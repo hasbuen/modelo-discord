@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Protocolo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #2C2F33;
+            color: rgb(197, 197, 197);
+        }
+
+        .container {
+            max-width: 75%;
+            margin: 0 auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .radio-group {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .column-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .inputs>div {
+            margin-bottom: 15px;
+        }
+
+        input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-right: 8px;
+            transition: background-color 0.3s, border-color 0.3s;
+            outline: none;
+        }
+
+        input[type="radio"][value="sugestao"] {
+            border: 2px solid #05310a;
+            background-color: #baf4bc;
+        }
+
+        input[type="radio"][value="erro"] {
+            border: 2px solid #4f0505;
+            background-color: #ffa6a6;
+        }
+
+        input[type="radio"][value="sugestao"]:checked {
+            background-color: rgb(30, 255, 0);
+        }
+
+        input[type="radio"][value="erro"]:checked {
+            background-color: rgb(255, 0, 0);
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: 400;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            resize: vertical;
+            font-size: medium;
+            outline: none;
+            font-size: 16px;
+            color: rgb(197, 197, 197);
+            background: #3a3e44;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            font-size: 18px;
+        }
+
+        textarea {
+            height: 100px;
+            color: rgb(197, 197, 197);
+        }
+
+        button {
+            padding: 8px;
+            background-color: #05310a;
+            color: #baf4bc;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: larger;
+            transition: background-color 0.5s ease;
+        }
+
+        button:hover {
+            background-color: #052008;
+        }
+
+        .column-right {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .link input {
+            color: #5bade8;
+            font-weight: normal;
+        }
+
+        #output {
+            height: 200px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #3a3e44;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #2a2a2a;
+            color: #baf4bc;
+            margin: 15% auto;
+            padding: 20px;
+            border: none;
+            border-radius: 5px;
+            width: 20%;
+            text-align: center;
+        }
+
+        .close-btn {
+            background-color: #05310a;
+            color: #baf4bc;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Modelo Discord</h1>
+
+        <div class="grid">
+            <div class="column-left">
+                <div class="inputs">
+                    <div class="radio-group">
+                        <label><input type="radio" name="tipo" value="sugestao" required> Sugestão</label>
+                        <label><input type="radio" name="tipo" value="erro" required> Erro</label>
+                    </div>
+                    <div>
+                        <label for="prt">PRT:</label>
+                        <input type="text" id="prt" placeholder="Digite o PRT" required>
+                    </div>
+                    <div>
+                        <label for="ticket">Ticket:</label>
+                        <input type="text" id="ticket" placeholder="Digite o link do ticket.." required>
+                    </div>
+                    <div>
+                        <label for="descricao">Descrição resumida:</label>
+                        <textarea id="descricao" placeholder="Digite a descrição resumida aqui.." required></textarea>
+                    </div>
+                    <div>
+                        <label for="paliativo">Paliativo:</label>
+                        <textarea id="paliativo" placeholder="Digite o paliativo aqui.." required></textarea>
+                    </div>
+                    <div>
+                        <label for="prazo">Prazo:</label>
+                        <input type="text" id="prazo" placeholder="Digite o prazo.." required>
+                    </div>
+                    <div class="link">
+                        <label for="link">Link:</label>
+                        <input type="text" class="link" id="link" placeholder="Cole o link do ticket aqui.." required>
+                    </div>
+                </div>
+
+                <button onclick="gerarTexto()">Gerar</button>
+            </div>
+
+            <div class="column-right">
+                <label for="output">Cole no discord:</label>
+                <textarea id="output" readonly></textarea>
+                <button onclick="copiarTexto()">Copiar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="errorModal" class="modal">
+        <div class="modal-content">
+            <p id="modalMessage"></p>
+            <button class="close-btn" onclick="fecharModal()">Ok</button>
+        </div>
+    </div>
+
+    <script>
+        const MENSAGEM_1 = "Selecione o tipo do protocolo!";
+        const MENSAGEM_2 = "Preencha todos os campos!";
+        const MENSAGEM_3 = "Por favor, insira um link válido!";
+        const MENSAGEM_4 = "Nenhum texto para copiar!";
+        const MENSAGEM_5 = "Texto copiado com sucesso!";
+        const MENSAGEM_6 = "Erro ao copiar o texto!";
+
+        function validarURL(url) {
+            console.log(url); // Adicione este log para ver o valor da URL
+            const regex = /^(http:\/\/|https:\/\/)[\w.-]+\.[a-zA-Z]{2,}(\/.*)?$/;
+            return regex.test(url);
+        }
+
+        function gerarTexto() {
+            const tipoElement = document.querySelector('input[name="tipo"]:checked');
+            const prt = document.getElementById('prt');
+            const ticket = document.getElementById('ticket');
+            const descricao = document.getElementById('descricao');
+            const paliativo = document.getElementById('paliativo');
+            const prazo = document.getElementById('prazo');
+            const link = document.getElementById('link');
+            const requiredFields = [prt, ticket, descricao, paliativo, prazo, link];
+
+            let valid = true;
+
+            requiredFields.forEach(field => {
+                field.classList.remove('error');
+            });
+
+            requiredFields.forEach(field => {
+                if (field.value.trim() === "") {
+                    field.classList.add('error');
+                    valid = false;
+                }
+            });
+
+            if (!tipoElement) {
+                valid = false;
+                exibirModal(MENSAGEM_1);
+            } else if (!valid) {
+                exibirModal(MENSAGEM_2);
+                return;
+            } else if (!validarURL(link.value)) {
+                exibirModal(MENSAGEM_3);
+                return;
+            }
+
+            let texto = "";
+
+            const formatarTexto = (texto) => {
+                let linhas = texto.split("\n");
+                let resultado = [];
+
+                for (let linha of linhas) {
+                    let linhaTrimmed = linha.trim();
+                    if (linhaTrimmed) {
+                        resultado.push("  - " + linhaTrimmed);
+                    }
+                }
+                return resultado.join("\n");
+            };
+
+            const descricaoFormatada = formatarTexto(descricao.value);
+            const paliativoFormatado = formatarTexto(paliativo.value);
+
+            if (tipoElement.value === "sugestao") {
+                texto = `**\`\`\`diff
++ Protocolo [SUGESTÃO]:
++ PRT: ${prt.value}
++ Ticket: ${ticket.value}
+\`\`\`**
+- **Descrição resumida:**
+${descricaoFormatada}
+
+- **Paliativo:**
+${paliativoFormatado}
+
+- **Prazo: ** ${prazo.value.trim()}
+- **Link >> ** ${link.value.trim()}
+                `;
+            } else {
+                texto = `**\`\`\`diff
+- Protocolo [ERRO]:
+- PRT: ${prt.value}
+- Ticket: ${ticket.value}
+\`\`\`**
+- **Descrição resumida:**
+${descricaoFormatada}
+
+- **Paliativo:**
+${paliativoFormatado}
+
+- **Prazo: ** ${prazo.value.trim()}
+- **Link >> ** ${link.value.trim()}
+                `;
+            }
+
+            document.getElementById('output').value = texto;
+        }
+
+        function copiarTexto() {
+            const outputElement = document.getElementById('output');
+            const textoParaCopiar = outputElement.value;
+
+            if (textoParaCopiar.trim() === "") {
+                exibirModal(MENSAGEM_4);
+                return;
+            }
+
+            navigator.clipboard.writeText(textoParaCopiar)
+                .then(() => {
+                    exibirModal(MENSAGEM_5);
+                    limparCampos();
+                })
+                .catch(() => {
+                    exibirModal(MENSAGEM_6);
+                });
+        }
+
+        function exibirModal(mensagem) {
+            const modal = document.getElementById("errorModal");
+            const modalMessage = document.getElementById("modalMessage");
+            modalMessage.textContent = mensagem;
+            modal.style.display = "block";
+        }
+
+        function fecharModal() {
+            const modal = document.getElementById("errorModal");
+            modal.style.display = "none";
+        }
+
+        function limparCampos() {
+            document.getElementById('prt').value = '';
+            document.getElementById('ticket').value = '';
+            document.getElementById('descricao').value = '';
+            document.getElementById('paliativo').value = '';
+            document.getElementById('prazo').value = '';
+            document.getElementById('link').value = '';
+            document.getElementById('output').value = '';
+            const radioButtons = document.querySelectorAll('input[name="tipo"]');
+            radioButtons.forEach(radio => {
+                radio.checked = false;
+            });
+        }
+    </script>
+</body>
+
+</html>
