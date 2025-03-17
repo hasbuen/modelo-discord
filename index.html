@@ -206,8 +206,29 @@
                     </div>
                     <div>
                         <label for="prazo">Prazo:</label>
-                        <input type="text" id="prazo" placeholder="Digite o prazo.." required>
+                        <input type="text" id="prazo" placeholder="Digite o prazo..." />
+                        <label>
+                          <input type="checkbox" id="prazoCheckbox" onclick="togglePrazo()" />
+                               Encaminhar para avaliação de alocação
+                        </label>
+
                     </div>
+
+                    <script>
+                        function togglePrazo() {
+                            const checkbox = document.getElementById("prazoCheckbox");
+                            const input = document.getElementById("prazo");
+
+                            if (checkbox.checked) {
+                              input.value = "Encaminhado para avaliação de alocação";
+                              input.disabled = true;
+                            } else {
+                              input.value = "";
+                              input.disabled = false;
+                            }
+                          }
+                    </script>
+
                     <div class="link">
                         <label for="link">Link:</label>
                         <input type="text" class="link" id="link" placeholder="Cole o link do ticket aqui.." required>
