@@ -32,39 +32,64 @@
                     </div>
                     <div>
                         <label for="ticket">Ticket:</label>
-                        <input type="text" id="ticket" placeholder="Digite número do ticket.." required>
+                        <input type="text" id="ticket" placeholder="Digite o número do ticket.." required>
                     </div>
                     <div>
                         <label for="descricao">Descrição resumida:</label>
                         <textarea id="descricao" placeholder="Digite a descrição resumida aqui.." required></textarea>
                     </div>
                     <div>
-                        <label for="paliativo">Paliativo:</label>
+                        <div class="input-group">
+                            <label for="paliativo">Paliativo:</label>
+                            <select id="paliativoSelect" onchange="togglePaliativo()">
+                                <option value=""></option>
+                                <option value="não encontrado.">Paliativo não encontrado.</option>
+                                <option value="nova funcionalidade.">Nova funcionalidade.</option>
+                            </select>
+                        </div>
                         <textarea id="paliativo" placeholder="Digite o paliativo aqui.." required></textarea>
                     </div>
                     <div>
-                        <label for="prazo">Prazo:</label>
+                        <div class="input-group">
+                            <label for="prazo">Prazo:</label>
+                            <select id="prazoSelect" onchange="togglePrazo()">
+                                <option value=""></option>
+                                <option value="encaminhado para avaliação de alocação.">Encaminhar para avaliação de
+                                    alocação.</option>
+                                <option value="registrado no banco de dados RhedeSAC.">Registrar no banco de dados
+                                    RhedeSAC.
+                                </option>
+                            </select>
+                        </div>
                         <input type="text" id="prazo" placeholder="Digite o prazo..." />
-                        <label>
-                          <input type="checkbox" id="prazoCheckbox" onclick="togglePrazo()" />
-                               Encaminhar para avaliação de alocação
-                        </label>
-
                     </div>
 
                     <script>
+                        function togglePaliativo() {
+                            const select = document.getElementById("paliativoSelect");
+                            const textarea = document.getElementById("paliativo");
+
+                            if (select.value) {
+                                textarea.value = select.value;
+                                textarea.disabled = true;
+                            } else {
+                                textarea.value = "";
+                                textarea.disabled = false;
+                            }
+                        }
+
                         function togglePrazo() {
-                            const checkbox = document.getElementById("prazoCheckbox");
+                            const select = document.getElementById("prazoSelect");
                             const input = document.getElementById("prazo");
 
-                            if (checkbox.checked) {
-                              input.value = "Encaminhado para avaliação de alocação";
-                              input.disabled = true;
+                            if (select.value) {
+                                input.value = select.value;
+                                input.disabled = true;
                             } else {
-                              input.value = "";
-                              input.disabled = false;
+                                input.value = "";
+                                input.disabled = false;
                             }
-                          }
+                        }
                     </script>
 
                     <div class="link">
