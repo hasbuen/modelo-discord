@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "versatile-nomad-454418-b4",
+  "private_key_id": "1486c2185a8f9abf1ef28c1185185227ef0e7b55",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCrFrW/GoiE8egh\nXzrFY3O1egJk5YcvtmL8TWThfQVqsgxuxymg4uX+Gg4g/YGz23uV37Xhcnd6ds8X\n4UdftmnQAF+jK3Wf56wkDUiH5BAjUrH5UNB+MKf9ijkF2Na4dhnvYXBJnS/o/a4Q\nfB3dUaupeXH8DAYodqvRN9DwtGa9eOd7DwlA2QlBeYufEvjr/l34/DgmcfhBb3Ww\nuACErSUdpgF2YmTHyxiq/GLKcoGWgwsXED1BRy6BH6WRnp8ex1udLtFjMhxBsg5u\nXINa8hrSI+4AQK3oLJxUvQ+b8Wd/JXx9K8UEylMjbamWxO9MLcd7U8eImH+X8+mL\nCWIz/uJtAgMBAAECggEABuhV0i9qD6QMsTw9DTckttEEQ7qYqK5+dJ1TU19O1q31\nnotf/OTsUEQRCffyQqa76KMtnrqWZFVjqx0nWo/s2b8KHXZlu10JMDNxGDt3A1YV\nZXGD2XRxc+UexEOq96udBHM0q2QzSP7lBjlco1Dm02LZ3UlG/l88NKhCQVWnSEMG\nfc7/uKjXW8ewxwrQ9WDS8H7Fum/qyl9tUvYu5AoqF4qv4sRoyEfOmza9rPhakpxt\nt0aEtuEbgh5KLhOEd8fbYE+pfu/PQzEdKF/IC+xghm95uGKZpNfVPXjSll96WyV/\nFNhRYTjq9Yd32knLTeJJcgryLtKqcpq03KX63vimgQKBgQDW3A+XSVNgwo4+uzlF\ncgkOXimTnLGpIA/KEEzHzntMbJ0JeDD5R6EFbhiKR9nCHj19SfVouwct24VdXSK8\n52yKhUXE6XHW3VpMAhnMvgjSAhr5dZyU3pqTWOKJtMm08j9WEFYjOLzxV3rKG+Qy\nOr5oGk6OYDVz+JmkR9YTahTMnQKBgQDL2RjW0C/vpL5awEkoI0qdEgvloWR4tGmR\nd3HQllvSuLMcOuxiVuRUWTRBajZ+jdjGhnRr5j45OUMtqP/9wtYoWHBS2fzRMf8a\nUj2kQk/9ROigMHBuOyguyJH0eBR4cKmQCvtXuzBjTSpGDvBzkcPNpFIFUnzZ9rPp\nmylK06K8EQKBgQDFu6YZi6DRBpvT/Yd6crUE5QGMWINj6x68zf1rUIpGThrDcTpY\n32O/1I9/CxrLO/tIx3yzUpQLzt/QiXsDsFNCs93+lvxuSi3kj3Zg527Enq1mcKeW\nlbpZ6k4pfxi2js5dDRHIvlmcHe7h+4Mp+sfqlHNBMidfQCVde8L3AQR9PQKBgEAT\nJXOgTPEO36a2+kfbkAB/Q64SZPpr+yL2YJgoKwS5edNN0i+3EF5TC9HkCO0OuSzt\n5npkDPr/vNYFYTHqpFZaNjRUwNsg1Ab6AtY24d3CYzy2/SApCCBsezRU6lpRT3sv\neIHDHRqZjsgmuf4Zu2pQVFfH7ea1XSf41annjCeBAoGABRSlDr2kjOZQ1HXUdYzw\nNqg02N1mZsXnGTwKGZACTChiWmXPvt9Yw837DdRI+9P0KiezmEhQx9Wsj+tjMIrU\nDQuMJdyRBVWT3uxh/JxzgiQJ4vyFSZWNnPSdBo0StjH9jLEFNUaxss0iLASo/KOl\nQ4yvftIOkYljnapJiTL4jwY=\n-----END PRIVATE KEY-----\n",
+  "client_email": "modelo-discord@versatile-nomad-454418-b4.iam.gserviceaccount.com",
+  "client_id": "104726024497130680058",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/modelo-discord%40versatile-nomad-454418-b4.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
