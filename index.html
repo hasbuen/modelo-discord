@@ -347,6 +347,22 @@ ${paliativoFormatado}
             tbody.innerHTML = "";
 
             const registros = JSON.parse(localStorage.getItem("registros") || "[]");
+
+            if (registros.length === 0) {
+                const tr = document.createElement("tr");
+                const td = document.createElement("td");
+                td.colSpan = 5;
+                td.style.textAlign = "center";
+                td.style.padding = "20px";
+                td.style.color = "#666";
+                td.style.fontSize = "1.2rem";
+                td.style.fontStyle = "italic";
+                td.textContent = "No momento nenhum registro gravado.";
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+                return;
+            }
+            
             registros.forEach(reg => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
