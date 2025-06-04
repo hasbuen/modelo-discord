@@ -4,28 +4,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Protocolo</title>
+    <title>ProtoCord</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🩹</text></svg>">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0FRFV9Z0P1"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-0FRFV9Z0P1');
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-0FRFV9Z0P1');
     </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="container">
-        <h1>Modelo Discord</h1>
+    <div class="container" style="position: relative;">
+        <div class="version-label" style="
+          position: absolute;
+          top: 5px;
+          right: 5px;
+          font-size: 0.8rem;
+          color: #666;
+          font-weight: 600;
+        ">
+          v2.0.1
+        </div>
+
+        <h3>Seu Histórico!</h3>
+        <div class="tabela-container">
+            <table id="tabelaRegistros">
+                <thead>
+                    <tr>
+                        <th>🔗 Ticket</th>
+                        <th>⚙️ Protocolo</th>
+                        <th>Tipo</th>
+                        <th>Descrição</th>
+                        <th>💊 Paliativo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linhas serão inseridas aqui via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <h1>🩹 ProtoCord</h1>
 
         <div class="grid">
             <div class="column-left">
                 <div class="inputs">
                     <div class="radio-group">
-                        <label><input type="radio" name="tipo" value="sugestao" required> Sugestão</label>
-                        <label><input type="radio" name="tipo" value="erro" required> Erro</label>
+                        <div>
+                            <span class="tipo-opcao sugestao" data-tipo="sugestao">Sugestão</span>
+                            <span class="tipo-opcao erro" data-tipo="erro">Erro</span>
+                            <input type="hidden" id="tipo" name="tipo">
+                        </div>
                     </div>
+
+                    <script>
+                        document.querySelectorAll(".tipo-opcao").forEach(el => {
+                            el.onclick = () => {
+                                document.querySelectorAll(".tipo-opcao").forEach(e => e.classList.remove("ativo"));
+                                el.classList.add("ativo");
+                                document.getElementById("tipo").value = el.dataset.tipo;
+                            };
+                        });
+                    </script>
+
                     <div>
                         <label for="prt">PRT:</label>
                         <input type="text" id="prt" placeholder="Digite o PRT" required>
@@ -124,6 +169,8 @@
         const MENSAGEM_4 = "Nenhum texto para copiar!";
         const MENSAGEM_5 = "Texto copiado com sucesso!";
         const MENSAGEM_6 = "Erro ao copiar o texto!";
+        const MENSAGEM_7 = "O protocolo deve conter apenas números!";
+        const MENSAGEM_8 = "O ticket deve conter apenas números!";
 
         function validarURL(url) {
             console.log(url); // Adicione este log para ver o valor da URL
@@ -131,8 +178,14 @@
             return regex.test(url);
         }
 
+        function validarNumeros(valor) {
+            // Aceita apenas números (de 1 ou mais dígitos)
+            const regex = /^\d+$/;
+            return regex.test(valor);
+        }
+
         function gerarTexto() {
-            const tipoElement = document.querySelector('input[name="tipo"]:checked');
+            const tipoElement = document.getElementById('tipo').value.trim();
             const prt = document.getElementById('prt');
             const ticket = document.getElementById('ticket');
             const descricao = document.getElementById('descricao');
@@ -162,6 +215,12 @@
                 return;
             } else if (!validarURL(link.value)) {
                 exibirModal(MENSAGEM_3);
+                return;
+            } else if (!validarNumeros(prt.value.trim())) {
+                exibirModal(MENSAGEM_7);
+                return;
+            } else if (!validarNumeros(ticket.value.trim())) {
+                exibirModal(MENSAGEM_8);
                 return;
             }
 
@@ -218,6 +277,24 @@ ${paliativoFormatado}
             document.getElementById('output').value = texto;
         }
 
+        // salva os dados no localStorage
+        function salvarRegistro() {
+            const tipo = document.getElementById("tipo").value.trim();
+            const prt = document.getElementById("prt").value.trim();
+            const ticket = document.getElementById("ticket").value.trim();
+            const descricao = document.getElementById("descricao").value.trim();
+            const paliativo = document.getElementById("paliativo").value.trim();
+            const link = document.getElementById("link").value.trim();
+
+            const registro = { tipo, prt, ticket, descricao, paliativo, link };
+
+            let registros = JSON.parse(localStorage.getItem("registros") || "[]");
+            registros.push(registro);
+            localStorage.setItem("registros", JSON.stringify(registros));
+
+            renderizarTabela();
+        }
+
         function copiarTexto() {
             const outputElement = document.getElementById('output');
             const textoParaCopiar = outputElement.value;
@@ -230,6 +307,7 @@ ${paliativoFormatado}
             navigator.clipboard.writeText(textoParaCopiar)
                 .then(() => {
                     exibirModal(MENSAGEM_5);
+                    salvarRegistro();
                     limparCampos();
                 })
                 .catch(() => {
@@ -262,6 +340,46 @@ ${paliativoFormatado}
                 radio.checked = false;
             });
         }
+
+        // renderiza a tabela no footer
+        function renderizarTabela() {
+            const tbody = document.querySelector("#tabelaRegistros tbody");
+            tbody.innerHTML = "";
+
+            const registros = JSON.parse(localStorage.getItem("registros") || "[]");
+            registros.forEach(reg => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                <td><a href="${reg.link}" target="_blank">${reg.ticket}</a></td>
+                <td>${reg.prt}</td>
+                <td>
+                    ${reg.tipo.toLowerCase() === "sugestao"
+                        ? '<span style="background-color: green; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Sugestão</span>'
+                        : '<span style="background-color: red; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Erro</span>'
+                    }
+                </td>
+
+                <td>
+                    <div class="tooltip-container">
+                        <span class="descricao-resumida">
+                            ${reg.descricao.length > 200 ? reg.descricao.slice(0, 300) + ' ...' : reg.descricao}
+                        </span>
+                        <div class="tooltip-text">
+                            ${reg.descricao.replace(/\n/g, "<br>").replace(/"/g, '&quot;')}
+                        </div>
+                    </div>
+                </td>
+
+                <td>${reg.paliativo}</td>
+          `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Novo: ao carregar a página, renderiza a tabela com registros salvos
+        window.addEventListener("DOMContentLoaded", () => {
+            renderizarTabela();
+        });
     </script>
 </body>
 
