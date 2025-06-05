@@ -261,31 +261,31 @@
 + Protocolo [SUGESTÃO]:
 + PRT: ${prt.value}
 + Ticket: ${ticket.value}
-                            \`\`\`**
-                            - **Descrição resumida:**
-                                ${descricaoFormatada}
+\`\`\`**
+- **Descrição resumida:**
+  ${descricaoFormatada}
 
-                            - **Paliativo:**
-                                ${paliativoFormatado}
+- **Paliativo:**
+  ${paliativoFormatado}
 
-                            - **Prazo: ** ${prazo.value.trim()}
-                            - **Link >> ** ${link.value.trim()}
-                        `;
+- **Prazo: ** ${prazo.value.trim()}
+- **Link >> ** ${link.value.trim()}
+`;
             } else if (tipoElement === "erro") {
                 texto = `**\`\`\`diff
 - Protocolo [ERRO]:
 - PRT: ${prt.value}
 - Ticket: ${ticket.value}
-                            \`\`\`**
-                            - **Descrição resumida:**
-                                ${descricaoFormatada}
+\`\`\`**
+- **Descrição resumida:**
+  ${descricaoFormatada}
 
-                            - **Paliativo:**
-                                ${paliativoFormatado}
+- **Paliativo:**
+  ${paliativoFormatado}
 
-                            - **Prazo: ** ${prazo.value.trim()}
-                            - **Link >> ** ${link.value.trim()}
-                        `;
+- **Prazo: ** ${prazo.value.trim()}
+- **Link >> ** ${link.value.trim()}
+ `;
             } else {
                 exibirModal(MENSAGEM_1, "", 'erro');
                 return;
