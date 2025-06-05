@@ -247,19 +247,19 @@ function copiarLinha(botao) {
 
     const texto =
 `**\`\`\`diff
-+ Protocolo [${tipo}]:
-+ PRT: ${prt}
-+ Ticket: ${ticket}
+Protocolo [${tipo}]:
+PRT: ${prt}
+Ticket: ${ticket}
 \`\`\`**
-- **Descrição resumida:**
+**Descrição resumida:**
 ${descricaoFormatada}
 
-- **Paliativo:**
+**Paliativo:**
 ${paliativoFormatado}`;
 
     navigator.clipboard.writeText(texto)
-        .then(() => exibirModal("Texto formatado copiado para colar no Discord! 🎉", "", "sucesso"))
-        .catch(() => exibirModal("Erro ao copiar o texto. 😓", "", "erro"));
+        .then(() => exibirModal("Texto formatado copiado para colar no Discord!", "", "sucesso"))
+        .catch(() => exibirModal("Erro ao copiar o texto.", "", "erro"));
 }
 
 function mostrarTabela() {
