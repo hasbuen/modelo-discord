@@ -242,12 +242,7 @@ function copiarLinha(botao) {
     }
 
     navigator.clipboard.writeText(texto.slice(0, -3)); // Remove os últimos ' |'
-    alert("Texto copiado para a área de transferência!");
-}
-
-function removerLinha(botao) {
-    const linha = botao.closest("tr");
-    linha.remove();
+    exibirModal("Texto copiado para a área de transferência!", "", "sucesso");
 }
 
 function mostrarTabela() {
