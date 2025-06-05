@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProtoCord</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🩹</text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🩹</text></svg>">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0FRFV9Z0P1"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -14,6 +15,7 @@
         gtag('config', 'G-0FRFV9Z0P1');
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -27,11 +29,18 @@
           color: #666;
           font-weight: 600;
         ">
-            v2.0.1
+            v2.0.2
         </div>
 
-        <h3>Seu Histórico!</h3>
-        <div class="tabela-container">
+        <button class="toggle-button" onclick="mostrarTabela()">
+            <span id="texto-toggle">Exibir seu histórico de protocolos já registrados</span>
+            <i id="icon-toggle" class="fas fa-chevron-down icon"></i>
+        </button>
+
+        <div class="tabela-container hidden" id="tabela-container">
+                    <!-- Campo de busca -->
+        <input type="text" id="busca" class="input-busca" placeholder="Buscar registros..." onkeyup="filtrarTabela()" />
+
             <table id="tabelaRegistros">
                 <thead>
                     <tr>
@@ -157,8 +166,13 @@
     <!-- Modal -->
     <div id="errorModal" class="modal">
         <div class="modal-content">
-            <p id="modalMessage"></p>
-            <button class="close-btn" onclick="fecharModal()">Ok</button>
+            <p id="modalMessage">
+                <span id="modalIcon" style="margin-right: 8px;"></span>
+                <span id="modalText"></span>
+            </p>
+            <div class="modal-footer">
+                <button class="close-btn" onclick="fecharModal()">Compreendi</button>
+            </div>
         </div>
     </div>
 
@@ -209,18 +223,18 @@
 
             if (!tipoElement) {
                 valid = false;
-                exibirModal(MENSAGEM_1);
+                exibirModal(MENSAGEM_1, "", 'erro');
             } else if (!valid) {
-                exibirModal(MENSAGEM_2);
+                exibirModal(MENSAGEM_2, "", 'erro');
                 return;
             } else if (!validarURL(link.value)) {
-                exibirModal(MENSAGEM_3);
+                exibirModal(MENSAGEM_3, "", 'erro');
                 return;
             } else if (!validarNumeros(prt.value.trim())) {
-                exibirModal(MENSAGEM_7);
+                exibirModal(MENSAGEM_7, "", 'erro');
                 return;
             } else if (!validarNumeros(ticket.value.trim())) {
-                exibirModal(MENSAGEM_8);
+                exibirModal(MENSAGEM_8, "", 'erro');
                 return;
             }
 
@@ -259,21 +273,21 @@
                         `;
             } else if (tipoElement === "erro") {
                 texto = `**\`\`\`diff
-                    - Protocolo [ERRO]:
-                    - PRT: ${prt.value}
-                    - Ticket: ${ticket.value}
-                    \`\`\`**
-                    - **Descrição resumida:**
-                        ${descricaoFormatada}
+                            - Protocolo [ERRO]:
+                            - PRT: ${prt.value}
+                            - Ticket: ${ticket.value}
+                            \`\`\`**
+                            - **Descrição resumida:**
+                                ${descricaoFormatada}
 
-                    - **Paliativo:**
-                        ${paliativoFormatado}
+                            - **Paliativo:**
+                                ${paliativoFormatado}
 
-                    - **Prazo: ** ${prazo.value.trim()}
-                    - **Link >> ** ${link.value.trim()}
-                `;
+                            - **Prazo: ** ${prazo.value.trim()}
+                            - **Link >> ** ${link.value.trim()}
+                        `;
             } else {
-                exibirModal(MENSAGEM_1);
+                exibirModal(MENSAGEM_1, "", 'erro');
                 return;
             }
 
@@ -288,6 +302,15 @@
             const descricao = document.getElementById("descricao").value.trim();
             const paliativo = document.getElementById("paliativo").value.trim();
             const link = document.getElementById("link").value.trim();
+            let registrosJaGravados = JSON.parse(localStorage.getItem("registros") || "[]");
+
+            // Verifica se já existe um registro com o mesmo PRT
+            const prtExistente = registrosJaGravados.some(reg => reg.prt === prt);
+            if (prtExistente) {
+                exibirModal(`Este protocolo já havia sido gravado!`, prt, "info");
+
+                return;
+            }
 
             const registro = { tipo, prt, ticket, descricao, paliativo, link };
 
@@ -303,27 +326,51 @@
             const textoParaCopiar = outputElement.value;
 
             if (textoParaCopiar.trim() === "") {
-                exibirModal(MENSAGEM_4);
+                exibirModal(MENSAGEM_4, "", "info");
                 return;
             }
 
             navigator.clipboard.writeText(textoParaCopiar)
                 .then(() => {
-                    exibirModal(MENSAGEM_5);
+                    exibirModal(MENSAGEM_5, "", "sucesso");
                     salvarRegistro();
                     limparCampos();
                 })
                 .catch(() => {
-                    exibirModal(MENSAGEM_6);
+                    exibirModal(MENSAGEM_6, "", "erro");
                 });
         }
 
-        function exibirModal(mensagem) {
+        function exibirModal(mensagem, prt, tipo = "info") {
             const modal = document.getElementById("errorModal");
-            const modalMessage = document.getElementById("modalMessage");
-            modalMessage.textContent = mensagem;
-            modal.style.display = "block";
+            const modalIcon = document.getElementById("modalIcon");
+            const modalText = document.getElementById("modalText");
+
+            // Ícones por tipo
+            let iconHTML = '';
+            switch (tipo) {
+                case "erro":
+                    iconHTML = '<i class="fas fa-exclamation-triangle" style="color: #ff4c4c;"></i>';
+                    break;
+                case "sucesso":
+                    iconHTML = '<i class="fas fa-check-circle" style="color: #4caf50;"></i>';
+                    break;
+                case "info":
+                default:
+                    iconHTML = '<i class="fas fa-info-circle" style="color: #2196f3;"></i>';
+                    break;
+            }
+
+            modalIcon.innerHTML = iconHTML;
+            modalText.textContent = mensagem;
+            if (prt.trim() !== "" && prt !== null) {
+                // Adiciona o PRT ao texto do modal, se fornecido
+                modalText.textContent += `\n (PRT: ${prt})`;
+            }
+            modal.style.display = "inline-block";
+            modalText.style.whiteSpace = "pre-wrap"; // Permite quebras de linha
         }
+
 
         function fecharModal() {
             const modal = document.getElementById("errorModal");
@@ -342,6 +389,44 @@
             radioButtons.forEach(radio => {
                 radio.checked = false;
             });
+        }
+
+        function filtrarTabela() {
+            const input = document.getElementById("busca");
+            const filter = input.value.toLowerCase();
+            const tabela = document.getElementById("tabelaRegistros");
+            const trs = tabela.getElementsByTagName("tr");
+
+            for (let i = 1; i < trs.length; i++) {
+                const tds = trs[i].getElementsByTagName("td");
+                let found = false;
+
+                for (let j = 0; j < tds.length; j++) {
+                    if (tds[j].textContent.toLowerCase().includes(filter)) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                trs[i].style.display = found ? "" : "none";
+            }
+        }
+
+        function mostrarTabela() {
+            const tabela = document.getElementById("tabela-container");
+            const icone = document.getElementById("icon-toggle");
+            const texto = document.getElementById("texto-toggle");
+
+            // Alterna a visibilidade
+            tabela.classList.toggle("hidden");
+
+            if (tabela.classList.contains("hidden")) {
+                icone.className = "fas fa-chevron-down icon";
+                texto.textContent = "Exibir seu histórico de protocolos já registrados";
+            } else {
+                icone.className = "fas fa-chevron-up icon";
+                texto.textContent = "Ocultar seu histórico de protocolos já registrados";
+            }
         }
 
         // renderiza a tabela no footer
