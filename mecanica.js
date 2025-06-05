@@ -232,6 +232,24 @@ function filtrarTabela() {
     }
 }
 
+function copiarLinha(botao) {
+    const linha = botao.closest("tr");
+    const colunas = linha.querySelectorAll("td");
+    let texto = '';
+
+    for (let i = 0; i < colunas.length - 1; i++) { // Ignora a última coluna (ações)
+        texto += colunas[i].innerText.trim() + ' | ';
+    }
+
+    navigator.clipboard.writeText(texto.slice(0, -3)); // Remove os últimos ' |'
+    alert("Texto copiado para a área de transferência!");
+}
+
+function removerLinha(botao) {
+    const linha = botao.closest("tr");
+    linha.remove();
+}
+
 function mostrarTabela() {
     const tabela = document.getElementById("tabela-container");
     const icone = document.getElementById("icon-toggle");
