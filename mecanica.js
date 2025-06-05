@@ -212,6 +212,24 @@
             });
         }
 
+        function mostrarTabela() {
+            const container = document.getElementById("tabela-container");
+            const texto = document.getElementById("texto-toggle");
+            const icon = document.getElementById("icon-toggle");
+
+            if (container.classList.contains("hidden")) {
+                container.classList.remove("hidden");
+                texto.textContent = "Ocultar seu histórico de protocolos já registrados";
+                icon.classList.remove("fa-chevron-down");
+                icon.classList.add("fa-chevron-up");
+            } else {
+                container.classList.add("hidden");
+                texto.textContent = "Exibir seu histórico de protocolos já registrados";
+                icon.classList.remove("fa-chevron-up");
+                icon.classList.add("fa-chevron-down");
+            }
+        }
+
         // renderiza a tabela no footer
         function renderizarTabela() {
             const tbody = document.querySelector("#tabelaRegistros tbody");
