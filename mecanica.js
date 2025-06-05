@@ -313,6 +313,10 @@ function renderizarTabela() {
         </td>
 
         <td>${reg.paliativo}</td>
+        <td>
+            <button onclick="copiarLinha(this)" title="Copiar"><i class="fas fa-copy"></i></button>
+            <button onclick="removerLinha(this)" title="Remover"><i class="fas fa-trash-alt"></i></button>
+        </td>
   `;
         tbody.appendChild(tr);
     });
