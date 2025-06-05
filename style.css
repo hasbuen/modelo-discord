@@ -1,408 +1,414 @@
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #2C2F33;
-            color: rgb(197, 197, 197);
-        }
-
-        .container {
-            max-width: 75%;
-            margin: 0 auto;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        .radio-group {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-        }
-
-        .column-left {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .inputs>div {
-            margin-bottom: 15px;
-        }
-
-        input[type="radio"] {
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            cursor: pointer;
-            margin-right: 8px;
-            transition: background-color 0.3s, border-color 0.3s;
-            outline: none;
-        }
-
-        input[type="radio"][value="sugestao"] {
-            border: 2px solid #05310a;
-            background-color: #baf4bc;
-        }
-
-        input[type="radio"][value="erro"] {
-            border: 2px solid #4f0505;
-            background-color: #ffa6a6;
-        }
-
-        input[type="radio"][value="sugestao"]:checked {
-            background-color: rgb(30, 255, 0);
-        }
-
-        input[type="radio"][value="erro"]:checked {
-            background-color: rgb(255, 0, 0);
-        }
-
-        label {
-            margin-bottom: 5px;
-            font-weight: 400;
-        }
-
-
-        input[type="text"]:focus,
-        textarea:focus {
-            font-size: 18px;
-        }
-
-        textarea {
-            height: 100px;
-            color: rgb(197, 197, 197);
-        }
-
-
-        .input-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            /* Espaço entre o label e o select */
-            margin-bottom: 5px;
-            /* Espaço entre o grupo e o próximo elemento */
-        }
-
-        .input-group label {
-            white-space: nowrap;
-            /* Evita que o label quebre para a linha de baixo */
-            font-weight: bold;
-        }
-
-        select {
-            padding: 8px;
-            border: none;
-            border-radius: 5px;
-            background-color: #3a3e44;
-            color: rgb(197, 197, 197);
-            font-size: 16px;
-            cursor: pointer;
-
-            /* Adiciona uma seta personalizada */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='20' height='20' fill='white'%3E%3Cpath d='M7 10l5 5 5-5H7z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 16px;
-
-            /* Remove a aparência padrão */
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-
-            padding-right: 30px;
-            /* Garante espaço para a setinha */
-        }
-
-        textarea,
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            resize: vertical;
-            font-size: 16px;
-            outline: none;
-            color: rgb(197, 197, 197);
-            background: #3a3e44;
-        }
-
-
-        /* Foco no select */
-        select:focus {
-            outline: none;
-            /* Remove a borda do foco */
-            background-color: #4c5258;
-            /* Cor de fundo quando o select está focado */
-        }
-
-        /* Estilo do ícone de seta */
-        select::-ms-expand {
-            display: none;
-        }
-
-        /* Adicionando uma seta personalizada ao select */
-        .select-container {
-            position: relative;
-            width: 50%;
-        }
-
-        .select-container::after {
-            content: '\2193';
-            /* Código da seta para baixo */
-            font-size: 18px;
-            color: rgb(197, 197, 197);
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            pointer-events: none;
-        }
-
-        /* Focando no select */
-        select:hover {
-            background-color: #4c5258;
-            /* Cor de fundo quando o select é hover */
-        }
-
-        /* Estilos de quando o select estiver desabilitado */
-        select:disabled {
-            background-color: #4f5056;
-            cursor: not-allowed;
-        }
-
-
-        button {
-            padding: 8px;
-            background-color: #05310a;
-            color: #baf4bc;
-            border: none;
-            cursor: pointer;
-            margin-top: 10px;
-            font-size: larger;
-            transition: background-color 0.5s ease;
-        }
-
-        button:hover {
-            background-color: #052008;
-        }
-
-        .column-right {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .link input {
-            color: #5bade8;
-            font-weight: normal;
-        }
-
-        #output {
-            height: 200px;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background: #3a3e44;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: #2a2a2a;
-            color: #baf4bc;
-            margin: 15% auto;
-            padding: 20px;
-            border: none;
-            border-radius: 5px;
-            width: 20%;
-            text-align: center;
-        }
-
-        .close-btn {
-            background-color: #05310a;
-            color: #baf4bc;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-
-        .tabela-container {
-            width: 100%;
-            max-width: 100%;
-            margin: 0 auto;
-            border-radius: 6px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            font-family: Arial, sans-serif;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
-
-        tbody {
-            display: block;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        tbody tr {
-            display: table;
-            width: 100%;
-            table-layout: fixed;
-        }
-
-        tbody td {
-            padding: 10px 12px;
-            word-break: break-word;
-        }
-
-        /* As células do thead precisam do mesmo width das do tbody para alinhamento */
-        thead,
-        tbody tr {
-            display: table;
-            width: 100%;
-            table-layout: fixed;
-        }
-
-        #tabelaRegistros {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: Arial, sans-serif;
-            margin-top: 10px;
-            table-layout: auto;
-        }
-
-        #tabelaRegistros th:nth-child(1),
-        #tabelaRegistros td:nth-child(1) {
-            width: 80px;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        #tabelaRegistros th:nth-child(2),
-        #tabelaRegistros td:nth-child(2) {
-            width: 80px;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        #tabelaRegistros th:nth-child(3),
-        #tabelaRegistros td:nth-child(3) {
-            width: 80px;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        #tabelaRegistros th:nth-child(5),
-        #tabelaRegistros td:nth-child(5) {
-            width: 170px;
-            text-align: left;
-        }
-
-        #tabelaRegistros thead {
-            background-color: #333;
-            color: white;
-            text-align: left;
-        }
-
-        #tabelaRegistros th,
-        #tabelaRegistros td {
-            padding: 10px 12px;
-            font-size: 14px;
-        }
-
-        #tabelaRegistros tbody tr {
-            background-color: rgba(0, 0, 0, 0.5);
-            transition: background-color 0.3s;
-        }
-
-        #tabelaRegistros tbody tr:hover {
-            background-color: rgba(26, 26, 31, 0.5);
-        }
-
-        #tabelaRegistros a {
-            color: #007bff;
-            text-decoration: none;
-        }
-
-        #tabelaRegistros a:hover {
-            text-decoration: underline;
-        }
-
-        #tabelaRegistros i.fas.fa-circle {
-            margin-right: 6px;
-        }
-
-        .tooltip-container {
-            position: relative;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            cursor: help;
-        }
-
-        .tooltip-container .tooltip-text {
-            visibility: hidden;
-            background-color: #333;
-            color: #fff;
-            padding: 10px;
-            border-radius: 6px;
-            position: absolute;
-            z-index: 999;
-            bottom: 120%;
-            left: 0;
-            opacity: 0;
-            transition: opacity 0.3s;
-            width: 400px;
-            white-space: normal;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .tooltip-container:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .tipo-opcao {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: white;
-            cursor: pointer;
-            margin-right: 10px;
-            opacity: 0.6;
-        }
-
-        .ativo {
-            opacity: 1;
-            box-shadow: 0 0 3px #0003;
-        }
-
-        .sugestao {
-            background-color: green;
-        }
-
-        .erro {
-            background-color: red;
-        }
+body {
+    font-family: Arial, sans-serif; /* Define a fonte */
+    margin: 0;
+    padding: 20px; /* Espaçamento interno */
+    background-color: #2C2F33; /* Cor de fundo escura */
+    color: rgb(197, 197, 197); /* Cor do texto */
+}
+
+.container {
+    max-width: 75%; /* Largura máxima */
+    margin: 0 auto; /* Centraliza */
+    border-radius: 8px; /* Bordas arredondadas */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+h1 {
+    text-align: center; /* Centraliza o título */
+}
+
+.radio-group {
+    text-align: center;
+    margin-bottom: 20px; /* Espaço abaixo */
+}
+
+.grid {
+    display: grid; /* Usa grid layout */
+    grid-template-columns: 1fr 1fr; /* Duas colunas iguais */
+    gap: 40px; /* Espaço entre colunas */
+}
+
+.column-left {
+    display: flex;
+    flex-direction: column; /* Coloca itens em coluna */
+}
+
+.inputs > div {
+    margin-bottom: 15px; /* Espaço entre campos */
+}
+
+input[type="radio"] {
+    appearance: none; /* Remove estilo padrão */
+    width: 20px;
+    height: 20px;
+    border-radius: 50%; /* Deixa redondo */
+    cursor: pointer;
+    margin-right: 8px;
+    transition: background-color 0.3s, border-color 0.3s; /* Animações */
+    outline: none;
+}
+
+/* Cores específicas para cada tipo de radio */
+input[type="radio"][value="sugestao"] {
+    border: 2px solid #05310a;
+    background-color: #baf4bc;
+}
+
+input[type="radio"][value="erro"] {
+    border: 2px solid #4f0505;
+    background-color: #ffa6a6;
+}
+
+/* Cores ao selecionar radio */
+input[type="radio"][value="sugestao"]:checked {
+    background-color: rgb(30, 255, 0);
+}
+
+input[type="radio"][value="erro"]:checked {
+    background-color: rgb(255, 0, 0);
+}
+
+label {
+    margin-bottom: 5px;
+    font-weight: 400; /* Peso da fonte */
+}
+
+/* Destaque no foco */
+input[type="text"]:focus,
+textarea:focus {
+    font-size: 18px;
+}
+
+textarea {
+    height: 100px;
+    color: rgb(197, 197, 197);
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaço entre label e campo */
+    margin-bottom: 5px;
+}
+
+.input-group label {
+    white-space: nowrap; /* Evita quebra de linha */
+    font-weight: bold;
+}
+
+select {
+    padding: 8px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3a3e44;
+    color: rgb(197, 197, 197);
+    font-size: 16px;
+    cursor: pointer;
+
+    /* Seta customizada */
+    background-image: url("data:image/svg+xml,...");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    padding-right: 30px; /* Espaço para seta */
+}
+
+/* Estilo comum para textarea e input */
+textarea,
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    resize: vertical;
+    font-size: 16px;
+    outline: none;
+    color: rgb(197, 197, 197);
+    background: #3a3e44;
+}
+
+/* Foco no select */
+select:focus {
+    outline: none;
+    background-color: #4c5258;
+}
+
+/* Remove seta do IE */
+select::-ms-expand {
+    display: none;
+}
+
+/* Container da seta customizada */
+.select-container {
+    position: relative;
+    width: 50%;
+}
+
+.select-container::after {
+    content: '\2193'; /* Seta para baixo */
+    font-size: 18px;
+    color: rgb(197, 197, 197);
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+select:hover {
+    background-color: #4c5258;
+}
+
+/* Select desabilitado */
+select:disabled {
+    background-color: #4f5056;
+    cursor: not-allowed;
+}
+
+button {
+    padding: 8px;
+    background-color: #05310a;
+    color: #baf4bc;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: larger;
+    transition: background-color 0.5s ease;
+}
+
+button:hover {
+    background-color: #052008;
+}
+
+.column-right {
+    display: flex;
+    flex-direction: column;
+}
+
+.link input {
+    color: #5bade8;
+    font-weight: normal;
+}
+
+#output {
+    height: 200px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: #3a3e44;
+}
+
+/* Modal de confirmação */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Conteúdo do modal */
+.modal-content {
+    background-color: #2a2a2a;
+    color: #baf4bc;
+    margin: 15% auto;
+    padding: 20px;
+    border: none;
+    border-radius: 5px;
+    width: 20%;
+    text-align: center;
+}
+
+/* Botão do modal */
+.close-btn {
+    background-color: #05310a;
+    color: #baf4bc;
+    border: none;
+    padding: 6px 16px;
+    font-size: 0.9rem;
+    border-radius: 16px;
+    height: 32px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.close-btn:hover {
+    background-color: #042307;
+}
+
+/* Rodapé do modal */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Container da tabela */
+.tabela-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+tbody {
+    display: block;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+tbody td {
+    padding: 10px 12px;
+    word-break: break-word; /* Quebra palavras longas */
+}
+
+thead,
+tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+/* Estilo da tabela principal */
+#tabelaRegistros {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    margin-top: 10px;
+    table-layout: auto;
+}
+
+/* Larguras e alinhamentos das colunas */
+#tabelaRegistros th:nth-child(1),
+#tabelaRegistros td:nth-child(1),
+#tabelaRegistros th:nth-child(2),
+#tabelaRegistros td:nth-child(2),
+#tabelaRegistros th:nth-child(3),
+#tabelaRegistros td:nth-child(3) {
+    width: 80px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+#tabelaRegistros th:nth-child(5),
+#tabelaRegistros td:nth-child(5) {
+    width: 170px;
+    text-align: left;
+}
+
+/* Cabeçalho da tabela */
+#tabelaRegistros thead {
+    background-color: #333;
+    color: white;
+    text-align: left;
+}
+
+#tabelaRegistros th,
+#tabelaRegistros td {
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+#tabelaRegistros tbody tr {
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s;
+}
+
+#tabelaRegistros tbody tr:hover {
+    background-color: rgba(26, 26, 31, 0.5);
+}
+
+#tabelaRegistros a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+#tabelaRegistros a:hover {
+    text-decoration: underline;
+}
+
+#tabelaRegistros i.fas.fa-circle {
+    margin-right: 6px;
+}
+
+/* Tooltip */
+.tooltip-container {
+    position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: help;
+}
+
+.tooltip-container .tooltip-text {
+    visibility: hidden;
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 999;
+    bottom: 120%;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    width: 400px;
+    white-space: normal;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Estilo das tags de tipo */
+.tipo-opcao {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    margin-right: 10px;
+    opacity: 0.6;
+}
+
+.ativo {
+    opacity: 1;
+    box-shadow: 0 0 3px #0003;
+}
+
+.sugestao {
+    background-color: green;
+}
+
+.erro {
+    background-color: red;
+}
