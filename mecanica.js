@@ -247,11 +247,11 @@ function copiarLinha(botao) {
 
     const texto =
 `**\`\`\`diff
-Protocolo [${tipo}]:
+Tipo protocolo [${tipo}]:
 ${prt}
 Ticket: ${ticket}
 \`\`\`**
-**Descrição resumida:**
+**Resumo:**
 ${descricaoFormatada}
 
 **Paliativo:**
