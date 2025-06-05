@@ -29,7 +29,7 @@
           color: #666;
           font-weight: 600;
         ">
-            v2.0.2
+            v2.0.5
         </div>
 
         <button class="toggle-button" onclick="mostrarTabela()">
@@ -297,8 +297,8 @@
         // salva os dados no localStorage
         function salvarRegistro() {
             const tipo = document.getElementById("tipo").value.trim();
-            const prt = "PRT#"+document.getElementById("prt").value.trim();
-            const ticket = document.getElementById("ticket").value.trim();
+            const prt = "#PRT"+document.getElementById("prt").value.trim();
+            const ticket = "#"+document.getElementById("ticket").value.trim();
             const descricao = document.getElementById("descricao").value.trim();
             const paliativo = document.getElementById("paliativo").value.trim();
             const link = document.getElementById("link").value.trim();
@@ -308,7 +308,6 @@
             const prtExistente = registrosJaGravados.some(reg => reg.prt === prt);
             if (prtExistente) {
                 exibirModal(`Este protocolo já havia sido gravado!`, prt, "info");
-
                 return;
             }
 
@@ -365,7 +364,7 @@
             modalText.textContent = mensagem;
             if (prt.trim() !== "" && prt !== null) {
                 // Adiciona o PRT ao texto do modal, se fornecido
-                modalText.textContent += `\n (PRT: ${prt})`;
+                modalText.textContent += `\n ${prt}`;
             }
             modal.style.display = "inline-block";
             modalText.style.whiteSpace = "pre-wrap"; // Permite quebras de linha
