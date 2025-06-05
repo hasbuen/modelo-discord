@@ -375,7 +375,7 @@ body {
         .tooltip-container {
             position: relative;
             display: inline-block;
-            cursor: pointer;
+            cursor: help;
           }
           
           .tooltip-text {
@@ -401,7 +401,7 @@ body {
           .tooltip-container:hover .tooltip-text {
             visibility: visible;
             opacity: 1;
-          }
+          }          
 
         .tipo-opcao {
             padding: 4px 10px;
