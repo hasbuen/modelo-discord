@@ -17,10 +17,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
     <link rel="stylesheet" href="style.css">
-
-    
-  <!-- Importando o JavaScript -->
-  <script src="mecanica.js" defer></script>
 </head>
 
 <body>
@@ -33,18 +29,14 @@
           color: #666;
           font-weight: 600;
         ">
-            v2.0.7
+            v2.1.0
         </div>
 
         <button class="toggle-button" onclick="mostrarTabela()">
             <span id="texto-toggle">Exibir seu histórico de protocolos já registrados</span>
             <i id="icon-toggle" class="fas fa-chevron-down icon"></i>
         </button>
-
         <div class="tabela-container hidden" id="tabela-container">
-                    <!-- Campo de busca -->
-        <input type="text" id="busca" class="input-busca" placeholder="Buscar registros..." onkeyup="filtrarTabela()" />
-
             <table id="tabelaRegistros">
                 <thead>
                     <tr>
@@ -180,9 +172,8 @@
         </div>
     </div>
 
+    <!-- Importando o JavaScript -->
+    <script src="mecanica.js"></script>
 
-  <!-- Importando o JavaScript -->
-  <script src="mecanica.js"></script>
 </body>
-
 </html>
