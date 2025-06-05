@@ -338,6 +338,12 @@ body {
             text-align: left;
         }
 
+        #tabelaRegistros th:nth-child(6),
+        #tabelaRegistros td:nth-child(6) {
+            width: 50px;
+            text-align: center;
+        }
+
         #tabelaRegistros thead {
             background-color: #333;
             color: white;
