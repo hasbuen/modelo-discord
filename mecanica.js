@@ -235,14 +235,31 @@ function filtrarTabela() {
 function copiarLinha(botao) {
     const linha = botao.closest("tr");
     const colunas = linha.querySelectorAll("td");
-    let texto = '';
 
-    for (let i = 0; i < colunas.length - 1; i++) { // Ignora a última coluna (ações)
-        texto += colunas[i].innerText.trim() + ' | ';
-    }
+    const ticket = colunas[0]?.innerText.trim();
+    const prt = colunas[1]?.innerText.trim();
+    const tipo = colunas[2]?.innerText.trim().toUpperCase();
+    const descricao = colunas[3]?.innerText.trim();
+    const paliativo = colunas[4]?.innerText.trim();
 
-    navigator.clipboard.writeText(texto.slice(0, -3)); // Remove os últimos ' |'
-    exibirModal("Texto copiado para a área de transferência!", "", "sucesso");
+    const descricaoFormatada = descricao.replace(/\n/g, ' ');
+    const paliativoFormatado = paliativo.replace(/\n/g, ' ');
+
+    const texto =
+`**\`\`\`diff
++ Protocolo [${tipo}]:
++ PRT: ${prt}
++ Ticket: ${ticket}
+\`\`\`**
+- **Descrição resumida:**
+${descricaoFormatada}
+
+- **Paliativo:**
+${paliativoFormatado}`;
+
+    navigator.clipboard.writeText(texto)
+        .then(() => exibirModal("Texto formatado copiado para colar no Discord! 🎉", "", "sucesso"))
+        .catch(() => exibirModal("Erro ao copiar o texto. 😓", "", "erro"));
 }
 
 function mostrarTabela() {
