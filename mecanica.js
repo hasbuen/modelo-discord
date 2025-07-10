@@ -8,7 +8,6 @@ const MENSAGEM_7 = "O protocolo deve conter apenas números!";
 const MENSAGEM_8 = "O ticket deve conter apenas números!";
 
 function validarURL(url) {
-    console.log(url); // Adicione este log para ver o valor da URL
     const regex = /^(http:\/\/|https:\/\/)[\w.-]+\.[a-zA-Z]{2,}(\/.*)?$/;
     return regex.test(url);
 }
@@ -120,10 +119,13 @@ async function salvarRegistro() {
     const paliativo = document.getElementById("paliativo").value.trim();
     const link = document.getElementById("link").value.trim();
     
-    let registrosJaGravados = JSON.parse(localStorage.getItem("registros") || "[]");
+   // let registrosJaGravados = JSON.parse(localStorage.getItem("registros") || "[]");
 
+    const registrosArmazenados = await fetch('https://modelo-discord-server.vercel.app/api/protocolos');
+    const registrosArmazenados = await res.json();
+    
     // Verifica se já existe um registro com o mesmo PRT
-    const prtExistente = registrosJaGravados.some(reg => reg.prt === prt);
+    const prtExistente = registrosArmazenados.some(reg => reg.prt === prt);
     if (prtExistente) {
         exibirModal(`Este protocolo já havia sido gravado!`, prt, "info");
         return;
@@ -131,10 +133,10 @@ async function salvarRegistro() {
 
     const registro = { tipo, prt, ticket, descricao, paliativo, link };
 
-    let registros = JSON.parse(localStorage.getItem("registros") || "[]");
+   /* let registros = JSON.parse(localStorage.getItem("registros") || "[]");
     registros.push(registro);
     localStorage.setItem("registros", JSON.stringify(registros));
-
+*/
     try {
         const res = await fetch('https://modelo-discord-server.vercel.app/api/protocolos', {
             method: 'POST',
