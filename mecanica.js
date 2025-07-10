@@ -292,7 +292,7 @@ function mostrarTabela() {
 }
 
 // renderiza a tabela no footer
-function renderizarTabela() {
+async function renderizarTabela() {
     const tbody = document.querySelector("#tabelaRegistros tbody");
     tbody.innerHTML = "";
 
