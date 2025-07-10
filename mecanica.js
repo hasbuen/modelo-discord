@@ -139,7 +139,7 @@ async function salvarRegistro() {
         const res = await fetch('https://modelo-discord-server.vercel.app/api/protocolos', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dados)
+            body: JSON.stringify(registro)
         });
 
         if (!res.ok) throw new Error("Erro ao salvar no servidor");
