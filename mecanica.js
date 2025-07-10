@@ -118,13 +118,10 @@ async function salvarRegistro() {
     const descricao = document.getElementById("descricao").value.trim();
     const paliativo = document.getElementById("paliativo").value.trim();
     const link = document.getElementById("link").value.trim();
-    
-   // let registrosJaGravados = JSON.parse(localStorage.getItem("registros") || "[]");
 
     const pegaRegistrosArmazenados = await fetch('https://modelo-discord-server.vercel.app/api/protocolos');
     const registrosArmazenados = await pegaRegistrosArmazenados.json();
-    
-    // Verifica se já existe um registro com o mesmo PRT
+
     const prtExistente = registrosArmazenados.some(reg => reg.prt === prt);
     if (prtExistente) {
         exibirModal(`Este protocolo já havia sido gravado!`, prt, "info");
@@ -132,11 +129,6 @@ async function salvarRegistro() {
     }
 
     const registro = { tipo, prt, ticket, descricao, paliativo, link };
-
-   /* let registros = JSON.parse(localStorage.getItem("registros") || "[]");
-    registros.push(registro);
-    localStorage.setItem("registros", JSON.stringify(registros));
-*/
     try {
         const res = await fetch('https://modelo-discord-server.vercel.app/api/protocolos', {
             method: 'POST',
@@ -151,8 +143,6 @@ async function salvarRegistro() {
     } catch (error) {
         exibirModal("Erro ao salvar registro: " + error.message, "", "erro");
     }
-
-    renderizarTabela();
 }
 
 function copiarTexto() {
