@@ -287,7 +287,7 @@ function mostrarTabela() {
         texto.textContent = "Exibir seu histórico de protocolos já registrados";
     } else {
         icone.className = "fas fa-chevron-up icon";
-        texto.textContent = "Ocultar seu histórico de protocolos já registrados";
+        texto.textContent = "Ocultar histórico!";
     }
 }
 
