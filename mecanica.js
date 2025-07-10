@@ -30,11 +30,7 @@ function gerarTexto() {
     const requiredFields = [prt, ticket, descricao, paliativo, prazo, link];
 
     let valid = true;
-
-    requiredFields.forEach(field => {
-        field.classList.remove('error');
-    });
-
+    requiredFields.forEach(field => field.classList.remove('error'));
     requiredFields.forEach(field => {
         if (field.value.trim() === "") {
             field.classList.add('error');
@@ -116,13 +112,14 @@ ${paliativoFormatado}
 }
 
 // salva os dados no localStorage
-function salvarRegistro() {
+async function salvarRegistro() {
     const tipo = document.getElementById("tipo").value.trim();
     const prt = "#PRT"+document.getElementById("prt").value.trim();
     const ticket = "#"+document.getElementById("ticket").value.trim();
     const descricao = document.getElementById("descricao").value.trim();
     const paliativo = document.getElementById("paliativo").value.trim();
     const link = document.getElementById("link").value.trim();
+    
     let registrosJaGravados = JSON.parse(localStorage.getItem("registros") || "[]");
 
     // Verifica se já existe um registro com o mesmo PRT
@@ -137,6 +134,21 @@ function salvarRegistro() {
     let registros = JSON.parse(localStorage.getItem("registros") || "[]");
     registros.push(registro);
     localStorage.setItem("registros", JSON.stringify(registros));
+
+    try {
+        const res = await fetch('https://modelo-discord-server.vercel.app/api/protocolos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dados)
+        });
+
+        if (!res.ok) throw new Error("Erro ao salvar no servidor");
+
+        exibirModal("Registro salvo com sucesso!", "", "sucesso");
+        renderizarTabela();
+    } catch (error) {
+        exibirModal("Erro ao salvar registro: " + error.message, "", "erro");
+    }
 
     renderizarTabela();
 }
@@ -284,7 +296,8 @@ function renderizarTabela() {
     const tbody = document.querySelector("#tabelaRegistros tbody");
     tbody.innerHTML = "";
 
-    const registros = JSON.parse(localStorage.getItem("registros") || "[]");
+    const res = await fetch('https://modelo-discord-server.vercel.app/api/protocolos');
+    const registros = await res.json();
 
     if (registros.length === 0) {
         const tr = document.createElement("tr");
