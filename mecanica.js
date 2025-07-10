@@ -121,8 +121,8 @@ async function salvarRegistro() {
     
    // let registrosJaGravados = JSON.parse(localStorage.getItem("registros") || "[]");
 
-    const registrosArmazenados = await fetch('https://modelo-discord-server.vercel.app/api/protocolos');
-    const registrosArmazenados = await res.json();
+    const pegaRegistrosArmazenados = await fetch('https://modelo-discord-server.vercel.app/api/protocolos');
+    const registrosArmazenados = await pegaRegistrosArmazenados.json();
     
     // Verifica se já existe um registro com o mesmo PRT
     const prtExistente = registrosArmazenados.some(reg => reg.prt === prt);
