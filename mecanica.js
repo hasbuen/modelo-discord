@@ -330,21 +330,16 @@ registros.forEach(reg => {
         </td>
     `;
 
-    // Criar botão "Ver" para o paliativo
-    const tdPaliativo = document.createElement("td");
-    const btnVer = document.createElement("button");
-    btnVer.textContent = "Ver";
-    btnVer.classList.add("btn-paliativo");
-    btnVer.onclick = () => {
-        exibirModal(reg.paliativo || "Nenhum paliativo disponível.", "", "info");
-    };
-    tdPaliativo.appendChild(btnVer);
-    tr.appendChild(tdPaliativo);
+const tdPaliativo = document.createElement("td");
+const btnVer = document.createElement("button");
+btnVer.textContent = "Ver";
+btnVer.classList.add("btn-paliativo");
+btnVer.onclick = () => {
+    mostrarModalPaliativo(reg.paliativo);
+};
+tdPaliativo.appendChild(btnVer);
+tr.appendChild(tdPaliativo);
 
-    // Botão copiar
-    const tdCopiar = document.createElement("td");
-    tdCopiar.innerHTML = `<button onclick="copiarLinha(this)" title="Copiar"><i class="fas fa-copy"></i></button>`;
-    tr.appendChild(tdCopiar);
 
     tbody.appendChild(tr);
 });
@@ -381,6 +376,25 @@ function fecharModal() {
     document.getElementById("errorModal").style.display = "none";
 }
 
+}
+
+function mostrarModalPaliativo(texto) {
+    const modal = document.getElementById("paliativoModal");
+    const content = document.getElementById("paliativoModalText");
+    content.textContent = texto || "Nenhuma informação disponível.";
+    modal.style.display = "block";
+}
+
+function fecharPaliativoModal() {
+    const modal = document.getElementById("paliativoModal");
+    modal.style.display = "none";
+}
+
+function copiarTextoPaliativo() {
+    const texto = document.getElementById("paliativoModalText").textContent;
+    navigator.clipboard.writeText(texto)
+        .then(() => exibirModal("Texto do paliativo copiado com sucesso!", "", "sucesso"))
+        .catch(() => exibirModal("Erro ao copiar texto do paliativo.", "", "erro"));
 }
 
 // Novo: ao carregar a página, renderiza a tabela com registros salvos
