@@ -175,6 +175,23 @@
         </div>
     </div>
 
+    <!-- Novo Modal para Paliativo -->
+<div id="paliativoModal" class="modal">
+  <div class="modal-content" id="paliativoModalContent">
+    <div class="modal-header" id="paliativoModalHeader" style="cursor: move;">
+      <strong style="flex: 1;">💊 Paliativo</strong>
+      <button onclick="fecharPaliativoModal()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer;">×</button>
+    </div>
+    <div class="modal-body">
+      <pre id="paliativoModalText" style="white-space: pre-wrap;"></pre>
+    </div>
+    <div class="modal-footer">
+      <button onclick="copiarTextoPaliativo()" class="btn-paliativo">Copiar Texto</button>
+      <button onclick="fecharPaliativoModal()" class="btn-paliativo">Fechar</button>
+    </div>
+  </div>
+</div>
+
     <!-- Importando o JavaScript -->
     <script src="mecanica.js"></script>
 
