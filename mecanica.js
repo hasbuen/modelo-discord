@@ -306,9 +306,10 @@ async function renderizarTabela() {
         return;
     }
 
-    registros.forEach(reg => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
+registros.forEach(reg => {
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
         <td><a href="${reg.link}" target="_blank">${reg.ticket}</a></td>
         <td>${reg.prt}</td>
         <td>
@@ -317,7 +318,6 @@ async function renderizarTabela() {
                 : '<span style="background-color: red; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Erro</span>'
             }
         </td>
-
         <td>
             <div class="tooltip-container">
                 <span class="descricao-resumida">
@@ -328,16 +328,28 @@ async function renderizarTabela() {
                 </div>
             </div>
         </td>
+    `;
 
-        <td>${reg.paliativo}</td>
-        <td>
-            <button onclick="copiarLinha(this)" title="Copiar"><i class="fas fa-copy"></i></button>
-        </td>
-  `;
-        tbody.appendChild(tr);
-    });
-
+    // Criar botão "Ver" para o paliativo
     const tdPaliativo = document.createElement("td");
+    const btnVer = document.createElement("button");
+    btnVer.textContent = "Ver";
+    btnVer.classList.add("btn-paliativo");
+    btnVer.onclick = () => {
+        exibirModal(reg.paliativo || "Nenhum paliativo disponível.", "", "info");
+    };
+    tdPaliativo.appendChild(btnVer);
+    tr.appendChild(tdPaliativo);
+
+    // Botão copiar
+    const tdCopiar = document.createElement("td");
+    tdCopiar.innerHTML = `<button onclick="copiarLinha(this)" title="Copiar"><i class="fas fa-copy"></i></button>`;
+    tr.appendChild(tdCopiar);
+
+    tbody.appendChild(tr);
+});
+
+const tdPaliativo = document.createElement("td");
 const botaoPaliativo = document.createElement("button");
 botaoPaliativo.textContent = "Ver";
 botaoPaliativo.classList.add("btn-paliativo");
