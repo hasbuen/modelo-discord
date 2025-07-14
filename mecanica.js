@@ -283,39 +283,6 @@ function mostrarTabela() {
     }
 }
 
-const tdPaliativo = document.createElement("td");
-const botaoPaliativo = document.createElement("button");
-botaoPaliativo.textContent = "Ver";
-botaoPaliativo.classList.add("btn-paliativo");
-botaoPaliativo.onclick = () => {
-    exibirModal(reg.paliativo, "info");
-};
-tdPaliativo.appendChild(botaoPaliativo);
-tr.appendChild(tdPaliativo);
-
-function exibirModal(mensagem, tipo = "info") {
-    const modal = document.getElementById("errorModal");
-    const modalIcon = document.getElementById("modalIcon");
-    const modalText = document.getElementById("modalText");
-
-    // Ícone conforme o tipo
-    const icons = {
-        info: '<i class="fas fa-info-circle"></i>',
-        error: '<i class="fas fa-exclamation-triangle"></i>',
-        success: '<i class="fas fa-check-circle"></i>'
-    };
-
-    modalIcon.innerHTML = icons[tipo] || '';
-    modalText.innerText = mensagem;
-
-    modal.style.display = "block";
-}
-
-function fecharModal() {
-    document.getElementById("errorModal").style.display = "none";
-}
-
-
 // renderiza a tabela no footer
 async function renderizarTabela() {
     const tbody = document.querySelector("#tabelaRegistros tbody");
@@ -369,6 +336,39 @@ async function renderizarTabela() {
   `;
         tbody.appendChild(tr);
     });
+
+    const tdPaliativo = document.createElement("td");
+const botaoPaliativo = document.createElement("button");
+botaoPaliativo.textContent = "Ver";
+botaoPaliativo.classList.add("btn-paliativo");
+botaoPaliativo.onclick = () => {
+    exibirModal(reg.paliativo, "info");
+};
+tdPaliativo.appendChild(botaoPaliativo);
+tr.appendChild(tdPaliativo);
+
+function exibirModal(mensagem, tipo = "info") {
+    const modal = document.getElementById("errorModal");
+    const modalIcon = document.getElementById("modalIcon");
+    const modalText = document.getElementById("modalText");
+
+    // Ícone conforme o tipo
+    const icons = {
+        info: '<i class="fas fa-info-circle"></i>',
+        error: '<i class="fas fa-exclamation-triangle"></i>',
+        success: '<i class="fas fa-check-circle"></i>'
+    };
+
+    modalIcon.innerHTML = icons[tipo] || '';
+    modalText.innerText = mensagem;
+
+    modal.style.display = "block";
+}
+
+function fecharModal() {
+    document.getElementById("errorModal").style.display = "none";
+}
+
 }
 
 // Novo: ao carregar a página, renderiza a tabela com registros salvos
