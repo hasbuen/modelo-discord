@@ -163,24 +163,17 @@
     </div>
 
     <!-- Modal -->
-<!-- Modal Atualizado -->
-<div id="errorModal" class="modal">
-    <div class="modal-content" id="modalContent">
-        <div class="modal-header" id="modalHeader" style="cursor: move;">
-            <span id="modalIcon" style="margin-right: 8px;"></span>
-            <strong style="flex: 1;" id="modalTitle">Mensagem</strong>
-            <button onclick="fecharModal()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer;">×</button>
-        </div>
-        <div class="modal-body">
-            <p id="modalText" style="white-space: pre-wrap; margin-top: 10px;"></p>
-        </div>
-        <div class="modal-footer" style="margin-top: 15px;">
-            <button onclick="copiarTextoModal()" class="btn-paliativo">Copiar Texto</button>
-            <button onclick="fecharModal()" class="btn-paliativo">Fechar</button>
+    <div id="errorModal" class="modal">
+        <div class="modal-content">
+            <p id="modalMessage">
+                <span id="modalIcon" style="margin-right: 8px;"></span>
+                <span id="modalText"></span>
+            </p>
+            <div class="modal-footer">
+                <button class="close-btn" onclick="fecharModal()">Compreendi</button>
+            </div>
         </div>
     </div>
-</div>
-
 
     <!-- Importando o JavaScript -->
     <script src="mecanica.js"></script>
