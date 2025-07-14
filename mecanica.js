@@ -397,6 +397,35 @@ function copiarTextoPaliativo() {
         .catch(() => exibirModal("Erro ao copiar texto do paliativo.", "", "erro"));
 }
 
+// ← COLE AQUI, antes do "DOMContentLoaded"
+(function tornarPaliativoModalArrastavel() {
+    const modal = document.getElementById("paliativoModalContent");
+    const header = document.getElementById("paliativoModalHeader");
+
+    let isDragging = false, offsetX = 0, offsetY = 0;
+
+    header.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        const rect = modal.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+        document.body.style.userSelect = "none";
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (isDragging) {
+            modal.style.left = `${e.clientX - offsetX}px`;
+            modal.style.top = `${e.clientY - offsetY}px`;
+            modal.style.transform = "none";
+        }
+    });
+
+    document.addEventListener("mouseup", () => {
+        isDragging = false;
+        document.body.style.userSelect = "auto";
+    });
+})();
+
 // Novo: ao carregar a página, renderiza a tabela com registros salvos
 window.addEventListener("DOMContentLoaded", () => {
     renderizarTabela();
