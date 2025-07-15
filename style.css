@@ -340,13 +340,13 @@ body {
 
         #tabelaRegistros th:nth-child(6),
         #tabelaRegistros td:nth-child(6) {
-            width: 6px;
+            width: 3px;
             text-align: center;
         }
 
         #tabelaRegistros th:nth-child(7),
         #tabelaRegistros td:nth-child(7) {
-            width: 6px;
+            width: 3px;
             text-align: center;
         }
 
