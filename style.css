@@ -441,6 +441,7 @@ body {
             border-radius: 6px;
             cursor: pointer;
             font-size: 0.85rem;
+            margin-left: 10px;
             transition: background-color 0.3s;
         }
 
