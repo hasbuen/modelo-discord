@@ -306,57 +306,58 @@ async function renderizarTabela() {
         return;
     }
 
-registros.forEach(reg => {
-    const tr = document.createElement("tr");
+    registros.forEach(reg => {
+        const tr = document.createElement("tr");
 
-    tr.innerHTML = `
-        <td><a href="${reg.link}" target="_blank">${reg.ticket}</a></td>
-        <td>${reg.prt}</td>
-        <td>
-            ${reg.tipo.toLowerCase() === "sugestao"
-                ? '<span style="background-color: green; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Sugestão</span>'
-                : '<span style="background-color: red; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Erro</span>'
-            }
-        </td>
-        <td>
-            <div class="tooltip-container">
-                <span class="descricao-resumida">
-                    ${reg.descricao.length > 200 ? reg.descricao.slice(0, 300) + ' ...' : reg.descricao}
-                </span>
-                <div class="tooltip-text">
-                    ${reg.descricao.replace(/\n/g, "<br>").replace(/"/g, '&quot;')}
+        tr.innerHTML = `
+            <td><a href="${reg.link}" target="_blank">${reg.ticket}</a></td>
+            <td>${reg.prt}</td>
+            <td>
+                ${reg.tipo.toLowerCase() === "sugestao"
+                    ? '<span style="background-color: green; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Sugestão</span>'
+                    : '<span style="background-color: red; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Erro</span>'
+                }
+            </td>
+            <td>
+                <div class="tooltip-container">
+                    <span class="descricao-resumida">
+                        ${reg.descricao.length > 200 ? reg.descricao.slice(0, 300) + ' ...' : reg.descricao}
+                    </span>
+                    <div class="tooltip-text">
+                        ${reg.descricao.replace(/\n/g, "<br>").replace(/"/g, '&quot;')}
+                    </div>
                 </div>
-            </div>
-        </td>
-    `;
+            </td>
+        `;
 
-const tdPaliativo = document.createElement("td");
-const btnVer = document.createElement("button");
-btnVer.textContent = "Ver";
-btnVer.classList.add("btn-paliativo");
-btnVer.onclick = () => {
-    mostrarModalPaliativo(reg.paliativo);
-};
-tdPaliativo.appendChild(btnVer);
-tr.appendChild(tdPaliativo);
+        // 🔗 Coluna única para os botões
+        const tdAcoes = document.createElement("td");
+        tdAcoes.classList.add("td-acoes"); // Classe opcional para estilizar
 
-const tdCopiar = document.createElement("td");
-const btnCopiar = document.createElement("button");
-btnCopiar.classList.add("btn-copiar");
+        // Botão "Ver"
+        const btnVer = document.createElement("button");
+        btnVer.textContent = "Ver";
+        btnVer.classList.add("btn-paliativo");
+        btnVer.onclick = () => {
+            mostrarModalPaliativo(reg.paliativo);
+        };
 
-// Adiciona o ícone dentro do botão
-btnCopiar.innerHTML = '<i class="fas fa-copy"></i>';
+        // Botão "Copiar"
+        const btnCopiar = document.createElement("button");
+        btnCopiar.classList.add("btn-copiar");
+        btnCopiar.innerHTML = '<i class="fas fa-copy"></i>';
+        btnCopiar.onclick = () => {
+            copiarLinha(btnCopiar);
+        };
 
-// Define o comportamento do botão
-btnCopiar.onclick = () => {
-    copiarLinha(btnCopiar); // passa a própria referência
-};
+        // Agrupando os botões
+        tdAcoes.appendChild(btnVer);
+        tdAcoes.appendChild(btnCopiar);
+        tr.appendChild(tdAcoes);
 
-tdCopiar.appendChild(btnCopiar);
-tr.appendChild(tdCopiar);
-
-    tbody.appendChild(tr);
-});
+        tbody.appendChild(tr);
+    });
+}
 
 const tdPaliativo = document.createElement("td");
 const botaoPaliativo = document.createElement("button");
