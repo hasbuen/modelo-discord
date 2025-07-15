@@ -340,11 +340,20 @@ btnVer.onclick = () => {
 tdPaliativo.appendChild(btnVer);
 tr.appendChild(tdPaliativo);
 
-    tr.innerHTML = `        
-        <td>
-            <button onclick="copiarLinha(this)" title="Copiar"><i class="fas fa-copy"></i></button>
-        </td>
-    `;
+const tdCopiar = document.createElement("td");
+const btnCopiar = document.createElement("button");
+btnCopiar.classList.add("btn-copiar");
+
+// Adiciona o ícone dentro do botão
+btnCopiar.innerHTML = '<i class="fas fa-copy"></i>';
+
+// Define o comportamento do botão
+btnCopiar.onclick = () => {
+    copiarLinha(btnCopiar); // passa a própria referência
+};
+
+tdCopiar.appendChild(btnCopiar);
+tr.appendChild(tdCopiar);
 
     tbody.appendChild(tr);
 });
