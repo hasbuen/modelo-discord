@@ -195,7 +195,6 @@ function exibirModal(mensagem, prt, tipo = "info") {
     modalText.style.whiteSpace = "pre-wrap"; // Permite quebras de linha
 }
 
-
 function fecharModal() {
     const modal = document.getElementById("errorModal");
     modal.style.display = "none";
@@ -358,16 +357,6 @@ async function renderizarTabela() {
         tbody.appendChild(tr);
     });
 }
-
-const tdPaliativo = document.createElement("td");
-const botaoPaliativo = document.createElement("button");
-botaoPaliativo.textContent = "Ver";
-botaoPaliativo.classList.add("btn-paliativo");
-botaoPaliativo.onclick = () => {
-    exibirModal(reg.paliativo, "info");
-};
-tdPaliativo.appendChild(botaoPaliativo);
-tr.appendChild(tdPaliativo);
 
 function exibirModal(mensagem, tipo = "info") {
     const modal = document.getElementById("errorModal");
