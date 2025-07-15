@@ -340,15 +340,15 @@ body {
 
         #tabelaRegistros th:nth-child(6),
         #tabelaRegistros td:nth-child(6) {
-            width: 3px;
+            width: 20px;
             text-align: center;
         }
 
-        #tabelaRegistros th:nth-child(7),
-        #tabelaRegistros td:nth-child(7) {
-            width: 3px;
-            text-align: center;
-        }
+       td.acoes button {
+              display: flex;
+              gap: 5px; /* ou menor, como 2px */
+              justify-content: center;
+       }
 
         #tabelaRegistros thead {
             background-color: #333;
