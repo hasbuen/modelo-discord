@@ -344,15 +344,19 @@ body {
             text-align: center;
         }
 
-       td.acoes button {
-           margin-right: 5px;
-       }
+        .td-acoes {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+        }
 
-       td.acoes {
-              display: flex;
-              gap: 5px; 
-              justify-content: center;
-       }
+        .btn-paliativo,
+        .btn-copiar {
+            padding: 4px 8px;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
 
         #tabelaRegistros thead {
             background-color: #333;
