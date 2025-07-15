@@ -1,3 +1,4 @@
+
 body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -340,7 +341,7 @@ body {
 
         #tabelaRegistros th:nth-child(6),
         #tabelaRegistros td:nth-child(6) {
-            width: 20px;
+            width: 10px;
             text-align: center;
         }
 
