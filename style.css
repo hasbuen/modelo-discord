@@ -345,8 +345,12 @@ body {
         }
 
        td.acoes button {
+           margin-right: 5px;
+       }
+
+       td.acoes {
               display: flex;
-              gap: 5px; /* ou menor, como 2px */
+              gap: 5px; 
               justify-content: center;
        }
 
