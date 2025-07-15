@@ -380,8 +380,6 @@ function fecharModal() {
     document.getElementById("errorModal").style.display = "none";
 }
 
-}
-
 function mostrarModalPaliativo(texto) {
     const modal = document.getElementById("paliativoModal");
     const content = document.getElementById("paliativoModalText");
