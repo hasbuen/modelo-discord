@@ -328,6 +328,10 @@ registros.forEach(reg => {
                 </div>
             </div>
         </td>
+
+        <td>
+            <button onclick="copiarLinha(this)" title="Copiar"><i class="fas fa-copy"></i></button>
+        </td>
     `;
 
 const tdPaliativo = document.createElement("td");
@@ -339,7 +343,6 @@ btnVer.onclick = () => {
 };
 tdPaliativo.appendChild(btnVer);
 tr.appendChild(tdPaliativo);
-
 
     tbody.appendChild(tr);
 });
