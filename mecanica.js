@@ -336,7 +336,7 @@ registros.forEach(reg => {
 
 const tdPaliativo = document.createElement("td");
 const btnVer = document.createElement("button");
-btnVer.textContent = "Ver";
+btnVer.textContent = "👁‍🗨";
 btnVer.classList.add("btn-paliativo");
 btnVer.onclick = () => {
     mostrarModalPaliativo(reg.paliativo);
