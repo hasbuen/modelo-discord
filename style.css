@@ -345,13 +345,6 @@ body {
             text-align: center;
         }
 
-        .td-acoes {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            align-items: center;
-        }
-
         .btn-paliativo,
         .btn-copiar {
             padding: 4px 8px;
