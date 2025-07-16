@@ -453,7 +453,7 @@ async function atualizarContadoresDosCards() {
     });
 })();
 
-// Novo: ao carregar a página, renderiza a tabela com registros salvos
-window.addEventListener("DOMContentLoaded", () => {
-    renderizarTabela();
+window.addEventListener("DOMContentLoaded", async () => {
+  await atualizarContadoresDosCards();
+  await renderizarTabela(); 
 });
