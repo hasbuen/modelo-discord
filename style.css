@@ -471,11 +471,15 @@ body {
 .contador-card {
   background-color: #2a2a2a;
   color: #baf4bc;
-  padding: 16px 24px;
-  border-radius: 12px;
+  padding: 12px 18px; /* redução no padding */
+  border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   text-align: center;
-  min-width: 140px;
+  min-width: 120px;
+  height: 100px; /* altura controlada */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .contador-card h3 {
