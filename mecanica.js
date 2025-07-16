@@ -415,22 +415,7 @@ function copiarTextoPaliativo() {
 }
 
 // Atualiza os contadores dos cards
-async function atualizarContadoresDosCards() {
-  const registros = await carregarRegistrosProtocolos();
-
-  const totalErros = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "erro").length;
-  const totalSugestoes = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "sugestao").length;
-
-  const erroEl = document.getElementById("contador-erros");
-  const sugestaoEl = document.getElementById("contador-sugestoes");
-
-  // Remove skeleton e atualiza valores
-  erroEl.classList.remove("skeleton-loader");
-  sugestaoEl.classList.remove("skeleton-loader");
-
-  erroEl.textContent = totalErros;
-  sugestaoEl.textContent = totalSugestoes;
-}
+async function atualizarContadoresDosCards() { const registros = await carregarRegistrosProtocolos(); const totalErros = registros.filter(r => r.tipo.trim().toLowerCase() === "erro").length; const totalSugestoes = registros.filter(r => r.tipo.trim().toLowerCase() === "sugestao").length; document.getElementById("contador-erros").textContent = totalErros; document.getElementById("contador-sugestoes").textContent = totalSugestoes; }
 
 // antes do "DOMContentLoaded"
 (function tornarPaliativoModalArrastavel() {
