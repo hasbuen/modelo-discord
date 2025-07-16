@@ -399,7 +399,7 @@ function copiarTextoPaliativo() {
         .catch(() => exibirModal("Erro ao copiar texto do paliativo.", "", "erro"));
 }
 
-// ← COLE AQUI, antes do "DOMContentLoaded"
+// antes do "DOMContentLoaded"
 (function tornarPaliativoModalArrastavel() {
     const modal = document.getElementById("paliativoModalContent");
     const header = document.getElementById("paliativoModalHeader");
