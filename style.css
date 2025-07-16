@@ -531,6 +531,8 @@ body {
   background-size: 400% 400%;
   animation: pulse 1.2s ease-in-out infinite;
   display: inline-block;
+  margin: 0 auto; /* centraliza horizontalmente */
+  align-self: center; /* funciona com flexbox nos cards */
 }
 
 @keyframes pulse {
