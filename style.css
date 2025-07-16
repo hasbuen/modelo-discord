@@ -226,15 +226,18 @@ body {
         }
 
         .modal-content {
-            position: absolute;
-            background-color: #2a2a2a;
-            color: #baf4bc;
-            margin: 15% auto;
-            padding: 20px;
-            border: none;
-            border-radius: 5px;
-            width: 20%;
-            text-align: center;
+          position: absolute;
+          background-color: #2a2a2a;
+          color: #baf4bc;
+          padding: 20px;
+          border: none;
+          border-radius: 5px;
+          width: 60%; 
+          max-width: 800px;
+          text-align: left;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
         }
 
         .close-btn {
