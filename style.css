@@ -460,3 +460,31 @@ body {
         .btn-paliativo:hover {
             background-color: #1f5f8b;
         }
+
+.contador-cards-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.contador-card {
+  background-color: #2a2a2a;
+  color: #baf4bc;
+  padding: 16px 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  min-width: 140px;
+}
+
+.contador-card h3 {
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.contador-card p {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
