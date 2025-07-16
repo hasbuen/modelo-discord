@@ -7,6 +7,22 @@ const MENSAGEM_6 = "Erro ao copiar o texto!";
 const MENSAGEM_7 = "O protocolo deve conter apenas números!";
 const MENSAGEM_8 = "O ticket deve conter apenas números!";
 
+let registrosCache = [];
+
+async function carregarRegistrosProtocolos() {
+  if (registrosCache.length > 0) return registrosCache; // usa cache se já carregado
+
+  try {
+    const res = await carregarRegistrosProtocolos();
+    const data = await res.json();
+    registrosCache = data;
+    return registrosCache;
+  } catch (err) {
+    console.error("Erro ao carregar registros da API:", err);
+    return [];
+  }
+}
+
 function validarURL(url) {
     const regex = /^(http:\/\/|https:\/\/)[\w.-]+\.[a-zA-Z]{2,}(\/.*)?$/;
     return regex.test(url);
@@ -119,7 +135,7 @@ async function salvarRegistro() {
     const paliativo = document.getElementById("paliativo").value.trim();
     const link = document.getElementById("link").value.trim();
 
-    const pegaRegistrosArmazenados = await fetch('https://modelo-discord-server.vercel.app/api/protocolos');
+    const pegaRegistrosArmazenados = await carregarRegistrosProtocolos();
     const registrosArmazenados = await pegaRegistrosArmazenados.json();
 
     const prtExistente = registrosArmazenados.some(reg => reg.prt === prt);
@@ -287,7 +303,7 @@ async function renderizarTabela() {
     const tbody = document.querySelector("#tabelaRegistros tbody");
     tbody.innerHTML = "";
 
-    const res = await fetch('https://modelo-discord-server.vercel.app/api/protocolos');
+    const res = await carregarRegistrosProtocolos();
     const registros = await res.json();
 
     if (registros.length === 0) {
@@ -397,6 +413,15 @@ function copiarTextoPaliativo() {
     navigator.clipboard.writeText(texto)
         .then(() => exibirModal("Texto do paliativo copiado com sucesso!", "", "sucesso"))
         .catch(() => exibirModal("Erro ao copiar texto do paliativo.", "", "erro"));
+}
+
+async function atualizarContadores() {
+  const registros = await carregarRegistrosProtocolos();
+  const erros = registros.filter(r => r.tipo.toLowerCase() === "erro").length;
+  const sugestoes = registros.filter(r => r.tipo.toLowerCase() === "sugestao").length;
+
+  document.getElementById("contador-erros").textContent = erros;
+  document.getElementById("contador-sugestoes").textContent = sugestoes;
 }
 
 // antes do "DOMContentLoaded"
