@@ -414,13 +414,15 @@ function copiarTextoPaliativo() {
         .catch(() => exibirModal("Erro ao copiar texto do paliativo.", "", "erro"));
 }
 
-async function atualizarContadores() {
+// Atualiza os contadores dos cards
+async function atualizarContadoresDosCards() {
   const registros = await carregarRegistrosProtocolos();
-  const erros = registros.filter(r => r.tipo.toLowerCase() === "erro").length;
-  const sugestoes = registros.filter(r => r.tipo.toLowerCase() === "sugestao").length;
 
-  document.getElementById("contador-erros").textContent = erros;
-  document.getElementById("contador-sugestoes").textContent = sugestoes;
+  const totalErros = registros.filter(r => r.tipo.trim().toLowerCase() === "erro").length;
+  const totalSugestoes = registros.filter(r => r.tipo.trim().toLowerCase() === "sugestao").length;
+
+  document.getElementById("contador-erros").textContent = totalErros;
+  document.getElementById("contador-sugestoes").textContent = totalSugestoes;
 }
 
 // antes do "DOMContentLoaded"
