@@ -226,6 +226,7 @@ body {
         }
 
         .modal-content {
+            position: absolute;
             background-color: #2a2a2a;
             color: #baf4bc;
             margin: 15% auto;
