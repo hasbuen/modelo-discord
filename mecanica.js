@@ -418,7 +418,6 @@ function copiarTextoPaliativo() {
         if (isDragging) {
             modal.style.left = `${e.clientX - offsetX}px`;
             modal.style.top = `${e.clientY - offsetY}px`;
-            modal.style.transform = "none";
         }
     });
 
