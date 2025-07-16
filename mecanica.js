@@ -303,8 +303,7 @@ async function renderizarTabela() {
     const tbody = document.querySelector("#tabelaRegistros tbody");
     tbody.innerHTML = "";
 
-    const res = await carregarRegistrosProtocolos();
-    const registros = await res.json();
+    const registros = await carregarRegistrosProtocolos();
 
     if (registros.length === 0) {
         const tr = document.createElement("tr");
