@@ -430,7 +430,20 @@ body {
             cursor: pointer;
             margin-right: 10px;
             opacity: 0.6;
-        }
+         transition: 
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    filter 0.25s ease;
+  display: inline-block;
+}
+
+/* Efeito no hover */
+.tipo-opcao:hover {
+  transform: translateY(2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  filter: brightness(1.2); /* clareia suavemente */
+  opacity: 1;
+}
 
         .ativo {
             opacity: 1;
