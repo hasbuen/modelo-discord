@@ -424,12 +424,14 @@ async function atualizarContadoresDosCards() {
   const erroEl = document.getElementById("contador-erros");
   const sugestaoEl = document.getElementById("contador-sugestoes");
 
-  // Remove skeleton e atualiza valores
-  erroEl.classList.remove("skeleton-loader");
-  sugestaoEl.classList.remove("skeleton-loader");
+  // Força o skeleton a ficar visível por X segundos, mesmo que já tenha os dados
+  setTimeout(() => {
+    erroEl.classList.remove("skeleton-loader");
+    sugestaoEl.classList.remove("skeleton-loader");
 
-  erroEl.textContent = totalErros;
-  sugestaoEl.textContent = totalSugestoes;
+    erroEl.textContent = totalErros;
+    sugestaoEl.textContent = totalSugestoes;
+  }, 2000); // ⏳ aqui define o tempo (em milissegundos) — nesse caso, 2 segundos
 }
 
 // antes do "DOMContentLoaded"
