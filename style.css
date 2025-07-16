@@ -469,6 +469,7 @@ body {
 }
 
 .contador-card {
+  color: white;
   padding: 12px 18px; /* redução no padding */
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -481,13 +482,11 @@ body {
 }
 
 .contador-card-erros {
-   background-color: #D8BFD8;
-   color: #FF3030;            
+   background-color: red;        
 }
 
 .contador-card-sugestoes {
-  background-color: #FFF68F; 
-  color: #CD9B1D;            
+  background-color: green;     
 }
 
 .contador-card h3 {
