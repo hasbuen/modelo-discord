@@ -13,7 +13,7 @@ async function carregarRegistrosProtocolos() {
   if (registrosCache.length > 0) return registrosCache; // usa cache se já carregado
 
   try {
-    const res = await carregarRegistrosProtocolos();
+    const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
     const data = await res.json();
     registrosCache = data;
     return registrosCache;
