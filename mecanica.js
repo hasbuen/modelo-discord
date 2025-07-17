@@ -136,9 +136,8 @@ async function salvarRegistro() {
     const link = document.getElementById("link").value.trim();
 
     const pegaRegistrosArmazenados = await carregarRegistrosProtocolos();
-    const registrosArmazenados = await pegaRegistrosArmazenados.json();
 
-    const prtExistente = registrosArmazenados.some(reg => reg.prt === prt);
+    const prtExistente = pegaRegistrosArmazenados.some(reg => reg.prt === prt);
     if (prtExistente) {
         exibirModal(`Este protocolo já havia sido gravado!`, prt, "info");
         return;
