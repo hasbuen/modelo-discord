@@ -302,6 +302,7 @@ async function renderizarTabela() {
     const tbody = document.querySelector("#tabelaRegistros tbody");
     tbody.innerHTML = "";
 
+    atualizarContadoresDosCards();
     const registros = await carregarRegistrosProtocolos();
 
     if (registros.length === 0) {
