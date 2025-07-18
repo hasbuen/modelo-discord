@@ -263,17 +263,33 @@ function copiarLinha(botao, paliativoOriginal) {
     const descricaoFormatada = descricao.replace(/\n/g, ' ');
      const paliativoFormatado = paliativoOriginal.replace(/\n/g, ' ');
 
-    const texto =
+  const texto = "";
+  
+  if(reg.tipo === 'erro') {
+     texto =
 `**\`\`\`diff
-Tipo protocolo [${tipo}]:
-${prt}
-Ticket: ${ticket}
+- Tipo protocolo [${tipo}]:
+- ${prt}
+- Ticket: ${ticket}
 \`\`\`**
 **Resumo:**
 ${descricaoFormatada}
 
 **Paliativo:**
 ${paliativoFormatado}`;
+} else if(reg.tipo === "sugestao") {
+     texto =
+`**\`\`\`diff
++ Tipo protocolo [${tipo}]:
++ ${prt}
++ Ticket: ${ticket}
+\`\`\`**
+**Resumo:**
+${descricaoFormatada}
+
+**Paliativo:**
+${paliativoFormatado}`;    
+}
 
     navigator.clipboard.writeText(texto)
         .then(() => exibirModal("Texto formatado copiado para colar no Discord!", "", "sucesso"))
