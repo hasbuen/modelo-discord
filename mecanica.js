@@ -263,11 +263,11 @@ function copiarLinha(botao, paliativoOriginal) {
     const descricaoFormatada = descricao.replace(/\n/g, ' ');
      const paliativoFormatado = paliativoOriginal.replace(/\n/g, ' ');
 
-  const texto = "";
-  
-  if(reg.tipo === 'erro') {
-     texto =
-`**\`\`\`diff
+
+  let texto = "";
+
+  if (tipo === 'erro') {
+    texto = `**\`\`\`diff
 - Tipo protocolo [${tipo}]:
 - ${prt}
 - Ticket: ${ticket}
@@ -277,9 +277,8 @@ ${descricaoFormatada}
 
 **Paliativo:**
 ${paliativoFormatado}`;
-} else if(reg.tipo === "sugestao") {
-     texto =
-`**\`\`\`diff
+  } else if (tipo === "sugestao") {
+    texto = `**\`\`\`diff
 + Tipo protocolo [${tipo}]:
 + ${prt}
 + Ticket: ${ticket}
@@ -288,12 +287,12 @@ ${paliativoFormatado}`;
 ${descricaoFormatada}
 
 **Paliativo:**
-${paliativoFormatado}`;    
-}
+${paliativoFormatado}`;
+  }
 
-    navigator.clipboard.writeText(texto)
-        .then(() => exibirModal("Texto formatado copiado para colar no Discord!", "", "sucesso"))
-        .catch(() => exibirModal("Erro ao copiar o texto.", "", "erro"));
+  navigator.clipboard.writeText(texto)
+    .then(() => exibirModal("Texto formatado copiado para colar no Discord!", "", "sucesso"))
+    .catch(() => exibirModal("Erro ao copiar o texto.", "", "erro"));
 }
 
 function mostrarTabela() {
