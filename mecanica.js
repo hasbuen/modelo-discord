@@ -250,7 +250,7 @@ function filtrarTabela() {
     }
 }
 
-function copiarLinha(botao) {
+function copiarLinha(botao, paliativoOriginal) {
     const linha = botao.closest("tr");
     const colunas = linha.querySelectorAll("td");
 
@@ -261,7 +261,7 @@ function copiarLinha(botao) {
     const paliativo = colunas[4]?.innerText.trim();
 
     const descricaoFormatada = descricao.replace(/\n/g, ' ');
-    const paliativoFormatado = paliativo.replace(/\n/g, ' ');
+     const paliativoFormatado = paliativoOriginal.replace(/\n/g, ' ');
 
     const texto =
 `**\`\`\`diff
@@ -361,7 +361,7 @@ async function renderizarTabela() {
         btnCopiar.classList.add("btn-copiar");
         btnCopiar.innerHTML = '<i class="fas fa-copy"></i>';
         btnCopiar.onclick = () => {
-            copiarLinha(btnCopiar);
+            copiarLinha(btnCopiar, reg.paliativo);
         };
 
         // Agrupando os botões
