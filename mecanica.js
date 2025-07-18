@@ -289,7 +289,8 @@ ${descricaoFormatada}
 **Paliativo:**
 ${paliativoFormatado}`;
   }
-
+console.log(texto);
+  console.log(tipo);
   navigator.clipboard.writeText(texto)
     .then(() => exibirModal("Texto formatado copiado para colar no Discord!", "", "sucesso"))
     .catch(() => exibirModal("Erro ao copiar o texto.", "", "erro"));
