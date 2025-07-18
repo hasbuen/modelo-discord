@@ -266,7 +266,7 @@ function copiarLinha(botao, paliativoOriginal) {
 
   let texto = "";
 
-  if (tipo === 'erro') {
+  if (tipo.toLowerCase() === 'erro') {
     texto = `**\`\`\`diff
 - Tipo protocolo [${tipo}]:
 - ${prt}
@@ -277,7 +277,7 @@ ${descricaoFormatada}
 
 **Paliativo:**
 ${paliativoFormatado}`;
-  } else if (tipo === "sugestao") {
+  } else if (tipo.toLowerCase() === "sugestao") {
     texto = `**\`\`\`diff
 + Tipo protocolo [${tipo}]:
 + ${prt}
