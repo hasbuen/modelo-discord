@@ -322,9 +322,11 @@ async function renderizarTabela() {
     const tbody = document.querySelector("#tabelaRegistros tbody");
     tbody.innerHTML = "";
 
-    atualizarContadoresDosCards();
+    registrosCache = []; // zera cache para garantir que fetch será feito novamente
+    
     const registros = await carregarRegistrosProtocolos();
-
+    atualizarContadoresDosCards();
+  
     if (registros.length === 0) {
         const tr = document.createElement("tr");
         const td = document.createElement("td");
