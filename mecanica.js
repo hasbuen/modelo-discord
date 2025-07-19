@@ -15,6 +15,10 @@ async function carregarRegistrosProtocolos() {
   try {
     const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
     const data = await res.json();
+
+    // Ordena os registros por 'id' em ordem decrescente
+    data.sort((a, b) => b.id - a.id);
+    
     registrosCache = data;
     return registrosCache;
   } catch (err) {
