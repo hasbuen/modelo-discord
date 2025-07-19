@@ -498,6 +498,16 @@ body {
     filter 0.25s ease;
 }
 
+.contador-card p {
+  font-size: 1.8rem;
+  font-weight: bold;
+  min-height: 28px;  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
 /* Hover em qualquer card */
 .contador-card:hover {
   transform: translateY(4px);
