@@ -1,3 +1,4 @@
+// Mensagens reutilizáveis no sistema
 const MENSAGEM_1 = "Selecione o tipo do protocolo!";
 const MENSAGEM_2 = "Preencha todos os campos!";
 const MENSAGEM_3 = "Por favor, insira um link válido!";
@@ -7,37 +8,41 @@ const MENSAGEM_6 = "Erro ao copiar o texto!";
 const MENSAGEM_7 = "O protocolo deve conter apenas números!";
 const MENSAGEM_8 = "O ticket deve conter apenas números!";
 
+// Cache local de registros, evita chamadas repetidas à API
 let registrosCache = [];
 
+// Função para carregar registros da API e cacheá-los
 async function carregarRegistrosProtocolos() {
-  if (registrosCache.length > 0) return registrosCache; // usa cache se já carregado
+    if (registrosCache.length > 0) return registrosCache; // usa cache se já carregado
 
-  try {
-    const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
-    const data = await res.json();
+    try {
+        const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
+        const data = await res.json();
 
-    // Ordena os registros por 'id' em ordem decrescente
-    data.sort((a, b) => b.id - a.id);
-    
-    registrosCache = data;
-    return registrosCache;
-  } catch (err) {
-    console.error("Erro ao carregar registros da API:", err);
-    return [];
-  }
+        // Ordena os registros por 'id' em ordem decrescente
+        data.sort((a, b) => b.id - a.id);
+
+        registrosCache = data;
+        return registrosCache;
+    } catch (err) {
+        console.error("Erro ao carregar registros da API:", err);
+        return [];
+    }
 }
 
+// Valida se uma string é uma URL válida (http/https)
 function validarURL(url) {
     const regex = /^(http:\/\/|https:\/\/)[\w.-]+\.[a-zA-Z]{2,}(\/.*)?$/;
     return regex.test(url);
 }
 
+// Valida se o valor contém apenas dígitos numéricos
 function validarNumeros(valor) {
-    // Aceita apenas números (de 1 ou mais dígitos)
     const regex = /^\d+$/;
     return regex.test(valor);
 }
 
+// Gera texto formatado com base nos campos preenchidos do formulário
 function gerarTexto() {
     const tipoElement = document.getElementById('tipo').value.trim();
     const prt = document.getElementById('prt');
@@ -57,6 +62,7 @@ function gerarTexto() {
         }
     });
 
+    // Validações em cascata para cada campo
     if (!tipoElement) {
         valid = false;
         exibirModal(MENSAGEM_1, "", 'erro');
@@ -76,6 +82,7 @@ function gerarTexto() {
 
     let texto = "";
 
+    // Função auxiliar para formatar parágrafos com hífen
     const formatarTexto = (texto) => {
         let linhas = texto.split("\n");
         let resultado = [];
@@ -92,6 +99,7 @@ function gerarTexto() {
     const descricaoFormatada = formatarTexto(descricao.value);
     const paliativoFormatado = formatarTexto(paliativo.value);
 
+    // Gera texto diferenciado por tipo de protocolo
     if (tipoElement === "sugestao") {
         texto = `**\`\`\`diff
 + Protocolo [SUGESTÃO]:
@@ -130,17 +138,18 @@ ${paliativoFormatado}
     document.getElementById('output').value = texto;
 }
 
-// salva os dados no localStorage
+// Função para salvar um novo registro na API
 async function salvarRegistro() {
     const tipo = document.getElementById("tipo").value.trim();
-    const prt = "#PRT"+document.getElementById("prt").value.trim();
-    const ticket = "#"+document.getElementById("ticket").value.trim();
+    const prt = "#PRT" + document.getElementById("prt").value.trim();
+    const ticket = "#" + document.getElementById("ticket").value.trim();
     const descricao = document.getElementById("descricao").value.trim();
     const paliativo = document.getElementById("paliativo").value.trim();
     const link = document.getElementById("link").value.trim();
 
     const pegaRegistrosArmazenados = await carregarRegistrosProtocolos();
 
+    // Verifica se o protocolo já existe
     const prtExistente = pegaRegistrosArmazenados.some(reg => reg.prt === prt);
     if (prtExistente) {
         exibirModal(`Este protocolo já havia sido gravado!`, prt, "info");
@@ -164,6 +173,7 @@ async function salvarRegistro() {
     }
 }
 
+// Função para copiar o texto formatado
 function copiarTexto() {
     const outputElement = document.getElementById('output');
     const textoParaCopiar = outputElement.value;
@@ -184,6 +194,7 @@ function copiarTexto() {
         });
 }
 
+// Exibe modal com mensagem e ícone personalizado
 function exibirModal(mensagem, prt, tipo = "info") {
     const modal = document.getElementById("errorModal");
     const modalIcon = document.getElementById("modalIcon");
@@ -207,18 +218,19 @@ function exibirModal(mensagem, prt, tipo = "info") {
     modalIcon.innerHTML = iconHTML;
     modalText.textContent = mensagem;
     if (prt.trim() !== "" && prt !== null) {
-        // Adiciona o PRT ao texto do modal, se fornecido
         modalText.textContent += `\n ${prt}`;
     }
     modal.style.display = "inline-block";
-    modalText.style.whiteSpace = "pre-wrap"; // Permite quebras de linha
+    modalText.style.whiteSpace = "pre-wrap";
 }
 
+// Fecha o modal de erro/sucesso/info
 function fecharModal() {
     const modal = document.getElementById("errorModal");
     modal.style.display = "none";
 }
 
+// Limpa os campos do formulário após submissão
 function limparCampos() {
     document.getElementById('prt').value = '';
     document.getElementById('ticket').value = '';
@@ -233,6 +245,7 @@ function limparCampos() {
     });
 }
 
+// Função de busca na tabela de registros
 function filtrarTabela() {
     const input = document.getElementById("busca");
     const filter = input.value.toLowerCase();
@@ -254,24 +267,28 @@ function filtrarTabela() {
     }
 }
 
-function copiarLinha(botao, paliativoOriginal) {
-    const linha = botao.closest("tr");
-    const colunas = linha.querySelectorAll("td");
 
+// Função que copia o conteúdo formatado de uma linha da tabela para a área de transferência
+function copiarLinha(botao, paliativoOriginal) {
+    const linha = botao.closest("tr"); // Pega a linha da tabela onde o botão foi clicado
+    const colunas = linha.querySelectorAll("td"); // Pega todas as colunas da linha
+
+    // Extrai dados das colunas
     const ticket = colunas[0]?.innerText.trim();
     const prt = colunas[1]?.innerText.trim();
     const tipo = colunas[2]?.innerText.trim().toUpperCase();
     const descricao = colunas[3]?.innerText.trim();
     const paliativo = colunas[4]?.innerText.trim();
 
+    // Remove quebras de linha para o Discord
     const descricaoFormatada = descricao.replace(/\n/g, ' ');
-     const paliativoFormatado = paliativoOriginal.replace(/\n/g, ' ');
+    const paliativoFormatado = paliativoOriginal.replace(/\n/g, ' ');
 
+    let texto = "";
 
-  let texto = "";
-
-  if (tipo.toLowerCase() === 'erro') {
-    texto = `**\`\`\`diff
+    // Monta o texto formatado de acordo com o tipo
+    if (tipo.toLowerCase() === 'erro') {
+        texto = `**\`\`\`diff
 - Tipo protocolo [${tipo}]:
 - ${prt}
 - Ticket: ${ticket}
@@ -281,8 +298,8 @@ ${descricaoFormatada}
 
 **Paliativo:**
 ${paliativoFormatado}`;
-  } else {
-    texto = `**\`\`\`diff
+    } else {
+        texto = `**\`\`\`diff
 + Tipo protocolo [${tipo}]:
 + ${prt}
 + Ticket: ${ticket}
@@ -292,21 +309,23 @@ ${descricaoFormatada}
 
 **Paliativo:**
 ${paliativoFormatado}`;
-  }
-  
-  navigator.clipboard.writeText(texto)
-    .then(() => exibirModal("Texto formatado copiado para colar no Discord!", "", "sucesso"))
-    .catch(() => exibirModal("Erro ao copiar o texto.", "", "erro"));
+    }
+
+    // Copia o texto para a área de transferência
+    navigator.clipboard.writeText(texto)
+        .then(() => exibirModal("Texto formatado copiado para colar no Discord!", "", "sucesso"))
+        .catch(() => exibirModal("Erro ao copiar o texto.", "", "erro"));
 }
 
+// Alterna a visibilidade da tabela de registros (mostrar/ocultar)
 function mostrarTabela() {
     const tabela = document.getElementById("tabela-container");
     const icone = document.getElementById("icon-toggle");
     const texto = document.getElementById("texto-toggle");
 
-    // Alterna a visibilidade
-    tabela.classList.toggle("hidden");
+    tabela.classList.toggle("hidden"); // Mostra ou esconde a tabela
 
+    // Atualiza o ícone e o texto do botão
     if (tabela.classList.contains("hidden")) {
         icone.className = "fas fa-chevron-down icon";
         texto.textContent = "Exibir histórico!";
@@ -316,17 +335,19 @@ function mostrarTabela() {
     }
 }
 
-// renderiza a tabela no footer
+
+// Renderiza os registros em uma tabela HTML
 async function renderizarTabela() {
     const tbody = document.querySelector("#tabelaRegistros tbody");
-    tbody.innerHTML = "";
+    tbody.innerHTML = ""; // Limpa a tabela
 
-    registrosCache = []; // zera cache para garantir que fetch será feito novamente
-    
+    registrosCache = []; // Zera cache para forçar recarregamento da API
+
     const registros = await carregarRegistrosProtocolos();
-    atualizarContadoresDosCards();
-  
+    atualizarContadoresDosCards(); // Atualiza os contadores visuais
+
     if (registros.length === 0) {
+        // Exibe mensagem de tabela vazia
         const tr = document.createElement("tr");
         const td = document.createElement("td");
         td.colSpan = 5;
@@ -344,14 +365,14 @@ async function renderizarTabela() {
     registros.forEach(reg => {
         const tr = document.createElement("tr");
 
+        // Preenche colunas da linha
         tr.innerHTML = `
             <td><a href="${reg.link}" target="_blank">${reg.ticket}</a></td>
             <td>${reg.prt}</td>
             <td>
                 ${reg.tipo.toLowerCase() === "sugestao"
-                    ? '<span style="background-color: green; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Sugestão</span>'
-                    : '<span style="background-color: red; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Erro</span>'
-                }
+                ? '<span style="background-color: green; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Sugestão</span>'
+                : '<span style="background-color: red; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Erro</span>'}
             </td>
             <td>
                 <div class="tooltip-container">
@@ -365,11 +386,10 @@ async function renderizarTabela() {
             </td>
         `;
 
-        // 🔗 Coluna única para os botões
+        // Cria coluna com botões de ação
         const tdAcoes = document.createElement("td");
-        tdAcoes.classList.add("td-acoes"); // Classe opcional para estilizar
+        tdAcoes.classList.add("td-acoes");
 
-        // Botão "Ver"
         const btnVer = document.createElement("button");
         btnVer.textContent = "Ver";
         btnVer.classList.add("btn-paliativo");
@@ -377,7 +397,6 @@ async function renderizarTabela() {
             mostrarModalPaliativo(reg.paliativo);
         };
 
-        // Botão "Copiar"
         const btnCopiar = document.createElement("button");
         btnCopiar.classList.add("btn-copiar");
         btnCopiar.innerHTML = '<i class="fas fa-copy"></i>';
@@ -385,7 +404,6 @@ async function renderizarTabela() {
             copiarLinha(btnCopiar, reg.paliativo);
         };
 
-        // Agrupando os botões
         tdAcoes.appendChild(btnVer);
         tdAcoes.appendChild(btnCopiar);
         tr.appendChild(tdAcoes);
@@ -394,12 +412,12 @@ async function renderizarTabela() {
     });
 }
 
+// Exibe modal com mensagem
 function exibirModal(mensagem, tipo = "info") {
     const modal = document.getElementById("errorModal");
     const modalIcon = document.getElementById("modalIcon");
     const modalText = document.getElementById("modalText");
 
-    // Ícone conforme o tipo
     const icons = {
         info: '<i class="fas fa-info-circle"></i>',
         error: '<i class="fas fa-exclamation-triangle"></i>',
@@ -408,14 +426,15 @@ function exibirModal(mensagem, tipo = "info") {
 
     modalIcon.innerHTML = icons[tipo] || '';
     modalText.innerText = mensagem;
-
     modal.style.display = "block";
 }
 
+// Fecha o modal de mensagens
 function fecharModal() {
     document.getElementById("errorModal").style.display = "none";
 }
 
+// Exibe modal com o texto completo do paliativo
 function mostrarModalPaliativo(texto) {
     const modal = document.getElementById("paliativoModal");
     const content = document.getElementById("paliativoModalText");
@@ -423,11 +442,13 @@ function mostrarModalPaliativo(texto) {
     modal.style.display = "block";
 }
 
+// Fecha o modal de paliativo
 function fecharPaliativoModal() {
     const modal = document.getElementById("paliativoModal");
     modal.style.display = "none";
 }
 
+// Copia o conteúdo do texto paliativo para a área de transferência
 function copiarTextoPaliativo() {
     const texto = document.getElementById("paliativoModalText").textContent;
     navigator.clipboard.writeText(texto)
@@ -435,27 +456,27 @@ function copiarTextoPaliativo() {
         .catch(() => exibirModal("Erro ao copiar texto do paliativo.", "", "erro"));
 }
 
-// Atualiza os contadores dos cards
+// Atualiza os contadores de erros e sugestões visíveis nos cards
 async function atualizarContadoresDosCards() {
-  const registros = await carregarRegistrosProtocolos();
+    const registros = await carregarRegistrosProtocolos();
 
-  const totalErros = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "erro").length;
-  const totalSugestoes = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "sugestao").length;
+    const totalErros = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "erro").length;
+    const totalSugestoes = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "sugestao").length;
 
-  const erroEl = document.getElementById("contador-erros");
-  const sugestaoEl = document.getElementById("contador-sugestoes");
+    const erroEl = document.getElementById("contador-erros");
+    const sugestaoEl = document.getElementById("contador-sugestoes");
 
-  // Força o skeleton a ficar visível por X segundos, mesmo que já tenha os dados
-  setTimeout(() => {
-    erroEl.classList.remove("skeleton-loader");
-    sugestaoEl.classList.remove("skeleton-loader");
+    // Aplica delay para simular carregamento
+    setTimeout(() => {
+        erroEl.classList.remove("skeleton-loader");
+        sugestaoEl.classList.remove("skeleton-loader");
 
-    erroEl.textContent = totalErros;
-    sugestaoEl.textContent = totalSugestoes;
-  }, 2000); // ⏳ aqui define o tempo (em milissegundos) — nesse caso, 2 segundos
+        erroEl.textContent = totalErros;
+        sugestaoEl.textContent = totalSugestoes;
+    }, 2000); // 2 segundos
 }
 
-// antes do "DOMContentLoaded"
+// Torna o modal de paliativo arrastável com o mouse
 (function tornarPaliativoModalArrastavel() {
     const modal = document.getElementById("paliativoModalContent");
     const header = document.getElementById("paliativoModalHeader");
@@ -483,7 +504,8 @@ async function atualizarContadoresDosCards() {
     });
 })();
 
+// Executa ao carregar a página
 window.addEventListener("DOMContentLoaded", async () => {
-  await atualizarContadoresDosCards();
-  await renderizarTabela(); 
+    await atualizarContadoresDosCards();
+    await renderizarTabela();
 });
