@@ -2,11 +2,17 @@
 <html lang="pt-BR">
 
 <head>
+    <!-- Define a codificação de caracteres -->
     <meta charset="UTF-8">
+    <!-- Responsivo para diferentes dispositivos -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ProtoCord</title>
+
+    <!-- Ícone da aba com emoji -->
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🩹</text></svg>">
+
+    <!-- Script do Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0FRFV9Z0P1"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -14,45 +20,44 @@
         gtag('js', new Date());
         gtag('config', 'G-0FRFV9Z0P1');
     </script>
+
+    <!-- Ícones Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
+    <!-- Estilos personalizados -->
     <link rel="stylesheet" href="style.css">
-
 </head>
 
 <body>
     <div class="container" style="position: relative;">
-        <div class="version-label" style="
-          position: absolute;
-          top: 5px;
-          right: 5px;
-          font-size: 0.8rem;
-          color: #666;
-          font-weight: 600;
-        ">
+        <!-- Versão do sistema exibida no canto superior direito -->
+        <div class="version-label" style="...">
             v3.0.0
         </div>
 
+        <!-- Cards de contadores: erros e sugestões -->
         <div class="contador-cards-container">
-  <div class="contador-card contador-card-erros">
- 
-    <h3>🔧 Erros</h3>
-    <p id="contador-erros" class="skeleton-loader">&nbsp;</p>
-  
-  </div>
-  <div class="contador-card contador-card-sugestoes">
-     
-    <h3>💡 Sugestões</h3>
-    <p id="contador-sugestoes" class="skeleton-loader">&nbsp;</p>
-  </div>
-</div>
+            <div class="contador-card contador-card-erros">
+                <h3>🔧 Erros</h3>
+                <p id="contador-erros" class="skeleton-loader">&nbsp;</p>
+            </div>
+            <div class="contador-card contador-card-sugestoes">
+                <h3>💡 Sugestões</h3>
+                <p id="contador-sugestoes" class="skeleton-loader">&nbsp;</p>
+            </div>
+        </div>
 
+        <!-- Botão para exibir ou ocultar a tabela -->
         <button class="toggle-button" onclick="mostrarTabela()">
             <span id="texto-toggle">Exibir histórico!</span>
             <i id="icon-toggle" class="fas fa-chevron-down icon"></i>
         </button>
+
+        <!-- Tabela oculta por padrão -->
         <div class="tabela-container hidden" id="tabela-container">
-            <input type="text" id="busca" class="input-busca" placeholder="Buscar registros..." onkeyup="filtrarTabela()" />
+            <!-- Campo de busca -->
+            <input type="text" id="busca" class="input-busca" placeholder="Buscar registros..."
+                onkeyup="filtrarTabela()" />
             <table id="tabelaRegistros">
                 <thead>
                     <tr>
@@ -64,16 +69,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Linhas serão inseridas aqui via JavaScript -->
+                    <!-- Conteúdo dinâmico via JavaScript -->
                 </tbody>
             </table>
         </div>
 
+        <!-- Título principal -->
         <h1>🩹 ProtoCord</h1>
 
+        <!-- Layout principal em duas colunas -->
         <div class="grid">
+            <!-- Coluna da esquerda: inputs -->
             <div class="column-left">
                 <div class="inputs">
+                    <!-- Seleção do tipo: Erro ou Sugestão -->
                     <div class="radio-group">
                         <div>
                             <span class="tipo-opcao erro" data-tipo="erro">Erro</span>
@@ -82,6 +91,7 @@
                         </div>
                     </div>
 
+                    <!-- Script para alternar visual e valor do tipo selecionado -->
                     <script>
                         document.querySelectorAll(".tipo-opcao").forEach(el => {
                             el.onclick = () => {
@@ -92,18 +102,25 @@
                         });
                     </script>
 
+                    <!-- Campo PRT -->
                     <div>
                         <label for="prt">PRT:</label>
                         <input type="text" id="prt" placeholder="Digite o PRT" required>
                     </div>
+
+                    <!-- Campo Ticket -->
                     <div>
                         <label for="ticket">Ticket:</label>
                         <input type="text" id="ticket" placeholder="Digite o número do ticket.." required>
                     </div>
+
+                    <!-- Campo Descrição -->
                     <div>
                         <label for="descricao">Descrição resumida:</label>
                         <textarea id="descricao" placeholder="Digite a descrição resumida aqui.." required></textarea>
                     </div>
+
+                    <!-- Campo Paliativo com opções rápidas -->
                     <div>
                         <div class="input-group">
                             <label for="paliativo">Paliativo:</label>
@@ -115,6 +132,8 @@
                         </div>
                         <textarea id="paliativo" placeholder="Digite o paliativo aqui.." required></textarea>
                     </div>
+
+                    <!-- Campo Prazo com seleção rápida -->
                     <div>
                         <div class="input-group">
                             <label for="prazo">Prazo:</label>
@@ -123,13 +142,13 @@
                                 <option value="encaminhado para avaliação de alocação.">Encaminhar para avaliação de
                                     alocação.</option>
                                 <option value="registrado no banco de dados RhedeSAC.">Registrar no banco de dados
-                                    RhedeSAC.
-                                </option>
+                                    RhedeSAC.</option>
                             </select>
                         </div>
                         <input type="text" id="prazo" placeholder="Digite o prazo..." />
                     </div>
 
+                    <!-- Script para preencher automaticamente os campos de paliativo e prazo -->
                     <script>
                         function togglePaliativo() {
                             const select = document.getElementById("paliativoSelect");
@@ -158,15 +177,18 @@
                         }
                     </script>
 
+                    <!-- Campo Link -->
                     <div class="link">
                         <label for="link">Link:</label>
                         <input type="text" class="link" id="link" placeholder="Cole o link do ticket aqui.." required>
                     </div>
                 </div>
 
+                <!-- Botão para gerar o texto final -->
                 <button onclick="gerarTexto()">Gerar</button>
             </div>
 
+            <!-- Coluna da direita: exibição do resultado -->
             <div class="column-right">
                 <label for="output">Cole no discord:</label>
                 <textarea id="output" readonly></textarea>
@@ -175,7 +197,7 @@
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal de mensagens de erro/sucesso/info -->
     <div id="errorModal" class="modal">
         <div class="modal-content">
             <p id="modalMessage">
@@ -188,23 +210,23 @@
         </div>
     </div>
 
-    <!-- Modal para Paliativo -->
-<div id="paliativoModal" class="modal">
-  <div class="modal-content" id="paliativoModalContent">
-    <div class="modal-header" id="paliativoModalHeader" style="cursor: move;">
-      <strong style="flex: 1;">💊 Paliativo</strong>
+    <!-- Modal específico para visualizar o paliativo -->
+    <div id="paliativoModal" class="modal">
+        <div class="modal-content" id="paliativoModalContent">
+            <div class="modal-header" id="paliativoModalHeader" style="cursor: move;">
+                <strong style="flex: 1;">💊 Paliativo</strong>
+            </div>
+            <div class="modal-body">
+                <pre id="paliativoModalText" style="white-space: pre-wrap;"></pre>
+            </div>
+            <div class="modal-footer">
+                <button onclick="copiarTextoPaliativo()" class="btn-paliativo">Copiar Texto</button>
+                <button onclick="fecharPaliativoModal()" class="btn-paliativo">Fechar</button>
+            </div>
+        </div>
     </div>
-    <div class="modal-body">
-      <pre id="paliativoModalText" style="white-space: pre-wrap;"></pre>
-    </div>
-    <div class="modal-footer">
-      <button onclick="copiarTextoPaliativo()" class="btn-paliativo">Copiar Texto</button>
-      <button onclick="fecharPaliativoModal()" class="btn-paliativo">Fechar</button>
-    </div>
-  </div>
-</div>
 
-    <!-- Importando o JavaScript -->
+    <!-- Importa o script principal com a lógica JS -->
     <script src="mecanica.js"></script>
 
 </body>
