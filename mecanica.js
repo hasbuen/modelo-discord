@@ -367,7 +367,7 @@ async function renderizarTabela() {
 
     registros.forEach(reg => {
         const tr = document.createElement("tr");
-
+        console.log(reg.tipo)
         // Preenche colunas da linha
         tr.innerHTML = `
             <td><a href="${reg.link}" target="_blank">${reg.ticket}</a></td>
