@@ -100,7 +100,7 @@ function gerarTexto() {
     const paliativoFormatado = formatarTexto(paliativo.value);
 
     // Gera texto diferenciado por tipo de protocolo
-    if (tipoElement === "sugestao") {
+    if (tipo === 1) {
         texto = `**\`\`\`diff
 + Protocolo [SUGESTÃO]:
 + PRT: ${prt.value}
@@ -115,7 +115,7 @@ ${paliativoFormatado}
 - **Prazo: ** ${prazo.value.trim()}
 - **Link >> ** ${link.value.trim()}
 `;
-    } else if (tipoElement === "erro") {
+    } else if (tipo === 0) {
         texto = `**\`\`\`diff
 - Protocolo [ERRO]:
 - PRT: ${prt.value}
@@ -140,7 +140,10 @@ ${paliativoFormatado}
 
 // Função para salvar um novo registro na API
 async function salvarRegistro() {
-    const tipo = document.getElementById("tipo").value.trim();
+    //const tipo = document.getElementById("tipo").value.trim();
+    const tipoProtocolo = document.getElementById("tipo").value.trim();
+    const tipo = tipoProtocolo === "erro" ? 0 : 1;
+
     const prt = "#PRT" + document.getElementById("prt").value.trim();
     const ticket = "#" + document.getElementById("ticket").value.trim();
     const descricao = document.getElementById("descricao").value.trim();
@@ -287,7 +290,7 @@ function copiarLinha(botao, paliativoOriginal) {
     let texto = "";
 
     // Monta o texto formatado de acordo com o tipo
-    if (tipo.toLowerCase() === 'erro') {
+    if (tipo === 0) {
         texto = `**\`\`\`diff
 - Tipo protocolo [${tipo}]:
 - ${prt}
@@ -370,7 +373,7 @@ async function renderizarTabela() {
             <td><a href="${reg.link}" target="_blank">${reg.ticket}</a></td>
             <td>${reg.prt}</td>
             <td>
-                ${reg.tipo.toLowerCase() === "sugestao"
+                ${reg.tipo === 1 
                 ? '<span style="background-color: green; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Sugestão</span>'
                 : '<span style="background-color: red; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Erro</span>'}
             </td>
@@ -460,8 +463,10 @@ function copiarTextoPaliativo() {
 async function atualizarContadoresDosCards() {
     const registros = await carregarRegistrosProtocolos();
 
-    const totalErros = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "erro").length;
-    const totalSugestoes = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "sugestao").length;
+    //const totalErros = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "erro").length;
+    //const totalSugestoes = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "sugestao").length;
+    const totalErros = registros.filter(r => r.tipo === 0).length;
+    const totalSugestoes = registros.filter(r => r.tipo === 1).length;
 
     const erroEl = document.getElementById("contador-erros");
     const sugestaoEl = document.getElementById("contador-sugestoes");
