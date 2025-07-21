@@ -44,7 +44,7 @@ function validarNumeros(valor) {
 
 // Gera texto formatado com base nos campos preenchidos do formulário
 function gerarTexto() {
-    const tipoElement = document.getElementById('tipo').value.trim();
+    const tipoElement = document.getElementById('tipo').value;
     const prt = document.getElementById('prt');
     const ticket = document.getElementById('ticket');
     const descricao = document.getElementById('descricao');
@@ -100,7 +100,7 @@ function gerarTexto() {
     const paliativoFormatado = formatarTexto(paliativo.value);
 
     // Gera texto diferenciado por tipo de protocolo
-    if (tipo === 1) {
+    if (tipo === '1') {
         texto = `**\`\`\`diff
 + Protocolo [SUGESTÃO]:
 + PRT: ${prt.value}
@@ -115,7 +115,7 @@ ${paliativoFormatado}
 - **Prazo: ** ${prazo.value.trim()}
 - **Link >> ** ${link.value.trim()}
 `;
-    } else if (tipo === 0) {
+    } else if (tipo === '0') {
         texto = `**\`\`\`diff
 - Protocolo [ERRO]:
 - PRT: ${prt.value}
