@@ -226,17 +226,23 @@
         </div>
     </div>
 
-    <div id="modalExclusao"
-        style="display:none; position:fixed; top:30%; left:50%; transform:translateX(-50%); background:#fff; padding:20px; box-shadow:0 0 20px rgba(0,0,0,0.3); border-radius:10px; z-index:1000;">
-        <h3>Confirmar exclusão</h3>
-        <p>Digite o número do protocolo <strong id="ticketEsperado"></strong> para liberar a exclusão:</p>
-        <input type="text" id="inputConfirmacao" style="width:100%; margin:10px 0; padding:5px;"
-            oninput="verificarConfirmacao()" />
-        <button id="btnConfirmar" onclick="confirmarExclusao()" disabled
-            style="background:#dc3545; color:white; padding:8px 12px; border:none; border-radius:5px;">Confirmar</button>
-        <button onclick="fecharModalEclusao()" style="margin-left:10px;">Cancelar</button>
+<div id="modalExclusao" class="modal-exclusao" style="display: none;">
+  <div class="modal-conteudo">
+    <h2 class="modal-titulo">
+      <i class="fas fa-trash-alt" style="color: #dc3545; margin-right: 8px;"></i>
+      Confirmar Exclusão
+    </h2>
+    <p class="modal-texto">
+      Para excluir o registro, digite o número do protocolo <strong id="ticketEsperado" style="color:#2ecc71;"></strong> abaixo:
+    </p>
+    <input type="text" id="inputConfirmacao" class="modal-input" oninput="verificarConfirmacao()" placeholder="Digite o número do protocolo" />
+    
+    <div class="modal-botoes">
+      <button id="btnConfirmar" onclick="confirmarExclusao()" class="btn-confirmar" disabled>Confirmar</button>
+      <button onclick="fecharModalEclusao()" class="btn-cancelar">Cancelar</button>
     </div>
-
+  </div>
+</div>
 
     <!-- Importa o script principal com a lógica JS -->
     <script src="mecanica.js"></script>
