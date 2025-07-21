@@ -465,8 +465,8 @@ async function atualizarContadoresDosCards() {
 
     //const totalErros = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "erro").length;
     //const totalSugestoes = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "sugestao").length;
-    const totalErros = registros.filter(r => r.tipo === 0).length;
-    const totalSugestoes = registros.filter(r => r.tipo === 1).length;
+    const totalErros = registros.filter(r => r.tipo === '0').length;
+    const totalSugestoes = registros.filter(r => r.tipo === '1').length;
 
     const erroEl = document.getElementById("contador-erros");
     const sugestaoEl = document.getElementById("contador-sugestoes");
