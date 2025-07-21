@@ -270,7 +270,6 @@ function filtrarTabela() {
     }
 }
 
-
 // Função que copia o conteúdo formatado de uma linha da tabela para a área de transferência
 function copiarLinha(botao, paliativoOriginal) {
     const linha = botao.closest("tr"); // Pega a linha da tabela onde o botão foi clicado
@@ -373,7 +372,7 @@ async function renderizarTabela() {
             <td><a href="${reg.link}" target="_blank">${reg.ticket}</a></td>
             <td>${reg.prt}</td>
             <td>
-                ${reg.tipo === '1' 
+                ${reg.tipo === '1'
                 ? '<span style="background-color: green; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Sugestão</span>'
                 : '<span style="background-color: red; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Erro</span>'}
             </td>
@@ -407,8 +406,16 @@ async function renderizarTabela() {
             copiarLinha(btnCopiar, reg.paliativo);
         };
 
+        const btnExcluir = document.createElement("button");
+        btnExcluir.classList.add("btn-excluir");
+        btnExcluir.innerHTML = '<i class="fas fa-trash-alt"></i>';
+        btnExcluir.onclick = () => {
+            abrirModalExclusao(reg.id, reg.ticket); // chama modal com id e protocolo
+        };
+
         tdAcoes.appendChild(btnVer);
         tdAcoes.appendChild(btnCopiar);
+        tdAcoes.appendChild(btnExcluir);
         tr.appendChild(tdAcoes);
 
         tbody.appendChild(tr);
@@ -479,6 +486,46 @@ async function atualizarContadoresDosCards() {
         erroEl.textContent = totalErros;
         sugestaoEl.textContent = totalSugestoes;
     }, 2000); // 2 segundos
+}
+
+let idParaExcluir = null;
+let protocoloEsperado = null;
+
+function abrirModalExclusao(id, ticket) {
+    idParaExcluir = id;
+    protocoloEsperado = ticket;
+    document.getElementById("ticketEsperado").textContent = ticket;
+    document.getElementById("inputConfirmacao").value = "";
+    document.getElementById("btnConfirmar").disabled = true;
+    document.getElementById("modalExclusao").style.display = "block";
+}
+
+function verificarConfirmacao() {
+    const valor = document.getElementById("inputConfirmacao").value.trim();
+    document.getElementById("btnConfirmar").disabled = valor !== protocoloEsperado;
+}
+
+function confirmarExclusao() {
+    fetch("URL_DO_SEU_ENDPOINT", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: idParaExcluir })
+    })
+        .then(res => res.text())
+        .then(msg => {
+            alert(msg);
+            fecharModal();
+            renderizarTabela(); // atualiza a tabela após exclusão
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Erro ao excluir.");
+            fecharModal();
+        });
+}
+
+function fecharModal() {
+    document.getElementById("modalExclusao").style.display = "none";
 }
 
 // Torna o modal de paliativo arrastável com o mouse
