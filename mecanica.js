@@ -514,7 +514,6 @@ function confirmarExclusao() {
     })
         .then(res => res.text())
         .then(msg => {
-            alert(msg);
             fecharModalEclusao();
             renderizarTabela(); // atualiza a tabela após exclusão
         })
