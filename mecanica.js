@@ -45,6 +45,7 @@ function validarNumeros(valor) {
 // Gera texto formatado com base nos campos preenchidos do formulário
 function gerarTexto() {
     const tipoElement = document.getElementById('tipo').value.trim();
+    const tipo = tipoElement === "erro" ? '0' : '1';
     const prt = document.getElementById('prt');
     const ticket = document.getElementById('ticket');
     const descricao = document.getElementById('descricao');
@@ -63,7 +64,7 @@ function gerarTexto() {
     });
 
     // Validações em cascata para cada campo
-    if (!tipoElement) {
+    if (!tipo) {
         valid = false;
         exibirModal(MENSAGEM_1, "", 'erro');
     } else if (!valid) {
