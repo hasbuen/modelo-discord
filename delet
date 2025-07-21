@@ -507,7 +507,7 @@ function verificarConfirmacao() {
 }
 
 function confirmarExclusao() {
-    fetch("URL_DO_SEU_ENDPOINT", {
+    fetch("https://modelo-discord-server.vercel.app/api/protocolos", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: idParaExcluir })
@@ -515,13 +515,12 @@ function confirmarExclusao() {
         .then(res => res.text())
         .then(msg => {
             alert(msg);
-            fecharModal();
+            fecharModalEclusao();
             renderizarTabela(); // atualiza a tabela após exclusão
         })
         .catch(err => {
-            console.error(err);
             alert("Erro ao excluir.");
-            fecharModal();
+            fecharModalEclusao();
         });
 }
 
