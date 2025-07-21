@@ -494,6 +494,7 @@ tbody tr {
 
 .modal-exclusao {
   position: fixed;
+  background-color: #3a3e44;
   top: 20%;
   left: 50%;
   transform: translateX(-50%);
