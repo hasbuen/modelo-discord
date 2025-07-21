@@ -524,7 +524,7 @@ function confirmarExclusao() {
         });
 }
 
-function fecharModal() {
+function fecharModalEclusao() {
     document.getElementById("modalExclusao").style.display = "none";
 }
 
