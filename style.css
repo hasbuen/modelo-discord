@@ -427,10 +427,6 @@ tbody tr {
   transition: transform 0.3s ease;
 }
 
-.icone-ordenacao:hover {
-    cursor: 
-}
-
 th.ativo.asc .icone-ordenacao {
   color: #00aa55;
   transform: rotate(180deg);
@@ -438,6 +434,11 @@ th.ativo.asc .icone-ordenacao {
 
 th.ativo.desc .icone-ordenacao {
   color: #ff4444;
+}
+
+th:hover .icone-ordenacao {
+  transform: scale(1.2) rotate(10deg);
+  color: #ffcc00; /* destaque dourado no hover */
 }
 
 /* Container de tooltip */
