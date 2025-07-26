@@ -423,8 +423,12 @@ tbody tr {
 .icone-ordenacao {
   font-size: 12px;
   margin-left: 6px;
-  color: #888;
+  color: #fff;
   transition: transform 0.3s ease;
+}
+
+.icone-ordenacao:hover {
+    cursor: 
 }
 
 th.ativo.asc .icone-ordenacao {
