@@ -427,13 +427,6 @@ tbody tr {
   transition: transform 0.3s ease;
 }
 
-th {
-  cursor: pointer;
-  user-select: none;
-  padding: 8px;
-  background: #f0f0f0;
-}
-
 th.ativo.asc .icone-ordenacao {
   color: #00aa55;
   transform: rotate(180deg);
