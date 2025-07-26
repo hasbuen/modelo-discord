@@ -437,8 +437,7 @@ th.ativo.desc .icone-ordenacao {
 }
 
 th:hover .icone-ordenacao {
-  transform: scale(1.2) rotate(10deg);
-  color: #ffcc00; /* destaque dourado no hover */
+  cursor: pointer;
 }
 
 /* Container de tooltip */
