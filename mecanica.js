@@ -271,6 +271,25 @@ function filtrarTabela() {
     }
 }
 
+function ordenarTabela(coluna) {
+  const tabela = document.querySelector("table");
+  const linhas = Array.from(tabela.querySelectorAll("tbody tr"));
+  const icone = document.querySelector(`th[onclick*="${coluna}"] .icone-seta`);
+
+  let ordemAsc = !icone.classList.contains("asc");
+
+  linhas.sort((a, b) => {
+    const valorA = a.querySelector(`td[data-coluna="${coluna}"]`).textContent.trim();
+    const valorB = b.querySelector(`td[data-coluna="${coluna}"]`).textContent.trim();
+    return ordemAsc ? valorA.localeCompare(valorB) : valorB.localeCompare(valorA);
+  });
+
+  linhas.forEach(linha => tabela.querySelector("tbody").appendChild(linha));
+
+  document.querySelectorAll(".icone-seta").forEach(i => i.classList.remove("ativo", "asc", "desc"));
+  icone.classList.add("ativo", ordemAsc ? "asc" : "desc");
+}
+
 // Função que copia o conteúdo formatado de uma linha da tabela para a área de transferência
 function copiarLinha(botao, paliativoOriginal) {
     const linha = botao.closest("tr"); // Pega a linha da tabela onde o botão foi clicado
