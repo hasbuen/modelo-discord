@@ -420,19 +420,27 @@ tbody tr {
     margin-right: 6px;
 }
 
-.icone-seta {
-  margin-left: 5px;
-  cursor: pointer;
+.icone-ordenacao {
+  font-size: 12px;
+  margin-left: 6px;
+  color: #888;
   transition: transform 0.3s ease;
 }
 
-.icone-seta.ativo.asc {
-  transform: rotate(180deg);
-  color: #00aaff;
+th {
+  cursor: pointer;
+  user-select: none;
+  padding: 8px;
+  background: #f0f0f0;
 }
 
-.icone-seta.ativo.desc {
-  color: #ff5500;
+th.ativo.asc .icone-ordenacao {
+  color: #00aa55;
+  transform: rotate(180deg);
+}
+
+th.ativo.desc .icone-ordenacao {
+  color: #ff4444;
 }
 
 /* Container de tooltip */
