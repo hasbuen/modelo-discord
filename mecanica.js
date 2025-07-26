@@ -271,24 +271,38 @@ function filtrarTabela() {
     }
 }
 
-function ordenarTabela(coluna) {
+let ultimaColuna = -1;
+let ordemAsc = true;
+
+function ordenarTabela(colunaIndex) {
   const tabela = document.querySelector("table");
   const linhas = Array.from(tabela.querySelectorAll("tbody tr"));
-  const icone = document.querySelector(`th[onclick*="${coluna}"] .icone-seta`);
 
-  let ordemAsc = !icone.classList.contains("asc");
+  // Alterna direção se a mesma coluna for clicada novamente
+  if (ultimaColuna === colunaIndex) {
+    ordemAsc = !ordemAsc;
+  } else {
+    ordemAsc = true;
+    ultimaColuna = colunaIndex;
+  }
 
   linhas.sort((a, b) => {
-    const valorA = a.querySelector(`td[data-coluna="${coluna}"]`).textContent.trim();
-    const valorB = b.querySelector(`td[data-coluna="${coluna}"]`).textContent.trim();
-    return ordemAsc ? valorA.localeCompare(valorB) : valorB.localeCompare(valorA);
+    let valorA = a.children[colunaIndex].textContent.trim().toLowerCase();
+    let valorB = b.children[colunaIndex].textContent.trim().toLowerCase();
+
+    return ordemAsc
+      ? valorA.localeCompare(valorB)
+      : valorB.localeCompare(valorA);
   });
 
-  linhas.forEach(linha => tabela.querySelector("tbody").appendChild(linha));
+  linhas.forEach((linha) => tabela.querySelector("tbody").appendChild(linha));
 
-  document.querySelectorAll(".icone-seta").forEach(i => i.classList.remove("ativo", "asc", "desc"));
-  icone.classList.add("ativo", ordemAsc ? "asc" : "desc");
+  // Atualiza estilo do cabeçalho
+  document.querySelectorAll("th").forEach(th => th.classList.remove("ativo", "asc", "desc"));
+  const thAtual = tabela.querySelectorAll("th")[colunaIndex];
+  thAtual.classList.add("ativo", ordemAsc ? "asc" : "desc");
 }
+
 
 // Função que copia o conteúdo formatado de uma linha da tabela para a área de transferência
 function copiarLinha(botao, paliativoOriginal) {
