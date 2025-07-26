@@ -420,6 +420,21 @@ tbody tr {
     margin-right: 6px;
 }
 
+.icone-seta {
+  margin-left: 5px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.icone-seta.ativo.asc {
+  transform: rotate(180deg);
+  color: #00aaff;
+}
+
+.icone-seta.ativo.desc {
+  color: #ff5500;
+}
+
 /* Container de tooltip */
 .tooltip-container {
     position: relative;
