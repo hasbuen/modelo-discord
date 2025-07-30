@@ -1,0 +1,44 @@
+function abrirArquivoRTF() {
+  document.getElementById('arquivoRTF').click();
+}
+
+function processarRTF(event) {
+  const arquivo = event.target.files[0];
+  if (!arquivo) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const texto = e.target.result;
+
+    // Extrai os protocolos do RTF (simplesmente como texto)
+    const encontrados = [...texto.matchAll(/Protocolo:\s*(PRT\d+)/g)].map(m => m[1]);
+
+    // Pega todos os protocolos da tabela de histórico
+    const protocolosHTML = document.querySelectorAll('.tabela-historico td'); // ou ajuste conforme seu layout
+    const historicoPRTs = [...protocolosHTML]
+      .map(el => el.textContent.trim())
+      .filter(texto => texto.startsWith('#PRT'))
+      .map(texto => texto.replace('#', ''));
+
+    // Confronta os dois
+    const resultados = encontrados.map(prt => ({
+      protocolo: prt,
+      estaRegistrado: historicoPRTs.includes(prt)
+    }));
+
+    // Renderiza tabela
+    let html = '<table><tr><th>Protocolo</th><th>Status</th></tr>';
+    resultados.forEach(r => {
+      html += `<tr>
+        <td>${r.protocolo}</td>
+        <td style="color: ${r.estaRegistrado ? 'green' : 'red'};">
+          ${r.estaRegistrado ? '✓ Encontrado no histórico' : '✗ Não registrado'}
+        </td>
+      </tr>`;
+    });
+    html += '</table>';
+    document.getElementById('resultadosRTF').innerHTML = html;
+  };
+
+  reader.readAsText(arquivo); // RTF tratado como texto bruto
+}
