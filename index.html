@@ -224,7 +224,10 @@
         </div>
     </div>
 
-    <div class="tabela-container hidden" id="liberacoes-container"></div>
+    <div class="tabela-container hidden" id="liberacoes-container">
+          <!-- Campo oculto que será clicado via JS -->
+          <input type="file" id="arquivoRTF" accept=".rtf" style="display:none" onchange="processarRTF(event)">
+    </div>
 
     <!-- Modal de mensagens de erro/sucesso/info -->
     <div id="errorModal" class="modal">
