@@ -14,7 +14,13 @@ function mostrarLiberacoes() {
 
 function processarRTF(event) {
   const arquivo = event.target.files[0];
-  if (!arquivo) return;
+   if (!arquivo) {
+    console.warn("Nenhum arquivo selecionado.");
+    return;
+  }
+
+  // Exemplo: apenas exibir nome do arquivo por enquanto
+  console.log("Arquivo selecionado:", arquivo.name);
 
   const reader = new FileReader();
   reader.onload = function(e) {
