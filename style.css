@@ -23,6 +23,19 @@ body {
     /* Sombra leve */
 }
 
+.botao-destaque {
+  background-color: #28a745;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-right: 10px;
+  text-decoration: none;
+  display: inline-block;
+}
+
 /* Título centralizado */
 h1 {
     text-align: center;
