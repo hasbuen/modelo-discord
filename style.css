@@ -24,16 +24,19 @@ body {
 }
 
 .botao-destaque {
-  background-color: #28a745;
+  background-color: #28a745; /* verde sucesso */
   color: white;
-  padding: 12px 20px;
+  padding: 10px 16px;
   border: none;
   border-radius: 6px;
-  font-size: 16px;
+  font-size: 14px;
   cursor: pointer;
-  margin-right: 10px;
+  margin-top: 8px;
   text-decoration: none;
   display: inline-block;
+}
+.botao-destaque:hover {
+  background-color: #218838; /* verde mais escuro no hover */
 }
 
 /* Título centralizado */
