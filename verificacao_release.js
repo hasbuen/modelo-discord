@@ -47,7 +47,8 @@ function processarRTF(event) {
       </tr>`;
     });
     html += '</table>';
-    document.getElementById('resultadosRTF').innerHTML = html;
+    document.getElementById('liberacoes-container').innerHTML = html;
+
   };
 
   reader.readAsText(arquivo); // RTF tratado como texto bruto
