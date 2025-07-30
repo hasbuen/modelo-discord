@@ -2,6 +2,16 @@ function abrirArquivoRTF() {
   document.getElementById('arquivoRTF').click();
 }
 
+function mostrarLiberacoes() {
+  const container = document.getElementById('liberacoes-container');
+  container.classList.toggle('hidden');
+
+  // Se ficou visível, inicia processamento do RTF
+  if (!container.classList.contains('hidden')) {
+    abrirArquivoRTF(); // Abre seletor de arquivo
+  }
+}
+
 function processarRTF(event) {
   const arquivo = event.target.files[0];
   if (!arquivo) return;
