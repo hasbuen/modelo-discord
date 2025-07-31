@@ -9,6 +9,7 @@ function mostrarLiberacoes() {
   // Se ficou visível, inicia processamento do RTF
   if (!container.classList.contains('hidden')) {
     abrirArquivoRTF(); // Abre seletor de arquivo
+    container.innerHTML = html;
   }
 }
 
