@@ -19,13 +19,10 @@ function processarRTF(event) {
     return;
   }
 
-  // Exemplo: apenas exibir nome do arquivo por enquanto
-  console.log("Arquivo selecionado:", arquivo.name);
-
   const reader = new FileReader();
   reader.onload = function(e) {
     const texto = e.target.result;
-    console.log(texto);
+    
     // Extrai os protocolos do RTF (simplesmente como texto)
     const encontrados = [...texto.matchAll(/Protocolo:\s*(PRT\d+)/g)].map(m => m[1]);
 
