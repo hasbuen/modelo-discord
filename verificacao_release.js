@@ -90,7 +90,7 @@ function renderizarLiberacoes(registros) {
   tabela.innerHTML = `
     <thead>
       <tr>
-        <th>PRT</th>
+        <th>Protocolo</th>
         <th>Ticket</th>
       </tr>
     </thead>
