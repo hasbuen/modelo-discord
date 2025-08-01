@@ -42,12 +42,12 @@ const historicoPRTs = [...protocolosHTML]
     
 // Confronta os dois
 const resultados = encontrados.map(prt => {
-  const regexVersao = new RegExp(`Protocolo:\\s*${prt}\\)[\\s\\-–]*([^\\n]+)`);
+  const regexVersao = new RegExp(`Protocolo:\\s*${prt}\\)[\\s\\-–]*(.*)`);
   const match = texto.match(regexVersao);
-
-  // 🔍 Limpa comandos RTF se encontrados
   let versao = match ? match[1].trim() : '';
-  versao = versao.replace(/\\[a-zA-Z]+\d*|[{}]/g, '').trim();
+  versao = versao.replace(/\
+
+\[a-zA-Z]+\d*|[{}]/g, '').trim();
 
   return {
     protocolo: prt,
@@ -56,7 +56,8 @@ const resultados = encontrados.map(prt => {
   };
 });
 
-cnosole.log(resultados.some(r => r.estaRegistrado));
+console.table(resultados.filter(r => r.estaRegistrado));
+
 // Verifica se algum foi encontrado
 const algumRegistrado = resultados.some(r => r.estaRegistrado);
 
