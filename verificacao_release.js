@@ -105,7 +105,7 @@ function processarRTF(event) {
     const historicoPRTs = [...document.querySelectorAll('.tabela-historico td')]
       .map(td => td.textContent.trim().replace(/\D/g, '')) // remove tudo que não for número
       .filter(texto => texto); // descarta strings vazias
-
+    console.table("historicoPRTs: "+ historicoPRTs);
     // === 3. Processa os resultados com suas versões ===
     const resultados = encontrados.map(protocolo => {
       // Regex para encontrar a linha com "Protocolo: 123456)" e capturar o texto após hífens, por exemplo:
@@ -127,8 +127,6 @@ function processarRTF(event) {
         versao
       };
     });
-
-    console.table(resultados.filter(r => r.estaRegistrado));
 
     // === 4. Renderiza o resultado ===
     const container = document.getElementById('liberacoes-container');
