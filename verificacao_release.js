@@ -41,24 +41,18 @@ function processarRTF(event) {
 
   const reader = new FileReader();
 
-  reader.onload = function (e) {
-    const texto = e.target.result;
+reader.onload = async function (e) {
+  const texto = e.target.result;
 
-    // 1. Extrai os protocolos do texto 
-    // Captura algo como "Protocolo: 123456" ou "Protocolo: 123456)"
-    const protocolosLocalizados = [...texto.matchAll(/Protocolo:\s*(\d+)/g)].map(m => m[1]);
+  const protocolosLocalizados = [...texto.matchAll(/Protocolo:\s*(\d+)/g)].map(m => m[1]);
+  const encontrados = [...new Set(protocolosLocalizados)];
+  console.table(encontrados);
 
-    // Remove duplicatas e garante limpeza
-    const encontrados = [...new Set(protocolosLocalizados)];
+  // CORRETO: aguardando a Promise
+  const historicoPRTs = await obterListaPRTs();
+  console.table(historicoPRTs);
 
-    console.table(encontrados);
-
-    // 2. Captura os protocolos da tabela
-    const historicoPRTs = obterListaPRTs();
-    console.table("historicoPRTs: "+ historicoPRTs);
-    
-    // === 3. Processa os resultados com suas versões ===
-    const resultados = encontrados.map(protocolo => {
+  const resultados = encontrados.map(protocolo => {
       // Regex para encontrar a linha com "Protocolo: 123456)" e capturar o texto após hífens, por exemplo:
       // "Protocolo: 123456) - versão X" => captura "versão X"
       const regexVersao = new RegExp(`Protocolo:\\s*${protocolo}\\)?[\\s\\-–—]*(.*?)\\s*(\\\\|$)`, 'i');
