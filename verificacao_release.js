@@ -48,9 +48,7 @@ const resultados = encontrados.map(prt => {
 
   // 🔍 Limpa comandos RTF se encontrados
   let versao = match ? match[1].trim() : '';
-  versao = versao.replace(/\
-
-\[a-zA-Z]+\d*|[{}]/g, '').trim();
+  versao = versao.replace(/\\[a-zA-Z]+\d*|[{}]/g, '').trim();
 
   return {
     protocolo: prt,
