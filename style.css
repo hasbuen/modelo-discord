@@ -452,6 +452,14 @@ th:hover .icone-ordenacao {
   cursor: pointer;
 }
 
+#liberacoes-container {
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f9f9f9;
+}
+
 /* Container de tooltip */
 .tooltip-container {
     position: relative;
