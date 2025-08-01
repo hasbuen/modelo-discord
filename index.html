@@ -61,10 +61,25 @@
             <i id="icon-toggle" class="fas fa-chevron-down icon"></i>
         </button>
 
-        <button id="toggleLiberacoes" class="bg-green-700 text-white px-4 py-2 rounded-md mt-4">
+        <!--<button id="toggleLiberacoes" class="bg-green-700 text-white px-4 py-2 rounded-md mt-4">
             <span id="texto-toggle-liberacoes">📂 Verificar liberações</span>
             <i id="icon-toggle-liberacoes" class="fas fa-chevron-down icon"></i>
-        </button>
+        </button>-->
+
+        <!-- Botão toggle (igual aos históricos) -->
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <button onclick="mostrarLiberacoes()" class="bg-green-700 text-white px-4 py-2 rounded-md">
+    <i id="icon-toggle-liberacoes" class="fas fa-chevron-down icon"></i>
+    <span>📂 Verificar liberações</span>
+  </button>
+</div>
+
+<!-- Input invisível para upload -->
+<input type="file" id="arquivoRTF" accept=".rtf" style="display: none;" onchange="processarRTF(event)" />
+
+<!-- Tabela de liberações -->
+<div id="liberacoes-container" class="mt-4 bg-[#1c1c1c] p-4 rounded-md hidden overflow-auto border border-green-800 text-white"></div>
+
 
         <!-- Tabela oculta por padrão -->
         <div class="tabela-container hidden" id="tabela-container">
@@ -224,10 +239,8 @@
         </div>
     </div>
 
-
-    <!-- Tabela de Verificação de Liberações -->
+<!--
 <div id="verificarLiberacoes" class="mt-4">
- <!-- Campo oculto que será clicado via JS -->
 <input type="file" id="arquivoRTF" style="display:none" accept=".rtf" onchange="processarRTF(event)">
   <input type="text" id="buscarLiberacoes" placeholder="Buscar liberações..." class="p-2 mb-2 w-full rounded" />
 
@@ -240,10 +253,10 @@
       </tr>
     </thead>
     <tbody id="liberacoesBody">
-      <!-- Dados inseridos via JavaScript -->
     </tbody>
   </table>
 </div>
+    -->
 
     <!-- Modal de mensagens de erro/sucesso/info -->
     <div id="errorModal" class="modal">
