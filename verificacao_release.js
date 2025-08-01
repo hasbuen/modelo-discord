@@ -90,7 +90,7 @@ function renderizarLiberacoes(registros) {
   const container = document.querySelector("#liberacoes-container");
 
   const tabela = document.createElement("table");
-  tabela.classList.add("tabela-comum");
+  tabela.classList.add("tabela-liberacoes");
 
   tabela.innerHTML = `
     <thead>
