@@ -63,59 +63,14 @@
   <button id="toggleLiberacoes" class="bg-green-800 text-white px-4 py-2 rounded-md">
     📂 Verificar liberações
   </button>
+  <!-- Input invisível para upload -->
+  <input type="file" id="arquivoRTF" accept=".rtf" style="display: none;" onchange="processarRTF(event)" />
 </div>
 
         
 <!-- Histórico -->
 <div id="historico-container" style="display: block;">
-       <!-- Tabela oculta por padrão -->
-        <div class="tabela-container hidden" id="tabela-container">
-            <!-- Campo de busca -->
-            <input type="text" id="busca" class="input-busca" placeholder="Buscar registros..."
-                onkeyup="filtrarTabela()" />
-            <table id="tabelaRegistros">
-                <thead>
-                    <tr>
-                        <th onclick="ordenarTabela(0)">
-                            🔗 Ticket
-                            <span class="icone-ordenacao">&#10580;&#10581;</span>
-                        </th>
-                        <th onclick="ordenarTabela(1)">
-                            ⚙️ Protocolo
-                            <span class="icone-ordenacao">&#10580;&#10581;</span>
-                        </th>
-                        <th onclick="ordenarTabela(2)">
-                            Tipo
-                            <span class="icone-ordenacao">&#10580;&#10581;</span>
-                        </th>
-                        <th onclick="ordenarTabela(3)">
-                            Descrição
-                            <span class="icone-ordenacao">&#10580;&#10581;</span>
-                        </th>
-                        <th>
-                            💊 Paliativo
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Conteúdo dinâmico via JavaScript -->
-                </tbody>
-            </table>
-</div>
-
-<!-- Liberacoes -->
-<div id="liberacoes-container" class="hidden" style="display: none;">
-</div>
-
-        
-<!-- Input invisível para upload -->
-<input type="file" id="arquivoRTF" accept=".rtf" style="display: none;" onchange="processarRTF(event)" />
-
-<!-- Tabela de liberações -->
-<div id="liberacoes-container" class="mt-4 bg-[#1c1c1c] p-4 rounded-md hidden overflow-auto border border-green-800 text-white"></div>
-
-
-        <!-- Tabela oculta por padrão -->
+   <!-- Tabela oculta por padrão -->
         <div class="tabela-container hidden" id="tabela-container">
             <!-- Campo de busca -->
             <input type="text" id="busca" class="input-busca" placeholder="Buscar registros..."
@@ -149,7 +104,13 @@
                 </tbody>
             </table>
         </div>
+</div>
 
+<!-- Liberacoes -->
+<div id="liberacoes-container" class="hidden" style="display: none;">
+    <!-- ... será preenchido dinamicamente ... -->
+</div>
+        
         <!-- Título principal -->
         <h1>🩹 ProtoCord</h1>
 
