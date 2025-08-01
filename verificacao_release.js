@@ -23,8 +23,16 @@ async function obterListaPRTs() {
   try { 
     const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos"); 
     const registros = await res.json(); 
-    const listaPRTs = registros.map(reg => reg.prt?.replace('#PRT', '')).filter(Boolean);
-    console.table(listaPRTs);
+
+        // Retorna objetos com prt, ticket e link
+    const listaPRTs = registros
+      .filter(reg => reg.prt) // filtra só os registros válidos
+      .map(reg => ({
+        protocolo: reg.prt.replace('#PRT', ''),
+        ticket: reg.ticket || '',
+        link: reg.link || ''
+      }));
+
     return listaPRTs;
   } catch (err) {
     console.error("Erro ao carregar registros da API:", err);
@@ -41,63 +49,43 @@ function processarRTF(event) {
 
   const reader = new FileReader();
 
-reader.onload = async function (e) {
-  const texto = e.target.result;
-  const linhasLimpas = texto
-  .split(/\\par\b/)
-  .map(l => l.replace(/\\[a-z]+\d*|{|}|\s+/gi, ' ').trim())
-  .filter(Boolean);
+  reader.onload = async function (e) {
+    const texto = e.target.result;
 
-const resultadosFormatados = [];
+    // Extrai todos os protocolos encontrados
+    const protocolosLocalizados = [...texto.matchAll(/Protocolo:\s*(\d+)/g)].map(m => m[1]);
+    const encontrados = [...new Set(protocolosLocalizados)];
+    console.table(encontrados);
 
-for (let i = 0; i < linhasLimpas.length - 1; i++) {
-  const linhaAtual = linhasLimpas[i];
-  const linhaSeguinte = linhasLimpas[i + 1];
+    // Busca os registros completos da API (protocolo, ticket, link)
+    const historicoPRTs = await obterListaPRTs();
+    console.table(historicoPRTs);
 
-  const regexVersao = /^\-\s*(\d+\.\d+\.\d+\.\d+)\s*\((\d{2}\/\d{2}\/\d{4})\)/;
+    // Associa os protocolos encontrados aos dados vindos da API
+    const resultados = encontrados.map(protocolo => {
+      const registro = historicoPRTs.find(reg => reg.protocolo === protocolo);
 
-  if (regexVersao.test(linhaSeguinte)) {
-    const versao = linhaSeguinte.match(regexVersao)[0];
-    resultadosFormatados.push(`${linhaAtual} - ${versao}`);
-  }
-}
+      return {
+        protocolo,
+        ticket: registro?.ticket || '',
+        link: registro?.link || '',
+        estaRegistrado: !!registro
+      };
+    });
 
-
-  const protocolosLocalizados = [...texto.matchAll(/Protocolo:\s*(\d+)/g)].map(m => m[1]);
-  const encontrados = [...new Set(protocolosLocalizados)];
-  console.table(encontrados);
-
-  // CORRETO: aguardando a Promise
-  const historicoPRTs = await obterListaPRTs();
-  console.table(historicoPRTs);
-
-const resultados = encontrados.map(protocolo => {
-  // Procura no array de linhas formatadas por uma que contenha o protocolo
-  const linhaMatch = resultadosFormatados.find(linha => linha.includes(protocolo));
-
-  // Se encontrar, extrai o trecho após o hífen
-  const versao = linhaMatch?.split(' - ').slice(1).join(' - ').trim() || '';
-
-  return {
-    protocolo,
-    estaRegistrado: historicoPRTs.includes(protocolo),
-    versao
-  };
-});
-
-    // === 4. Renderiza o resultado ===
+    // === Renderiza o resultado ===
     const container = document.getElementById('liberacoes-container');
     let html = '';
 
     const encontradosRegistrados = resultados.filter(r => r.estaRegistrado);
 
     if (encontradosRegistrados.length) {
-      html += '<table><tr><th style="text-align: left; padding: 6px;">Protocolo</th><th style="text-align: left; padding: 6px;">Versão</th></tr>';
+      html += '<table><tr><th style="text-align: left; padding: 6px;">Protocolo</th><th style="text-align: left; padding: 6px;">Ticket</th></tr>';
       encontradosRegistrados.forEach(r => {
         html += `
           <tr>
             <td style="padding: 6px;">#PRT${r.protocolo}</td>
-            <td style="padding: 6px;">${r.versao || '-'}</td>
+            <td style="padding: 6px;"><a href="${r.link}" target="_blank">${r.ticket}</a></td>
           </tr>
         `;
       });
@@ -109,5 +97,5 @@ const resultados = encontrados.map(protocolo => {
     container.innerHTML = html;
   };
 
-  reader.readAsText(arquivo); // RTF tratado como texto bruto
+  reader.readAsText(arquivo);
 }
