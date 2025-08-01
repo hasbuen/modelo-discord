@@ -30,8 +30,8 @@ function processarRTF(event) {
   reader.onload = function(e) {
     const texto = e.target.result;
     // Extrai os protocolos do RTF (simplesmente como texto)
-    const encontrados = [...texto.matchAll(/Protocolo:\s*(\S+)/g)].map(m => m[1])
-    console.log(encontrados)
+    const protocolosLocalizados = [...texto.matchAll(/Protocolo:\s*(\S+)/g)].map(m => m[1])
+    const encontrados = protocolosLocalizados.map(item => item.replace(')', ''));
     
     // Pega todos os protocolos da tabela de histórico
     const protocolosHTML = document.querySelectorAll('.tabela-historico td'); // ou ajuste conforme seu layout
