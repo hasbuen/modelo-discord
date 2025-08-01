@@ -354,7 +354,7 @@ ${paliativoFormatado}`;
 }
 
 // Alterna a visibilidade da tabela de registros (mostrar/ocultar)
-function mostrarTabela() {
+/*function mostrarTabela() {
     const tabela = document.getElementById("tabela-container");
     const icone = document.getElementById("icon-toggle");
     const texto = document.getElementById("texto-toggle");
@@ -369,7 +369,12 @@ function mostrarTabela() {
         icone.className = "fas fa-chevron-up icon";
         texto.textContent = "Ocultar histórico!";
     }
-}
+}*/
+document.getElementById("toggleHistorico").addEventListener("click", function () {
+  document.getElementById("historico-container").style.display = "block";
+  document.getElementById("liberacoes-container").style.display = "none";
+});
+
 
 
 // Renderiza os registros em uma tabela HTML
