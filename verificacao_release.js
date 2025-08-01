@@ -80,6 +80,16 @@ if (algumRegistrado) {
 document.getElementById('liberacoes-container').innerHTML = html;
   };*/
 
+async function obterListaPRTs() {
+  try { 
+    const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos"); 
+    const registros = await res.json(); 
+    const listaPRTs = registros.map(reg => reg.prt?.replace('#PRT', '')).filter(Boolean);
+    console.table(listaPRTs);
+    return listaPRTs;
+}
+
+
 function processarRTF(event) {
   const arquivo = event.target.files[0];
   if (!arquivo) {
@@ -92,7 +102,7 @@ function processarRTF(event) {
   reader.onload = function (e) {
     const texto = e.target.result;
 
-    // === 1. Extrai os protocolos do texto ===
+    // 1. Extrai os protocolos do texto 
     // Captura algo como "Protocolo: 123456" ou "Protocolo: 123456)"
     const protocolosLocalizados = [...texto.matchAll(/Protocolo:\s*(\d+)/g)].map(m => m[1]);
 
@@ -101,11 +111,10 @@ function processarRTF(event) {
 
     console.table(encontrados);
 
-    // === 2. Captura os protocolos da tabela HTML ===
-    const historicoPRTs = [...document.querySelectorAll('.tabela-historico td')]
-      .map(td => td.textContent.trim().replace(/\D/g, '')) // remove tudo que não for número
-      .filter(texto => texto); // descarta strings vazias
+    // 2. Captura os protocolos da tabela
+    const historicoPRTs = obterListaPRTs().
     console.table("historicoPRTs: "+ historicoPRTs);
+    
     // === 3. Processa os resultados com suas versões ===
     const resultados = encontrados.map(protocolo => {
       // Regex para encontrar a linha com "Protocolo: 123456)" e capturar o texto após hífens, por exemplo:
