@@ -12,6 +12,7 @@ function mostrarLiberacoes() {
     if (liberacoes.classList.contains("hidden")) {
         icone.className = "fas fa-chevron-down icon";
         texto.textContent = "📂 Verificar liberações";
+        abrirArquivoRTF();
     } else {
         icone.className = "fas fa-chevron-up icon";
         texto.textContent = "📂 Ocultar liberações";
