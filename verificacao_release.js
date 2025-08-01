@@ -43,6 +43,27 @@ function processarRTF(event) {
 
 reader.onload = async function (e) {
   const texto = e.target.result;
+  const linhasLimpas = texto
+  .split(/\\par\b/)
+  .map(l => l.replace(/\
+
+\[a-z]+\d*|{|}|\s+/gi, ' ').trim())
+  .filter(Boolean);
+
+const resultadosFormatados = [];
+
+for (let i = 0; i < linhasLimpas.length - 1; i++) {
+  const linhaAtual = linhasLimpas[i];
+  const linhaSeguinte = linhasLimpas[i + 1];
+
+  const regexVersao = /^\-\s*(\d+\.\d+\.\d+\.\d+)\s*\((\d{2}\/\d{2}\/\d{4})\)/;
+
+  if (regexVersao.test(linhaSeguinte)) {
+    const versao = linhaSeguinte.match(regexVersao)[0];
+    resultadosFormatados.push(`${linhaAtual} - ${versao}`);
+  }
+}
+
 
   const protocolosLocalizados = [...texto.matchAll(/Protocolo:\s*(\d+)/g)].map(m => m[1]);
   const encontrados = [...new Set(protocolosLocalizados)];
@@ -52,26 +73,19 @@ reader.onload = async function (e) {
   const historicoPRTs = await obterListaPRTs();
   console.table(historicoPRTs);
 
-  const resultados = encontrados.map(protocolo => {
-      // Regex para encontrar a linha com "Protocolo: 123456)" e capturar o texto após hífens, por exemplo:
-      // "Protocolo: 123456) - versão X" => captura "versão X"
-      const regexVersao = new RegExp(`Protocolo:\\s*${protocolo}\\)?[\\s\\-–—]*(.*?)\\s*(\\\\|$)`, 'i');
-      const match = texto.match(regexVersao);
+const resultados = encontrados.map(protocolo => {
+  // Procura no array de linhas formatadas por uma que contenha o protocolo
+  const linhaMatch = resultadosFormatados.find(linha => linha.includes(protocolo));
 
-      let versao = match?.[1] || '';
-      
-      // Remove comandos RTF como \par, \b, etc.
-      versao = versao.replace(/\\[a-z]+\b/g, '').trim();
+  // Se encontrar, extrai o trecho após o hífen
+  const versao = linhaMatch?.split(' - ').slice(1).join(' - ').trim() || '';
 
-      // Limpa números isolados e múltiplos espaços
-      versao = versao.replace(/\b\d+\b/g, '').replace(/\s+/g, ' ').trim();
-
-      return {
-        protocolo,
-        estaRegistrado: historicoPRTs.includes(protocolo),
-        versao
-      };
-    });
+  return {
+    protocolo,
+    estaRegistrado: historicoPRTs.includes(protocolo),
+    versao
+  };
+});
 
     // === 4. Renderiza o resultado ===
     const container = document.getElementById('liberacoes-container');
