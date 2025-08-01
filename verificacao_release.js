@@ -45,9 +45,10 @@ const resultados = encontrados.map(prt => {
   const regexVersao = new RegExp(`Protocolo:\\s*${prt}\\)[\\s\\-–]*(.*)`);
   const match = texto.match(regexVersao);
 let versao = match ? match[1].trim() : '';
-versao = versao.replace(/\
+versao = versao.replace(new RegExp('\\\
 
-\[a-zA-Z]+\d*|[{}]/g, '').trim();
+\[a-zA-Z]+', 'g'), '').trim();
+versao = versao.replace(new RegExp('(?:\\d+|\\s+\\d+)', 'g'), '').trim();
 
   return {
     protocolo: prt,
