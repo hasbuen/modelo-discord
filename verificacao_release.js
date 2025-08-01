@@ -44,8 +44,8 @@ const historicoPRTs = [...protocolosHTML]
 const resultados = encontrados.map(prt => {
   const regexVersao = new RegExp(`Protocolo:\\s*${prt}\\)[\\s\\-–]*(.*)`);
   const match = texto.match(regexVersao);
-  let versao = match ? match[1].trim() : '';
-  versao = versao.replace(/\
+let versao = match ? match[1].trim() : '';
+versao = versao.replace(/\
 
 \[a-zA-Z]+\d*|[{}]/g, '').trim();
 
