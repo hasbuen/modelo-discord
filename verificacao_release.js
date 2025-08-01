@@ -24,18 +24,18 @@ async function obterListaPRTs() {
   try {
     const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
     const registros = await res.json();
-    console.table(registros);
+    
     // Retorna objetos com prt, ticket e link
-    const listaPRTs = registros
-      .filter(reg => reg.prt) // filtra só os registros válidos
+     const listaPRTs = registros
+      .filter(reg => reg.prt) // filtra os registros válidos
       .map(reg => ({
         protocolo: reg.prt.replace('#PRT', ''),
         tipo: reg.tipo || '',
         ticket: reg.ticket || '',
-        descricao: reg.ticket || '',
+        descricao: reg.descricao || '',
         link: reg.link || ''
       }));
-    console.table("listaPRTs     : " + listaPRTs);
+    
     return listaPRTs;
   } catch (err) {
     console.error("Erro ao carregar registros da API:", err);
