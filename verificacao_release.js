@@ -33,32 +33,40 @@ function processarRTF(event) {
     const protocolosLocalizados = [...texto.matchAll(/Protocolo:\s*(\S+)/g)].map(m => m[1])
     const encontrados = protocolosLocalizados.map(item => item.replace(')', ''));
     
-    // Pega todos os protocolos da tabela de histórico
-    const protocolosHTML = document.querySelectorAll('.tabela-historico td'); // ou ajuste conforme seu layout
-    const historicoPRTs = [...protocolosHTML]
-      .map(el => el.textContent.trim())
-      .filter(texto => texto.startsWith('#PRT'))
-      .map(texto => texto.replace('#', ''));
+// Pega todos os protocolos da tabela de histórico
+const protocolosHTML = document.querySelectorAll('.tabela-historico td');
+const historicoPRTs = [...protocolosHTML]
+  .map(el => el.textContent.trim())
+  .filter(texto => texto.startsWith('#PRT'))
+  .map(texto => texto.replace('#', ''));
 
-    // Confronta os dois
-    const resultados = encontrados.map(prt => ({
-      protocolo: prt,
-      estaRegistrado: historicoPRTs.includes(prt)
-    }));
+// Confronta os dois
+const resultados = encontrados.map(prt => ({
+  protocolo: prt,
+  estaRegistrado: historicoPRTs.includes(prt)
+}));
 
-    // Renderiza tabela
-    let html = '<table><tr><th>Protocolo</th><th>Status</th></tr>';
-    resultados.forEach(r => {
-      html += `<tr>
-        <td>${r.protocolo}</td>
-        <td style="color: ${r.estaRegistrado ? 'green' : 'red'};">
-          ${r.estaRegistrado ? '✓ Encontrado no histórico' : '✗ Não registrado'}
-        </td>
-      </tr>`;
-    });
-    html += '</table>';
-    document.getElementById('liberacoes-container').innerHTML = html;
+// Verifica se algum foi encontrado
+const algumRegistrado = resultados.some(r => r.estaRegistrado);
 
+// Renderiza tabela ou mostra mensagem
+let html = '';
+if (algumRegistrado) {
+  html += '<table><tr><th>Protocolo</th><th>Status</th></tr>';
+  resultados.forEach(r => {
+    html += `<tr>
+      <td>${r.protocolo}</td>
+      <td style="color: ${r.estaRegistrado ? 'green' : 'red'};">
+        ${r.estaRegistrado ? '✓ Encontrado no histórico' : '✗ Não registrado'}
+      </td>
+    </tr>`;
+  });
+  html += '</table>';
+} else {
+  html = '<p style="color: red; font-weight: bold;">Nenhum dos protocolos registrados no ProtoCord foi liberado no release selecionado!</p>';
+}
+
+document.getElementById('liberacoes-container').innerHTML = html;
   };
 
   reader.readAsText(arquivo); // RTF tratado como texto bruto
