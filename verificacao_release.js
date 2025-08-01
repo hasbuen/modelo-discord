@@ -45,23 +45,26 @@ console.log(historicoPRTs);
 const resultados = encontrados.map(prt => {
   const regexVersao = new RegExp(`Protocolo:\\s*${prt}\\)[\\s\\-–]*([^\\n]+)`);
   const match = texto.match(regexVersao);
-  const versao = match ? match[1].trim() : '';
+
+  // 🔍 Limpa comandos RTF se encontrados
+  let versao = match ? match[1].trim() : '';
+  versao = versao.replace(/\
+
+\[a-zA-Z]+\d*|[{}]/g, '').trim();
+
   return {
     protocolo: prt,
     estaRegistrado: historicoPRTs.includes(prt),
     versao: versao
   };
 });
-console.table(resultados);
 
 // Verifica se algum foi encontrado
 const algumRegistrado = resultados.some(r => r.estaRegistrado);
-console.log("PROTOCOLO  : "+r.protocolo);
-console.log("VERSAO  : "+r.versao)
+
 // Renderiza tabela ou mostra mensagem
 let html = '';
 if (algumRegistrado) {
-  html += '<table style="width:100%; border-collapse: collapse;">';
   html += '<tr><th style="text-align: left; padding: 6px;">Protocolo</th><th style="text-align: left; padding: 6px;">Versão</th></tr>';
   resultados.forEach(r => {
     if (r.estaRegistrado) {
