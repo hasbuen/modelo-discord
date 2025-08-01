@@ -227,6 +227,24 @@
     <div class="tabela-container hidden" id="liberacoes-container">
           <!-- Campo oculto que será clicado via JS -->
           <input type="file" id="arquivoRTF" style="display:none" accept=".rtf" onchange="processarRTF(event)">
+
+        <table id="tabelaRegistros">
+                <thead>
+                    <tr>
+                         <th onclick="ordenarTabela(1)">
+                            ⚙️ Protocolo
+                            <span class="icone-ordenacao">&#10580;&#10581;</span>
+                        </th>
+                        <th onclick="ordenarTabela(0)">
+                            🔗 Ticket
+                            <span class="icone-ordenacao">&#10580;&#10581;</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Conteúdo dinâmico via JavaScript -->
+                </tbody>
+            </table>
     </div>
 
     <!-- Modal de mensagens de erro/sucesso/info -->
