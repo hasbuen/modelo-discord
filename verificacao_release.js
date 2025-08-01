@@ -1,6 +1,16 @@
 function abrirArquivoRTF() {
   document.getElementById('arquivoRTF').click();
 }
+document.getElementById("toggleLiberacoes").addEventListener("click", function () {
+  const div = document.getElementById("verificarLiberacoes");
+  if (div.style.display === "none") {
+    div.style.display = "block";
+    this.textContent = "📂 Ocultar liberações ▲";
+  } else {
+    div.style.display = "none";
+    this.textContent = "📂 Mostrar liberações ▼";
+  }
+});
 
 function mostrarLiberacoes() {
   const liberacoes = document.getElementById("liberacoes-container");
