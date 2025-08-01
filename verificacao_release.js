@@ -39,6 +39,7 @@ const historicoPRTs = [...protocolosHTML]
   .map(el => el.textContent.trim())
   .map(texto => texto.replace(')', ''))
   .filter(texto => !isNaN(texto)); // só números válidos
+console.log(historicoPRTs);
     
 // Confronta os dois
 const resultados = encontrados.map(prt => {
@@ -51,10 +52,12 @@ const resultados = encontrados.map(prt => {
     versao: versao
   };
 });
+console.table(resultados);
 
 // Verifica se algum foi encontrado
 const algumRegistrado = resultados.some(r => r.estaRegistrado);
-
+console.log("PROTOCOLO  : "+r.protocolo);
+console.log("VERSAO  : "+r.versao)
 // Renderiza tabela ou mostra mensagem
 let html = '';
 if (algumRegistrado) {
