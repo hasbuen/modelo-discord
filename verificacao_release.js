@@ -13,22 +13,7 @@ document.getElementById("toggleLiberacoes").addEventListener("click", function (
   }
 });
 
-/*function mostrarLiberacoes() {
-  const liberacoes = document.getElementById("liberacoes-container");
-  const icone = document.getElementById("icon-toggle-liberacoes");
-  const texto = document.querySelector('[onclick="mostrarLiberacoes()"] span');
 
-  liberacoes.classList.toggle("hidden");
-
-  if (liberacoes.classList.contains("hidden")) {
-    icone.className = "fas fa-chevron-down icon";
-    texto.textContent = "📂 Verificar liberações";
-    abrirArquivoRTF();
-  } else {
-    icone.className = "fas fa-chevron-up icon";
-    texto.textContent = "📂 Ocultar liberações";
-  }
-}*/
 document.getElementById("toggleLiberacoes").addEventListener("click", function () {
   document.getElementById("historico-container").style.display = "none";
   document.getElementById("liberacoes-container").style.display = "block";
@@ -45,7 +30,9 @@ async function obterListaPRTs() {
       .filter(reg => reg.prt) // filtra só os registros válidos
       .map(reg => ({
         protocolo: reg.prt.replace('#PRT', ''),
+        tipo: reg.tipo || '',
         ticket: reg.ticket || '',
+        descricao: reg.ticket || '',
         link: reg.link || ''
       }));
 
@@ -76,7 +63,9 @@ function processarRTF(event) {
       const registro = historicoPRTs.find(reg => reg.protocolo === protocolo);
       return {
         protocolo,
+        ticket: registro?.tipo || '',
         ticket: registro?.ticket || '',
+        ticket: registro?.descricao || '',
         link: registro?.link || '',
         estaRegistrado: !!registro
       };
@@ -106,8 +95,10 @@ function renderizarLiberacoes(registros) {
   tabela.innerHTML = `
     <thead>
       <tr>
-        <th>Protocolo</th>
         <th>Ticket</th>
+        <th>Protocolo</th>
+        <th>Tipo</th>
+        <th>descricao</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -119,8 +110,10 @@ function renderizarLiberacoes(registros) {
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td>#PRT${reg.protocolo}</td>
       <td><a href="${reg.link}" target="_blank">${reg.ticket}</a></td>
+      <td>#PRT${reg.protocolo}</td>
+      <td>${reg.tipo}</td>
+      <td>${reg.descricao}</td>
     `;
 
     tbody.appendChild(tr);
