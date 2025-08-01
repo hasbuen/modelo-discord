@@ -154,9 +154,5 @@ function processarRTF(event) {
     container.innerHTML = html;
   };
 
-  reader.readAsText(arquivo);
-}
-
-
   reader.readAsText(arquivo); // RTF tratado como texto bruto
 }
