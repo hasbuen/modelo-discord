@@ -11,10 +11,10 @@ function mostrarLiberacoes() {
 
     if (liberacoes.classList.contains("hidden")) {
         icone.className = "fas fa-chevron-down icon";
-        texto.textContent = "Verificar liberações";
+        texto.textContent = "📂 Verificar liberações";
     } else {
         icone.className = "fas fa-chevron-up icon";
-        texto.textContent = "Ocultar liberações";
+        texto.textContent = "📂 Ocultar liberações";
     }
 }
 
