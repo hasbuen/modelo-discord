@@ -6,6 +6,7 @@ document.getElementById("toggleLiberacoes").addEventListener("click", function (
   if (div.style.display === "none") {
     div.style.display = "block";
     this.textContent = "📂 Ocultar liberações ▲";
+    abrirArquivoRTF();
   } else {
     div.style.display = "none";
     this.textContent = "📂 Mostrar liberações ▼";
