@@ -32,14 +32,13 @@ function processarRTF(event) {
     // Extrai os protocolos do RTF (simplesmente como texto)
     const protocolosLocalizados = [...texto.matchAll(/Protocolo:\s*(\S+)/g)].map(m => m[1]);
     const encontrados = protocolosLocalizados.map(item => item.replace(')', ''));
-    
+    console.table(encontrados);
 // Pega todos os protocolos da tabela de histórico
 const protocolosHTML = document.querySelectorAll('.tabela-historico td');
 const historicoPRTs = [...protocolosHTML]
   .map(el => el.textContent.trim())
   .map(texto => texto.replace(')', ''))
   .filter(texto => !isNaN(texto)); // só números válidos
-console.log(historicoPRTs);
     
 // Confronta os dois
 const resultados = encontrados.map(prt => {
@@ -57,6 +56,7 @@ const resultados = encontrados.map(prt => {
   };
 });
 
+cnosole.log(resultados.some(r => r.estaRegistrado));
 // Verifica se algum foi encontrado
 const algumRegistrado = resultados.some(r => r.estaRegistrado);
 
