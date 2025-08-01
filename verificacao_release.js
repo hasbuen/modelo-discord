@@ -13,7 +13,7 @@ document.getElementById("toggleLiberacoes").addEventListener("click", function (
   }
 });
 
-function mostrarLiberacoes() {
+/*function mostrarLiberacoes() {
   const liberacoes = document.getElementById("liberacoes-container");
   const icone = document.getElementById("icon-toggle-liberacoes");
   const texto = document.querySelector('[onclick="mostrarLiberacoes()"] span');
@@ -28,7 +28,12 @@ function mostrarLiberacoes() {
     icone.className = "fas fa-chevron-up icon";
     texto.textContent = "📂 Ocultar liberações";
   }
-}
+}*/
+document.getElementById("toggleLiberacoes").addEventListener("click", function () {
+  document.getElementById("historico-container").style.display = "none";
+  document.getElementById("liberacoes-container").style.display = "block";
+  abrirArquivoRTF(); // Abre o seletor para .rtf
+});
 
 async function obterListaPRTs() {
   try {
