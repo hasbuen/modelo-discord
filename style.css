@@ -687,6 +687,31 @@ th:hover .icone-ordenacao {
     align-self: center;
 }
 
+.tabela-comum {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #121212;
+  color: white;
+  margin-top: 10px;
+}
+
+.tabela-comum th,
+.tabela-comum td {
+  border: 1px solid #2a2a2a;
+  padding: 10px;
+  text-align: left;
+}
+
+.tabela-comum thead {
+  background-color: #065f46; /* verde escuro */
+}
+
+.tabela-comum a {
+  color: #4ade80; /* verde claro */
+  text-decoration: underline;
+}
+
+
 /* Animação do skeleton loader */
 @keyframes pulse {
     0% {
