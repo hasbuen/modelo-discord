@@ -364,10 +364,10 @@ function mostrarTabela() {
     // Atualiza o ícone e o texto do botão
     if (tabela.classList.contains("hidden")) {
         icone.className = "fas fa-chevron-down icon";
-        texto.textContent = "Exibir histórico!";
+        texto.textContent = "📜 Exibir histórico!";
     } else {
         icone.className = "fas fa-chevron-up icon";
-        texto.textContent = "Ocultar histórico!";
+        texto.textContent = "📜 Ocultar histórico!";
     }
 }
 /*
