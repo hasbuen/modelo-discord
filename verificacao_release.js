@@ -45,9 +45,7 @@ reader.onload = async function (e) {
   const texto = e.target.result;
   const linhasLimpas = texto
   .split(/\\par\b/)
-  .map(l => l.replace(/\
-
-\[a-z]+\d*|{|}|\s+/gi, ' ').trim())
+  .map(l => l.replace(/\\[a-z]+\d*|{|}|\s+/gi, ' ').trim())
   .filter(Boolean);
 
 const resultadosFormatados = [];
