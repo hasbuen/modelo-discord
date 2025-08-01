@@ -3,13 +3,19 @@ function abrirArquivoRTF() {
 }
 
 function mostrarLiberacoes() {
-  const container = document.getElementById('liberacoes-container');
-  container.classList.toggle('hidden');
+    const liberacoes = document.getElementById("liberacoes-container");
+    const icone = document.getElementById("icon-toggle-liberacoes");
+    const texto = document.querySelector('[onclick="mostrarLiberacoes()"] span');
 
-  // Se ficou visível, inicia processamento do RTF
-  if (!container.classList.contains('hidden')) {
-    abrirArquivoRTF();
-  }
+    liberacoes.classList.toggle("hidden");
+
+    if (liberacoes.classList.contains("hidden")) {
+        icone.className = "fas fa-chevron-down icon";
+        texto.textContent = "Verificar liberações";
+    } else {
+        icone.className = "fas fa-chevron-up icon";
+        texto.textContent = "Ocultar liberações";
+    }
 }
 
 function processarRTF(event) {
