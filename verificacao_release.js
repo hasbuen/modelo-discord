@@ -3,28 +3,28 @@ function abrirArquivoRTF() {
 }
 
 function mostrarLiberacoes() {
-    const liberacoes = document.getElementById("liberacoes-container");
-    const icone = document.getElementById("icon-toggle-liberacoes");
-    const texto = document.querySelector('[onclick="mostrarLiberacoes()"] span');
+  const liberacoes = document.getElementById("liberacoes-container");
+  const icone = document.getElementById("icon-toggle-liberacoes");
+  const texto = document.querySelector('[onclick="mostrarLiberacoes()"] span');
 
-    liberacoes.classList.toggle("hidden");
+  liberacoes.classList.toggle("hidden");
 
-    if (liberacoes.classList.contains("hidden")) {
-        icone.className = "fas fa-chevron-down icon";
-        texto.textContent = "📂 Verificar liberações";
-        abrirArquivoRTF();
-    } else {
-        icone.className = "fas fa-chevron-up icon";
-        texto.textContent = "📂 Ocultar liberações";
-    }
+  if (liberacoes.classList.contains("hidden")) {
+    icone.className = "fas fa-chevron-down icon";
+    texto.textContent = "📂 Verificar liberações";
+    abrirArquivoRTF();
+  } else {
+    icone.className = "fas fa-chevron-up icon";
+    texto.textContent = "📂 Ocultar liberações";
+  }
 }
 
 async function obterListaPRTs() {
-  try { 
-    const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos"); 
-    const registros = await res.json(); 
+  try {
+    const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
+    const registros = await res.json();
 
-        // Retorna objetos com prt, ticket e link
+    // Retorna objetos com prt, ticket e link
     const listaPRTs = registros
       .filter(reg => reg.prt) // filtra só os registros válidos
       .map(reg => ({
@@ -52,19 +52,12 @@ function processarRTF(event) {
   reader.onload = async function (e) {
     const texto = e.target.result;
 
-    // Extrai todos os protocolos encontrados
     const protocolosLocalizados = [...texto.matchAll(/Protocolo:\s*(\d+)/g)].map(m => m[1]);
     const encontrados = [...new Set(protocolosLocalizados)];
-    console.table(encontrados);
-
-    // Busca os registros completos da API (protocolo, ticket, link)
     const historicoPRTs = await obterListaPRTs();
-    console.table(historicoPRTs);
 
-    // Associa os protocolos encontrados aos dados vindos da API
     const resultados = encontrados.map(protocolo => {
       const registro = historicoPRTs.find(reg => reg.protocolo === protocolo);
-
       return {
         protocolo,
         ticket: registro?.ticket || '',
@@ -73,29 +66,49 @@ function processarRTF(event) {
       };
     });
 
-    // === Renderiza o resultado ===
     const container = document.getElementById('liberacoes-container');
-    let html = '';
+    container.innerHTML = ""; // Limpa tudo antes
 
     const encontradosRegistrados = resultados.filter(r => r.estaRegistrado);
 
     if (encontradosRegistrados.length) {
-      html += '<table><tr><th style="text-align: left; padding: 6px;">Protocolo</th><th style="text-align: left; padding: 6px;">Ticket</th></tr>';
-      encontradosRegistrados.forEach(r => {
-        html += `
-          <tr>
-            <td style="padding: 6px;">#PRT${r.protocolo}</td>
-            <td style="padding: 6px;"><a href="${r.link}" target="_blank">${r.ticket}</a></td>
-          </tr>
-        `;
-      });
-      html += '</table>';
+      renderizarLiberacoes(encontradosRegistrados);
     } else {
-      html = '<p style="color: red; font-weight: bold;">Nenhum dos protocolos registrados no ProtoCord foi liberado no release selecionado!</p>';
+      container.innerHTML = '<p style="color: red; font-weight: bold;">Nenhum dos protocolos registrados no ProtoCord foi liberado no release selecionado!</p>';
     }
-
-    container.innerHTML = html;
   };
 
   reader.readAsText(arquivo);
+}
+
+function renderizarLiberacoes(registros) {
+  const container = document.querySelector("#liberacoes-container");
+
+  const tabela = document.createElement("table");
+  tabela.classList.add("tabela-comum");
+
+  tabela.innerHTML = `
+    <thead>
+      <tr>
+        <th>PRT</th>
+        <th>Ticket</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+
+  const tbody = tabela.querySelector("tbody");
+
+  registros.forEach(reg => {
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>#PRT${reg.protocolo}</td>
+      <td><a href="${reg.link}" target="_blank">${reg.ticket}</a></td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+
+  container.appendChild(tabela);
 }
