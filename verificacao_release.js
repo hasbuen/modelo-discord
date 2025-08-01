@@ -63,9 +63,9 @@ function processarRTF(event) {
       const registro = historicoPRTs.find(reg => reg.protocolo === protocolo);
       return {
         protocolo,
-        ticket: registro?.tipo || '',
+        tipo: registro?.tipo || '',
         ticket: registro?.ticket || '',
-        ticket: registro?.descricao || '',
+        descricao: registro?.descricao || '',
         link: registro?.link || '',
         estaRegistrado: !!registro
       };
