@@ -56,7 +56,7 @@ function processarRTF(event) {
       </tr>`;
     });
     html += '</table>';
-    document.getElementById('liberacoes-container').innerHTML = html;
+    document.getElementById('liberacoes-container').insertAdjacentHTML('beforeend', html);
 
   };
 
