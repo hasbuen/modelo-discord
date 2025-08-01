@@ -35,34 +35,38 @@ function processarRTF(event) {
     
 // Pega todos os protocolos da tabela de histórico
 const protocolosHTML = document.querySelectorAll('.tabela-historico td');
-console.log("protocolos da tabela históricos : " + protocolosHTML)
 const historicoPRTs = [...protocolosHTML]
   .map(el => el.textContent.trim())
-  .filter(texto => texto.startsWith('#PRT'))
-  .map(texto => texto.replace('#', ''));
-console.log("historicoPRTs : " + historicoPRTs)
-// Confronta os dois
-const resultados = encontrados.map(prt => ({
-  protocolo: prt,
-  estaRegistrado: historicoPRTs.includes(prt)
-}));
-
+  .map(texto => texto.replace(')', ''))
+  .filter(texto => !isNaN(texto)); // só números válidos
     
-console.log("resultados : " + resultados)
+// Confronta os dois
+const resultados = encontrados.map(prt => {
+  const regexVersao = new RegExp(`Protocolo:\\s*${prt}\\)[\\s\\-–]*([^\\n]+)`);
+  const match = texto.match(regexVersao);
+  const versao = match ? match[1].trim() : '';
+  return {
+    protocolo: prt,
+    estaRegistrado: historicoPRTs.includes(prt),
+    versao: versao
+  };
+});
+
 // Verifica se algum foi encontrado
 const algumRegistrado = resultados.some(r => r.estaRegistrado);
 
 // Renderiza tabela ou mostra mensagem
 let html = '';
 if (algumRegistrado) {
-  html += '<table><tr><th>Protocolo</th><th>Status</th></tr>';
+  html += '<table style="width:100%; border-collapse: collapse;">';
+  html += '<tr><th style="text-align: left; padding: 6px;">Protocolo</th><th style="text-align: left; padding: 6px;">Versão</th></tr>';
   resultados.forEach(r => {
-    html += `<tr>
-      <td>${r.protocolo}</td>
-      <td style="color: ${r.estaRegistrado ? 'green' : 'red'};">
-        ${r.estaRegistrado ? '✓ Encontrado no histórico' : '✗ Não registrado'}
-      </td>
-    </tr>`;
+    if (r.estaRegistrado) {
+      html += `<tr>
+        <td style="padding: 6px;">#PRT${r.protocolo}</td>
+        <td style="padding: 6px;">${r.versao}</td>
+      </tr>`;
+    }
   });
   html += '</table>';
 } else {
