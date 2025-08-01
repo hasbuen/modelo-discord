@@ -33,7 +33,7 @@
         
           <!-- Versão alinhada à esquerda -->
           <div style="position: absolute; top: 10px; left: 10px; font-weight: bold;">
-            v3.0.0
+            v3.5.0
           </div>
 
           <!-- Botão de download alinhado à direita -->
@@ -68,6 +68,39 @@
         
 <!-- Histórico -->
 <div id="historico-container" style="display: block;">
+       <!-- Tabela oculta por padrão -->
+        <div class="tabela-container hidden" id="tabela-container">
+            <!-- Campo de busca -->
+            <input type="text" id="busca" class="input-busca" placeholder="Buscar registros..."
+                onkeyup="filtrarTabela()" />
+            <table id="tabelaRegistros">
+                <thead>
+                    <tr>
+                        <th onclick="ordenarTabela(0)">
+                            🔗 Ticket
+                            <span class="icone-ordenacao">&#10580;&#10581;</span>
+                        </th>
+                        <th onclick="ordenarTabela(1)">
+                            ⚙️ Protocolo
+                            <span class="icone-ordenacao">&#10580;&#10581;</span>
+                        </th>
+                        <th onclick="ordenarTabela(2)">
+                            Tipo
+                            <span class="icone-ordenacao">&#10580;&#10581;</span>
+                        </th>
+                        <th onclick="ordenarTabela(3)">
+                            Descrição
+                            <span class="icone-ordenacao">&#10580;&#10581;</span>
+                        </th>
+                        <th>
+                            💊 Paliativo
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Conteúdo dinâmico via JavaScript -->
+                </tbody>
+            </table>
 </div>
 
 <!-- Liberacoes -->
