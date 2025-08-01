@@ -26,6 +26,9 @@ async function obterListaPRTs() {
     const listaPRTs = registros.map(reg => reg.prt?.replace('#PRT', '')).filter(Boolean);
     console.table(listaPRTs);
     return listaPRTs;
+  } catch (err) {
+    console.error("Erro ao carregar registros da API:", err);
+    return [];
   }
 };
 
