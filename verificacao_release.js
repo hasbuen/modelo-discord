@@ -113,7 +113,7 @@ function renderizarLiberacoes(registros) {
       <td><a href="${reg.link}" target="_blank">${reg.ticket}</a></td>
       <td>#PRT${reg.protocolo}</td>
       <td>${reg.tipo}</td>
-      <td title="${reg.descricao}">${reg.descricao.slice(0, 40)}${reg.descricao.length > 40 ? '...' : ''}</td>
+      <td>${reg.descricao}</td>
     `;
 
     tbody.appendChild(tr);
