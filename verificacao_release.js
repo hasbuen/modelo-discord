@@ -19,67 +19,6 @@ function mostrarLiberacoes() {
     }
 }
 
-/*function processarRTF(event) {
-  const arquivo = event.target.files[0];
-   if (!arquivo) {
-    console.warn("Nenhum arquivo selecionado.");
-    return;
-  }
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    const texto = e.target.result;
-    // Extrai os protocolos do RTF (simplesmente como texto)
-    const protocolosLocalizados = [...texto.matchAll(/Protocolo:\s*(\S+)/g)].map(m => m[1]);
-    const encontrados = protocolosLocalizados.map(item => item.replace(')', ''));
-    console.table(encontrados);
-// Pega todos os protocolos da tabela de histórico
-const protocolosHTML = document.querySelectorAll('.tabela-historico td');
-const historicoPRTs = [...protocolosHTML]
-  .map(el => el.textContent.trim())
-  .map(texto => texto.replace(')', ''))
-  .filter(texto => !isNaN(texto)); // só números válidos
-    
-// Confronta os dois
-const resultados = encontrados.map(prt => {
-  const regexVersao = new RegExp(`Protocolo:\\s*${prt}\\)[\\s\\-–]*(.*)`);
-  const match = texto.match(regexVersao);
-let versao = match ? match[1].trim() : '';
-versao = versao.replace(/\\[a-zA-Z]+/g, '').trim();
-versao = versao.replace(/(?:\d+|\s+\d+)/g, '').trim();
-
-  return {
-    protocolo: prt,
-    estaRegistrado: historicoPRTs.includes(prt),
-    versao: versao
-  };
-});
-
-console.table(resultados.filter(r => r.estaRegistrado));
-
-// Verifica se algum foi encontrado
-const algumRegistrado = resultados.some(r => r.estaRegistrado);
-
-// Renderiza tabela ou mostra mensagem
-let html = '';
-if (algumRegistrado) {
-  html += '<tr><th style="text-align: left; padding: 6px;">Protocolo</th><th style="text-align: left; padding: 6px;">Versão</th></tr>';
-  resultados.forEach(r => {
-    if (r.estaRegistrado) {
-      html += `<tr>
-        <td style="padding: 6px;">#PRT${r.protocolo}</td>
-        <td style="padding: 6px;">${r.versao}</td>
-      </tr>`;
-    }
-  });
-  html += '</table>';
-} else {
-  html = '<p style="color: red; font-weight: bold;">Nenhum dos protocolos registrados no ProtoCord foi liberado no release selecionado!</p>';
-}
-
-document.getElementById('liberacoes-container').innerHTML = html;
-  };*/
-
 async function obterListaPRTs() {
   try { 
     const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos"); 
@@ -87,8 +26,8 @@ async function obterListaPRTs() {
     const listaPRTs = registros.map(reg => reg.prt?.replace('#PRT', '')).filter(Boolean);
     console.table(listaPRTs);
     return listaPRTs;
-}
-
+  }
+};
 
 function processarRTF(event) {
   const arquivo = event.target.files[0];
@@ -112,7 +51,7 @@ function processarRTF(event) {
     console.table(encontrados);
 
     // 2. Captura os protocolos da tabela
-    const historicoPRTs = obterListaPRTs().
+    const historicoPRTs = obterListaPRTs();
     console.table("historicoPRTs: "+ historicoPRTs);
     
     // === 3. Processa os resultados com suas versões ===
