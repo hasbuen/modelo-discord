@@ -687,26 +687,27 @@ th:hover .icone-ordenacao {
     align-self: center;
 }
 
-.tabela-comum {
-  width: 100%;
-  border-collapse: collapse;
-  background-color: #121212;
-  color: white;
-  margin-top: 10px;
+.tabela-liberacoes {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
 }
 
-.tabela-comum th,
-.tabela-comum td {
+.tabela-liberacoes th,
+.tabela-liberacoes td {
   border: 1px solid #2a2a2a;
   padding: 10px;
   text-align: left;
 }
 
-.tabela-comum thead {
+.tabela-liberacoes thead {
   background-color: #065f46; /* verde escuro */
 }
 
-.tabela-comum a {
+.tabela-liberacoes a {
   color: #4ade80; /* verde claro */
   text-decoration: underline;
 }
