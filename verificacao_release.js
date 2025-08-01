@@ -30,22 +30,25 @@ function processarRTF(event) {
   reader.onload = function(e) {
     const texto = e.target.result;
     // Extrai os protocolos do RTF (simplesmente como texto)
-    const protocolosLocalizados = [...texto.matchAll(/Protocolo:\s*(\S+)/g)].map(m => m[1])
+    const protocolosLocalizados = [...texto.matchAll(/Protocolo:\s*(\S+)/g)].map(m => m[1]);
     const encontrados = protocolosLocalizados.map(item => item.replace(')', ''));
     
 // Pega todos os protocolos da tabela de histórico
 const protocolosHTML = document.querySelectorAll('.tabela-historico td');
+console.log("protocolos da tabela históricos : " + protocolosHTML)
 const historicoPRTs = [...protocolosHTML]
   .map(el => el.textContent.trim())
   .filter(texto => texto.startsWith('#PRT'))
   .map(texto => texto.replace('#', ''));
-
+console.log("historicoPRTs : " + historicoPRTs)
 // Confronta os dois
 const resultados = encontrados.map(prt => ({
   protocolo: prt,
   estaRegistrado: historicoPRTs.includes(prt)
 }));
 
+    
+console.log("resultados : " + resultados)
 // Verifica se algum foi encontrado
 const algumRegistrado = resultados.some(r => r.estaRegistrado);
 
