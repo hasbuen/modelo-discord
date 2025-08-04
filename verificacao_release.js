@@ -112,7 +112,11 @@ function renderizarLiberacoes(registros) {
     tr.innerHTML = `
       <td><a href="${reg.link}" target="_blank">${reg.ticket}</a></td>
       <td>#PRT${reg.protocolo}</td>
-      <td>${reg.tipo}</td>
+      <td>
+         ${reg.tipo === '1'
+            ? '<span style="background-color: green; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Sugestão</span>'
+            : '<span style="background-color: red; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Erro</span>'}
+      </td>
       <td>${reg.descricao}</td>
     `;
 
