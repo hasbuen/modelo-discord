@@ -302,4 +302,5 @@ async function renderizarTabela() {
 // Chamar a API assim que a página carregar
 window.addEventListener('DOMContentLoaded', () => {
   renderizarTabela();
+  carregarRegistrosProtocolos();
 });
