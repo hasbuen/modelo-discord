@@ -38,7 +38,7 @@ function alternarTema(tema) {
     localStorage.removeItem('theme');
     html.removeAttribute('data-theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    document.getElementById(prefersDark ? 'tema-escuro' : 'tema-claro').classList.add('active');
+    document.getElementById(prefersDark ? 'tema-dark' : 'tema-light').classList.add('active');
   } else {
     localStorage.setItem('theme', tema);
     html.setAttribute('data-theme', tema);
@@ -147,7 +147,7 @@ ${paliativoFormatado}
 ${descricaoFormatada}
 
 - **Paliativo:**
-${paliativoFormatada}
+${paliativoFormatado}
 
 - **Prazo: ** ${prazo.value.trim()}
 - **Link >> ** ${link.value.trim()}
@@ -207,43 +207,6 @@ function ordenarTabela(idx) {
   linhas.forEach(l=>tbody.appendChild(l));
 }
 
-function mostrarModalPaliativo(paliativo) {
-  const modal = document.getElementById("errorModal");
-  const modalIcon = document.getElementById("modalIcon");
-  const modalText = document.getElementById("modalText");
-  modalIcon.innerHTML = `<i data-lucide="info" class="text-blue-400 w-5 h-5"></i>`;
-  modalText.textContent = paliativo.trim() || "Nenhum paliativo registrado.";
-  modal.classList.remove("hidden");
-  lucide.createIcons();
-}
-
-function copiarLinha(botao, paliativo) {
-  navigator.clipboard.writeText(paliativo.trim() || "")
-    .then(() => {
-      const originalText = botao.innerHTML;
-      botao.innerHTML = "OK";
-      setTimeout(() => {
-        botao.innerHTML = originalText;
-        lucide.createIcons();
-      }, 1000);
-    })
-    .catch(() => exibirModal("Erro ao copiar o paliativo.", "", "erro"));
-}
-
-async function abrirModalExclusao(id, ticket) {
-  if (confirm(`Tem certeza que deseja excluir o registro do ticket ${ticket}?`)) {
-    try {
-      await fetch(`https://modelo-discord-server.vercel.app/api/protocolos?id=${id}`, {
-        method: 'DELETE'
-      });
-      exibirModal("Registro excluído com sucesso!", "", "sucesso");
-      await renderizarTabela();
-    } catch {
-      exibirModal("Erro ao excluir registro.", "", "erro");
-    }
-  }
-}
-
 // Atualiza os contadores de erros e sugestões visíveis nos cards
 async function atualizarContadoresDosCards(registros) {
     const totalErros = registros.filter(r => r.tipo === '0').length;
@@ -252,11 +215,24 @@ async function atualizarContadoresDosCards(registros) {
     const erroEl = document.getElementById("contador-erros");
     const sugestaoEl = document.getElementById("contador-sugestoes");
 
-    erroEl.classList.remove("skeleton");
-    sugestaoEl.classList.remove("skeleton");
-    
-    erroEl.textContent = totalErros;
-    sugestaoEl.textContent = totalSugestoes;
+    // garante que a classe skeleton esteja ativa
+    erroEl.classList.add("skeleton");
+    sugestaoEl.classList.add("skeleton");
+
+    // opcional: mantém o espaço em branco durante o carregamento
+    erroEl.innerHTML = "&nbsp;";
+    sugestaoEl.innerHTML = "&nbsp;";
+
+    // simula delay de carregamento (ou aguarda dados reais)
+    setTimeout(() => {
+        // insere os valores reais
+        erroEl.textContent = totalErros;
+        sugestaoEl.textContent = totalSugestoes;
+
+        // remove a classe skeleton para exibir o texto
+        erroEl.classList.remove("skeleton");
+        sugestaoEl.classList.remove("skeleton");
+    }, 1000); // 1s é suficiente
 }
 
 async function renderizarTabela() {
@@ -265,7 +241,7 @@ async function renderizarTabela() {
   registrosCache = []; // força recarregamento
 
   const registros = await carregarRegistrosProtocolos();
-  await atualizarContadoresDosCards(registros); 
+  atualizarContadoresDosCards(registros); 
   // Mensagem quando não há registros
   if (!registros || registros.length === 0) {
     tbody.innerHTML = `
@@ -287,15 +263,6 @@ async function renderizarTabela() {
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
   };
-  const escJS = (s) => {
-    if (!s && s !== 0) return "";
-    return String(s)
-      .replace(/\\/g, "\\\\")
-      .replace(/'/g, "\\'")
-      .replace(/"/g, '\\"')
-      .replace(/\n/g, "\\n")
-      .replace(/\r/g, "");
-  };
 
   // Preenche a tabela
   registros.forEach(reg => {
@@ -306,49 +273,59 @@ async function renderizarTabela() {
       ? '<span class="px-3 py-1 text-xs font-bold rounded-full bg-green-700 text-green-100">Sugestão</span>'
       : '<span class="px-3 py-1 text-xs font-bold rounded-full bg-red-700 text-red-100">Erro</span>';
 
-    const descricaoEsc = escHTML(reg.descricao || "");
-    const descricaoTooltip = descricaoEsc.replace(/\n/g, "<br>");
-
-    // botões: Ver (abre paliativo), Copiar (chama copiarLinha), Excluir (chama abrirModalExclusao)
-    const paliativoForOnclick = escJS(reg.paliativo || "");
-    const ticketForOnclick = escJS(reg.ticket || "");
-
-    tr.innerHTML = `
-      <td class="py-2 px-3 align-top">
-        <a href="${escHTML(reg.link || '#')}" target="_blank" class="text-blue-400 underline">
-          ${escHTML(reg.ticket || '')}
-        </a>
-      </td>
-
-      <td class="py-2 px-3 align-top">${escHTML(reg.prt || '')}</td>
-
-      <td class="py-2 px-3 align-top">${badgeHTML}</td>
-
-      <td class="py-2 px-3 align-top">
-        <div class="tooltip-container relative">
-          <span class="desc-clamp">${escHTML((reg.descricao||'').slice(0, 300))}${(reg.descricao && reg.descricao.length>300 ? ' ...' : '')}</span>
-          <div class="tooltip-text">${descricaoTooltip}</div>
-        </div>
-      </td>
-
-      <td class="py-2 px-3 align-top flex gap-2">
-        <button class="bg-blue-600 hover:bg-blue-500 px-2 py-1 rounded text-xs"
-                onclick="mostrarModalPaliativo('${paliativoForOnclick}')">
-          Ver
-        </button>
-
-        <button class="bg-green-600 hover:bg-green-500 px-2 py-1 rounded text-xs"
-                onclick="copiarLinha(this, '${paliativoForOnclick}')">
-          <i data-lucide="copy" class="w-4 h-4"></i>
-        </button>
-
-        <button class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded text-xs"
-                onclick="abrirModalExclusao(${Number(reg.id)}, '${ticketForOnclick}')">
-          <i data-lucide="trash-2" class="w-4 h-4"></i>
-        </button>
-      </td>
+    // Cria as células da tabela
+    const tdTicket = document.createElement("td");
+    tdTicket.className = "py-2 px-3 align-top";
+    tdTicket.innerHTML = `<a href="${escHTML(reg.link || '#')}" target="_blank" class="text-blue-400 underline">${escHTML(reg.ticket || '')}</a>`;
+    
+    const tdPrt = document.createElement("td");
+    tdPrt.className = "py-2 px-3 align-top";
+    tdPrt.textContent = escHTML(reg.prt || '');
+    
+    const tdTipo = document.createElement("td");
+    tdTipo.className = "py-2 px-3 align-top";
+    tdTipo.innerHTML = badgeHTML;
+    
+    const tdDescricao = document.createElement("td");
+    tdDescricao.className = "py-2 px-3 align-top";
+    const descricaoTooltip = (reg.descricao || "").replace(/\n/g, "<br>");
+    tdDescricao.innerHTML = `
+      <div class="tooltip-container relative">
+        <span class="desc-clamp">${escHTML((reg.descricao || '').slice(0, 300))}${(reg.descricao && reg.descricao.length > 300 ? ' ...' : '')}</span>
+        <div class="tooltip-text">${descricaoTooltip}</div>
+      </div>
     `;
 
+    // Cria os botões e anexa os eventos
+    const tdAcoes = document.createElement("td");
+    tdAcoes.className = "py-2 px-3 align-top flex gap-2";
+
+    const btnVer = document.createElement("button");
+    btnVer.className = "bg-blue-600 hover:bg-blue-500 px-2 py-1 rounded text-xs";
+    btnVer.textContent = "Ver";
+    btnVer.onclick = () => mostrarModalPaliativo(reg.paliativo || "");
+    
+    const btnCopiar = document.createElement("button");
+    btnCopiar.className = "bg-green-600 hover:bg-green-500 px-2 py-1 rounded text-xs";
+    btnCopiar.innerHTML = '<i data-lucide="copy" class="w-4 h-4"></i>';
+    btnCopiar.onclick = () => copiarLinha(btnCopiar, reg.paliativo || "");
+
+    const btnExcluir = document.createElement("button");
+    btnExcluir.className = "bg-red-600 hover:bg-red-500 px-2 py-1 rounded text-xs";
+    btnExcluir.innerHTML = '<i data-lucide="trash-2" class="w-4 h-4"></i>';
+    btnExcluir.onclick = () => abrirModalExclusao(Number(reg.id), reg.ticket || "");
+
+    tdAcoes.appendChild(btnVer);
+    tdAcoes.appendChild(btnCopiar);
+    tdAcoes.appendChild(btnExcluir);
+
+    // Anexa as células à linha
+    tr.appendChild(tdTicket);
+    tr.appendChild(tdPrt);
+    tr.appendChild(tdTipo);
+    tr.appendChild(tdDescricao);
+    tr.appendChild(tdAcoes);
+    
     tbody.appendChild(tr);
   });
 
