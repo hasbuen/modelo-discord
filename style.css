@@ -8,3 +8,17 @@
 .desc-clamp {
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
+
+.skeleton {
+  background: linear-gradient(90deg, #2e2e2e 25%, #3a3a3a 50%, #2e2e2e 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 0.375rem;
+  height: 2.5rem;
+  width: 100%;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
