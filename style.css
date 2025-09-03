@@ -1,10 +1,72 @@
-/* Quase vazio, só utilitários extras que Tailwind 2 não cobre */
+:root {
+  /* Cores do Tema Escuro (Padrão) */
+  --cor-fundo-principal: #1f2227;
+  --cor-fundo-card: #2d3035;
+  --cor-fundo-modal: #1e2124;
+  --cor-fundo-tabela: #111827;
+  --cor-fundo-cabecalho-tabela: #1f2937;
+  --cor-fundo-input: #1e2124;
+  --cor-texto: #e5e7eb;
+  --cor-borda-tabela: #374151;
+  --cor-hover-tabela: #1f2937;
+  --cor-fundo-botao-neutro: #374151;
+}
+
+[data-theme="light"] {
+  /* Cores do Tema Claro */
+  --cor-fundo-principal: #f3f4f6; /* Cinza bem leve */
+  --cor-fundo-card: #e5e7eb; /* Outro cinza leve */
+  --cor-fundo-modal: #d1d5db; /* Cinza para modais */
+  --cor-fundo-tabela: #f9fafb;
+  --cor-fundo-cabecalho-tabela: #e5e7eb;
+  --cor-fundo-input: #d1d5db;
+  --cor-texto: #1f2937;
+  --cor-borda-tabela: #d1d5db;
+  --cor-hover-tabela: #e5e7eb;
+  --cor-fundo-botao-neutro: #d1d5db;
+}
+
+/* Aplica as variáveis CSS nas classes do Tailwind */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--cor-fundo-principal);
+  color: var(--cor-texto);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.bg-gray-800 { background-color: var(--cor-fundo-card) !important; }
+.bg-gray-900 { background-color: var(--cor-fundo-modal) !important; }
+.text-gray-200 { color: var(--cor-texto) !important; }
+.text-gray-400 { color: var(--cor-borda-tabela) !important; }
+.divide-gray-700 > :not([hidden]) ~ :not([hidden]) { border-color: var(--cor-borda-tabela) !important; }
+.hover\:bg-gray-800:hover { background-color: var(--cor-hover-tabela) !important; }
+.bg-gray-800.sticky { background-color: var(--cor-fundo-cabecalho-tabela) !important; }
+.bg-gray-700 { background-color: var(--cor-fundo-botao-neutro) !important; }
+
+/* Garante que o fundo dos inputs e textareas seja a cor definida na variável */
+.px-3.py-2.rounded-md.bg-gray-800,
+.flex-1.px-3.py-2.rounded-md.bg-gray-800 {
+  background-color: var(--cor-fundo-input) !important;
+}
+
+/* Garante que o texto dentro dos botões coloridos seja branco para destaque */
+.bg-red-700, .bg-green-700, .bg-blue-600, .bg-red-600, .bg-green-600 {
+  color: white !important;
+}
+
+/* Estilos de utilidade */
 .tooltip-text {
   visibility: hidden; opacity: 0; transition: opacity .2s;
+  background-color: rgba(30,30,30,.95); color:#fff;
+  padding:8px 12px; border-radius:8px;
+  position:absolute; z-index:10; bottom:125%; left:50%; transform:translateX(-50%);
+  max-width:320px; font-size:.875rem;
 }
+
 .tooltip-container:hover .tooltip-text {
   visibility: visible; opacity: 1;
 }
+
 .desc-clamp {
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
@@ -21,4 +83,14 @@
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
+}
+
+[data-theme="light"] .skeleton {
+  background: linear-gradient(90deg, #e0e0e0 25%, #d1d1d1 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+}
+
+.toggle-theme-btn.active {
+  background-color: #4b5563; /* Tailwind gray-600 */
+  color: #fff;
 }
