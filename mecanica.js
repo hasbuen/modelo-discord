@@ -315,6 +315,7 @@ async function renderizarTabela() {
 
 // Chamar a API assim que a página carregar
 window.addEventListener('DOMContentLoaded', () => {
-   await atualizarContadoresDosCards();
-   await renderizarTabela();
+  const registros = await carregarRegistrosProtocolos();
+  await atualizarContadoresDosCards(registros);
+  await renderizarTabela();
 });
