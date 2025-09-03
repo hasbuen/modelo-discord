@@ -204,14 +204,24 @@ async function atualizarContadoresDosCards(registros) {
     const erroEl = document.getElementById("contador-erros");
     const sugestaoEl = document.getElementById("contador-sugestoes");
 
-    // Aplica delay para simular carregamento
-    setTimeout(() => {
-        erroEl.classList.remove("skeleton-loader");
-        sugestaoEl.classList.remove("skeleton-loader");
+    // garante que a classe skeleton esteja ativa
+    erroEl.classList.add("skeleton");
+    sugestaoEl.classList.add("skeleton");
 
+    // opcional: mantém o espaço em branco durante o carregamento
+    erroEl.innerHTML = "&nbsp;";
+    sugestaoEl.innerHTML = "&nbsp;";
+
+    // simula delay de carregamento (ou aguarda dados reais)
+    setTimeout(() => {
+        // insere os valores reais
         erroEl.textContent = totalErros;
         sugestaoEl.textContent = totalSugestoes;
-    }, 2000); // 2 segundos
+
+        // remove a classe skeleton para exibir o texto
+        erroEl.classList.remove("skeleton");
+        sugestaoEl.classList.remove("skeleton");
+    }, 1000); // 1s é suficiente
 }
 
 async function renderizarTabela() {
