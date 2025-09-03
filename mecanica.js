@@ -38,11 +38,17 @@ function alternarTema(tema) {
     localStorage.removeItem('theme');
     html.removeAttribute('data-theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    document.getElementById(prefersDark ? 'tema-escuro' : 'tema-claro').classList.add('active');
+    const botaoPreferido = document.getElementById(prefersDark ? 'tema-escuro' : 'tema-claro');
+    if (botaoPreferido) {
+      botaoPreferido.classList.add('active');
+    }
   } else {
     localStorage.setItem('theme', tema);
     html.setAttribute('data-theme', tema);
-    document.getElementById(`tema-${tema}`).classList.add('active');
+    const botaoTema = document.getElementById(`tema-${tema}`);
+    if (botaoTema) {
+      botaoTema.classList.add('active');
+    }
   }
 }
 
@@ -52,10 +58,16 @@ function carregarTemaPreferido() {
   
   if (temaSalvo) {
     html.setAttribute('data-theme', temaSalvo);
-    document.getElementById(`tema-${temaSalvo}`).classList.add('active');
+    const botaoTema = document.getElementById(`tema-${temaSalvo}`);
+    if (botaoTema) {
+      botaoTema.classList.add('active');
+    }
   } else {
     html.removeAttribute('data-theme');
-    document.getElementById('tema-sistema').classList.add('active');
+    const botaoSistema = document.getElementById('tema-sistema');
+    if (botaoSistema) {
+      botaoSistema.classList.add('active');
+    }
   }
 }
 
@@ -361,10 +373,10 @@ async function renderizarTabela() {
 // Chamar a API assim que a página carregar
 window.addEventListener('DOMContentLoaded', async () => {
     try {
+        carregarTemaPreferido();
         const registros = await carregarRegistrosProtocolos();
         await atualizarContadoresDosCards(registros);
         await renderizarTabela();
-        carregarTemaPreferido();
     } catch (err) {
         console.error("Erro ao inicializar a página:", err);
     }
