@@ -2,41 +2,6 @@ function abrirArquivoRTF() {
   document.getElementById('arquivoRTF').click();
 }
 
-document.getElementById("toggleLiberacoes").addEventListener("click", function () {
-  document.getElementById("historico-container").style.display = "none";
-  const lib = document.getElementById("liberacoes-container");
-  lib.classList.remove("hidden");
-  lib.style.display = "block";
-  abrirArquivoRTF();
-});
-
-function mostrarLiberacoes() {
-  const liberacoes = document.getElementById("liberacoes-container");
-  const tabela = document.getElementById("tabela-container");
-
-  // Sempre fecha o container de histórico quando abrir liberações
-  tabela.classList.add("hidden");
-
-  liberacoes.classList.toggle("hidden");
-}
-
-async function obterListaPRTs() {
-  try {
-    const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
-    const registros = await res.json();
-    return registros.filter(reg => reg.prt).map(reg => ({
-      protocolo: reg.prt.replace('#PRT', ''),
-      tipo: reg.tipo || '',
-      ticket: reg.ticket || '',
-      descricao: reg.descricao || '',
-      link: reg.link || ''
-    }));
-  } catch (err) {
-    console.error("Erro API:", err);
-    return [];
-  }
-}
-
 function processarRTF(event) {
   const arquivo = event.target.files[0];
   if (!arquivo) return;
@@ -63,6 +28,23 @@ function processarRTF(event) {
   reader.readAsText(arquivo);
 }
 
+async function obterListaPRTs() {
+  try {
+    const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
+    const registros = await res.json();
+    return registros.filter(reg => reg.prt).map(reg => ({
+      protocolo: reg.prt.replace('#PRT', ''),
+      tipo: reg.tipo || '',
+      ticket: reg.ticket || '',
+      descricao: reg.descricao || '',
+      link: reg.link || ''
+    }));
+  } catch (err) {
+    console.error("Erro API:", err);
+    return [];
+  }
+}
+
 function renderizarLiberacoes(registros) {
   const container = document.querySelector("#liberacoes-container");
 
@@ -71,9 +53,6 @@ function renderizarLiberacoes(registros) {
   header.className = "flex items-center justify-between mb-3";
   header.innerHTML = `
     <div class="font-bold">Protocolos encontrados: <span>${registros.length}</span></div>
-    <button class="bg-gray-700 px-3 py-1 rounded hover:bg-gray-600" onclick="document.getElementById('historico-container').style.display='block'; document.getElementById('liberacoes-container').style.display='none'">
-      ⬅ Voltar ao histórico
-    </button>
   `;
   container.appendChild(header);
 
