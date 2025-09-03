@@ -373,10 +373,10 @@ async function renderizarTabela() {
 // Chamar a API assim que a página carregar
 window.addEventListener('DOMContentLoaded', async () => {
     try {
-        carregarTemaPreferido();
         const registros = await carregarRegistrosProtocolos();
         await atualizarContadoresDosCards(registros);
         await renderizarTabela();
+        carregarTemaPreferido();
     } catch (err) {
         console.error("Erro ao inicializar a página:", err);
     }
