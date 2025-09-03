@@ -141,7 +141,7 @@ async function salvarRegistro() {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(registro)
     });
     exibirModal("Registro salvo com sucesso!", "", "sucesso");
-    renderizarTabela();
+    await renderizarTabela();
   } catch { exibirModal("Erro ao salvar registro.", "", "erro"); }
 }
 
@@ -317,6 +317,6 @@ async function atualizarContadoresDosCards() {
 
 // Chamar a API assim que a página carregar
 window.addEventListener('DOMContentLoaded', () => {
-  renderizarTabela();
-  carregarRegistrosProtocolos();
+   await atualizarContadoresDosCards();
+   await renderizarTabela();
 });
