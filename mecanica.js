@@ -196,17 +196,8 @@ function mostrarTabela() {
   lucide.createIcons();
 }
 
-async function renderizarTabela() {
-  const tbody = document.querySelector("#tabelaRegistros tbody");
-  tbody.innerHTML = "";
-  registrosCache = []; // força recarregamento
-
 // Atualiza os contadores de erros e sugestões visíveis nos cards
-async function atualizarContadoresDosCards() {
-    const registros = await carregarRegistrosProtocolos();
-
-    //const totalErros = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "erro").length;
-    //const totalSugestoes = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "sugestao").length;
+async function atualizarContadoresDosCards(registros) {
     const totalErros = registros.filter(r => r.tipo === '0').length;
     const totalSugestoes = registros.filter(r => r.tipo === '1').length;
 
@@ -223,6 +214,13 @@ async function atualizarContadoresDosCards() {
     }, 2000); // 2 segundos
 }
 
+async function renderizarTabela() {
+  const tbody = document.querySelector("#tabelaRegistros tbody");
+  tbody.innerHTML = "";
+  registrosCache = []; // força recarregamento
+
+  const registros = await carregarRegistrosProtocolos();
+  atualizarContadoresDosCards(registros); 
   // Mensagem quando não há registros
   if (!registros || registros.length === 0) {
     tbody.innerHTML = `
