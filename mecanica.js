@@ -174,28 +174,6 @@ function ordenarTabela(idx) {
   linhas.forEach(l=>tbody.appendChild(l));
 }
 
-function mostrarTabela() {
-  const tabela = document.getElementById("tabela-container");
-  const liberacoes = document.getElementById("liberacoes-container");
-  const icone = document.getElementById("icon-toggle");
-  const texto = document.getElementById("texto-toggle");
-
-  // Sempre fecha o container de liberações quando abrir histórico
-  liberacoes.classList.add("hidden");
-
-  tabela.classList.toggle("hidden");
-
-  if (tabela.classList.contains("hidden")) {
-    icone.setAttribute("data-lucide", "chevron-down");
-    texto.textContent = "📜 Exibir histórico!";
-  } else {
-    icone.setAttribute("data-lucide", "chevron-up");
-    texto.textContent = "📜 Ocultar histórico!";
-  }
-
-  lucide.createIcons();
-}
-
 // Atualiza os contadores de erros e sugestões visíveis nos cards
 async function atualizarContadoresDosCards(registros) {
     const totalErros = registros.filter(r => r.tipo === '0').length;
@@ -230,7 +208,6 @@ async function renderizarTabela() {
   registrosCache = []; // força recarregamento
 
   const registros = await carregarRegistrosProtocolos();
-  atualizarContadoresDosCards(registros); 
   // Mensagem quando não há registros
   if (!registros || registros.length === 0) {
     tbody.innerHTML = `
