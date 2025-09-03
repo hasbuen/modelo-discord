@@ -1,125 +1,110 @@
 function abrirArquivoRTF() {
   document.getElementById('arquivoRTF').click();
 }
-document.getElementById("toggleLiberacoes").addEventListener("click", function () {
-  const div = document.getElementById("verificarLiberacoes");
-  if (div.style.display === "none") {
-    div.style.display = "block";
-    this.textContent = "📂 Ocultar liberações ▲";
-  } else {
-    div.style.display = "none";
-    this.textContent = "📂 Mostrar liberações ▼";
-    abrirArquivoRTF(); 
-  }
-});
-
 
 document.getElementById("toggleLiberacoes").addEventListener("click", function () {
   document.getElementById("historico-container").style.display = "none";
-  document.getElementById("liberacoes-container").style.display = "block";
-  abrirArquivoRTF(); // Abre o seletor para .rtf
+  const lib = document.getElementById("liberacoes-container");
+  lib.classList.remove("hidden");
+  lib.style.display = "block";
+  abrirArquivoRTF();
 });
+
+function mostrarLiberacoes() {
+  const liberacoes = document.getElementById("liberacoes-container");
+  const tabela = document.getElementById("tabela-container");
+
+  // Sempre fecha o container de histórico quando abrir liberações
+  tabela.classList.add("hidden");
+
+  liberacoes.classList.toggle("hidden");
+}
 
 async function obterListaPRTs() {
   try {
     const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
     const registros = await res.json();
-    
-    // Retorna objetos com prt, ticket e link
-     const listaPRTs = registros
-      .filter(reg => reg.prt) // filtra os registros válidos
-      .map(reg => ({
-        protocolo: reg.prt.replace('#PRT', ''),
-        tipo: reg.tipo || '',
-        ticket: reg.ticket || '',
-        descricao: reg.descricao || '',
-        link: reg.link || ''
-      }));
-    
-    return listaPRTs;
+    return registros.filter(reg => reg.prt).map(reg => ({
+      protocolo: reg.prt.replace('#PRT', ''),
+      tipo: reg.tipo || '',
+      ticket: reg.ticket || '',
+      descricao: reg.descricao || '',
+      link: reg.link || ''
+    }));
   } catch (err) {
-    console.error("Erro ao carregar registros da API:", err);
+    console.error("Erro API:", err);
     return [];
   }
-};
+}
 
 function processarRTF(event) {
   const arquivo = event.target.files[0];
-  if (!arquivo) {
-    console.warn("Nenhum arquivo selecionado.");
-    return;
-  }
-
+  if (!arquivo) return;
   const reader = new FileReader();
-
   reader.onload = async function (e) {
     const texto = e.target.result;
-
-    const protocolosLocalizados = [...texto.matchAll(/Protocolo:\s*(\d+)/g)].map(m => m[1]);
-    const encontrados = [...new Set(protocolosLocalizados)];
+    const encontrados = [...new Set([...texto.matchAll(/Protocolo:\s*(\d+)/g)].map(m => m[1]))];
     const historicoPRTs = await obterListaPRTs();
-
     const resultados = encontrados.map(protocolo => {
       const registro = historicoPRTs.find(reg => reg.protocolo === protocolo);
-      return {
-        protocolo,
-        tipo: registro?.tipo || '',
-        ticket: registro?.ticket || '',
-        descricao: registro?.descricao || '',
-        link: registro?.link || '',
-        estaRegistrado: !!registro
-      };
+      return { protocolo, ...registro, estaRegistrado: !!registro };
     });
 
     const container = document.getElementById('liberacoes-container');
-    container.innerHTML = ""; // Limpa tudo antes
-
+    container.innerHTML = "";
     const encontradosRegistrados = resultados.filter(r => r.estaRegistrado);
 
     if (encontradosRegistrados.length) {
       renderizarLiberacoes(encontradosRegistrados);
     } else {
-      container.innerHTML = '<p style="color: red; font-weight: bold;">Nenhum dos protocolos registrados no ProtoCord foi liberado no release selecionado!</p>';
+      container.innerHTML = `<p class="bg-red-900 text-red-200 p-3 rounded-md">Nenhum protocolo registrado foi liberado neste release!</p>`;
     }
   };
-
   reader.readAsText(arquivo);
 }
 
 function renderizarLiberacoes(registros) {
   const container = document.querySelector("#liberacoes-container");
 
-  const tabela = document.createElement("table");
-  tabela.classList.add("tabela-liberacoes");
+  // Cabeçalho
+  const header = document.createElement("div");
+  header.className = "flex items-center justify-between mb-3";
+  header.innerHTML = `
+    <div class="font-bold">Protocolos encontrados: <span>${registros.length}</span></div>
+    <button class="bg-gray-700 px-3 py-1 rounded hover:bg-gray-600" onclick="document.getElementById('historico-container').style.display='block'; document.getElementById('liberacoes-container').style.display='none'">
+      ⬅ Voltar ao histórico
+    </button>
+  `;
+  container.appendChild(header);
 
+  const tabela = document.createElement("table");
+  tabela.className = "w-full text-sm bg-gray-900 rounded-lg overflow-hidden shadow-lg";
   tabela.innerHTML = `
-    <thead>
+    <thead class="bg-gray-800">
       <tr>
-        <th>Ticket</th>
-        <th>Protocolo</th>
-        <th>Tipo</th>
-        <th>descricao</th>
+        <th class="py-2 px-3 text-left">Ticket</th>
+        <th class="py-2 px-3 text-left">Protocolo</th>
+        <th class="py-2 px-3 text-left">Tipo</th>
+        <th class="py-2 px-3 text-left">Descrição</th>
       </tr>
     </thead>
-    <tbody></tbody>
+    <tbody class="divide-y divide-gray-700"></tbody>
   `;
 
   const tbody = tabela.querySelector("tbody");
-
   registros.forEach(reg => {
     const tr = document.createElement("tr");
-
+    tr.className = "hover:bg-gray-800";
+    const badge = reg.tipo === '1'
+      ? '<span class="px-3 py-1 text-xs font-bold rounded-full bg-green-700 text-green-100">Sugestão</span>'
+      : '<span class="px-3 py-1 text-xs font-bold rounded-full bg-red-700 text-red-100">Erro</span>';
+    const descricaoHTML = `<div class="desc-clamp" title="${(reg.descricao || "").replace(/"/g,'&quot;')}">${reg.descricao || ""}</div>`;
     tr.innerHTML = `
-      <td><a href="${reg.link}" target="_blank">${reg.ticket}</a></td>
-      <td>#PRT${reg.protocolo}</td>
-      <td>
-         ${reg.tipo === '1'
-            ? '<span style="background-color: green; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Sugestão</span>'
-            : '<span style="background-color: red; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">Erro</span>'}
-      </td>
-      <td>${reg.descricao}</td>
+      <td class="py-2 px-3"><a href="${reg.link}" target="_blank" class="text-blue-400 underline">${reg.ticket}</a></td>
+      <td class="py-2 px-3">#PRT${reg.protocolo}</td>
+      <td class="py-2 px-3">${badge}</td>
+      <td class="py-2 px-3">${descricaoHTML}</td>
     `;
-
     tbody.appendChild(tr);
   });
 
