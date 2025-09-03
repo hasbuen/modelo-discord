@@ -298,3 +298,8 @@ async function renderizarTabela() {
     lucide.createIcons();
   }
 }
+
+// Chamar a API assim que a página carregar
+window.addEventListener('DOMContentLoaded', () => {
+  buscarDados();
+});
