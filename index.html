@@ -1,315 +1,148 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-    <!-- Define a codificação de caracteres -->
-    <meta charset="UTF-8">
-    <!-- Responsivo para diferentes dispositivos -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProtoCord</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ProtoCord</title>
 
-    <!-- Ícone da aba com emoji -->
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🩹</text></svg>">
+  <!-- Normalize -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+  <!-- Tailwind -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Animate.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <!-- Inter Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Script do Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0FRFV9Z0P1"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-0FRFV9Z0P1');
-    </script>
-
-    <!-- Ícones Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
-    <!-- Estilos personalizados -->
-    <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; background: #1f2227; color: #e5e7eb; }
+    .tooltip-text { visibility:hidden; opacity:0; transition:opacity .2s;
+      background:rgba(30,30,30,.95); color:#fff; padding:8px 12px; border-radius:8px;
+      position:absolute; z-index:10; bottom:125%; left:50%; transform:translateX(-50%);
+      max-width:320px; font-size:.875rem;
+    }
+    .tooltip-container:hover .tooltip-text { visibility:visible; opacity:1; }
+    .desc-clamp { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  </style>
 </head>
+<body class="p-6">
 
-<body>
-    <div class="container" style="position: relative;">
-        
-          <!-- Versão alinhada à esquerda -->
-          <div style="position: absolute; top: 10px; left: 10px; font-weight: bold;">
-            v3.5.0
-          </div>
+  <div class="max-w-6xl mx-auto space-y-6">
 
-          <!-- Botão de download alinhado à direita -->
-          <div style="position: absolute; top: 10px; right: 10px;">
-            <a href="https://github.com/hasbuen/ProtoCordMonitor/releases/download/v1.0.0/Setup_ProtoCord_Monitor.exe" class="botao-destaque">
-              📥 Baixar ProtoCord Monitor
-            </a>
-          </div>
-
-        <!-- Cards de contadores: erros e sugestões -->
-        <div class="contador-cards-container">
-            <div class="contador-card contador-card-erros">
-                <h3>🔧 Erros</h3>
-                <p id="contador-erros" class="skeleton-loader">&nbsp;</p>
-            </div>
-            <div class="contador-card contador-card-sugestoes">
-                <h3>💡 Sugestões</h3>
-                <p id="contador-sugestoes" class="skeleton-loader">&nbsp;</p>
-            </div>
-        </div>
-
-<div style="display: flex; gap: 10px; margin-bottom: 10px;">
-    <!-- Botão para exibir ou ocultar a tabela -->
-  <button class="toggle-button bg-green-800 text-white px-4 py-2 rounded-md" onclick="mostrarTabela()">
-    <span id="texto-toggle">📜 Exibir histórico</span>
-    <i id="icon-toggle" class="fas fa-chevron-down icon"></i>
-  </button>
-<!--  <button id="toggleHistorico">
-    📜 Exibir histórico
-  </button> -->
-
-  <button id="toggleLiberacoes" class="bg-green-800 text-white px-4 py-2 rounded-md">
-    📂 Verificar liberações
-  </button>
-  <!-- Input invisível para upload -->
-  <input type="file" id="arquivoRTF" accept=".rtf" style="display: none;" onchange="processarRTF(event)" />
-</div>
-
-        
-<!-- Histórico -->
-<div id="historico-container" style="display: block;">
-   <!-- Tabela oculta por padrão -->
-        <div class="tabela-container hidden" id="tabela-container">
-            <!-- Campo de busca -->
-            <input type="text" id="busca" class="input-busca" placeholder="Buscar registros..."
-                onkeyup="filtrarTabela()" />
-            <table id="tabelaRegistros">
-                <thead>
-                    <tr>
-                        <th onclick="ordenarTabela(0)">
-                            🔗 Ticket
-                            <span class="icone-ordenacao">&#10580;&#10581;</span>
-                        </th>
-                        <th onclick="ordenarTabela(1)">
-                            ⚙️ Protocolo
-                            <span class="icone-ordenacao">&#10580;&#10581;</span>
-                        </th>
-                        <th onclick="ordenarTabela(2)">
-                            Tipo
-                            <span class="icone-ordenacao">&#10580;&#10581;</span>
-                        </th>
-                        <th onclick="ordenarTabela(3)">
-                            Descrição
-                            <span class="icone-ordenacao">&#10580;&#10581;</span>
-                        </th>
-                        <th>
-                            💊 Paliativo
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Conteúdo dinâmico via JavaScript -->
-                </tbody>
-            </table>
-        </div>
-</div>
-
-<!-- Liberacoes -->
-<div id="liberacoes-container" class="hidden" style="display: none;">
-    <!-- ... será preenchido dinamicamente ... -->
-</div>
-        
-        <!-- Título principal -->
-        <h1>🩹 ProtoCord</h1>
-
-        <!-- Layout principal em duas colunas -->
-        <div class="grid">
-            <!-- Coluna da esquerda: inputs -->
-            <div class="column-left">
-                <div class="inputs">
-                    <!-- Seleção do tipo: Erro ou Sugestão -->
-                    <div class="radio-group">
-                        <div>
-                            <span class="tipo-opcao erro" data-tipo="erro">Erro</span>
-                            <span class="tipo-opcao sugestao" data-tipo="sugestao">Sugestão</span>
-                            <input type="hidden" id="tipo" name="tipo">
-                        </div>
-                    </div>
-
-                    <!-- Script para alternar visual e valor do tipo selecionado -->
-                    <script>
-                        document.querySelectorAll(".tipo-opcao").forEach(el => {
-                            el.onclick = () => {
-                                document.querySelectorAll(".tipo-opcao").forEach(e => e.classList.remove("ativo"));
-                                el.classList.add("ativo");
-                                document.getElementById("tipo").value = el.dataset.tipo;
-                            };
-                        });
-                    </script>
-
-                    <!-- Campo PRT -->
-                    <div>
-                        <label for="prt">PRT:</label>
-                        <input type="text" id="prt" placeholder="Digite o PRT" required>
-                    </div>
-
-                    <!-- Campo Ticket -->
-                    <div>
-                        <label for="ticket">Ticket:</label>
-                        <input type="text" id="ticket" placeholder="Digite o número do ticket.." required>
-                    </div>
-
-                    <!-- Campo Descrição -->
-                    <div>
-                        <label for="descricao">Descrição resumida:</label>
-                        <textarea id="descricao" placeholder="Digite a descrição resumida aqui.." required></textarea>
-                    </div>
-
-                    <!-- Campo Paliativo com opções rápidas -->
-                    <div>
-                        <div class="input-group">
-                            <label for="paliativo">Paliativo:</label>
-                            <select id="paliativoSelect" onchange="togglePaliativo()">
-                                <option value=""></option>
-                                <option value="não encontrado.">Paliativo não encontrado.</option>
-                                <option value="nova funcionalidade.">Nova funcionalidade.</option>
-                            </select>
-                        </div>
-                        <textarea id="paliativo" placeholder="Digite o paliativo aqui.." required></textarea>
-                    </div>
-
-                    <!-- Campo Prazo com seleção rápida -->
-                    <div>
-                        <div class="input-group">
-                            <label for="prazo">Prazo:</label>
-                            <select id="prazoSelect" onchange="togglePrazo()">
-                                <option value=""></option>
-                                <option value="encaminhado para avaliação de alocação.">Encaminhar para avaliação de
-                                    alocação.</option>
-                                <option value="registrado no banco de dados RhedeSAC.">Registrar no banco de dados
-                                    RhedeSAC.</option>
-                            </select>
-                        </div>
-                        <input type="text" id="prazo" placeholder="Digite o prazo..." />
-                    </div>
-
-                    <!-- Script para preencher automaticamente os campos de paliativo e prazo -->
-                    <script>
-                        function togglePaliativo() {
-                            const select = document.getElementById("paliativoSelect");
-                            const textarea = document.getElementById("paliativo");
-
-                            if (select.value) {
-                                textarea.value = select.value;
-                                textarea.disabled = true;
-                            } else {
-                                textarea.value = "";
-                                textarea.disabled = false;
-                            }
-                        }
-
-                        function togglePrazo() {
-                            const select = document.getElementById("prazoSelect");
-                            const input = document.getElementById("prazo");
-
-                            if (select.value) {
-                                input.value = select.value;
-                                input.disabled = true;
-                            } else {
-                                input.value = "";
-                                input.disabled = false;
-                            }
-                        }
-                    </script>
-
-                    <!-- Campo Link -->
-                    <div class="link">
-                        <label for="link">Link:</label>
-                        <input type="text" class="link" id="link" placeholder="Cole o link do ticket aqui.." required>
-                    </div>
-                </div>
-
-                <!-- Botão para gerar o texto final -->
-                <button onclick="gerarTexto()">Gerar</button>
-            </div>
-
-            <!-- Coluna da direita: exibição do resultado -->
-            <div class="column-right">
-                <label for="output">Cole no discord:</label>
-                <textarea id="output" readonly></textarea>
-                <button onclick="copiarTexto()">Copiar</button>
-            </div>
-        </div>
+    <!-- Header centralizado -->
+    <div class="flex justify-center items-center gap-2 mb-6">
+      <i data-lucide="bandage" class="w-7 h-7 text-blue-400"></i>
+      <h1 class="text-3xl font-bold">ProtoCord</h1>
     </div>
 
-<!--
-<div id="verificarLiberacoes" class="mt-4">
-<input type="file" id="arquivoRTF" style="display:none" accept=".rtf" onchange="processarRTF(event)">
-  <input type="text" id="buscarLiberacoes" placeholder="Buscar liberações..." class="p-2 mb-2 w-full rounded" />
-
-  <table class="min-w-full table-auto border border-gray-700 text-sm text-white bg-gray-900 rounded-md">
-    <thead class="bg-green-800 text-white">
-      <tr>
-        <th class="px-4 py-2">Protocolo</th>
-        <th class="px-4 py-2">Ticket</th>
-
-      </tr>
-    </thead>
-    <tbody id="liberacoesBody">
-    </tbody>
-  </table>
-</div>
-    -->
-
-    <!-- Modal de mensagens de erro/sucesso/info -->
-    <div id="errorModal" class="modal">
-        <div class="modal-content">
-            <p id="modalMessage">
-                <span id="modalIcon" style="margin-right: 8px;"></span>
-                <span id="modalText"></span>
-            </p>
-            <div class="modal-footer">
-                <button class="close-btn" onclick="fecharModal()">Compreendi</button>
-            </div>
-        </div>
+    <!-- Contadores -->
+    <div class="flex flex-wrap gap-4 justify-center animate__animated animate__fadeIn">
+      <div class="bg-red-700 rounded-xl p-6 text-center w-40 shadow-lg">
+        <h3 class="font-semibold text-lg">Erros</h3>
+        <p id="contador-erros" class="text-3xl font-bold">0</p>
+      </div>
+      <div class="bg-green-700 rounded-xl p-6 text-center w-40 shadow-lg">
+        <h3 class="font-semibold text-lg">Sugestões</h3>
+        <p id="contador-sugestoes" class="text-3xl font-bold">0</p>
+      </div>
     </div>
 
-    <!-- Modal específico para visualizar o paliativo -->
-    <div id="paliativoModal" class="modal">
-        <div class="modal-content" id="paliativoModalContent">
-            <div class="modal-header" id="paliativoModalHeader" style="cursor: move;">
-                <strong style="flex: 1;">💊 Paliativo</strong>
-            </div>
-            <div class="modal-body">
-                <pre id="paliativoModalText" style="white-space: pre-wrap;"></pre>
-            </div>
-            <div class="modal-footer">
-                <button onclick="copiarTextoPaliativo()" class="btn-paliativo">Copiar Texto</button>
-                <button onclick="fecharPaliativoModal()" class="btn-paliativo">Fechar</button>
-            </div>
-        </div>
+    <!-- Ações topo -->
+    <div class="flex flex-wrap gap-3">
+      <button onclick="mostrarTabela()" class="flex items-center gap-2 bg-gray-800 px-4 py-2 rounded-lg hover:bg-gray-700 transition">
+        <span id="texto-toggle">📜 Exibir histórico!</span>
+        <i id="icon-toggle" data-lucide="chevron-down" class="w-4 h-4"></i>
+      </button>
+
+      <button id="toggleLiberacoes" class="flex items-center gap-2 bg-gray-800 px-4 py-2 rounded-lg hover:bg-gray-700 transition">
+        <i data-lucide="folder-open" class="w-4 h-4"></i> Verificar liberações
+      </button>
+
+      <input type="file" id="arquivoRTF" accept=".rtf" class="hidden" onchange="processarRTF(event)" />
     </div>
 
-<div id="modalExclusao" class="modal-exclusao" style="display: none;">
-  <div class="modal-conteudo">
-    <h2 class="modal-titulo">
-      <i class="fas fa-trash-alt" style="color: #dc3545; margin-right: 8px;"></i>
-      Confirmar Exclusão
-    </h2>
-    <p class="modal-texto">
-      Para excluir o registro, digite <strong id="ticketEsperado" style="color:#2ecc71;"></strong> abaixo:
-    </p>
-    <input type="text" id="inputConfirmacao" class="modal-input" oninput="verificarConfirmacao()" placeholder="Digite o número do protocolo" />
-    
-    <div class="modal-botoes">
-      <button id="btnConfirmar" onclick="confirmarExclusao()" class="btn-confirmar" disabled>Confirmar</button>
-      <button onclick="fecharModalEclusao()" class="btn-cancelar">Cancelar</button>
+    <!-- Histórico -->
+    <div id="historico-container">
+      <div id="tabela-container" class="hidden animate__animated animate__fadeInUp bg-gray-900 p-4 rounded-xl">
+        <input type="text" id="busca" placeholder="Buscar..." onkeyup="filtrarTabela()"
+          class="w-full mb-3 px-3 py-2 rounded-md bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500"/>
+
+        <div class="overflow-y-auto max-h-96">
+          <table id="tabelaRegistros" class="w-full text-sm">
+            <thead class="bg-gray-800 sticky top-0">
+              <tr>
+                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(0)">Ticket</th>
+                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(1)">Protocolo</th>
+                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(2)">Tipo</th>
+                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(3)">Descrição</th>
+                <th class="py-2 px-3">Ações</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-700"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liberacoes -->
+    <div id="liberacoes-container" class="hidden animate__animated animate__fadeInUp"></div>
+
+    <!-- Form -->
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- Coluna esquerda -->
+      <div class="space-y-3">
+        <!-- Badges de seleção -->
+        <div class="flex gap-3 justify-center mb-4">
+          <button id="btn-erro" type="button" onclick="selecionarTipo('erro')"
+            class="px-4 py-2 rounded-full text-sm font-semibold bg-red-700 text-white hover:bg-red-600">
+            Erro
+          </button>
+          <button id="btn-sugestao" type="button" onclick="selecionarTipo('sugestao')"
+            class="px-4 py-2 rounded-full text-sm font-semibold bg-green-700 text-white hover:bg-green-600">
+            Sugestão
+          </button>
+        </div>
+        <!-- Campo oculto -->
+        <input type="hidden" id="tipo" />
+
+        <div><label for="prt">PRT</label><input id="prt" type="text" class="w-full px-3 py-2 rounded-md bg-gray-800"/></div>
+        <div><label for="ticket">Ticket</label><input id="ticket" type="text" class="w-full px-3 py-2 rounded-md bg-gray-800"/></div>
+        <div><label for="descricao">Descrição</label><textarea id="descricao" class="w-full px-3 py-2 rounded-md bg-gray-800"></textarea></div>
+        <div><label for="paliativo">Paliativo</label><textarea id="paliativo" class="w-full px-3 py-2 rounded-md bg-gray-800"></textarea></div>
+        <div><label for="prazo">Prazo</label><input id="prazo" type="text" class="w-full px-3 py-2 rounded-md bg-gray-800"/></div>
+        <div><label for="link">Link</label><input id="link" type="text" class="w-full px-3 py-2 rounded-md bg-gray-800"/></div>
+        <button onclick="gerarTexto()" class="w-full bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2">
+          <i data-lucide="wand-2" class="w-4 h-4"></i> Gerar
+        </button>
+      </div>
+
+      <!-- Coluna direita -->
+      <div class="flex flex-col space-y-3">
+        <label for="output">Cole no Discord:</label>
+        <textarea id="output" readonly class="flex-1 px-3 py-2 rounded-md bg-gray-800"></textarea>
+        <button onclick="copiarTexto()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2">
+          <i data-lucide="copy" class="w-4 h-4"></i> Copiar
+        </button>
+      </div>
     </div>
   </div>
-</div>
 
-    <!-- Importa o script principal com a lógica JS -->
-    <script src="mecanica.js"></script>
+  <!-- Modal -->
+  <div id="errorModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg max-w-lg animate__animated animate__zoomIn">
+      <p id="modalMessage" class="space-x-2 flex items-center">
+        <span id="modalIcon"></span><span id="modalText"></span>
+      </p>
+      <div class="mt-4 flex justify-end">
+        <button class="bg-gray-700 px-4 py-2 rounded" onclick="fecharModal()">Ok</button>
+      </div>
+    </div>
+  </div>
 
-    <script src="verificacao_release.js"></script>
-
+  <script src="mecanica.js"></script>
+  <script src="verificacao_release.js"></script>
+  <script> lucide.createIcons(); </script>
 </body>
-
 </html>
