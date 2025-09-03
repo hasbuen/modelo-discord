@@ -202,7 +202,7 @@ async function atualizarContadoresDosCards(registros) {
     }, 1000); // 1s é suficiente
 }
 
-async function renderizarTabela() {
+/*async function renderizarTabela() {
   const tbody = document.querySelector("#tabelaRegistros tbody");
   tbody.innerHTML = "";
   registrosCache = []; // força recarregamento
@@ -291,6 +291,106 @@ async function renderizarTabela() {
       </td>
     `;
 
+    tbody.appendChild(tr);
+  });
+
+  // renderiza ícones Lucide dentro das linhas recém-criadas
+  if (window.lucide && typeof lucide.createIcons === 'function') {
+    lucide.createIcons();
+  }
+}*/
+
+async function renderizarTabela() {
+  const tbody = document.querySelector("#tabelaRegistros tbody");
+  tbody.innerHTML = "";
+  registrosCache = []; // força recarregamento
+
+  const registros = await carregarRegistrosProtocolos();
+  atualizarContadoresDosCards(registros); 
+  // Mensagem quando não há registros
+  if (!registros || registros.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="text-center py-6 text-gray-400 italic">
+          No momento nenhum registro gravado.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  // helpers para escapar conteúdo em HTML / JS inline
+  const escHTML = (s) => {
+    if (!s && s !== 0) return "";
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  };
+
+  // Preenche a tabela
+  registros.forEach(reg => {
+    const tr = document.createElement("tr");
+    tr.className = "hover:bg-gray-800";
+
+    const badgeHTML = reg.tipo === '1'
+      ? '<span class="px-3 py-1 text-xs font-bold rounded-full bg-green-700 text-green-100">Sugestão</span>'
+      : '<span class="px-3 py-1 text-xs font-bold rounded-full bg-red-700 text-red-100">Erro</span>';
+
+    // Cria as células da tabela
+    const tdTicket = document.createElement("td");
+    tdTicket.className = "py-2 px-3 align-top";
+    tdTicket.innerHTML = `<a href="${escHTML(reg.link || '#')}" target="_blank" class="text-blue-400 underline">${escHTML(reg.ticket || '')}</a>`;
+    
+    const tdPrt = document.createElement("td");
+    tdPrt.className = "py-2 px-3 align-top";
+    tdPrt.textContent = escHTML(reg.prt || '');
+    
+    const tdTipo = document.createElement("td");
+    tdTipo.className = "py-2 px-3 align-top";
+    tdTipo.innerHTML = badgeHTML;
+    
+    const tdDescricao = document.createElement("td");
+    tdDescricao.className = "py-2 px-3 align-top";
+    const descricaoTooltip = (reg.descricao || "").replace(/\n/g, "<br>");
+    tdDescricao.innerHTML = `
+      <div class="tooltip-container relative">
+        <span class="desc-clamp">${escHTML((reg.descricao || '').slice(0, 300))}${(reg.descricao && reg.descricao.length > 300 ? ' ...' : '')}</span>
+        <div class="tooltip-text">${descricaoTooltip}</div>
+      </div>
+    `;
+
+    // Cria os botões e anexa os eventos
+    const tdAcoes = document.createElement("td");
+    tdAcoes.className = "py-2 px-3 align-top flex gap-2";
+
+    const btnVer = document.createElement("button");
+    btnVer.className = "bg-blue-600 hover:bg-blue-500 px-2 py-1 rounded text-xs";
+    btnVer.textContent = "Ver";
+    btnVer.onclick = () => mostrarModalPaliativo(reg.paliativo || "");
+    
+    const btnCopiar = document.createElement("button");
+    btnCopiar.className = "bg-green-600 hover:bg-green-500 px-2 py-1 rounded text-xs";
+    btnCopiar.innerHTML = '<i data-lucide="copy" class="w-4 h-4"></i>';
+    btnCopiar.onclick = () => copiarLinha(btnCopiar, reg.paliativo || "");
+
+    const btnExcluir = document.createElement("button");
+    btnExcluir.className = "bg-red-600 hover:bg-red-500 px-2 py-1 rounded text-xs";
+    btnExcluir.innerHTML = '<i data-lucide="trash-2" class="w-4 h-4"></i>';
+    btnExcluir.onclick = () => abrirModalExclusao(Number(reg.id), reg.ticket || "");
+
+    tdAcoes.appendChild(btnVer);
+    tdAcoes.appendChild(btnCopiar);
+    tdAcoes.appendChild(btnExcluir);
+
+    // Anexa as células à linha
+    tr.appendChild(tdTicket);
+    tr.appendChild(tdPrt);
+    tr.appendChild(tdTipo);
+    tr.appendChild(tdDescricao);
+    tr.appendChild(tdAcoes);
+    
     tbody.appendChild(tr);
   });
 
