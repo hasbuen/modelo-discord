@@ -201,11 +201,27 @@ async function renderizarTabela() {
   tbody.innerHTML = "";
   registrosCache = []; // força recarregamento
 
-  // Carrega registros e atualiza contadores (se a função existir)
-  const registros = await carregarRegistrosProtocolos();
-  if (typeof atualizarContadoresDosCards === 'function') {
-    try { await atualizarContadoresDosCards(); } catch (e) { /* ignore */ }
-  }
+// Atualiza os contadores de erros e sugestões visíveis nos cards
+async function atualizarContadoresDosCards() {
+    const registros = await carregarRegistrosProtocolos();
+
+    //const totalErros = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "erro").length;
+    //const totalSugestoes = registros.filter(r => r.tipo?.trim()?.toLowerCase() === "sugestao").length;
+    const totalErros = registros.filter(r => r.tipo === '0').length;
+    const totalSugestoes = registros.filter(r => r.tipo === '1').length;
+
+    const erroEl = document.getElementById("contador-erros");
+    const sugestaoEl = document.getElementById("contador-sugestoes");
+
+    // Aplica delay para simular carregamento
+    setTimeout(() => {
+        erroEl.classList.remove("skeleton-loader");
+        sugestaoEl.classList.remove("skeleton-loader");
+
+        erroEl.textContent = totalErros;
+        sugestaoEl.textContent = totalSugestoes;
+    }, 2000); // 2 segundos
+}
 
   // Mensagem quando não há registros
   if (!registros || registros.length === 0) {
