@@ -202,7 +202,7 @@ function ordenarTabela(idx) {
   linhas.sort((a,b)=>{
     let va=a.children[idx].textContent.trim().toLowerCase();
     let vb=b.children[idx].textContent.trim().toLowerCase();
-    return ordemAsc?va.localeCompare(vb):vb.localeCompare(va);
+    return ordemAsc?va.localeCompare(vb):vb.localeCompare(a);
   });
   linhas.forEach(l=>tbody.appendChild(l));
 }
@@ -361,10 +361,10 @@ async function renderizarTabela() {
 // Chamar a API assim que a página carregar
 window.addEventListener('DOMContentLoaded', async () => {
     try {
+        carregarTemaPreferido();
         const registros = await carregarRegistrosProtocolos();
         await atualizarContadoresDosCards(registros);
         await renderizarTabela();
-        carregarTemaPreferido();
     } catch (err) {
         console.error("Erro ao inicializar a página:", err);
     }
