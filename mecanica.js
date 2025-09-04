@@ -10,9 +10,6 @@ const MENSAGEM_8 = "O ticket deve conter apenas números!";
 
 let registrosCache = [];
 
-// Variável para armazenar o registro a ser excluído
-let registroParaExcluir = null;
-
 // Seleção de tipo com badges
 function selecionarTipo(tipo) {
   const hiddenInput = document.getElementById("tipo");
@@ -246,33 +243,29 @@ function copiarLinha(botao, paliativo) {
     .catch(() => exibirModal("Erro ao copiar o paliativo.", "", "erro"));
 }
 
-async function abrirModalExclusao(id, ticket) {
-  registroParaExcluir = { id, ticket };
-  
+async function abrirModalExclusao(id, ticket) {  
   const modal = document.getElementById("confirmModal");
   const confirmBtn = document.getElementById("confirmBtn");
 
   document.getElementById("confirmIcon").innerHTML = `<i data-lucide="trash-2" class="text-red-500 w-5 h-5"></i>`;
   document.getElementById("confirmText").textContent = `Tem certeza que deseja excluir o registro do ticket ${ticket}?`;
-  
+
+  Console.log(id+"  ticket "+ticket)
   // Define a função de exclusão diretamente no botão "Ok".
   confirmBtn.onclick = async () => {
     fecharConfirmModal();
-    if (!registroParaExcluir || registroParaExcluir.id !== id) return;
-
+     Console.log("entrou e o id é: "+id+"  ticket "+ticket)
     try {
       await fetch("https://modelo-discord-server.vercel.app/api/protocolos", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: registroParaExcluir.id })
+        body: JSON.stringify({ id: id })
       })
       exibirModal("Registro excluído com sucesso!", "", "sucesso");
       await renderizarTabela();
     } catch {
       exibirModal("Erro ao excluir registro.", "", "erro");
-    } finally {
-      registroParaExcluir = null;
-    }
+    } 
   };
 
   modal.classList.remove("hidden");
