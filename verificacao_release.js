@@ -103,7 +103,7 @@ async function carregarHistoricoLiberacoes() {
       tr.className = "hover:bg-gray-800";
       tr.innerHTML = `
         <td class="py-2 px-3 font-semibold">${reg.release}</td>
-        <td class="py-2 px-3 text-blue-400">${reg.protocolos}</td>
+        <td class="py-2 px-3 text-blue-400">${reg.prts}</td>
       `;
       tbody.appendChild(tr);
     });
