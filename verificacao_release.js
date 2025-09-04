@@ -6,6 +6,69 @@ function processarRTF(event) {
   const arquivo = event.target.files[0];
   if (!arquivo) return;
   const reader = new FileReader();
+
+  reader.onload = async function (e) {
+    const texto = e.target.result;
+
+    // 1. Extrair data do release (no formato dd/mm/yyyy)
+    const matchRelease = texto.match(/release[^0-9]*(\d{2}\/\d{2}\/\d{4})/i);
+    const releaseAtual = matchRelease ? matchRelease[1] : null;
+
+    // 2. Encontrar protocolos
+    const encontrados = [...new Set([...texto.matchAll(/Protocolo:\s*(\d+)/g)].map(m => m[1]))];
+    const historicoPRTs = await obterListaPRTs();
+    const resultados = encontrados.map(protocolo => {
+      const registro = historicoPRTs.find(reg => reg.protocolo === protocolo);
+      return { protocolo, ...registro, estaRegistrado: !!registro };
+    });
+
+    const container = document.getElementById('liberacoes-container');
+    container.innerHTML = "";
+    const encontradosRegistrados = resultados.filter(r => r.estaRegistrado);
+
+    if (encontradosRegistrados.length) {
+      renderizarLiberacoes(encontradosRegistrados);
+
+      // 3. Montar string de protocolos concatenados
+      const protocolosConcat = encontradosRegistrados
+        .map(r => `#PRT${r.protocolo}`)
+        .join(' ');
+
+      // 4. Salvar no Supabase
+      if (releaseAtual) {
+        try {
+          await fetch("https://modelo-discord-server.vercel.app/api/liberados", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              release: releaseAtual,
+              protocolos: protocolosConcat
+            })
+          });
+          console.log("Liberação salva no Supabase:", releaseAtual, protocolosConcat);
+        } catch (err) {
+          console.error("Erro ao salvar liberação:", err);
+        }
+      } else {
+        console.warn("Nenhuma data de release encontrada no arquivo.");
+      }
+
+    } else {
+      container.innerHTML =
+        `<p class="bg-red-900 text-red-200 p-3 rounded-md">
+           Nenhum protocolo registrado foi liberado neste release!
+         </p>`;
+    }
+  };
+
+  reader.readAsText(arquivo);
+}
+
+/*
+function processarRTF(event) {
+  const arquivo = event.target.files[0];
+  if (!arquivo) return;
+  const reader = new FileReader();
   reader.onload = async function (e) {
     const texto = e.target.result;
     const encontrados = [...new Set([...texto.matchAll(/Protocolo:\s*(\d+)/g)].map(m => m[1]))];
@@ -26,7 +89,7 @@ function processarRTF(event) {
     }
   };
   reader.readAsText(arquivo);
-}
+}*/
 
 async function obterListaPRTs() {
   try {
