@@ -140,9 +140,17 @@ body {
   inset: 0;
   border-radius: inherit;
   padding: 2px; /* espessura da borda */
-  background: linear-gradient(90deg, #00f, #0ff, #0f0, #ff0, #f0f, #f00, #00f);
+  background: linear-gradient(
+    90deg,
+    #00f,
+    #0ff,
+    #f0f,
+    #f00,
+    #ff4d4d,
+    #00f
+  );
   background-size: 400% 400%;
-  animation: neon-border 3s linear infinite;
+  animation: neon-border 10s linear infinite; 
   
   /* cria só a borda */
   -webkit-mask: 
