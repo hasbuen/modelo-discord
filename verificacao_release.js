@@ -63,33 +63,6 @@ function processarRTF(event) {
   reader.readAsText(arquivo);
 }
 
-/*
-function processarRTF(event) {
-  const arquivo = event.target.files[0];
-  if (!arquivo) return;
-  const reader = new FileReader();
-  reader.onload = async function (e) {
-    const texto = e.target.result;
-    const encontrados = [...new Set([...texto.matchAll(/Protocolo:\s*(\d+)/g)].map(m => m[1]))];
-    const historicoPRTs = await obterListaPRTs();
-    const resultados = encontrados.map(protocolo => {
-      const registro = historicoPRTs.find(reg => reg.protocolo === protocolo);
-      return { protocolo, ...registro, estaRegistrado: !!registro };
-    });
-
-    const container = document.getElementById('liberacoes-container');
-    container.innerHTML = "";
-    const encontradosRegistrados = resultados.filter(r => r.estaRegistrado);
-
-    if (encontradosRegistrados.length) {
-      renderizarLiberacoes(encontradosRegistrados);
-    } else {
-      container.innerHTML = `<p class="bg-red-900 text-red-200 p-3 rounded-md">Nenhum protocolo registrado foi liberado neste release!</p>`;
-    }
-  };
-  reader.readAsText(arquivo);
-}*/
-
 async function obterListaPRTs() {
   try {
     const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
@@ -104,6 +77,38 @@ async function obterListaPRTs() {
   } catch (err) {
     console.error("Erro API:", err);
     return [];
+  }
+}
+
+async function carregarHistoricoLiberacoes() {
+  try {
+    const res = await fetch("https://modelo-discord-server.vercel.app/api/liberados");
+    const dados = await res.json();
+
+    const tbody = document.getElementById("tabelaLiberados");
+    tbody.innerHTML = "";
+
+    if (!dados || dados.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="2" class="text-center py-6 text-gray-400 italic">
+            Nenhuma liberação registrada até o momento.
+          </td>
+        </tr>`;
+      return;
+    }
+
+    dados.forEach(reg => {
+      const tr = document.createElement("tr");
+      tr.className = "hover:bg-gray-800";
+      tr.innerHTML = `
+        <td class="py-2 px-3 font-semibold">${reg.release}</td>
+        <td class="py-2 px-3 text-blue-400">${reg.protocolos}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    console.error("Erro ao carregar histórico de liberações:", err);
   }
 }
 
