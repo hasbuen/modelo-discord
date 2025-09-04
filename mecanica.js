@@ -195,11 +195,29 @@ async function salvarRegistro() {
 }
 
 function copiarTexto() {
-  const texto = document.getElementById('output').value;
-  if (!texto.trim()) return exibirModal(MENSAGEM_4, "", "info");
-  navigator.clipboard.writeText(texto)
-    .then(() => { exibirModal(MENSAGEM_5, "", "sucesso"); salvarRegistro(); })
-    .catch(() => exibirModal(MENSAGEM_6, "", "erro"));
+    const texto = document.getElementById('output').value;
+    if (!texto.trim()) return exibirModal(MENSAGEM_4, "", "info");
+    navigator.clipboard.writeText(texto)
+        .then(() => {
+            exibirModal(MENSAGEM_5, "", "sucesso");
+            salvarRegistro();
+            limparCampos(); 
+        })
+        .catch(() => exibirModal(MENSAGEM_6, "", "erro"));
+}
+
+function limparCampos() {
+    document.getElementById('prt').value = '';
+    document.getElementById('ticket').value = '';
+    document.getElementById('descricao').value = '';
+    document.getElementById('paliativo').value = '';
+    document.getElementById('prazo').value = '';
+    document.getElementById('link').value = '';
+    document.getElementById('output').value = '';
+    // This part resets the type selection buttons' visual state
+    document.getElementById("btn-erro").classList.remove("ring-2", "ring-offset-2", "ring-red-400");
+    document.getElementById("btn-sugestao").classList.remove("ring-2", "ring-offset-2", "ring-green-400");
+    document.getElementById("tipo").value = ''; // clear the hidden input
 }
 
 // Tabela
