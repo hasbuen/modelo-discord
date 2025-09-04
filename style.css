@@ -127,31 +127,39 @@ body {
 #btn-liberacoes,
 #btn-historico-liberacoes {
   position: relative;
-  overflow: hidden;
+  border-radius: 0.5rem; /* mantém arredondado */
   z-index: 0;
 }
 
-#btn-home::before,
-#btn-historico::before,
-#btn-liberacoes::before,
-#btn-historico-liberacoes::before {
+#btn-home::after,
+#btn-historico::after,
+#btn-liberacoes::after,
+#btn-historico-liberacoes::after {
   content: "";
   position: absolute;
-  inset: -3px; /* borda para fora, mais visível */
+  inset: 0;
   border-radius: inherit;
+  padding: 2px; /* espessura da borda */
   background: linear-gradient(90deg, #00f, #0ff, #0f0, #ff0, #f0f, #f00, #00f);
   background-size: 400% 400%;
-  z-index: -1;
+  animation: neon-border 3s linear infinite;
+  
+  /* cria só a borda */
+  -webkit-mask: 
+    linear-gradient(#000 0 0) content-box, 
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+
+  pointer-events: none; /* não bloqueia clique */
   opacity: 0;
   transition: opacity 0.3s ease;
-  animation: neon-border 3s linear infinite;
-  filter: blur(2px); /* glow mais forte */
 }
 
-#btn-home:hover::before,
-#btn-historico:hover::before,
-#btn-liberacoes:hover::before,
-#btn-historico-liberacoes:hover::before {
+#btn-home:hover::after,
+#btn-historico:hover::after,
+#btn-liberacoes:hover::after,
+#btn-historico-liberacoes:hover::after {
   opacity: 1;
 }
 
@@ -160,4 +168,3 @@ body {
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-
