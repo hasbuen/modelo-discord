@@ -128,7 +128,7 @@ body {
 #btn-historico-liberacoes {
   position: relative;
   overflow: hidden;
-  transition: color 0.3s ease, background-color 0.3s ease;
+  z-index: 0; /* garante que o conteúdo fica acima */
 }
 
 #btn-home::before,
@@ -137,18 +137,20 @@ body {
 #btn-historico-liberacoes::before {
   content: "";
   position: absolute;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
+  inset: 0; /* ocupa exatamente o tamanho do botão */
+  border-radius: inherit; /* mesma curva do botão */
+  padding: 2px; /* espessura da borda */
   background: linear-gradient(90deg, #0ff, #00f, #f0f, #ff0, #0f0, #0ff);
   background-size: 400%;
-  border-radius: inherit;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0); 
+  -webkit-mask-composite: xor;
+  mask-composite: exclude; /* deixa só a borda visível */
   z-index: -1;
-  filter: blur(6px); /* brilho neon */
-  animation: neon-border 4s linear infinite;
   opacity: 0;
   transition: opacity 0.3s ease;
+  animation: neon-border 4s linear infinite;
 }
 
 #btn-home:hover::before,
@@ -163,4 +165,3 @@ body {
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-
