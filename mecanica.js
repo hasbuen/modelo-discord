@@ -193,8 +193,26 @@ async function salvarRegistro() {
 function copiarTexto() {
   const texto = document.getElementById('output').value;
   if (!texto.trim()) return exibirModal(MENSAGEM_4, "", "info");
+
   navigator.clipboard.writeText(texto)
-    .then(() => { exibirModal(MENSAGEM_5, "", "sucesso"); salvarRegistro(); })
+    .then(() => { 
+      exibirModal(MENSAGEM_5, "", "sucesso"); 
+      salvarRegistro();
+
+      // 🔹 Resetar formulário após copiar
+      document.getElementById('prt').value = "";
+      document.getElementById('ticket').value = "";
+      document.getElementById('descricao').value = "";
+      document.getElementById('paliativo').value = "";
+      document.getElementById('prazo').value = "";
+      document.getElementById('link').value = "";
+      document.getElementById('tipo').value = "";
+      document.getElementById('output').value = "";
+
+      // Remove destaque dos botões de tipo
+      document.getElementById("btn-erro").classList.remove("ring-2", "ring-offset-2", "ring-red-400");
+      document.getElementById("btn-sugestao").classList.remove("ring-2", "ring-offset-2", "ring-green-400");
+    })
     .catch(() => exibirModal(MENSAGEM_6, "", "erro"));
 }
 
