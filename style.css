@@ -140,15 +140,7 @@ body {
   inset: 0;
   border-radius: inherit;
   padding: 2px; /* espessura da borda */
-  background: linear-gradient(
-    90deg,
-    #5E79C2,
-    #285CE9,
-    #0032BA,
-    #BE0001,
-    #DC154A,
-    #C02F30
-  );
+  background: linear-gradient(90deg, #5E79C2, #285CE9, #0032BA, #BE0001, #DC154A, #C02F30, #009dff);
   background-size: 400% 400%;
   animation: neon-border 10s linear infinite; 
   
