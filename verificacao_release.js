@@ -45,7 +45,6 @@ function processarRTF(event) {
               prts: protocolosConcat
             })
           });
-          console.log("Liberação salva no Supabase:", releaseAtual, protocolosConcat);
         } catch (err) {
           console.error("Erro ao salvar liberação:", err);
         }
