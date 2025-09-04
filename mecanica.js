@@ -255,7 +255,7 @@ async function abrirModalExclusao(id, ticket) {
   document.getElementById("confirmIcon").innerHTML = `<i data-lucide="trash-2" class="text-red-500 w-5 h-5"></i>`;
   document.getElementById("confirmText").textContent = `Tem certeza que deseja excluir o registro do ticket ${ticket}?`;
 
-  console.log("de novo:  "id+"  ticket "+ticket);
+  console.log("de novo:  "+id+"  ticket "+ticket);
   
   confirmBtn.onclick = async () => {
      fecharConfirmModal();
