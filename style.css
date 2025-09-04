@@ -122,7 +122,6 @@ body {
   scrollbar-color: #3b82f6 var(--cor-fundo-card); /* cor do thumb e track */
 }
 
-/* Seleciona apenas os botões de navegação do menu */
 #btn-home,
 #btn-historico,
 #btn-liberacoes,
@@ -138,15 +137,16 @@ body {
 #btn-historico-liberacoes::before {
   content: "";
   position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(90deg, #00f, #0ff, #0f0, #ff0, #f0f, #00f);
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: linear-gradient(90deg, #0ff, #00f, #f0f, #ff0, #0f0, #0ff);
   background-size: 400%;
   border-radius: inherit;
   z-index: -1;
-  animation: neon-border 6s linear infinite;
+  filter: blur(6px); /* brilho neon */
+  animation: neon-border 4s linear infinite;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -163,3 +163,4 @@ body {
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+
