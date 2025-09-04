@@ -128,7 +128,7 @@ body {
 #btn-historico-liberacoes {
   position: relative;
   overflow: hidden;
-  z-index: 0; /* garante que o conteúdo fica acima */
+  z-index: 0;
 }
 
 #btn-home::before,
@@ -137,20 +137,15 @@ body {
 #btn-historico-liberacoes::before {
   content: "";
   position: absolute;
-  inset: 0; /* ocupa exatamente o tamanho do botão */
-  border-radius: inherit; /* mesma curva do botão */
-  padding: 2px; /* espessura da borda */
-  background: linear-gradient(90deg, #0ff, #00f, #f0f, #ff0, #0f0, #0ff);
-  background-size: 400%;
-  -webkit-mask: 
-    linear-gradient(#fff 0 0) content-box, 
-    linear-gradient(#fff 0 0); 
-  -webkit-mask-composite: xor;
-  mask-composite: exclude; /* deixa só a borda visível */
+  inset: -3px; /* borda para fora, mais visível */
+  border-radius: inherit;
+  background: linear-gradient(90deg, #00f, #0ff, #0f0, #ff0, #f0f, #f00, #00f);
+  background-size: 400% 400%;
   z-index: -1;
   opacity: 0;
   transition: opacity 0.3s ease;
-  animation: neon-border 4s linear infinite;
+  animation: neon-border 3s linear infinite;
+  filter: blur(2px); /* glow mais forte */
 }
 
 #btn-home:hover::before,
@@ -165,3 +160,4 @@ body {
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+
