@@ -142,12 +142,12 @@ body {
   padding: 2px; /* espessura da borda */
   background: linear-gradient(
     90deg,
-    #00f,
-    #0ff,
-    #f0f,
-    #f00,
-    #ff4d4d,
-    #00f
+    ##5E79C2,
+    #285CE9,
+    #0032BA,
+    #BE0001,
+    #DC154A,
+    #C02F30
   );
   background-size: 400% 400%;
   animation: neon-border 10s linear infinite; 
