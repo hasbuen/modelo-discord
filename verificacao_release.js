@@ -82,8 +82,13 @@ async function obterListaPRTs() {
 
 async function carregarHistoricoLiberacoes() {
   try {
+    // Buscar os releases
     const res = await fetch("https://modelo-discord-server.vercel.app/api/liberados");
     const dados = await res.json();
+
+    // Buscar os protocolos (para cruzar os dados)
+    const resProt = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
+    const protocolos = await resProt.json();
 
     const tbody = document.getElementById("tabelaLiberados");
     tbody.innerHTML = "";
@@ -101,9 +106,27 @@ async function carregarHistoricoLiberacoes() {
     dados.forEach(reg => {
       const tr = document.createElement("tr");
       tr.className = "hover:bg-gray-800";
+
+      // Quebra os protocolos em array
+      const prts = reg.protocolos.split(/\s+/).filter(Boolean);
+
+      // Monta badges comparando com protocolos
+      const badgesHTML = prts.map(prt => {
+        const registro = protocolos.find(p => p.prt === prt);
+        if (!registro) {
+          // Caso não encontre, badge cinza
+          return `<span class="px-2 py-1 rounded text-xs font-bold bg-gray-600 text-gray-100">${prt}</span>`;
+        }
+        const cor = registro.tipo === "1"
+          ? "bg-green-700 text-green-100"
+          : "bg-red-700 text-red-100";
+        const label = registro.tipo === "1" ? "Sugestão" : "Erro";
+        return `<span class="px-2 py-1 rounded text-xs font-bold ${cor}" title="${label}">${prt}</span>`;
+      }).join(" ");
+
       tr.innerHTML = `
         <td class="py-2 px-3 font-semibold">${reg.release}</td>
-        <td class="py-2 px-3 text-blue-400">${reg.prts}</td>
+        <td class="py-2 px-3 flex flex-wrap gap-2">${badgesHTML}</td>
       `;
       tbody.appendChild(tr);
     });
