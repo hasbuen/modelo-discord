@@ -121,3 +121,36 @@ body {
   scrollbar-width: thin; /* "auto", "thin" ou "none" */
   scrollbar-color: #3b82f6 var(--cor-fundo-card); /* cor do thumb e track */
 }
+
+.btn-neon {
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.btn-neon::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(90deg, #00f, #0ff, #0f0, #ff0, #f0f, #00f);
+  background-size: 400%;
+  border-radius: inherit;
+  z-index: -1;
+  animation: neon-border 6s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn-neon:hover::before {
+  opacity: 1;
+}
+
+@keyframes neon-border {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
