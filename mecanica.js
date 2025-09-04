@@ -248,35 +248,35 @@ function copiarLinha(botao, paliativo) {
 
 async function abrirModalExclusao(id, ticket) {
   registroParaExcluir = { id, ticket };
+  
   const modal = document.getElementById("confirmModal");
-  const modalIcon = document.getElementById("confirmIcon");
-  const modalText = document.getElementById("confirmText");
-  
-  modalIcon.innerHTML = `<i data-lucide="trash-2" class="text-red-500 w-5 h-5"></i>`;
-  modalText.textContent = `Tem certeza que deseja excluir o registro do ticket ${ticket}?`;
-  
-  modal.classList.remove("hidden");
-  lucide.createIcons();
-}
+  const confirmBtn = document.getElementById("confirmBtn");
 
-async function confirmarExclusao() {
-  fecharConfirmModal();
-  if (!registroParaExcluir) return;
+  document.getElementById("confirmIcon").innerHTML = `<i data-lucide="trash-2" class="text-red-500 w-5 h-5"></i>`;
+  document.getElementById("confirmText").textContent = `Tem certeza que deseja excluir o registro do ticket ${ticket}?`;
+  
+  // Define a função de exclusão diretamente no botão "Ok".
+  confirmBtn.onclick = async () => {
+    fecharConfirmModal();
+    if (!registroParaExcluir || registroParaExcluir.id !== id) return;
 
-  const { idParaExcluir } = registroParaExcluir;
-  try {
-    await fetch("https://modelo-discord-server.vercel.app/api/protocolos", {
+    try {
+      await fetch("https://modelo-discord-server.vercel.app/api/protocolos", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: idParaExcluir })
-    })
-    exibirModal("Registro excluído com sucesso!", "", "sucesso");
-    await renderizarTabela();
-  } catch {
-    exibirModal("Erro ao excluir registro.", "", "erro");
-  } finally {
-    registroParaExcluir = null;
-  }
+        body: JSON.stringify({ id: registroParaExcluir.id })
+      })
+      exibirModal("Registro excluído com sucesso!", "", "sucesso");
+      await renderizarTabela();
+    } catch {
+      exibirModal("Erro ao excluir registro.", "", "erro");
+    } finally {
+      registroParaExcluir = null;
+    }
+  };
+
+  modal.classList.remove("hidden");
+  lucide.createIcons();
 }
 
 // Atualiza os contadores de erros e sugestões visíveis nos cards
