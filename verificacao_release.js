@@ -42,7 +42,7 @@ function processarRTF(event) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               release: releaseAtual,
-              protocolos: protocolosConcat
+              prts: protocolosConcat
             })
           });
           console.log("Liberação salva no Supabase:", releaseAtual, protocolosConcat);
