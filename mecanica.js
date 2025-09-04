@@ -250,18 +250,12 @@ async function abrirModalExclusao(id, ticket) {
   const modal = document.getElementById("confirmModal");
   const confirmBtn = document.getElementById("confirmBtn");
   
-  console.log(id+"  ticket "+ticket);
-  
   document.getElementById("confirmIcon").innerHTML = `<i data-lucide="trash-2" class="text-red-500 w-5 h-5"></i>`;
   document.getElementById("confirmText").textContent = `Tem certeza que deseja excluir o registro do ticket ${ticket}?`;
 
-  console.log("de novo:  "+id+"  ticket "+ticket);
-  
   confirmBtn.onclick = async () => {
      fecharConfirmModal();
-    
-     console.log("entrou e o id é: "+id+"  ticket "+ticket);
-    
+  
     try {
       await fetch("https://modelo-discord-server.vercel.app/api/protocolos", {
         method: "DELETE",
