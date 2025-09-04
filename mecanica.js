@@ -10,6 +10,9 @@ const MENSAGEM_8 = "O ticket deve conter apenas números!";
 
 let registrosCache = [];
 
+// Variável para armazenar o registro a ser excluído
+let registroParaExcluir = null;
+
 // Seleção de tipo com badges
 function selecionarTipo(tipo) {
   const hiddenInput = document.getElementById("tipo");
@@ -97,6 +100,11 @@ function exibirModal(mensagem, prt = "", tipo = "info") {
 }
 function fecharModal() { document.getElementById("errorModal").classList.add("hidden"); }
 
+function fecharConfirmModal() {
+  document.getElementById("confirmModal").classList.add("hidden");
+  registroParaExcluir = null;
+}
+
 // API
 async function carregarRegistrosProtocolos() {
   if (registrosCache.length > 0) return registrosCache;
@@ -135,35 +143,31 @@ function gerarTexto() {
 
   let texto = "";
   if (tipo === '1') {
-    texto = `**\`\`\`diff
+    texto = `**\\\diff
 + Protocolo [SUGESTÃO]:
 + PRT: ${prt.value}
 + Ticket: ${ticket.value}
-\`\`\`**
-- **Descrição resumida:**
+\\\**- **Descrição resumida:**
 ${descricaoFormatada}
 
 - **Paliativo:**
 ${paliativoFormatado}
 
 - **Prazo: ** ${prazo.value.trim()}
-- **Link >> ** ${link.value.trim()}
-`;
+- **Link >> ** ${link.value.trim()}`;
   } else {
-    texto = `**\`\`\`diff
+    texto = `**\\\diff
 - Protocolo [ERRO]:
 - PRT: ${prt.value}
 - Ticket: ${ticket.value}
-\`\`\`**
-- **Descrição resumida:**
+\\\**- **Descrição resumida:**
 ${descricaoFormatada}
 
 - **Paliativo:**
 ${paliativoFormatado}
 
 - **Prazo: ** ${prazo.value.trim()}
-- **Link >> ** ${link.value.trim()}
-`;
+- **Link >> ** ${link.value.trim()}`;
   }
   document.getElementById('output').value = texto;
 }
@@ -193,26 +197,8 @@ async function salvarRegistro() {
 function copiarTexto() {
   const texto = document.getElementById('output').value;
   if (!texto.trim()) return exibirModal(MENSAGEM_4, "", "info");
-
   navigator.clipboard.writeText(texto)
-    .then(() => { 
-      exibirModal(MENSAGEM_5, "", "sucesso"); 
-      salvarRegistro();
-
-      // 🔹 Resetar formulário após copiar
-      document.getElementById('prt').value = "";
-      document.getElementById('ticket').value = "";
-      document.getElementById('descricao').value = "";
-      document.getElementById('paliativo').value = "";
-      document.getElementById('prazo').value = "";
-      document.getElementById('link').value = "";
-      document.getElementById('tipo').value = "";
-      document.getElementById('output').value = "";
-
-      // Remove destaque dos botões de tipo
-      document.getElementById("btn-erro").classList.remove("ring-2", "ring-offset-2", "ring-red-400");
-      document.getElementById("btn-sugestao").classList.remove("ring-2", "ring-offset-2", "ring-green-400");
-    })
+    .then(() => { exibirModal(MENSAGEM_5, "", "sucesso"); salvarRegistro(); })
     .catch(() => exibirModal(MENSAGEM_6, "", "erro"));
 }
 
@@ -261,16 +247,33 @@ function copiarLinha(botao, paliativo) {
 }
 
 async function abrirModalExclusao(id, ticket) {
-  if (confirm(`Tem certeza que deseja excluir o registro do ticket ${ticket}?`)) {
-    try {
-      await fetch(`https://modelo-discord-server.vercel.app/api/protocolos?id=${id}`, {
-        method: 'DELETE'
-      });
-      exibirModal("Registro excluído com sucesso!", "", "sucesso");
-      await renderizarTabela();
-    } catch {
-      exibirModal("Erro ao excluir registro.", "", "erro");
-    }
+  registroParaExcluir = { id, ticket };
+  const modal = document.getElementById("confirmModal");
+  const modalIcon = document.getElementById("confirmIcon");
+  const modalText = document.getElementById("confirmText");
+  
+  modalIcon.innerHTML = `<i data-lucide="trash-2" class="text-red-500 w-5 h-5"></i>`;
+  modalText.textContent = `Tem certeza que deseja excluir o registro do ticket ${ticket}?`;
+  
+  modal.classList.remove("hidden");
+  lucide.createIcons();
+}
+
+async function confirmarExclusao() {
+  fecharConfirmModal();
+  if (!registroParaExcluir) return;
+
+  const { id } = registroParaExcluir;
+  try {
+    await fetch(`https://modelo-discord-server.vercel.app/api/protocolos?id=${id}`, {
+      method: 'DELETE'
+    });
+    exibirModal("Registro excluído com sucesso!", "", "sucesso");
+    await renderizarTabela();
+  } catch {
+    exibirModal("Erro ao excluir registro.", "", "erro");
+  } finally {
+    registroParaExcluir = null;
   }
 }
 
@@ -298,14 +301,12 @@ async function renderizarTabela() {
   await atualizarContadoresDosCards(registros); 
   // Mensagem quando não há registros
   if (!registros || registros.length === 0) {
-    tbody.innerHTML = `
-      <tr>
+    tbody.innerHTML = `      <tr>
         <td colspan="5" class="text-center py-6 text-gray-400 italic">
           No momento nenhum registro gravado.
         </td>
       </tr>
-    `;
-    return;
+    `;    return;
   }
 
   // helpers para escapar conteúdo em HTML / JS inline
@@ -343,8 +344,7 @@ async function renderizarTabela() {
     const paliativoForOnclick = escJS(reg.paliativo || "");
     const ticketForOnclick = escJS(reg.ticket || "");
 
-    tr.innerHTML = `
-      <td class="py-2 px-3 align-top">
+    tr.innerHTML = `      <td class="py-2 px-3 align-top">
         <a href="${escHTML(reg.link || '#')}" target="_blank" class="text-blue-400 underline">
           ${escHTML(reg.ticket || '')}
         </a>
@@ -378,7 +378,6 @@ async function renderizarTabela() {
         </button>
       </td>
     `;
-
     tbody.appendChild(tr);
   });
 
