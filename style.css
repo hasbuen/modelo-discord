@@ -94,3 +94,30 @@ body {
   background-color: #4b5563; /* Tailwind gray-600 */
   color: #fff;
 }
+
+/* Barra de rolagem - Webkit (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cor-fundo-card); /* fundo do track */
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4f46e5, #3b82f6); /* degrade azul */
+  border-radius: 8px;
+  border: 2px solid var(--cor-fundo-card); /* "espaço" ao redor */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #6366f1, #2563eb);
+}
+
+/* Barra de rolagem - Firefox */
+* {
+  scrollbar-width: thin; /* "auto", "thin" ou "none" */
+  scrollbar-color: #3b82f6 var(--cor-fundo-card); /* cor do thumb e track */
+}
