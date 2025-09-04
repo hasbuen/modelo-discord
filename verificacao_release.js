@@ -82,11 +82,11 @@ async function obterListaPRTs() {
 
 async function carregarHistoricoLiberacoes() {
   try {
-    // Buscar os releases
+    // Buscar os releases salvos
     const res = await fetch("https://modelo-discord-server.vercel.app/api/liberados");
     const dados = await res.json();
 
-    // Buscar os protocolos (para cruzar os dados)
+    // Buscar os protocolos para cruzar dados
     const resProt = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
     const protocolos = await resProt.json();
 
@@ -107,20 +107,25 @@ async function carregarHistoricoLiberacoes() {
       const tr = document.createElement("tr");
       tr.className = "hover:bg-gray-800";
 
-      // Quebra os protocolos em array
+      // Quebra a string "protocolos" em array de PRTs
       const prts = reg.protocolos.split(/\s+/).filter(Boolean);
 
-      // Monta badges comparando com protocolos
+      // Para cada PRT encontrado no release
       const badgesHTML = prts.map(prt => {
+        // Localiza no histórico de protocolos
         const registro = protocolos.find(p => p.prt === prt);
+
         if (!registro) {
-          // Caso não encontre, badge cinza
+          // Se não encontrar no banco de protocolos → badge cinza
           return `<span class="px-2 py-1 rounded text-xs font-bold bg-gray-600 text-gray-100">${prt}</span>`;
         }
+
+        // Badge vermelho (erro) ou verde (sugestão)
         const cor = registro.tipo === "1"
           ? "bg-green-700 text-green-100"
           : "bg-red-700 text-red-100";
         const label = registro.tipo === "1" ? "Sugestão" : "Erro";
+
         return `<span class="px-2 py-1 rounded text-xs font-bold ${cor}" title="${label}">${prt}</span>`;
       }).join(" ");
 
@@ -134,6 +139,7 @@ async function carregarHistoricoLiberacoes() {
     console.error("Erro ao carregar histórico de liberações:", err);
   }
 }
+
 
 function renderizarLiberacoes(registros) {
   const container = document.querySelector("#liberacoes-container");
