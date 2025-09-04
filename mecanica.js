@@ -263,11 +263,13 @@ async function confirmarExclusao() {
   fecharConfirmModal();
   if (!registroParaExcluir) return;
 
-  const { id } = registroParaExcluir;
+  const { idParaExcluir } = registroParaExcluir;
   try {
-    await fetch(`https://modelo-discord-server.vercel.app/api/protocolos?id=${id}`, {
-      method: 'DELETE'
-    });
+    await fetch("https://modelo-discord-server.vercel.app/api/protocolos", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: idParaExcluir })
+    })
     exibirModal("Registro excluído com sucesso!", "", "sucesso");
     await renderizarTabela();
   } catch {
