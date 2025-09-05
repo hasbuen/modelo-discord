@@ -150,7 +150,9 @@ async function carregarHistoricoLiberacoes() {
           ? "bg-green-700 text-green-100"
           : "bg-red-700 text-red-100";
         const label = registro.tipo === "1" ? "Sugestão" : "Erro";
-        return `<span class="px-2 py-1 rounded text-xs font-bold ${cor}" title="${label}">${prt}</span>`;
+        // AQUI ESTÁ A ALTERAÇÃO: Adicionamos o evento de clique
+        const descricaoEsc = (registro.descricao || '').replace(/'/g, "\\'");
+        return `<span class="px-2 py-1 rounded text-xs font-bold ${cor}" title="${label}" onclick="mostrarDescricaoModal('${prt}', '${descricaoEsc}')">${prt}</span>`;
       }).join(" ");
 
       tr.innerHTML = `
