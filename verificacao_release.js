@@ -89,10 +89,10 @@ async function obterListaPRTs() {
 async function carregarHistoricoLiberacoes() {
   const tbody = document.getElementById("tabelaLiberados");
 
-  // Início do loading
+  // Início do loading: Insere o HTML de carregamento no corpo da tabela
   tbody.innerHTML = `
     <tr>
-      <td colspan="5" class="text-center py-6 text-gray-400">
+      <td colspan="2" class="text-center py-6 text-gray-400">
         <div class="flex items-center justify-center space-x-2">
           <div class="relative w-8 h-8 rounded-full">
             <div class="absolute inset-0 rounded-full border-2 border-transparent" style="background: linear-gradient(90deg, #1a1a1a 0%, #2e2e2e 20%, #444444 40%, #5a5a5a 60%, #444444 80%, #2e2e2e 90%, #1a1a1a 100%); animation: spin-soft 1.5s ease-in-out infinite;"></div>
@@ -106,6 +106,7 @@ async function carregarHistoricoLiberacoes() {
   try {
     const timerPromise = new Promise(resolve => setTimeout(resolve, 2000));
     
+    // Executa as requisições de fetch e o timer em paralelo
     const [liberadosRes, protocolosRes] = await Promise.all([
       fetch("https://modelo-discord-server.vercel.app/api/liberados"),
       fetch("https://modelo-discord-server.vercel.app/api/protocolos"),
@@ -115,6 +116,7 @@ async function carregarHistoricoLiberacoes() {
     const dados = await liberadosRes.json();
     const protocolos = await protocolosRes.json();
     
+    // Limpa o conteúdo de loading antes de renderizar os dados
     tbody.innerHTML = "";
 
     if (!dados || dados.length === 0) {
@@ -152,6 +154,7 @@ async function carregarHistoricoLiberacoes() {
           badgeSpan.classList.add(cor);
           badgeSpan.title = label;
 
+          // AQUI: Adiciona o evento de clique programaticamente
           const descricao = registro.descricao || 'Sem descrição.';
           badgeSpan.addEventListener('click', () => {
             mostrarDescricaoModal(prt, descricao);
