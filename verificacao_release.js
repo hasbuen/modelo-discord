@@ -92,30 +92,42 @@ async function obterListaPRTs() {
 }
 
 async function carregarHistoricoLiberacoes() {
-  try {
-    // Buscar os releases
-    const res = await fetch("https://modelo-discord-server.vercel.app/api/liberados");
-    const dados = await res.json();
+  const tbody = document.getElementById("tabelaLiberados");
 
-    // Buscar os protocolos (para cruzar os dados)
-    const resProt = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
-    const protocolos = await resProt.json();
-
-    const tbody = document.getElementById("tabelaLiberados");
-
-      // Início do loading: Insere o HTML de carregamento no corpo da tabela
-    tbody.innerHTML = `
+  // Início do loading: Insere o HTML de carregamento no corpo da tabela
+  tbody.innerHTML = `
     <tr>
       <td colspan="2" class="text-center py-6 text-gray-400">
         <div class="flex items-center justify-center space-x-2">
-          <svg class="animate-spin h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <span>Carregando...</span>
+          <div class="relative w-8 h-8 rounded-full">
+            <div class="absolute inset-0 rounded-full border-2 border-transparent" style="background: linear-gradient(90deg, #5EC26A, #10DF29, #009B12, #BE0001, #DC154A, #C02F30, #009dff); animation: spin-neon 2s linear infinite;"></div>
+            <div class="absolute inset-1 bg-gray-900 rounded-full"></div>
+            <svg class="absolute inset-0 m-auto h-5 w-5 text-transparent animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </div>
         </div>
       </td>
     </tr>`;
+
+  try {
+    // Cria uma Promise para o timer (2 segundos)
+    const timerPromise = new Promise(resolve => setTimeout(resolve, 2000)); // 2000ms = 2 segundos
+
+    // Executa as requisições de fetch e o timer em paralelo
+    const [liberadosRes, protocolosRes] = await Promise.all([
+      fetch("https://modelo-discord-server.vercel.app/api/liberados"),
+      fetch("https://modelo-discord-server.vercel.app/api/protocolos"),
+      timerPromise // Espera o timer e as requisições terminarem
+    ]);
+    
+    // Converte as respostas para JSON
+    const dados = await liberadosRes.json();
+    const protocolos = await protocolosRes.json();
+    
+    // Limpa o conteúdo de loading antes de renderizar os dados
+    tbody.innerHTML = "";
 
     if (!dados || dados.length === 0) {
       tbody.innerHTML = `
@@ -130,15 +142,11 @@ async function carregarHistoricoLiberacoes() {
     dados.forEach(reg => {
       const tr = document.createElement("tr");
       tr.className = "hover:bg-gray-800";
-
-      // Corrigido: usar reg.prts em vez de reg.protocolos
       const prts = reg.prts.split(/\s+/).filter(Boolean);
 
-      // Monta badges comparando com protocolos
       const badgesHTML = prts.map(prt => {
         const registro = protocolos.find(p => p.prt === prt);
         if (!registro) {
-          // Caso não encontre, badge cinza
           return `<span class="px-2 py-1 rounded text-xs font-bold bg-gray-600 text-gray-100">${prt}</span>`;
         }
         const cor = registro.tipo === "1"
@@ -156,6 +164,13 @@ async function carregarHistoricoLiberacoes() {
     });
   } catch (err) {
     console.error("Erro ao carregar histórico de liberações:", err);
+    // Em caso de erro, exibe uma mensagem de erro na tabela
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="2" class="text-center py-6 text-red-400">
+          Erro ao carregar os dados. Por favor, tente novamente.
+        </td>
+      </tr>`;
   }
 }
 
