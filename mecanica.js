@@ -438,7 +438,7 @@ async function enviarPergunta() {
   input.value = "";
 
   try {
-    const res = await fetch("https://modelo-discord-server.vercel.app/api/ia", {
+    const res = await fetch("https://modelo-discord-server.vercel.app/api/IA", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ pergunta })
