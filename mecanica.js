@@ -321,14 +321,9 @@ async function renderizarTabela() {
         <div class="flex items-center justify-center space-x-2">
           <div class="relative w-8 h-8 rounded-full">
             <div class="absolute inset-0 rounded-full border-2 border-transparent" style="background: linear-gradient(90deg, #5EC26A, #10DF29, #009B12, #BE0001, #DC154A, #C02F30, #009dff); animation: spin-neon 2s linear infinite;"></div>
-            <div class="absolute inset-1 bg-gray-900 rounded-full flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles text-blue-500">
-                <path d="M9.911 1.012a3 3 0 0 0-4.043 1.15L2.4 6.784a3 3 0 0 0 .862 4.143l4.331 2.656a3 3 0 0 0 3.986-.71l3.541-4.787a3 3 0 0 0-.616-4.225Z"/>
-                <path d="M14.089 22.988a3 3 0 0 0 4.043-1.15l3.468-5.62a3 3 0 0 0-.862-4.143l-4.331-2.656a3 3 0 0 0-3.986.71l-3.541 4.787a3 3 0 0 0 .616 4.225Z"/>
-              </svg>
+            <div class="absolute inset-1 bg-gray-900 rounded-full"></div>
             </div>
-          </div>
-          <span class="text-white text-lg">Só um segundo...</span>
+          <span class="text-white text-lg">Aguarde, em instantes...</span>
         </div>
       </td>
     </tr>`;
