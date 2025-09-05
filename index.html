@@ -84,41 +84,7 @@
           <div><label for="ticket">Ticket</label><input id="ticket" type="text" class="w-full px-3 py-2 rounded-md bg-gray-800"/></div>
           <div><label for="descricao">Descrição</label><textarea id="descricao" class="w-full px-3 py-2 rounded-md bg-gray-800"></textarea></div>
           <div><label for="paliativo">Paliativo</label><textarea id="paliativo" class="w-full px-3 py-2 rounded-md bg-gray-800"></textarea></div>
-          
-          <div class="mb-4">
-    <label for="paliativoInput" class="block text-sm font-medium text-gray-300 mb-1">
-        Paliativo:
-    </label>
-    <input 
-        list="paliativosList" 
-        id="paliativoInput" 
-        name="paliativo"
-        placeholder="Selecione ou digite aqui..." 
-        required
-        class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2"
-    />
-    <datalist id="paliativosList">
-        <option value="Paliativo não encontrado."></option>
-        <option value="Nova funcionalidade."></option>
-        </datalist>
-</div>
-
-<div class="mb-4">
-    <label for="prazoInput" class="block text-sm font-medium text-gray-300 mb-1">
-        Prazo:
-    </label>
-    <input 
-        list="prazosList" 
-        id="prazoInput" 
-        name="prazo"
-        placeholder="Selecione ou digite aqui..." 
-        class="w-full bg-gray-800 border border-gray-700 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2"
-    />
-    <datalist id="prazosList">
-        <option value="Encaminhar para avaliação de alocação."></option>
-        <option value="Registrar no banco de dados RhedeSAC."></option>
-        </datalist>
-</div>
+          <div><label for="prazo">Prazo</label><textarea id="prazo" class="w-full px-3 py-2 rounded-md bg-gray-800"></textarea></div>
 
           <button onclick="gerarTexto()" class="w-full bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2">
             <i data-lucide="wand-2" class="w-4 h-4"></i> Gerar
