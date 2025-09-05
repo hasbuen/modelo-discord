@@ -42,6 +42,7 @@ async function processarRTF(event) {
           const liberados = await res.json();
 
           const jaExiste = liberados.some(r => r.release === releaseAtual);
+          console.log("Já existe "+jaExiste+" release "+releaseAtual+"  retorno liberdos "+ liberados);
           if (!jaExiste) {
             await fetch("https://modelo-discord-server.vercel.app/api/liberados", {
               method: "POST",
