@@ -141,45 +141,22 @@ async function carregarHistoricoLiberacoes() {
       tr.className = "hover:bg-gray-800";
       const prts = reg.prts.split(/\s+/).filter(Boolean);
 
-      const badgesContainer = document.createElement("div");
-      badgesContainer.className = "flex flex-wrap gap-2";
-
-      prts.forEach(prt => {
+      const badgesHTML = prts.map(prt => {
         const registro = protocolos.find(p => p.prt === prt);
-        
-        const badgeSpan = document.createElement("span");
-        badgeSpan.className = "px-2 py-1 rounded text-xs font-bold";
-        badgeSpan.textContent = prt;
-
         if (!registro) {
-          badgeSpan.classList.add("bg-gray-600", "text-gray-100");
-        } else {
-          const cor = registro.tipo === "1"
-            ? "bg-green-700 text-green-100"
-            : "bg-red-700 text-red-100";
-          const label = registro.tipo === "1" ? "Sugestão" : "Erro";
-          badgeSpan.classList.add(cor);
-          badgeSpan.title = label;
-
-          // AQUI ESTÁ A ALTERAÇÃO: Adiciona o evento de clique programaticamente
-          const descricao = registro.descricao || 'Sem descrição.';
-          badgeSpan.addEventListener('click', () => {
-            mostrarDescricaoModal(prt, descricao);
-          });
+          return `<span class="px-2 py-1 rounded text-xs font-bold bg-gray-600 text-gray-100">${prt}</span>`;
         }
-        badgesContainer.appendChild(badgeSpan);
-      });
+        const cor = registro.tipo === "1"
+          ? "bg-green-700 text-green-100"
+          : "bg-red-700 text-red-100";
+        const label = registro.tipo === "1" ? "Sugestão" : "Erro";
+        return `<span class="px-2 py-1 rounded text-xs font-bold ${cor}" title="${label}">${prt}</span>`;
+      }).join(" ");
 
-      const releaseTd = document.createElement("td");
-      releaseTd.className = "py-2 px-3 font-semibold";
-      releaseTd.textContent = reg.release;
-
-      const protocolosTd = document.createElement("td");
-      protocolosTd.className = "py-2 px-3 flex flex-wrap gap-2";
-      protocolosTd.appendChild(badgesContainer);
-
-      tr.appendChild(releaseTd);
-      tr.appendChild(protocolosTd);
+      tr.innerHTML = `
+        <td class="py-2 px-3 font-semibold">${reg.release}</td>
+        <td class="py-2 px-3 flex flex-wrap gap-2">${badgesHTML}</td>
+      `;
       tbody.appendChild(tr);
     });
   } catch (err) {
