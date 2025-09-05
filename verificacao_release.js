@@ -215,3 +215,21 @@ function renderizarLiberacoes(registros) {
 
   container.appendChild(tabela);
 }
+
+// Nova função para mostrar a descrição em um modal
+function mostrarDescricaoModal(prt, descricao) {
+  const modal = document.getElementById('descricaoModal');
+  const titulo = document.getElementById('descricaoModalTitulo');
+  const corpo = document.getElementById('descricaoModalCorpo');
+
+  titulo.textContent = `Descrição do Protocolo ${prt}`;
+  corpo.textContent = descricao;
+
+  modal.classList.remove('hidden');
+}
+
+// Nova função para fechar o modal
+function fecharDescricaoModal() {
+  const modal = document.getElementById('descricaoModal');
+  modal.classList.add('hidden');
+}
