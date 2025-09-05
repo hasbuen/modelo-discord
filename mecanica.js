@@ -438,33 +438,23 @@ async function enviarPergunta() {
   input.value = "";
 
   try {
-    // Exemplo: consulta registros no Supabase
-    const { data: registros } = await fetch("https://TUO_SUPABASE_URL/rest/v1/protocolos", {
-      headers: {
-        "apikey": "TUO_SUPABASE_ANON_KEY",
-        "Authorization": "Bearer TUO_SUPABASE_ANON_KEY"
-      }
-    }).then(r => r.json().then(data => ({ data })));
+    const res = await fetch("https://modelo-discord-server.vercel.app/api/ia", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pergunta })
+    });
 
-    // Aqui você pode processar os dados para dar resposta "estatística"
-    let resposta = "Não encontrei nada relacionado.";
-    if (registros && registros.length > 0) {
-      // Exemplo básico: conta quantos registros mencionam a pergunta
-      const encontrados = registros.filter(r => 
-        r.descricao.toLowerCase().includes(pergunta.toLowerCase())
-      );
-
-      if (encontrados.length > 0) {
-        resposta = `Encontrei ${encontrados.length} registros relacionados.`;
-      }
+    if (!res.ok) {
+      throw new Error("Erro na requisição");
     }
 
-    // Aqui poderia chamar uma API de IA (ex: OpenAI) para deixar a resposta mais inteligente
-    exibirMensagem("bot", resposta);
+    const data = await res.json();
+    // Usa a resposta que o backend já preparou
+    exibirMensagem("bot", data.resposta);
 
   } catch (e) {
-    exibirMensagem("bot", "Erro ao consultar registros.");
     console.error(e);
+    exibirMensagem("bot", "Erro ao consultar a API.");
   }
 }
 
@@ -480,6 +470,7 @@ function exibirMensagem(remetente, texto) {
   chat.appendChild(msg);
   chat.scrollTop = chat.scrollHeight;
 }
+
 
 
 // Chamar a API assim que a página carregar
