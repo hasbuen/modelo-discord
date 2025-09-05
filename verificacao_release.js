@@ -10,11 +10,9 @@ async function processarRTF(event) {
   reader.onload = async function (e) {
     const texto = e.target.result;
 
-    // 1. Extrair data do release (no formato dd/mm/yyyy)
     const matchRelease = texto.match(/release[^0-9]*(\d{2}\/\d{2}\/\d{4})/i);
     const releaseAtual = matchRelease ? matchRelease[1] : null;
 
-    // 2. Encontrar protocolos
     const encontrados = [...new Set([...texto.matchAll(/Protocolo:\s*(\d+)/g)].map(m => m[1]))];
     const historicoPRTs = await obterListaPRTs();
     const resultados = encontrados.map(protocolo => {
@@ -29,15 +27,12 @@ async function processarRTF(event) {
     if (encontradosRegistrados.length) {
       renderizarLiberacoes(encontradosRegistrados);
 
-      // 3. Montar string de protocolos concatenados
       const protocolosConcat = encontradosRegistrados
         .map(r => `#PRT${r.protocolo}`)
         .join(' ');
 
-      // 4. Salvar no Supabase (somente se não existir ainda o release)
       if (releaseAtual) {
         try {
-          // Buscar os releases existentes
           const res = await fetch("https://modelo-discord-server.vercel.app/api/liberados");
           const liberados = await res.json();
 
@@ -94,7 +89,7 @@ async function obterListaPRTs() {
 async function carregarHistoricoLiberacoes() {
   const tbody = document.getElementById("tabelaLiberados");
 
-  // Início do loading: Insere o HTML de carregamento no corpo da tabela
+  // Início do loading
   tbody.innerHTML = `
     <tr>
       <td colspan="5" class="text-center py-6 text-gray-400">
@@ -109,21 +104,17 @@ async function carregarHistoricoLiberacoes() {
     </tr>`;
 
   try {
-    // Cria uma Promise para o timer (2 segundos)
-    const timerPromise = new Promise(resolve => setTimeout(resolve, 2000)); // 2000ms = 2 segundos
-
-    // Executa as requisições de fetch e o timer em paralelo
+    const timerPromise = new Promise(resolve => setTimeout(resolve, 2000));
+    
     const [liberadosRes, protocolosRes] = await Promise.all([
       fetch("https://modelo-discord-server.vercel.app/api/liberados"),
       fetch("https://modelo-discord-server.vercel.app/api/protocolos"),
-      timerPromise // Espera o timer e as requisições terminarem
+      timerPromise
     ]);
     
-    // Converte as respostas para JSON
     const dados = await liberadosRes.json();
     const protocolos = await protocolosRes.json();
     
-    // Limpa o conteúdo de loading antes de renderizar os dados
     tbody.innerHTML = "";
 
     if (!dados || dados.length === 0) {
@@ -141,27 +132,48 @@ async function carregarHistoricoLiberacoes() {
       tr.className = "hover:bg-gray-800";
       const prts = reg.prts.split(/\s+/).filter(Boolean);
 
-      const badgesHTML = prts.map(prt => {
-        const registro = protocolos.find(p => p.prt === prt);
-        if (!registro) {
-          return `<span class="px-2 py-1 rounded text-xs font-bold bg-gray-600 text-gray-100">${prt}</span>`;
-        }
-        const cor = registro.tipo === "1"
-          ? "bg-green-700 text-green-100"
-          : "bg-red-700 text-red-100";
-        const label = registro.tipo === "1" ? "Sugestão" : "Erro";
-        return `<span class="px-2 py-1 rounded text-xs font-bold ${cor}" title="${label}">${prt}</span>`;
-      }).join(" ");
+      const badgesContainer = document.createElement("div");
+      badgesContainer.className = "flex flex-wrap gap-2";
 
-      tr.innerHTML = `
-        <td class="py-2 px-3 font-semibold">${reg.release}</td>
-        <td class="py-2 px-3 flex flex-wrap gap-2">${badgesHTML}</td>
-      `;
+      prts.forEach(prt => {
+        const registro = protocolos.find(p => p.prt === prt);
+        
+        const badgeSpan = document.createElement("span");
+        badgeSpan.className = "px-2 py-1 rounded text-xs font-bold";
+        badgeSpan.textContent = prt;
+
+        if (!registro) {
+          badgeSpan.classList.add("bg-gray-600", "text-gray-100");
+        } else {
+          const cor = registro.tipo === "1"
+            ? "bg-green-700 text-green-100"
+            : "bg-red-700 text-red-100";
+          const label = registro.tipo === "1" ? "Sugestão" : "Erro";
+          badgeSpan.classList.add(cor);
+          badgeSpan.title = label;
+
+          const descricao = registro.descricao || 'Sem descrição.';
+          badgeSpan.addEventListener('click', () => {
+            mostrarDescricaoModal(prt, descricao);
+          });
+        }
+        badgesContainer.appendChild(badgeSpan);
+      });
+
+      const releaseTd = document.createElement("td");
+      releaseTd.className = "py-2 px-3 font-semibold";
+      releaseTd.textContent = reg.release;
+
+      const protocolosTd = document.createElement("td");
+      protocolosTd.className = "py-2 px-3 flex flex-wrap gap-2";
+      protocolosTd.appendChild(badgesContainer);
+
+      tr.appendChild(releaseTd);
+      tr.appendChild(protocolosTd);
       tbody.appendChild(tr);
     });
   } catch (err) {
     console.error("Erro ao carregar histórico de liberações:", err);
-    // Em caso de erro, exibe uma mensagem de erro na tabela
     tbody.innerHTML = `
       <tr>
         <td colspan="2" class="text-center py-6 text-red-400">
@@ -174,7 +186,6 @@ async function carregarHistoricoLiberacoes() {
 function renderizarLiberacoes(registros) {
   const container = document.querySelector("#liberacoes-container");
 
-  // Cabeçalho
   const header = document.createElement("div");
   header.className = "flex items-center justify-between mb-3";
   header.innerHTML = `
@@ -216,7 +227,7 @@ function renderizarLiberacoes(registros) {
   container.appendChild(tabela);
 }
 
-// Nova função para mostrar a descrição em um modal
+// ARQUIVO: seu modal deve estar aqui
 function mostrarDescricaoModal(prt, descricao) {
   const modal = document.getElementById('descricaoModal');
   const titulo = document.getElementById('descricaoModalTitulo');
@@ -228,7 +239,6 @@ function mostrarDescricaoModal(prt, descricao) {
   modal.classList.remove('hidden');
 }
 
-// Nova função para fechar o modal
 function fecharDescricaoModal() {
   const modal = document.getElementById('descricaoModal');
   modal.classList.add('hidden');
