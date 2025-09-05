@@ -320,7 +320,7 @@ async function renderizarTabela() {
       <td colspan="5" class="text-center py-6 text-gray-400">
         <div class="flex items-center justify-center space-x-2">
           <div class="relative w-8 h-8 rounded-full">
-            <div class="absolute inset-0 rounded-full border-2 border-transparent" style="background: linear-gradient(90deg, #1C1C1C, #2F2F2F, #444444, #5A5A5A, #444444, #2F2F2F, #1C1C1C); animation: spin-neon 2s linear infinite;"></div>
+            <div class="absolute inset-0 rounded-full border-2 border-transparent" style="background: linear-gradient(90deg,rgba(15, 15, 15, 1) 0%, rgba(92, 255, 141, 1) 100%, rgba(237, 221, 83, 1) 100%); animation: spin-neon 2s linear infinite;"></div>
             <div class="absolute inset-1 bg-gray-900 rounded-full"></div>
             </div>
           <span class="text-white text-lg">Aguarde, em instantes...</span>
