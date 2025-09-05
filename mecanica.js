@@ -335,7 +335,7 @@ async function renderizarTabela() {
 
   try {
     // Cria uma Promise para o timer (2 segundos)
-    const timerPromise = new Promise(resolve => setTimeout(resolve, 2000)); // 2000ms = 2 segundos
+    const timerPromise = new Promise(resolve => setTimeout(resolve, 6000)); // 2000ms = 2 segundos
 
     // Executa as requisições e o timer em paralelo
     const [registros, ] = await Promise.all([
