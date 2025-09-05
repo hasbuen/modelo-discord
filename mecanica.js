@@ -141,6 +141,42 @@ function gerarTexto() {
   const descricaoFormatada = formatar(descricao.value);
   const paliativoFormatado = formatar(paliativo.value);
 
+
+    let texto = "";
+  if (tipo === '1') {
+    texto = `**\`\`\`diff
++ Protocolo [SUGESTÃO]:
++ PRT: ${prt.value}
++ Ticket: ${ticket.value}
+\`\`\`**
+- **Descrição resumida:**
+${descricaoFormatada}
+
+- **Paliativo:**
+${paliativoFormatado}
+
+- **Prazo: ** ${prazo.value.trim()}
+- **Link >> ** ${link.value.trim()}
+`;
+  } else {
+    texto = `**\`\`\`diff
+- Protocolo [ERRO]:
+- PRT: ${prt.value}
+- Ticket: ${ticket.value}
+\`\`\`**
+- **Descrição resumida:**
+${descricaoFormatada}
+
+- **Paliativo:**
+${paliativoFormatado}
+
+- **Prazo: ** ${prazo.value.trim()}
+- **Link >> ** ${link.value.trim()}
+`;
+  }
+  document.getElementById('output').value = texto;
+}
+  /*
   let texto = "";
   if (tipo === '1') {
     texto = `**\\\diff
@@ -170,7 +206,7 @@ ${paliativoFormatado}
 - **Link >> ** ${link.value.trim()}`;
   }
   document.getElementById('output').value = texto;
-}
+}*/
 
 async function salvarRegistro() {
   const tipo = document.getElementById("tipo").value;
