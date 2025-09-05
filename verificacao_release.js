@@ -2,7 +2,7 @@ function abrirArquivoRTF() {
   document.getElementById('arquivoRTF').click();
 }
 
-function processarRTF(event) {
+async function processarRTF(event) {
   const arquivo = event.target.files[0];
   if (!arquivo) return;
   const reader = new FileReader();
@@ -34,17 +34,27 @@ function processarRTF(event) {
         .map(r => `#PRT${r.protocolo}`)
         .join(' ');
 
-      // 4. Salvar no Supabase
+      // 4. Salvar no Supabase (somente se não existir ainda o release)
       if (releaseAtual) {
         try {
-          await fetch("https://modelo-discord-server.vercel.app/api/liberados", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              release: releaseAtual,
-              prts: protocolosConcat
-            })
-          });
+          // Buscar os releases existentes
+          const res = await fetch("https://modelo-discord-server.vercel.app/api/liberados");
+          const liberados = await res.json();
+
+          const jaExiste = liberados.some(r => r.release === releaseAtual);
+          if (!jaExiste) {
+            await fetch("https://modelo-discord-server.vercel.app/api/liberados", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                release: releaseAtual,
+                prts: protocolosConcat
+              })
+            });
+            console.log("Release salvo:", releaseAtual);
+          } else {
+            console.log("Release já existe, não será duplicado:", releaseAtual);
+          }
         } catch (err) {
           console.error("Erro ao salvar liberação:", err);
         }
