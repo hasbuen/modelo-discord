@@ -107,8 +107,8 @@ async function carregarHistoricoLiberacoes() {
       const tr = document.createElement("tr");
       tr.className = "hover:bg-gray-800";
 
-      // Quebra os protocolos em array
-      const prts = reg.protocolos.split(/\s+/).filter(Boolean);
+      // Corrigido: usar reg.prts em vez de reg.protocolos
+      const prts = reg.prts.split(/\s+/).filter(Boolean);
 
       // Monta badges comparando com protocolos
       const badgesHTML = prts.map(prt => {
@@ -134,7 +134,6 @@ async function carregarHistoricoLiberacoes() {
     console.error("Erro ao carregar histórico de liberações:", err);
   }
 }
-
 
 function renderizarLiberacoes(registros) {
   const container = document.querySelector("#liberacoes-container");
