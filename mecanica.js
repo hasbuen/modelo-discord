@@ -176,37 +176,6 @@ ${paliativoFormatado}
   }
   document.getElementById('output').value = texto;
 }
-  /*
-  let texto = "";
-  if (tipo === '1') {
-    texto = `**\\\diff
-+ Protocolo [SUGESTÃO]:
-+ PRT: ${prt.value}
-+ Ticket: ${ticket.value}
-\\\**- **Descrição resumida:**
-${descricaoFormatada}
-
-- **Paliativo:**
-${paliativoFormatado}
-
-- **Prazo: ** ${prazo.value.trim()}
-- **Link >> ** ${link.value.trim()}`;
-  } else {
-    texto = `**\\\diff
-- Protocolo [ERRO]:
-- PRT: ${prt.value}
-- Ticket: ${ticket.value}
-\\\**- **Descrição resumida:**
-${descricaoFormatada}
-
-- **Paliativo:**
-${paliativoFormatado}
-
-- **Prazo: ** ${prazo.value.trim()}
-- **Link >> ** ${link.value.trim()}`;
-  }
-  document.getElementById('output').value = texto;
-}*/
 
 async function salvarRegistro() {
   const tipo = document.getElementById("tipo").value;
@@ -344,6 +313,118 @@ async function atualizarContadoresDosCards(registros) {
 
 async function renderizarTabela() {
   const tbody = document.querySelector("#tabelaRegistros tbody");
+  registrosCache = []; // força recarregamento
+
+  // INÍCIO DO LOADING: Insere o spinner no corpo da tabela
+  tbody.innerHTML = `
+    <tr>
+      <td colspan="5" class="text-center py-6 text-gray-400">
+        <div class="flex items-center justify-center space-x-2">
+          <svg class="animate-spin h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>Carregando...</span>
+        </div>
+      </td>
+    </tr>`;
+
+  try {
+    // Estas operações agora ocorrem em segundo plano
+    const registros = await carregarRegistrosProtocolos();
+    await atualizarContadoresDosCards(registros);
+    
+    // FIM DO LOADING: Limpa o conteúdo de loading antes de renderizar os dados
+    tbody.innerHTML = "";
+
+    // Mensagem quando não há registros
+    if (!registros || registros.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5" class="text-center py-6 text-gray-400 italic">
+            No momento nenhum registro gravado.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    // helpers para escapar conteúdo em HTML
+    const escHTML = (s) => {
+      if (!s && s !== 0) return "";
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    };
+
+    // Preenche a tabela
+    registros.forEach(reg => {
+      const tr = document.createElement("tr");
+      tr.className = "hover:bg-gray-800";
+
+      const badgeHTML = reg.tipo === '1'
+        ? '<span class="px-3 py-1 text-xs font-bold rounded-full bg-green-700 text-green-100">Sugestão</span>'
+        : '<span class="px-3 py-1 text-xs font-bold rounded-full bg-red-700 text-red-100">Erro</span>';
+
+      const descricaoEsc = escHTML(reg.descricao || "");
+      const descricaoTooltip = descricaoEsc.replace(/\n/g, "<br>");
+
+      tr.innerHTML = `
+        <td class="py-2 px-3 align-top">
+          <a href="${escHTML(reg.link || '#')}" target="_blank" class="text-blue-400 underline">
+            ${escHTML(reg.ticket || '')}
+          </a>
+        </td>
+        <td class="py-2 px-3 align-top">${escHTML(reg.prt || '')}</td>
+        <td class="py-2 px-3 align-top">${badgeHTML}</td>
+        <td class="py-2 px-3 align-top">
+          <div class="tooltip-container relative">
+            <span class="desc-clamp">${escHTML((reg.descricao || '').slice(0, 300))}${(reg.descricao && reg.descricao.length > 300 ? ' ...' : '')}</span>
+            <div class="tooltip-text">${descricaoTooltip}</div>
+          </div>
+        </td>
+        <td class="py-2 px-3 align-top flex gap-2">
+          <button class="bg-blue-600 hover:bg-blue-500 px-2 py-1 rounded text-xs"
+                  onclick="mostrarModalPaliativo('${escHTML(reg.paliativo || '').replace(/'/g, "\\'")}')">
+            Ver
+          </button>
+          <button class="bg-green-600 hover:bg-green-500 px-2 py-1 rounded text-xs"
+                  onclick="copiarLinha(this, '${escHTML(reg.paliativo || '').replace(/'/g, "\\'")}')">
+            <i data-lucide="copy" class="w-4 h-4"></i>
+          </button>
+          <button class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded text-xs">
+            <i data-lucide="trash-2" class="w-4 h-4"></i>
+          </button>
+        </td>
+      `;
+      
+      const btnExcluir = tr.querySelector('.bg-red-600');
+      if (btnExcluir) {
+          btnExcluir.onclick = () => abrirModalExclusao(Number(reg.id), reg.ticket);
+      }
+      
+      tbody.appendChild(tr);
+    });
+
+    if (window.lucide && typeof lucide.createIcons === 'function') {
+      lucide.createIcons();
+    }
+  } catch (error) {
+    console.error("Erro ao carregar registros:", error);
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="text-center py-6 text-red-400">
+          Erro ao carregar os dados. Por favor, tente novamente.
+        </td>
+      </tr>
+    `;
+  }
+}
+
+/*async function renderizarTabela() {
+  const tbody = document.querySelector("#tabelaRegistros tbody");
   tbody.innerHTML = "";
   registrosCache = []; // força recarregamento
 
@@ -430,103 +511,8 @@ async function renderizarTabela() {
   if (window.lucide && typeof lucide.createIcons === 'function') {
     lucide.createIcons();
   }
-}
-/*
-async function renderizarTabela() {
-  const tbody = document.querySelector("#tabelaRegistros tbody");
-  tbody.innerHTML = "";
-  registrosCache = []; // força recarregamento
+}*/
 
-  const registros = await carregarRegistrosProtocolos();
-  await atualizarContadoresDosCards(registros); 
-  // Mensagem quando não há registros
-  if (!registros || registros.length === 0) {
-    tbody.innerHTML = `      <tr>
-        <td colspan="5" class="text-center py-6 text-gray-400 italic">
-          No momento nenhum registro gravado.
-        </td>
-      </tr>
-    `;    return;
-  }
-
-  // helpers para escapar conteúdo em HTML / JS inline
-  const escHTML = (s) => {
-    if (!s && s !== 0) return "";
-    return String(s)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
-  };
-  const escJS = (s) => {
-    if (!s && s !== 0) return "";
-    return String(s)
-      .replace(/\\/g, "\\\\")
-      .replace(/'/g, "\\'")
-      .replace(/"/g, '\\"')
-      .replace(/\n/g, "\\n")
-      .replace(/\r/g, "");
-  };
-
-  // Preenche a tabela
-  registros.forEach(reg => {
-    const tr = document.createElement("tr");
-    tr.className = "hover:bg-gray-800";
-
-    const badgeHTML = reg.tipo === '1'
-      ? '<span class="px-3 py-1 text-xs font-bold rounded-full bg-green-700 text-green-100">Sugestão</span>'
-      : '<span class="px-3 py-1 text-xs font-bold rounded-full bg-red-700 text-red-100">Erro</span>';
-
-    const descricaoEsc = escHTML(reg.descricao || "");
-    const descricaoTooltip = descricaoEsc.replace(/\n/g, "<br>");
-
-    // botões: Ver (abre paliativo), Copiar (chama copiarLinha), Excluir (chama abrirModalExclusao)
-    const paliativoForOnclick = escJS(reg.paliativo || "");
-    const ticketForOnclick = escJS(reg.ticket || "");
-
-    tr.innerHTML = `      <td class="py-2 px-3 align-top">
-        <a href="${escHTML(reg.link || '#')}" target="_blank" class="text-blue-400 underline">
-          ${escHTML(reg.ticket || '')}
-        </a>
-      </td>
-
-      <td class="py-2 px-3 align-top">${escHTML(reg.prt || '')}</td>
-
-      <td class="py-2 px-3 align-top">${badgeHTML}</td>
-
-      <td class="py-2 px-3 align-top">
-        <div class="tooltip-container relative">
-          <span class="desc-clamp">${escHTML((reg.descricao||'').slice(0, 300))}${(reg.descricao && reg.descricao.length>300 ? ' ...' : '')}</span>
-          <div class="tooltip-text">${descricaoTooltip}</div>
-        </div>
-      </td>
-
-      <td class="py-2 px-3 align-top flex gap-2">
-        <button class="bg-blue-600 hover:bg-blue-500 px-2 py-1 rounded text-xs"
-                onclick="mostrarModalPaliativo('${paliativoForOnclick}')">
-          Ver
-        </button>
-
-        <button class="bg-green-600 hover:bg-green-500 px-2 py-1 rounded text-xs"
-                onclick="copiarLinha(this, '${paliativoForOnclick}')">
-          <i data-lucide="copy" class="w-4 h-4"></i>
-        </button>
-
-        <button class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded text-xs"
-                onclick="abrirModalExclusao(${Number(reg.id)}, '${ticketForOnclick}')">
-          <i data-lucide="trash-2" class="w-4 h-4"></i>
-        </button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-
-  // renderiza ícones Lucide dentro das linhas recém-criadas
-  if (window.lucide && typeof lucide.createIcons === 'function') {
-    lucide.createIcons();
-  }
-}
-*/
 // Chamar a API assim que a página carregar
 window.addEventListener('DOMContentLoaded', async () => {
     try {
