@@ -429,6 +429,59 @@ async function renderizarTabela() {
   }
 }
 
+async function enviarPergunta() {
+  const input = document.getElementById("chat-input");
+  const pergunta = input.value.trim();
+  if (!pergunta) return;
+
+  exibirMensagem("user", pergunta);
+  input.value = "";
+
+  try {
+    // Exemplo: consulta registros no Supabase
+    const { data: registros } = await fetch("https://TUO_SUPABASE_URL/rest/v1/protocolos", {
+      headers: {
+        "apikey": "TUO_SUPABASE_ANON_KEY",
+        "Authorization": "Bearer TUO_SUPABASE_ANON_KEY"
+      }
+    }).then(r => r.json().then(data => ({ data })));
+
+    // Aqui você pode processar os dados para dar resposta "estatística"
+    let resposta = "Não encontrei nada relacionado.";
+    if (registros && registros.length > 0) {
+      // Exemplo básico: conta quantos registros mencionam a pergunta
+      const encontrados = registros.filter(r => 
+        r.descricao.toLowerCase().includes(pergunta.toLowerCase())
+      );
+
+      if (encontrados.length > 0) {
+        resposta = `Encontrei ${encontrados.length} registros relacionados.`;
+      }
+    }
+
+    // Aqui poderia chamar uma API de IA (ex: OpenAI) para deixar a resposta mais inteligente
+    exibirMensagem("bot", resposta);
+
+  } catch (e) {
+    exibirMensagem("bot", "Erro ao consultar registros.");
+    console.error(e);
+  }
+}
+
+function exibirMensagem(remetente, texto) {
+  const chat = document.getElementById("chat-container");
+  const msg = document.createElement("div");
+
+  msg.className = remetente === "user" 
+    ? "bg-blue-600 text-white px-3 py-2 rounded-lg self-end max-w-xs ml-auto"
+    : "bg-gray-700 text-white px-3 py-2 rounded-lg self-start max-w-xs";
+
+  msg.textContent = texto;
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+
 // Chamar a API assim que a página carregar
 window.addEventListener('DOMContentLoaded', async () => {
     try {
