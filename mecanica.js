@@ -219,10 +219,9 @@ function limparCampos() {
     document.getElementById('prazo').value = '';
     document.getElementById('link').value = '';
     document.getElementById('output').value = '';
-    // This part resets the type selection buttons' visual state
     document.getElementById("btn-erro").classList.remove("ring-2", "ring-offset-2", "ring-red-400");
     document.getElementById("btn-sugestao").classList.remove("ring-2", "ring-offset-2", "ring-green-400");
-    document.getElementById("tipo").value = ''; // clear the hidden input
+    document.getElementById("tipo").value = ''; 
 }
 
 // Tabela
@@ -315,7 +314,7 @@ async function renderizarTabela() {
   const tbody = document.querySelector("#tabelaRegistros tbody");
   registrosCache = []; // força recarregamento
 
-  // INÍCIO DO LOADING: Insere o spinner colorido com o texto "Só um segundo..."
+  // INÍCIO DO LOADING: Insere o spinner colorido no corpo da tabela
   tbody.innerHTML = `
     <tr>
       <td colspan="5" class="text-center py-6 text-gray-400">
@@ -335,7 +334,15 @@ async function renderizarTabela() {
     </tr>`;
 
   try {
-    const registros = await carregarRegistrosProtocolos();
+    // Cria uma Promise para o timer (2 segundos)
+    const timerPromise = new Promise(resolve => setTimeout(resolve, 2000)); // 2000ms = 2 segundos
+
+    // Executa as requisições e o timer em paralelo
+    const [registros, ] = await Promise.all([
+      carregarRegistrosProtocolos(),
+      timerPromise // Garante que o loading apareça por no mínimo 2 segundos
+    ]);
+
     await atualizarContadoresDosCards(registros);
     
     // FIM DO LOADING: Limpa o conteúdo de loading antes de renderizar os dados
@@ -426,96 +433,6 @@ async function renderizarTabela() {
     `;
   }
 }
-
-/*async function renderizarTabela() {
-  const tbody = document.querySelector("#tabelaRegistros tbody");
-  tbody.innerHTML = "";
-  registrosCache = []; // força recarregamento
-
-  const registros = await carregarRegistrosProtocolos();
-  await atualizarContadoresDosCards(registros); 
-  // Mensagem quando não há registros
-  if (!registros || registros.length === 0) {
-    tbody.innerHTML = `      <tr>
-        <td colspan="5" class="text-center py-6 text-gray-400 italic">
-          No momento nenhum registro gravado.
-        </td>
-      </tr>
-    `;
-    return;
-  }
-
-  // helpers para escapar conteúdo em HTML
-  const escHTML = (s) => {
-    if (!s && s !== 0) return "";
-    return String(s)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
-  };
-
-  // Preenche a tabela
-  registros.forEach(reg => {
-    const tr = document.createElement("tr");
-    tr.className = "hover:bg-gray-800";
-
-    const badgeHTML = reg.tipo === '1'
-      ? '<span class="px-3 py-1 text-xs font-bold rounded-full bg-green-700 text-green-100">Sugestão</span>'
-      : '<span class="px-3 py-1 text-xs font-bold rounded-full bg-red-700 text-red-100">Erro</span>';
-
-    const descricaoEsc = escHTML(reg.descricao || "");
-    const descricaoTooltip = descricaoEsc.replace(/\n/g, "<br>");
-
-    // Constroi o HTML sem o evento onclick, que será adicionado programaticamente
-    tr.innerHTML = `      <td class="py-2 px-3 align-top">
-        <a href="${escHTML(reg.link || '#')}" target="_blank" class="text-blue-400 underline">
-          ${escHTML(reg.ticket || '')}
-        </a>
-      </td>
-
-      <td class="py-2 px-3 align-top">${escHTML(reg.prt || '')}</td>
-
-      <td class="py-2 px-3 align-top">${badgeHTML}</td>
-
-      <td class="py-2 px-3 align-top">
-        <div class="tooltip-container relative">
-          <span class="desc-clamp">${escHTML((reg.descricao||'').slice(0, 300))}${(reg.descricao && reg.descricao.length>300 ? ' ...' : '')}</span>
-          <div class="tooltip-text">${descricaoTooltip}</div>
-        </div>
-      </td>
-
-      <td class="py-2 px-3 align-top flex gap-2">
-        <button class="bg-blue-600 hover:bg-blue-500 px-2 py-1 rounded text-xs"
-                onclick="mostrarModalPaliativo('${escHTML(reg.paliativo || '').replace(/'/g, "\\'")}')">
-          Ver
-        </button>
-
-        <button class="bg-green-600 hover:bg-green-500 px-2 py-1 rounded text-xs"
-                onclick="copiarLinha(this, '${escHTML(reg.paliativo || '').replace(/'/g, "\\'")}')">
-          <i data-lucide="copy" class="w-4 h-4"></i>
-        </button>
-
-        <button class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded text-xs">
-          <i data-lucide="trash-2" class="w-4 h-4"></i>
-        </button>
-      </td>
-    `;
-    
-    // Anexa o evento de exclusão programaticamente
-    const btnExcluir = tr.querySelector('.bg-red-600');
-    if (btnExcluir) {
-        btnExcluir.onclick = () => abrirModalExclusao(Number(reg.id), reg.ticket);
-    }
-    
-    tbody.appendChild(tr);
-  });
-
-  // renderiza ícones Lucide dentro das linhas recém-criadas
-  if (window.lucide && typeof lucide.createIcons === 'function') {
-    lucide.createIcons();
-  }
-}*/
 
 // Chamar a API assim que a página carregar
 window.addEventListener('DOMContentLoaded', async () => {
