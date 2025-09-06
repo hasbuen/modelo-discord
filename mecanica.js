@@ -434,8 +434,16 @@ async function enviarPergunta() {
   const pergunta = input.value.trim();
   if (!pergunta) return;
 
+  const loadingMessage = document.getElementById("loading-message");
+
+  // 1. Exibir a mensagem do usuário
   exibirMensagem("user", pergunta);
   input.value = "";
+
+  // 2. Exibir a mensagem de "Pensando..." e rolar o chat para baixo
+  loadingMessage.classList.remove("hidden");
+  const chat = document.getElementById("chat-container");
+  chat.scrollTop = chat.scrollHeight;
 
   try {
     const res = await fetch("https://modelo-discord-server.vercel.app/api/IA", {
@@ -449,12 +457,16 @@ async function enviarPergunta() {
     }
 
     const data = await res.json();
-    // Usa a resposta que o backend já preparou
     exibirMensagem("bot", data.resposta);
 
   } catch (e) {
     console.error(e);
     exibirMensagem("bot", "Erro ao consultar a API.");
+  } finally {
+    // 3. Ocultar a mensagem de "Pensando..." no final, independentemente do resultado
+    loadingMessage.classList.add("hidden");
+    // Rola para o final novamente para mostrar a última mensagem
+    chat.scrollTop = chat.scrollHeight;
   }
 }
 
