@@ -449,7 +449,8 @@ async function enviarPergunta() {
     const res = await fetch("https://modelo-discord-server.vercel.app/api/IA", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ pergunta })
+      body: JSON.stringify({ pergunta: pergunta })
+
     });
 
     if (!res.ok) {
