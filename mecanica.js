@@ -462,16 +462,24 @@ function exibirMensagem(remetente, texto) {
   const chat = document.getElementById("chat-container");
   const msg = document.createElement("div");
 
-  msg.className = remetente === "user" 
+  msg.className = remetente === "user"
     ? "bg-blue-600 text-white px-3 py-2 rounded-lg self-end max-w-xs ml-auto"
     : "bg-gray-700 text-white px-3 py-2 rounded-lg self-start max-w-xs";
 
-  msg.textContent = texto;
+  // Se a mensagem for do bot, converta o markdown para HTML
+  if (remetente === "bot") {
+    // Adicione um wrapper para a formatação do markdown
+    const formattedContent = document.createElement('div');
+    formattedContent.innerHTML = marked.parse(texto);
+    msg.appendChild(formattedContent);
+  } else {
+    // Para o usuário, exiba o texto normal
+    msg.textContent = texto;
+  }
+  
   chat.appendChild(msg);
   chat.scrollTop = chat.scrollHeight;
 }
-
-
 
 // Chamar a API assim que a página carregar
 window.addEventListener('DOMContentLoaded', async () => {
