@@ -470,25 +470,43 @@ async function enviarPergunta() {
   }
 }
 
+// arquivo mecanica.js
+
 function exibirMensagem(remetente, texto) {
   const chat = document.getElementById("chat-container");
   const msg = document.createElement("div");
 
   msg.className = remetente === "user"
-    ? "bg-blue-600 text-white px-3 py-2 rounded-lg self-end max-w-xs ml-auto"
-    : "bg-gray-700 text-white px-3 py-2 rounded-lg self-start max-w-xs";
+    ? "bg-blue-600 text-white px-3 py-2 rounded-lg self-end max-w-3xl ml-auto"
+    : "bg-gray-700 text-white px-3 py-2 rounded-lg self-start max-w-3xl";
 
-  // Se a mensagem for do bot, converta o markdown para HTML
   if (remetente === "bot") {
-    // Adicione um wrapper para a formatação do markdown
-    const formattedContent = document.createElement('div');
-    formattedContent.innerHTML = marked.parse(texto);
-    msg.appendChild(formattedContent);
+    // Cria um container para o nome e a resposta
+    const content = document.createElement("div");
+
+    // Cria um span para o nome do assistente e aplica um estilo de negrito
+    const nomeAssistente = document.createElement("span");
+    nomeAssistente.textContent = "Skynet: "; 
+    nomeAssistente.style.fontWeight = "bold";
+
+    // Adiciona o nome do assistente ao container
+    content.appendChild(nomeAssistente);
+
+    // Usa marked.js para converter Markdown em HTML
+    const respostaFormatada = document.createElement("span");
+    respostaFormatada.innerHTML = marked.parse(texto);
+    
+    // Adiciona a resposta formatada ao container
+    content.appendChild(respostaFormatada);
+
+    // Adiciona o container completo ao balão de mensagem
+    msg.appendChild(content);
+
   } else {
-    // Para o usuário, exiba o texto normal
+    // Para a mensagem do usuário, exiba o texto normal
     msg.textContent = texto;
   }
-  
+
   chat.appendChild(msg);
   chat.scrollTop = chat.scrollHeight;
 }
