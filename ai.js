@@ -1,7 +1,5 @@
-// A URL da sua API na Vercel para buscar os protocolos.
 const API_SERVER = "https://modelo-discord-server.vercel.app";
 
-// Intenções e respostas (agora embutidas diretamente no frontend)
 const intents = {
   greeting: ["olá", "oi", "bom dia", "boa tarde", "e aí"],
   farewell: ["tchau", "até mais", "adeus"],
@@ -56,7 +54,6 @@ function normalize(text) {
 // ==============================
 // Load modelo + dados
 // ==============================
-// no arquivo ai.js (ou script.js)
 async function loadModelAndData() {
   try {
     statusEl.textContent = "Iniciando a inteligência...";
@@ -81,17 +78,18 @@ async function loadModelAndData() {
   }
 }
 
-// No seu arquivo ai.js (ou script.js)
-
 async function fetchAndIndexProtocols() {
   try {
-    statusEl.textContent = "Buscando protocolos na API...";
+    statusEl.textContent = "Conectando ao núcleo de dados...";
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
     const res = await fetch(`${API_SERVER}/api/protocolos`);
     const data = await res.json();
+
+    statusEl.textContent = "Processando memória histórica...";
+    await new Promise(resolve => setTimeout(resolve, 3000));
     
     protocolos = Array.isArray(data) ? data : (data?.data || []);
-    console.log("Protocolos recebidos:", protocolos);
     
     if (!protocolos || protocolos.length === 0) {
       statusEl.textContent = "⚠️ Nenhum protocolo encontrado.";
@@ -101,7 +99,6 @@ async function fetchAndIndexProtocols() {
     const docs = protocolos.map(p =>
       protocoloFieldsToIndex.map(f => (p?.[f] || "")).filter(Boolean).join(" · ")
     );
-    console.log("Docs gerados:", docs);
     
     if (!docs.length || docs.every(d => d.trim() === "")) {
       statusEl.textContent = "⚠️ Nenhum dado válido para indexar.";
@@ -112,6 +109,9 @@ async function fetchAndIndexProtocols() {
     const totalBatches = Math.ceil(docs.length / batchSize);
     
     const allEmbeddings = [];
+
+    statusEl.textContent = "Coletando informações...";
+    await new Promise(resolve => setTimeout(resolve, 3000));
     
     statusEl.textContent = `Aguarde, estou processando ${docs.length} protocolos...`;
 
@@ -127,7 +127,7 @@ async function fetchAndIndexProtocols() {
       await new Promise(resolve => setTimeout(resolve, 0));
       
       const percent = Math.floor(((i + 1) / totalBatches) * 100);
-      statusEl.textContent = `Aguardando, ainda estou processando os protocolos (${percent}% concluído)...`;
+      statusEl.textContent = `Aguarde, ainda estou processando os protocolos (${percent}% concluído)...`;
     }
 
     protocoloEmbeddings = allEmbeddings;
