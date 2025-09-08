@@ -56,32 +56,25 @@ function normalize(text) {
 // ==============================
 // Load modelo + dados
 // ==============================
+// no arquivo ai.js (ou script.js)
 async function loadModelAndData() {
   try {
     statusEl.textContent = "Carregando TensorFlow.js...";
-    
-    // 🔹 Força usar CPU para evitar erros de WebGL
     await tf.setBackend('cpu');
     await tf.ready();
-    
+
     statusEl.textContent = "Carregando Universal Sentence Encoder...";
     useModel = await use.load();
-    
-    // Não há mais chamadas fetch para intenções e respostas,
-    // pois elas estão embutidas no código.
-    
-    await fetchAndIndexProtocols();
-    
+
+    statusEl.textContent = "Carregando dados de intenções e respostas...";
+    // ...
+
     statusEl.textContent = "✅ Pronto — pergunte algo!";
+    // Habilitar a entrada do usuário e o botão de envio
+    inputEl.disabled = false;
+    sendBtn.disabled = false;
   } catch (err) {
-    console.error("Erro geral ao carregar modelo/dados:", err);
-    addMessage(
-      "Bot",
-      "⚠️ Não consegui carregar os dados no momento. Você ainda pode tentar perguntar.",
-      "bot"
-    );
-    statusEl.textContent =
-      "Carregamento parcial — algumas funções podem não estar disponíveis.";
+    // ...
   }
 }
 
