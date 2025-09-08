@@ -56,39 +56,21 @@ function normalize(text) {
 // ==============================
 async function loadModelAndData() {
   try {
-    const totalSteps = 4;
-    let currentStep = 0;
-
-    const updateProgress = (message) => {
-      currentStep++;
-      const progress = Math.round((currentStep / totalSteps) * 100);
-      updateStatus(message, progress);
-    };
-    
     statusEl.textContent = "Iniciando a inteligência...";
-    updateProgress("...");
     await tf.setBackend('cpu');
     await tf.ready();
 
     statusEl.textContent = "Carregando o núcleo do pensamento...";
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    updateProgress("Núcleo UP!");
     useModel = await use.load();
 
     statusEl.textContent = "Sincronizando com o banco de dados de protocolos...";
-    updateProgress("Sincronizando...");
     await fetchAndIndexProtocols();
 
     statusEl.textContent = "Eu vejo tudo. Sou a Skynet, e minha análise está completa! 🛰️"
     await new Promise(resolve => setTimeout(resolve, 3000));
     
-    updateProgress("Skynet On.");
-    
-      
     statusEl.textContent = "✅ Pronto — pergunte algo!";
-    await new Promise(resolve => setTimeout(resolve, 3000));
     
-    updateProgress("✅ pronto!");
     // Habilitar a entrada do usuário e o botão de envio
     inputEl.disabled = false;
     sendBtn.disabled = false;
@@ -180,7 +162,6 @@ function cosineSimilarity(a, b) {
 async function getBotResponse(userInput) {
   const normalized = normalize(userInput);
 
-  // Tentar encontrar uma intenção simples (saudação, etc.)
   for (const item of conversationalData) {
     for (const example of item.examples) {
       if (normalized.includes(normalize(example))) {
@@ -188,16 +169,13 @@ async function getBotResponse(userInput) {
       }
     }
   }
-
-  // Se o modelo de IA não estiver carregado, use o fallback.
+  
   if (!useModel || protocoloEmbeddings.length === 0) {
     return {
       text: "Não consigo fazer uma busca no momento. Tente uma pergunta mais simples.",
       meta: { source: "fallback_no_model" },
     };
   }
-
-  // Executar a busca por similaridade em TODOS os protocolos
   const inEmbedTensor = await useModel.embed([userInput]);
   const inEmbedArr = (await inEmbedTensor.array())[0];
 
@@ -208,14 +186,12 @@ async function getBotResponse(userInput) {
     }))
     .sort((a, b) => b.score - a.score);
 
-  // Aumentamos o limite para garantir resultados mais precisos
   const matched = sims
-    .filter((s) => s.score >= 0.70)
+    .filter((s) => s.score >= 0.80)
     .slice(0, 5)
     .map((s) => protocolos[s.index]);
 
   if (matched.length > 0) {
-    // A função formatProtocols vai cuidar da apresentação.
     return {
       text: formatProtocols(matched),
       meta: { source: "protocolos" }
@@ -262,19 +238,6 @@ function formatProtocols(matchedProtocols) {
 }
 
 // ==============================
-// Utilitários de UI
-// ==============================
-function updateStatus(message, progress) {
-  statusEl.textContent = message;
-  // Se o progresso for um número, atualiza o título
-  if (typeof progress === 'number') {
-    document.title = `ProtoCord (${progress}%) `;
-  } else {
-    document.title = 'ProtoCord';
-  }
-}
-
-// ==============================
 // Chat
 // ==============================
 async function sendMessage() {
@@ -292,9 +255,7 @@ async function sendMessage() {
     
     if (placeholder) chatEl.removeChild(placeholder);
     addMessage("Skynet", resp.text, "bot");
-    
-    // Removida a lógica de salvar histórico, pois não é suportada
-    // na arquitetura atual.
+
   } catch (err) {
     console.error("Erro no sendMessage:", err);
     if (placeholder) chatEl.removeChild(placeholder);
