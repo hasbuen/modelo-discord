@@ -225,4 +225,4 @@ async function sendMessage() {
 }
 
 // start
-loadModelAndData();
+//loadModelAndData();
