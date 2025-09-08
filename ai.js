@@ -190,13 +190,48 @@ async function getBotResponse(userInput) {
     const list = matched
       .map((m) => `• ${m.descricao || m.prt || "(sem título)"}`)
       .join("\n");
-    return { text: `🔎 Protocolos relacionados:\n${list}`, meta: { source: "protocolos" } };
+    return { 
+      text: formatProtocols(matched), 
+      meta: { source: "protocolos" } 
+    };
   }
   
   return {
     text: "Não encontrei nada relacionado. Pode reformular?",
     meta: { source: "fallback" },
   };
+}
+
+// ==============================
+// Formata a resposta com protocolos
+// ==============================
+function formatProtocols(matchedProtocols) {
+  if (!matchedProtocols || matchedProtocols.length === 0) {
+    return "Não encontrei protocolos relacionados. Pode tentar outra busca.";
+  }
+
+  // Título
+  let html = "<b> 🌐 Protocolos relacionados: </b><br><br>";
+  
+  // Lista de protocolos
+  html += "<ul style='padding-left: 20px; margin: 0;'>";
+  matchedProtocols.forEach(p => {
+    const descricao = p.descricao || "(sem descrição)";
+    const prt = p.prt ? `(${p.prt})` : "";
+    const link = p.link ? `<a href="${p.link}" target="_blank">Acessar protocolo</a>` : "";
+
+    html += `
+      <li style="margin-bottom: 15px;">
+        <b>${descricao} ${prt}</b>
+        <br>
+        <small>${p.contexto || ""}</small><br>
+        ${link}
+      </li>
+    `;
+  });
+  html += "</ul>";
+
+  return html;
 }
 
 // ==============================
