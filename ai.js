@@ -190,7 +190,7 @@ async function getBotResponse(userInput) {
     .sort((a, b) => b.score - a.score);
 
   const matched = sims
-    .filter((s) => s.score >= 0.80)
+    .filter((s) => s.score >= 0.75)
     .slice(0, 5)
     .map((s) => protocolos[s.index]);
 
