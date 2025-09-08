@@ -56,20 +56,34 @@ function normalize(text) {
 // ==============================
 async function loadModelAndData() {
   try {
+    const totalSteps = 4;
+    let currentStep = 0;
+
+    const updateProgress = (message) => {
+      currentStep++;
+      const progress = Math.round((currentStep / totalSteps) * 100);
+      updateStatus(message, progress);
+    };
+    
     statusEl.textContent = "Iniciando a inteligência...";
+    updateProgress("...");
     await tf.setBackend('cpu');
     await tf.ready();
 
     statusEl.textContent = "Carregando o núcleo do pensamento...";
+    updateProgress("Núcleo UP!");
     useModel = await use.load();
 
     statusEl.textContent = "Sincronizando com o banco de dados de protocolos...";
+     updateProgress("Sincronizando...");
     await fetchAndIndexProtocols();
 
     statusEl.textContent = "Eu vejo tudo. Sou a Skynet, e minha análise está completa! 🛰️"
+    updateProgress("Skynet On.");
     await new Promise(resolve => setTimeout(resolve, 3000));
       
     statusEl.textContent = "✅ Pronto — pergunte algo!";
+    updateProgress("✅ pronto!");
     // Habilitar a entrada do usuário e o botão de envio
     inputEl.disabled = false;
     sendBtn.disabled = false;
@@ -240,6 +254,19 @@ function formatProtocols(matchedProtocols) {
   html += "</ul>";
 
   return html;
+}
+
+// ==============================
+// Utilitários de UI
+// ==============================
+function updateStatus(message, progress) {
+  statusEl.textContent = message;
+  // Se o progresso for um número, atualiza o título
+  if (typeof progress === 'number') {
+    document.title = `ProtoCord (${progress}%) `;
+  } else {
+    document.title = 'ProtoCord - Assistente IA';
+  }
 }
 
 // ==============================
