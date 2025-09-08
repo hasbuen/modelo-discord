@@ -1,6 +1,6 @@
 const API_SERVER = "https://modelo-discord-server.vercel.app";
 
-// Intents básicas
+// Intents
 const intents = {
   greeting: ["olá", "oi", "bom dia", "boa tarde", "e aí"],
   farewell: ["tchau", "até mais", "adeus"],
@@ -17,7 +17,7 @@ const responses = {
   module_future: "Estamos desenvolvendo novos módulos com foco em segurança e integração futura."
 };
 
-// Variáveis
+// Variáveis e elementos DOM
 let useModel = null;
 let protocolos = [];
 let protocoloEmbeddings = [];
@@ -29,13 +29,12 @@ const statusEl = document.getElementById("status");
 const inputEl = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 
-// Eventos
+// garante eventos
 sendBtn.addEventListener("click", sendMessage);
 inputEl.addEventListener("keyup", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
-// Add mensagem no chat
 function addMessage(sender, text, type = "bot") {
   const p = document.createElement("div");
   p.className = `message ${type}`;
@@ -44,7 +43,7 @@ function addMessage(sender, text, type = "bot") {
   chatEl.scrollTop = chatEl.scrollHeight;
 }
 
-// Normaliza texto
+// normaliza texto
 function normalize(text) {
   return (text || "")
     .toString()
@@ -54,63 +53,74 @@ function normalize(text) {
 }
 
 // ==============================
-// Load modelo + dados (em paralelo)
+// Load modelo + dados
 // ==============================
 async function loadModelAndData() {
   try {
-    statusEl.textContent = "Iniciando núcleo de IA...";
+    statusEl.textContent = "Iniciando a inteligência...";
+    await tf.setBackend("cpu");
+    await tf.ready();
 
-    // Carrega modelo e protocolos ao mesmo tempo
-    const [model, protos] = await Promise.all([
-      (async () => {
-        await tf.setBackend('cpu');
-        await tf.ready();
-        return await use.load();
-      })(),
-      fetchAndIndexProtocols()
-    ]);
+    statusEl.textContent = "Carregando o núcleo do pensamento...";
+    useModel = await use.load();
 
-    useModel = model;
+    statusEl.textContent = "Sincronizando com o banco de dados de protocolos...";
+    await fetchAndIndexProtocols();
 
-    statusEl.textContent = "✅ IA carregada — pergunte algo!";
+    statusEl.textContent = "✅ Pronto — pergunte algo!";
     inputEl.disabled = false;
     sendBtn.disabled = false;
   } catch (err) {
+    console.error("Erro no loadModelAndData:", err);
     statusEl.textContent = "Erro ao carregar IA.";
-    console.error(err);
   }
 }
 
 async function fetchAndIndexProtocols() {
   try {
-    statusEl.textContent = "Baixando protocolos...";
     const res = await fetch(`${API_SERVER}/api/protocolos`);
     const data = await res.json();
 
     protocolos = Array.isArray(data) ? data : (data?.data || []);
-    if (!protocolos.length) {
+    if (!protocolos || protocolos.length === 0) {
       statusEl.textContent = "⚠️ Nenhum protocolo encontrado.";
       return;
     }
 
-    // Gera textos para embutir
     const docs = protocolos.map(p =>
       protocoloFieldsToIndex.map(f => (p?.[f] || "")).filter(Boolean).join(" · ")
     );
 
-    if (!docs.length) {
+    if (!docs.length || docs.every(d => d.trim() === "")) {
       statusEl.textContent = "⚠️ Nenhum dado válido para indexar.";
       return;
     }
 
-    // Embedding direto (sem pausas artificiais)
-    const embeddings = await use.load().then(m => m.embed(docs));
-    protocoloEmbeddings = await embeddings.array();
-    protocoloModules = protocolos.map(p => normalize(p.modulo || p.tipo || p.prt || ""));
+    const batchSize = 25; // 🔹 maior lote para processar mais rápido
+    const totalBatches = Math.ceil(docs.length / batchSize);
+    const allEmbeddings = [];
 
-    statusEl.textContent = `📂 Protocolos indexados: ${protocolos.length}`;
+    for (let i = 0; i < totalBatches; i++) {
+      const start = i * batchSize;
+      const end = start + batchSize;
+      const batchDocs = docs.slice(start, end);
+
+      const batchEmbeddings = await useModel.embed(batchDocs);
+      allEmbeddings.push(...(await batchEmbeddings.array()));
+
+      const percent = Math.floor(((i + 1) / totalBatches) * 100);
+      statusEl.textContent = `Indexando protocolos... ${percent}%`;
+      document.title = `ProtoCord (${percent}%)`;
+
+      await new Promise(resolve => setTimeout(resolve, 0)); // 🔹 libera UI
+    }
+
+    protocoloEmbeddings = allEmbeddings;
+    protocoloModules = protocolos.map(p => normalize(p.modulo || p.tipo || p.prt || ""));
+    statusEl.textContent = `📂 Indexação concluída: ${protocolos.length} protocolos.`;
+    document.title = "ProtoCord";
   } catch (err) {
-    console.error("Erro ao buscar protocolos:", err);
+    console.error("Erro fetchAndIndexProtocols:", err);
     statusEl.textContent = "Erro ao carregar protocolos.";
   }
 }
@@ -134,24 +144,22 @@ function cosineSimilarity(a, b) {
 async function getBotResponse(userInput) {
   const normalized = normalize(userInput);
 
-  // Primeiro checa intents
+  // 🔹 Intents rápidos primeiro
   for (const [intent, examples] of Object.entries(intents)) {
-    for (const ex of examples) {
-      if (normalized.includes(normalize(ex))) {
-        return { text: responses[intent], meta: { source: "intent", intent } };
-      }
+    if (examples.some(ex => normalized.includes(normalize(ex)))) {
+      return { text: responses[intent], meta: { source: "intent", intent } };
     }
   }
 
-  // Se não tem modelo ou embeddings
+  // 🔹 Sem modelo ou embeddings
   if (!useModel || protocoloEmbeddings.length === 0) {
     return {
-      text: "Ainda estou inicializando, tente novamente em instantes.",
+      text: "Ainda estou inicializando, mas posso ajudar com dúvidas gerais! 🤖",
       meta: { source: "fallback_no_model" }
     };
   }
 
-  // Calcula embedding da pergunta
+  // 🔹 Similaridade semântica
   const inEmbedTensor = await useModel.embed([userInput]);
   const inEmbedArr = (await inEmbedTensor.array())[0];
 
@@ -162,23 +170,24 @@ async function getBotResponse(userInput) {
   const matched = sims.filter(s => s.score >= 0.7).slice(0, 5).map(s => protocolos[s.index]);
 
   if (matched.length > 0) {
-    return {
-      text: formatProtocols(matched),
-      meta: { source: "protocolos" }
-    };
+    return { text: formatProtocols(matched), meta: { source: "protocolos" } };
   }
 
-  // 🔹 Fallback mais natural
+  // 🔹 Fallback mais natural, estilo IA
   return {
-    text: `🤔 Não encontrei nada específico sobre "${userInput}". Mas posso tentar entender melhor: está relacionado a protocolos, segurança ou faturamento?`,
+    text: `🤔 Não encontrei nada específico sobre "${userInput}". Mas posso tentar ajudar se você reformular a pergunta ou detalhar um pouco mais.`,
     meta: { source: "fallback" }
   };
 }
 
 // ==============================
-// Formata resposta com protocolos
+// Formata protocolos
 // ==============================
 function formatProtocols(matchedProtocols) {
+  if (!matchedProtocols.length) {
+    return "Não encontrei protocolos relacionados.";
+  }
+
   let html = "<b>🌐 Protocolos relacionados:</b><br><br><ul>";
   matchedProtocols.forEach(p => {
     const descricao = p.descricao || "(sem descrição)";
@@ -210,7 +219,7 @@ async function sendMessage() {
   } catch (err) {
     console.error("Erro no sendMessage:", err);
     if (placeholder) chatEl.removeChild(placeholder);
-    addMessage("Skynet", `⚠️ Erro: ${err.message}`, "bot");
+    addMessage("Skynet", `⚠️ Erro ao processar a mensagem: ${err.message}`, "bot");
   }
 }
 
