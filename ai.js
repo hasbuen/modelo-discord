@@ -105,7 +105,7 @@ async function fetchAndIndexProtocols() {
       return;
     }
 
-    const batchSize = 30;
+    const batchSize = 15;
     const totalBatches = Math.ceil(docs.length / batchSize);
     
     const allEmbeddings = [];
