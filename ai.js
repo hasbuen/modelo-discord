@@ -128,7 +128,7 @@ async function fetchAndIndexProtocols() {
     await new Promise(resolve => setTimeout(resolve, 3000));
     
     statusEl.textContent = `Aguarde, estou processando ${docs.length} protocolos...`;
-    document.title = `🩹 ProtoCord (${docs.length} reg.)`;
+    document.title = `ProtoCord (${docs.length} reg.)`;
     
 
     for (let i = 0; i < totalBatches; i++) {
@@ -144,7 +144,7 @@ async function fetchAndIndexProtocols() {
       
       const percent = Math.floor(((i + 1) / totalBatches) * 100);
       statusEl.textContent = `Aguarde, ainda estou processando os protocolos (${percent}% concluído)...`;
-      document.title = `🩹 ProtoCord (${percent}%)`;
+      document.title = `ProtoCord (${percent}%)`;
     }
 
     protocoloEmbeddings = allEmbeddings;
@@ -155,7 +155,7 @@ async function fetchAndIndexProtocols() {
     statusEl.textContent = "Erro ao carregar protocolos.";
   }
 
-  document.title = `🩹 ProtoCord `;
+  document.title = `ProtoCord `;
 }
 
 // ==============================
@@ -268,9 +268,9 @@ function updateStatus(message, progress) {
   statusEl.textContent = message;
   // Se o progresso for um número, atualiza o título
   if (typeof progress === 'number') {
-    document.title = `🩹 ProtoCord (${progress}%) `;
+    document.title = `ProtoCord (${progress}%) `;
   } else {
-    document.title = '🩹 ProtoCord';
+    document.title = 'ProtoCord';
   }
 }
 
