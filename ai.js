@@ -35,12 +35,26 @@ inputEl.addEventListener("keyup", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
+// ==============================
+// Mensagens (agora com histórico salvo)
+// ==============================
 function addMessage(sender, text, type = "bot") {
   const p = document.createElement("div");
   p.className = `message ${type}`;
   p.innerHTML = `<div class="meta"><strong>${sender}</strong></div><div>${text}</div>`;
   chatEl.appendChild(p);
   chatEl.scrollTop = chatEl.scrollHeight;
+
+  // 🔹 Salva histórico no localStorage
+  let history = JSON.parse(localStorage.getItem("chat_history") || "[]");
+  history.push({ sender, text, type });
+  localStorage.setItem("chat_history", JSON.stringify(history));
+}
+
+// 🔹 Carregar histórico ao abrir
+function loadChatHistory() {
+  const history = JSON.parse(localStorage.getItem("chat_history") || "[]");
+  history.forEach(msg => addMessage(msg.sender, msg.text, msg.type));
 }
 
 // normaliza texto
@@ -65,6 +79,21 @@ async function loadModelAndData() {
     useModel = await use.load();
 
     statusEl.textContent = "Sincronizando com o banco de dados de protocolos...";
+
+    // 🔹 Tenta carregar do localStorage
+    const cache = localStorage.getItem("protocol_cache");
+    if (cache) {
+      const parsed = JSON.parse(cache);
+      protocolos = parsed.protocolos || [];
+      protocoloEmbeddings = parsed.embeddings || [];
+      protocoloModules = parsed.modules || [];
+      statusEl.textContent = `📂 Indexação carregada do cache: ${protocolos.length} protocolos.`;
+      inputEl.disabled = false;
+      sendBtn.disabled = false;
+      return;
+    }
+
+    // 🔹 Se não houver cache → busca e indexa
     await fetchAndIndexProtocols();
 
     statusEl.textContent = "✅ Pronto — pergunte algo!";
@@ -119,6 +148,13 @@ async function fetchAndIndexProtocols() {
     protocoloModules = protocolos.map(p => normalize(p.modulo || p.tipo || p.prt || ""));
     statusEl.textContent = `📂 Indexação concluída: ${protocolos.length} protocolos.`;
     document.title = "ProtoCord";
+
+    // 🔹 Salva no cache (localStorage)
+    localStorage.setItem("protocol_cache", JSON.stringify({
+      protocolos,
+      embeddings: protocoloEmbeddings,
+      modules: protocoloModules
+    }));
   } catch (err) {
     console.error("Erro fetchAndIndexProtocols:", err);
     statusEl.textContent = "Erro ao carregar protocolos.";
@@ -222,3 +258,6 @@ async function sendMessage() {
     addMessage("Skynet", `⚠️ Erro ao processar a mensagem: ${err.message}`, "bot");
   }
 }
+
+// 🔹 Carregar histórico automaticamente ao abrir
+loadChatHistory();
