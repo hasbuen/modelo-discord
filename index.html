@@ -256,6 +256,8 @@
   
   <script>
     lucide.createIcons();
+    let iaModelLoaded = false; 
+    
     function mostrarPagina(paginaId) {
       document.querySelectorAll('[id^="pagina-"]').forEach(p => p.classList.add('hidden'));
       document.getElementById(`pagina-${paginaId}`).classList.remove('hidden');
@@ -277,6 +279,11 @@
 
       if (paginaId === 'historico-liberacoes') {
         carregarHistoricoLiberacoes();
+      }
+
+      if (paginaId === 'ia' && !iaModelLoaded) {
+        loadModelAndData();
+        iaModelLoaded = true;
       }
 
     }
