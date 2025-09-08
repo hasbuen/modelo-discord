@@ -1,8 +1,7 @@
 // A URL da sua API na Vercel para buscar os protocolos.
-// Substitua 'SEU_PROJETO.vercel.app' pela URL real do seu projeto.
 const API_SERVER = "https://modelo-discord-server.vercel.app";
 
-// Intenções e respostas (copiadas dos seus arquivos intents.js e responses.js)
+// Intenções e respostas (agora embutidas diretamente no frontend)
 const intents = {
   greeting: ["olá", "oi", "bom dia", "boa tarde", "e aí"],
   farewell: ["tchau", "até mais", "adeus"],
@@ -31,7 +30,7 @@ const statusEl = document.getElementById("status");
 const inputEl = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 
-// Garante eventos
+// garante eventos
 sendBtn.addEventListener("click", sendMessage);
 inputEl.addEventListener("keyup", (e) => {
   if (e.key === "Enter") sendMessage();
@@ -45,7 +44,7 @@ function addMessage(sender, text, type = "bot") {
   chatEl.scrollTop = chatEl.scrollHeight;
 }
 
-// Normaliza texto
+// normaliza texto
 function normalize(text) {
   return (text || "")
     .toString()
@@ -60,26 +59,19 @@ function normalize(text) {
 async function loadModelAndData() {
   try {
     statusEl.textContent = "Carregando TensorFlow.js...";
-
-    // Força usar CPU para evitar erros de WebGL
+    
+    // 🔹 Força usar CPU para evitar erros de WebGL
     await tf.setBackend('cpu');
     await tf.ready();
-
+    
     statusEl.textContent = "Carregando Universal Sentence Encoder...";
+    useModel = await use.load();
     
-    try {
-      // O modelo USE é carregado via CDN no frontend
-      useModel = await use.load();
-    } catch (modelErr) {
-      console.error("Erro ao carregar o modelo USE:", modelErr);
-      statusEl.textContent = "⚠️ Erro ao carregar o modelo. Verifique sua conexão ou tente novamente.";
-      return;
-    }
-    
-    // As intenções e respostas agora estão embutidas no código.
-    // Não há necessidade de chamadas `fetch` para elas.
+    // Não há mais chamadas fetch para intenções e respostas,
+    // pois elas estão embutidas no código.
     
     await fetchAndIndexProtocols();
+    
     statusEl.textContent = "✅ Pronto — pergunte algo!";
   } catch (err) {
     console.error("Erro geral ao carregar modelo/dados:", err);
@@ -88,35 +80,35 @@ async function loadModelAndData() {
       "⚠️ Não consegui carregar os dados no momento. Você ainda pode tentar perguntar.",
       "bot"
     );
-    statusEl.textContent = "Carregamento parcial — algumas funções podem não estar disponíveis.";
+    statusEl.textContent =
+      "Carregamento parcial — algumas funções podem não estar disponíveis.";
   }
 }
 
 async function fetchAndIndexProtocols() {
   try {
-    // Busca os protocolos diretamente da API Vercel
+    // Busca os protocolos na API da Vercel
     const res = await fetch(`${API_SERVER}/api/protocolos`);
     const data = await res.json();
-
-    // A API Vercel retorna a lista de protocolos diretamente
+    
     protocolos = Array.isArray(data) ? data : (data?.data || []);
     console.log("Protocolos recebidos:", protocolos);
-
+    
     if (!protocolos || protocolos.length === 0) {
       statusEl.textContent = "⚠️ Nenhum protocolo encontrado.";
       return;
     }
-
+    
     const docs = protocolos.map(p =>
       protocoloFieldsToIndex.map(f => (p?.[f] || "")).filter(Boolean).join(" · ")
     );
     console.log("Docs gerados:", docs);
-
+    
     if (!docs.length || docs.every(d => d.trim() === "")) {
       statusEl.textContent = "⚠️ Nenhum dado válido para indexar.";
       return;
     }
-
+    
     const embeddings = await useModel.embed(docs);
     protocoloEmbeddings = await embeddings.array();
     protocoloModules = protocolos.map(p => normalize(p.modulo || p.tipo || p.prt || ""));
@@ -148,8 +140,8 @@ function cosineSimilarity(a, b) {
 // ==============================
 async function getBotResponse(userInput) {
   const normalized = normalize(userInput);
-
-  // Intents simples (agora embutidas no código)
+  
+  // intents simples
   for (const [intent, examples] of Object.entries(intents)) {
     for (const ex of examples) {
       if (normalized.includes(normalize(ex))) {
@@ -157,30 +149,30 @@ async function getBotResponse(userInput) {
       }
     }
   }
-
-  // Embeddings
+  
+  // embeddings
   const inEmbedTensor = await useModel.embed([userInput]);
   const inEmbedArr = (await inEmbedTensor.array())[0];
-
+  
   const sims = protocoloEmbeddings
     .map((vec, i) => ({
       index: i,
       score: cosineSimilarity(inEmbedArr, vec),
     }))
     .sort((a, b) => b.score - a.score);
-
+  
   const matched = sims
     .filter((s) => s.score >= 0.45)
     .slice(0, 5)
     .map((s) => protocolos[s.index]);
-
+  
   if (matched.length > 0) {
     const list = matched
       .map((m) => `• ${m.descricao || m.prt || "(sem título)"}`)
       .join("\n");
     return { text: `🔎 Protocolos relacionados:\n${list}`, meta: { source: "protocolos" } };
   }
-
+  
   return {
     text: "Não encontrei nada relacionado. Pode reformular?",
     meta: { source: "fallback" },
@@ -193,29 +185,23 @@ async function getBotResponse(userInput) {
 async function sendMessage() {
   const input = inputEl.value.trim();
   if (!input) return;
-
+  
   console.log("Enviando pergunta:", input);
-
+  
   addMessage("Você", input, "user");
   inputEl.value = "";
   addMessage("Bot", "<em>processando...</em>", "bot");
-
+  
   const placeholder = chatEl.lastElementChild;
-
+  
   try {
     const resp = await getBotResponse(input);
-
+    
     if (placeholder) chatEl.removeChild(placeholder);
     addMessage("Bot", resp.text, "bot");
-
-    // A rota /historico não existe mais na sua API Vercel,
-    // então a chamada a seguir causará um erro 404.
-    // Você pode remover ou comentar este trecho para evitar o erro.
-    // await fetch(`${API_SERVER}/historico`, {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ pergunta: input, resposta: resp.text }),
-    // });
+    
+    // Removida a lógica de salvar histórico, pois não é suportada
+    // na arquitetura atual.
   } catch (err) {
     console.error("Erro no sendMessage:", err);
     if (placeholder) chatEl.removeChild(placeholder);
