@@ -74,7 +74,9 @@ async function loadModelAndData() {
     // Habilitar a entrada do usuário e o botão de envio
     inputEl.disabled = false;
     sendBtn.disabled = false;
-  } 
+  } catch (err) {
+    //...
+  }
 }
 
 async function fetchAndIndexProtocols() {
@@ -162,14 +164,15 @@ function cosineSimilarity(a, b) {
 async function getBotResponse(userInput) {
   const normalized = normalize(userInput);
 
-  for (const item of conversationalData) {
-    for (const example of item.examples) {
-      if (normalized.includes(normalize(example))) {
-        return { text: item.response, meta: { source: "intent", intent: item.intent } };
+  // 🔹 Lógica corrigida para usar as variáveis 'intents' e 'responses'
+  for (const [intent, examples] of Object.entries(intents)) {
+    for (const ex of examples) {
+      if (normalized.includes(normalize(ex))) {
+        return { text: responses[intent], meta: { source: "intent", intent } };
       }
     }
   }
-  
+
   if (!useModel || protocoloEmbeddings.length === 0) {
     return {
       text: "Não consigo fazer uma busca no momento. Tente uma pergunta mais simples.",
