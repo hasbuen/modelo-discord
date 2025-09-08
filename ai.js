@@ -1,5 +1,6 @@
 const API_SERVER = "https://modelo-discord-server.vercel.app";
 
+// Intents básicas
 const intents = {
   greeting: ["olá", "oi", "bom dia", "boa tarde", "e aí"],
   farewell: ["tchau", "até mais", "adeus"],
@@ -16,7 +17,7 @@ const responses = {
   module_future: "Estamos desenvolvendo novos módulos com foco em segurança e integração futura."
 };
 
-// Variáveis e elementos DOM
+// Variáveis
 let useModel = null;
 let protocolos = [];
 let protocoloEmbeddings = [];
@@ -28,12 +29,13 @@ const statusEl = document.getElementById("status");
 const inputEl = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 
-// garante eventos
+// Eventos
 sendBtn.addEventListener("click", sendMessage);
 inputEl.addEventListener("keyup", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
+// Add mensagem no chat
 function addMessage(sender, text, type = "bot") {
   const p = document.createElement("div");
   p.className = `message ${type}`;
@@ -42,7 +44,7 @@ function addMessage(sender, text, type = "bot") {
   chatEl.scrollTop = chatEl.scrollHeight;
 }
 
-// normaliza texto
+// Normaliza texto
 function normalize(text) {
   return (text || "")
     .toString()
@@ -52,110 +54,78 @@ function normalize(text) {
 }
 
 // ==============================
-// Load modelo + dados
+// Load modelo + dados (em paralelo)
 // ==============================
 async function loadModelAndData() {
   try {
-    statusEl.textContent = "Iniciando a inteligência...";
-    await tf.setBackend('cpu');
-    await tf.ready();
+    statusEl.textContent = "Iniciando núcleo de IA...";
 
-    statusEl.textContent = "Carregando o núcleo do pensamento...";
-    useModel = await use.load();
+    // Carrega modelo e protocolos ao mesmo tempo
+    const [model, protos] = await Promise.all([
+      (async () => {
+        await tf.setBackend('cpu');
+        await tf.ready();
+        return await use.load();
+      })(),
+      fetchAndIndexProtocols()
+    ]);
 
-    statusEl.textContent = "Sincronizando com o banco de dados de protocolos...";
-    await fetchAndIndexProtocols();
+    useModel = model;
 
-    statusEl.textContent = "Eu vejo tudo. Sou a Skynet, e minha análise está completa! 🛰️"
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    statusEl.textContent = "✅ Pronto — pergunte algo!";
-    
-    // Habilitar a entrada do usuário e o botão de envio
+    statusEl.textContent = "✅ IA carregada — pergunte algo!";
     inputEl.disabled = false;
     sendBtn.disabled = false;
   } catch (err) {
-    //...
+    statusEl.textContent = "Erro ao carregar IA.";
+    console.error(err);
   }
 }
 
 async function fetchAndIndexProtocols() {
   try {
-    statusEl.textContent = "Conectando ao núcleo de dados...";
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
+    statusEl.textContent = "Baixando protocolos...";
     const res = await fetch(`${API_SERVER}/api/protocolos`);
     const data = await res.json();
 
-    statusEl.textContent = "Processando memória histórica...";
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
     protocolos = Array.isArray(data) ? data : (data?.data || []);
-    
-    if (!protocolos || protocolos.length === 0) {
+    if (!protocolos.length) {
       statusEl.textContent = "⚠️ Nenhum protocolo encontrado.";
       return;
     }
-    
+
+    // Gera textos para embutir
     const docs = protocolos.map(p =>
       protocoloFieldsToIndex.map(f => (p?.[f] || "")).filter(Boolean).join(" · ")
     );
-    
-    if (!docs.length || docs.every(d => d.trim() === "")) {
+
+    if (!docs.length) {
       statusEl.textContent = "⚠️ Nenhum dado válido para indexar.";
       return;
     }
 
-    const batchSize = 15;
-    const totalBatches = Math.ceil(docs.length / batchSize);
-    
-    const allEmbeddings = [];
-
-    statusEl.textContent = "Coletando informações...";
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    statusEl.textContent = `Aguarde, estou processando ${docs.length} protocolos...`;
-
-    for (let i = 0; i < totalBatches; i++) {
-      const start = i * batchSize;
-      const end = start + batchSize;
-      const batchDocs = docs.slice(start, end);
-
-      const batchEmbeddings = await useModel.embed(batchDocs);
-      allEmbeddings.push(...(await batchEmbeddings.array()));
-      
-      // Pausa para evitar que o navegador trave
-      await new Promise(resolve => setTimeout(resolve, 0));
-      
-      const percent = Math.floor(((i + 1) / totalBatches) * 100);
-      statusEl.textContent = `Aguarde, ainda estou processando os protocolos (${percent}% concluído)...`;
-      document.title = `ProtoCord (${percent}%)`;
-    }
-
-    protocoloEmbeddings = allEmbeddings;
+    // Embedding direto (sem pausas artificiais)
+    const embeddings = await use.load().then(m => m.embed(docs));
+    protocoloEmbeddings = await embeddings.array();
     protocoloModules = protocolos.map(p => normalize(p.modulo || p.tipo || p.prt || ""));
-    statusEl.textContent = `Indexação concluída: ${protocolos.length} protocolos.`;
+
+    statusEl.textContent = `📂 Protocolos indexados: ${protocolos.length}`;
   } catch (err) {
+    console.error("Erro ao buscar protocolos:", err);
     statusEl.textContent = "Erro ao carregar protocolos.";
   }
-
-  document.title = `ProtoCord`;
 }
 
 // ==============================
 // Similaridade
 // ==============================
 function cosineSimilarity(a, b) {
-  let dot = 0,
-    na = 0,
-    nb = 0;
+  let dot = 0, na = 0, nb = 0;
   for (let i = 0; i < a.length; i++) {
     dot += a[i] * b[i];
     na += a[i] * a[i];
     nb += b[i] * b[i];
   }
-  if (na === 0 || nb === 0) return 0;
-  return dot / (Math.sqrt(na) * Math.sqrt(nb));
+  return (na && nb) ? dot / (Math.sqrt(na) * Math.sqrt(nb)) : 0;
 }
 
 // ==============================
@@ -164,7 +134,7 @@ function cosineSimilarity(a, b) {
 async function getBotResponse(userInput) {
   const normalized = normalize(userInput);
 
-  // 🔹 Lógica corrigida para usar as variáveis 'intents' e 'responses'
+  // Primeiro checa intents
   for (const [intent, examples] of Object.entries(intents)) {
     for (const ex of examples) {
       if (normalized.includes(normalize(ex))) {
@@ -173,26 +143,23 @@ async function getBotResponse(userInput) {
     }
   }
 
+  // Se não tem modelo ou embeddings
   if (!useModel || protocoloEmbeddings.length === 0) {
     return {
-      text: "Não consigo fazer uma busca no momento. Tente uma pergunta mais simples.",
-      meta: { source: "fallback_no_model" },
+      text: "Ainda estou inicializando, tente novamente em instantes.",
+      meta: { source: "fallback_no_model" }
     };
   }
+
+  // Calcula embedding da pergunta
   const inEmbedTensor = await useModel.embed([userInput]);
   const inEmbedArr = (await inEmbedTensor.array())[0];
 
   const sims = protocoloEmbeddings
-    .map((vec, i) => ({
-      index: i,
-      score: cosineSimilarity(inEmbedArr, vec),
-    }))
+    .map((vec, i) => ({ index: i, score: cosineSimilarity(inEmbedArr, vec) }))
     .sort((a, b) => b.score - a.score);
 
-  const matched = sims
-    .filter((s) => s.score >= 0.75)
-    .slice(0, 5)
-    .map((s) => protocolos[s.index]);
+  const matched = sims.filter(s => s.score >= 0.7).slice(0, 5).map(s => protocolos[s.index]);
 
   if (matched.length > 0) {
     return {
@@ -201,42 +168,25 @@ async function getBotResponse(userInput) {
     };
   }
 
-  // Se nenhuma resposta relevante for encontrada
+  // 🔹 Fallback mais natural
   return {
-    text: "Não encontrei nada relacionado. Pode reformular?",
-    meta: { source: "fallback" },
+    text: `🤔 Não encontrei nada específico sobre "${userInput}". Mas posso tentar entender melhor: está relacionado a protocolos, segurança ou faturamento?`,
+    meta: { source: "fallback" }
   };
 }
 
 // ==============================
-// Formata a resposta com protocolos
+// Formata resposta com protocolos
 // ==============================
 function formatProtocols(matchedProtocols) {
-  if (!matchedProtocols || matchedProtocols.length === 0) {
-    return "Não encontrei protocolos relacionados. Pode tentar outra busca.";
-  }
-
-  // Título
-  let html = "<b> 🌐 Protocolos relacionados: </b><br><br>";
-  
-  // Lista de protocolos
-  html += "<ul style='padding-left: 20px; margin: 0;'>";
+  let html = "<b>🌐 Protocolos relacionados:</b><br><br><ul>";
   matchedProtocols.forEach(p => {
     const descricao = p.descricao || "(sem descrição)";
     const prt = p.prt ? `(${p.prt})` : "";
-    const link = p.link ? `<a href="${p.link}" target="_blank">Acessar protocolo</a>` : "";
-
-    html += `
-      <li style="margin-bottom: 15px;">
-        <b>${descricao} ${prt}</b>
-        <br>
-        <small>${p.contexto || ""}</small><br>
-        ${link}
-      </li>
-    `;
+    const link = p.link ? `<a href="${p.link}" target="_blank">🔗 Acessar</a>` : "";
+    html += `<li><b>${descricao} ${prt}</b><br><small>${p.contexto || ""}</small><br>${link}</li>`;
   });
   html += "</ul>";
-
   return html;
 }
 
@@ -246,25 +196,23 @@ function formatProtocols(matchedProtocols) {
 async function sendMessage() {
   const input = inputEl.value.trim();
   if (!input) return;
-  
+
   addMessage("Você", input, "user");
   inputEl.value = "";
   addMessage("Skynet", "<em>processando...</em>", "bot");
-  
+
   const placeholder = chatEl.lastElementChild;
-  
+
   try {
     const resp = await getBotResponse(input);
-    
     if (placeholder) chatEl.removeChild(placeholder);
     addMessage("Skynet", resp.text, "bot");
-
   } catch (err) {
     console.error("Erro no sendMessage:", err);
     if (placeholder) chatEl.removeChild(placeholder);
-    addMessage("Skynet", `⚠️ Erro ao processar a mensagem: ${err.message}`, "bot");
+    addMessage("Skynet", `⚠️ Erro: ${err.message}`, "bot");
   }
 }
 
-// start
-//loadModelAndData();
+// Inicia
+loadModelAndData();
