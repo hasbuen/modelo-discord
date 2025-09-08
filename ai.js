@@ -59,16 +59,19 @@ function normalize(text) {
 // no arquivo ai.js (ou script.js)
 async function loadModelAndData() {
   try {
-    statusEl.textContent = "Carregando TensorFlow.js...";
+    statusEl.textContent = "Iniciando a inteligência...";
     await tf.setBackend('cpu');
     await tf.ready();
 
-    statusEl.textContent = "Carregando Universal Sentence Encoder...";
+    statusEl.textContent = "Carregando o núcleo do pensamento...";
     useModel = await use.load();
 
-    statusEl.textContent = "Carregando dados de intenções e respostas...";
+    statusEl.textContent = "Sincronizando com o banco de dados de protocolos...";
     await fetchAndIndexProtocols();
 
+    statusEl.textContent = "Eu vejo tudo. Sou a Skynet, e minha análise está completa! 🛰️"
+    await new Promise(resolve => setTimeout(resolve, 3000));
+      
     statusEl.textContent = "✅ Pronto — pergunte algo!";
     // Habilitar a entrada do usuário e o botão de envio
     inputEl.disabled = false;
@@ -110,7 +113,7 @@ async function fetchAndIndexProtocols() {
     
     const allEmbeddings = [];
     
-    statusEl.textContent = `A IA está processando ${docs.length} protocolos...`;
+    statusEl.textContent = `Aguarde, estou processando ${docs.length} protocolos...`;
 
     for (let i = 0; i < totalBatches; i++) {
       const start = i * batchSize;
@@ -124,7 +127,7 @@ async function fetchAndIndexProtocols() {
       await new Promise(resolve => setTimeout(resolve, 0));
       
       const percent = Math.floor(((i + 1) / totalBatches) * 100);
-      statusEl.textContent = `A IA está processando os protocolos (${percent}% concluído)...`;
+      statusEl.textContent = `Aguardando, ainda estou processando os protocolos (${percent}% concluído)...`;
     }
 
     protocoloEmbeddings = allEmbeddings;
