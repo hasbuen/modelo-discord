@@ -160,42 +160,50 @@ function cosineSimilarity(a, b) {
 // ==============================
 async function getBotResponse(userInput) {
   const normalized = normalize(userInput);
-  
-  // intents simples
-  for (const [intent, examples] of Object.entries(intents)) {
-    for (const ex of examples) {
-      if (normalized.includes(normalize(ex))) {
-        return { text: responses[intent], meta: { source: "intent", intent } };
+
+  // Tentar encontrar uma intenção simples (saudação, etc.)
+  for (const item of conversationalData) {
+    for (const example of item.examples) {
+      if (normalized.includes(normalize(example))) {
+        return { text: item.response, meta: { source: "intent", intent: item.intent } };
       }
     }
   }
-  
-  // embeddings
+
+  // Se o modelo de IA não estiver carregado, use o fallback.
+  if (!useModel || protocoloEmbeddings.length === 0) {
+    return {
+      text: "Não consigo fazer uma busca no momento. Tente uma pergunta mais simples.",
+      meta: { source: "fallback_no_model" },
+    };
+  }
+
+  // Executar a busca por similaridade em TODOS os protocolos
   const inEmbedTensor = await useModel.embed([userInput]);
   const inEmbedArr = (await inEmbedTensor.array())[0];
-  
+
   const sims = protocoloEmbeddings
     .map((vec, i) => ({
       index: i,
       score: cosineSimilarity(inEmbedArr, vec),
     }))
     .sort((a, b) => b.score - a.score);
-  
+
+  // Aumentamos o limite para garantir resultados mais precisos
   const matched = sims
-    .filter((s) => s.score >= 0.45)
+    .filter((s) => s.score >= 0.70)
     .slice(0, 5)
     .map((s) => protocolos[s.index]);
-  
+
   if (matched.length > 0) {
-    const list = matched
-      .map((m) => `• ${m.descricao || m.prt || "(sem título)"}`)
-      .join("\n");
-    return { 
-      text: formatProtocols(matched), 
-      meta: { source: "protocolos" } 
+    // A função formatProtocols vai cuidar da apresentação.
+    return {
+      text: formatProtocols(matched),
+      meta: { source: "protocolos" }
     };
   }
-  
+
+  // Se nenhuma resposta relevante for encontrada
   return {
     text: "Não encontrei nada relacionado. Pode reformular?",
     meta: { source: "fallback" },
