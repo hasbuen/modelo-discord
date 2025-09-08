@@ -85,7 +85,6 @@ async function fetchAndIndexProtocols() {
     const data = await res.json();
     
     protocolos = Array.isArray(data) ? data : (data?.data || []);
-    console.log("Protocolos recebidos:", protocolos);
     
     if (!protocolos || protocolos.length === 0) {
       statusEl.textContent = "⚠️ Nenhum protocolo encontrado.";
@@ -95,7 +94,6 @@ async function fetchAndIndexProtocols() {
     const docs = protocolos.map(p =>
       protocoloFieldsToIndex.map(f => (p?.[f] || "")).filter(Boolean).join(" · ")
     );
-    console.log("Docs gerados:", docs);
     
     if (!docs.length || docs.every(d => d.trim() === "")) {
       statusEl.textContent = "⚠️ Nenhum dado válido para indexar.";
@@ -179,11 +177,9 @@ async function sendMessage() {
   const input = inputEl.value.trim();
   if (!input) return;
   
-  console.log("Enviando pergunta:", input);
-  
   addMessage("Você", input, "user");
   inputEl.value = "";
-  addMessage("Bot", "<em>processando...</em>", "bot");
+  addMessage("Skynet", "<em>processando...</em>", "bot");
   
   const placeholder = chatEl.lastElementChild;
   
