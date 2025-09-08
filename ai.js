@@ -71,25 +71,28 @@ async function loadModelAndData() {
     await tf.ready();
 
     statusEl.textContent = "Carregando o núcleo do pensamento...";
+    await new Promise(resolve => setTimeout(resolve, 3000));
     updateProgress("Núcleo UP!");
     useModel = await use.load();
 
     statusEl.textContent = "Sincronizando com o banco de dados de protocolos...";
-     updateProgress("Sincronizando...");
+    updateProgress("Sincronizando...");
     await fetchAndIndexProtocols();
 
     statusEl.textContent = "Eu vejo tudo. Sou a Skynet, e minha análise está completa! 🛰️"
-    updateProgress("Skynet On.");
     await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    updateProgress("Skynet On.");
+    
       
     statusEl.textContent = "✅ Pronto — pergunte algo!";
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
     updateProgress("✅ pronto!");
     // Habilitar a entrada do usuário e o botão de envio
     inputEl.disabled = false;
     sendBtn.disabled = false;
-  } catch (err) {
-    // ...
-  }
+  } 
 }
 
 async function fetchAndIndexProtocols() {
@@ -128,8 +131,6 @@ async function fetchAndIndexProtocols() {
     await new Promise(resolve => setTimeout(resolve, 3000));
     
     statusEl.textContent = `Aguarde, estou processando ${docs.length} protocolos...`;
-    document.title = `ProtoCord (${docs.length} reg.)`;
-    
 
     for (let i = 0; i < totalBatches; i++) {
       const start = i * batchSize;
@@ -151,11 +152,10 @@ async function fetchAndIndexProtocols() {
     protocoloModules = protocolos.map(p => normalize(p.modulo || p.tipo || p.prt || ""));
     statusEl.textContent = `Indexação concluída: ${protocolos.length} protocolos.`;
   } catch (err) {
-    console.error("Erro ao buscar/indexar protocolos:", err);
     statusEl.textContent = "Erro ao carregar protocolos.";
   }
 
-  document.title = `ProtoCord `;
+  document.title = `ProtoCord`;
 }
 
 // ==============================
