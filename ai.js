@@ -177,6 +177,9 @@ function cosineSimilarity(a, b) {
 // ==============================
 // Bot response
 // ==============================
+// ==============================
+// Bot response (melhorado)
+// ==============================
 async function getBotResponse(userInput) {
   const normalized = normalize(userInput);
 
@@ -195,7 +198,7 @@ async function getBotResponse(userInput) {
     };
   }
 
-  // 🔹 Similaridade semântica
+  // 🔹 Similaridade semântica adaptativa
   const inEmbedTensor = await useModel.embed([userInput]);
   const inEmbedArr = (await inEmbedTensor.array())[0];
 
@@ -203,18 +206,38 @@ async function getBotResponse(userInput) {
     .map((vec, i) => ({ index: i, score: cosineSimilarity(inEmbedArr, vec) }))
     .sort((a, b) => b.score - a.score);
 
-  const matched = sims.filter(s => s.score >= 0.7).slice(0, 5).map(s => protocolos[s.index]);
+  // tenta thresholds diferentes
+  let matched = sims.filter(s => s.score >= 0.7).slice(0, 5);
+  if (matched.length === 0) matched = sims.filter(s => s.score >= 0.6).slice(0, 3);
+  if (matched.length === 0) matched = sims.filter(s => s.score >= 0.5).slice(0, 2);
 
   if (matched.length > 0) {
-    return { text: formatProtocols(matched), meta: { source: "protocolos" } };
+    const protocolosMatch = matched.map(s => protocolos[s.index]);
+    let resposta = formatProtocols(protocolosMatch);
+
+    // 🔹 Se a confiança for baixa (<0.65), adiciona aviso estilo IA
+    if (matched[0].score < 0.65) {
+      resposta = `🤔 Não encontrei nada exatamente igual ao que você perguntou, mas talvez isso ajude:<br><br>${resposta}`;
+    }
+
+    return { text: resposta, meta: { source: "protocolos" } };
   }
 
-  // 🔹 Fallback mais natural, estilo IA
+  // 🔹 Fallback mais inteligente por palavras-chave
+  if (normalized.includes("nota fiscal")) {
+    return { text: responses.billing, meta: { source: "keyword_fallback" } };
+  }
+  if (normalized.includes("segurança")) {
+    return { text: responses.security, meta: { source: "keyword_fallback" } };
+  }
+
+  // 🔹 Fallback final mais humano
   return {
-    text: `🤔 Não encontrei nada específico sobre "${userInput}". Mas posso tentar ajudar se você reformular a pergunta ou detalhar um pouco mais.`,
+    text: `🤖 Eu não achei nada muito específico sobre "${userInput}". Pode detalhar melhor? Talvez eu consiga relacionar com algum protocolo.`,
     meta: { source: "fallback" }
   };
 }
+
 
 // ==============================
 // Formata protocolos
