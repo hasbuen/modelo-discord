@@ -78,13 +78,17 @@ async function loadModelAndData() {
   }
 }
 
+// No seu arquivo ai.js (ou script.js)
+
 async function fetchAndIndexProtocols() {
   try {
-    // Busca os protocolos na API da Vercel
+    statusEl.textContent = "Buscando protocolos na API...";
+
     const res = await fetch(`${API_SERVER}/api/protocolos`);
     const data = await res.json();
     
     protocolos = Array.isArray(data) ? data : (data?.data || []);
+    console.log("Protocolos recebidos:", protocolos);
     
     if (!protocolos || protocolos.length === 0) {
       statusEl.textContent = "⚠️ Nenhum protocolo encontrado.";
@@ -94,14 +98,36 @@ async function fetchAndIndexProtocols() {
     const docs = protocolos.map(p =>
       protocoloFieldsToIndex.map(f => (p?.[f] || "")).filter(Boolean).join(" · ")
     );
+    console.log("Docs gerados:", docs);
     
     if (!docs.length || docs.every(d => d.trim() === "")) {
       statusEl.textContent = "⚠️ Nenhum dado válido para indexar.";
       return;
     }
+
+    const batchSize = 50;
+    const totalBatches = Math.ceil(docs.length / batchSize);
     
-    const embeddings = await useModel.embed(docs);
-    protocoloEmbeddings = await embeddings.array();
+    const allEmbeddings = [];
+    
+    statusEl.textContent = `A IA está processando ${docs.length} protocolos...`;
+
+    for (let i = 0; i < totalBatches; i++) {
+      const start = i * batchSize;
+      const end = start + batchSize;
+      const batchDocs = docs.slice(start, end);
+
+      const batchEmbeddings = await useModel.embed(batchDocs);
+      allEmbeddings.push(...(await batchEmbeddings.array()));
+      
+      // Pausa para evitar que o navegador trave
+      await new Promise(resolve => setTimeout(resolve, 0));
+      
+      const percent = Math.floor(((i + 1) / totalBatches) * 100);
+      statusEl.textContent = `A IA está processando os protocolos (${percent}% concluído)...`;
+    }
+
+    protocoloEmbeddings = allEmbeddings;
     protocoloModules = protocolos.map(p => normalize(p.modulo || p.tipo || p.prt || ""));
     statusEl.textContent = `Indexação concluída: ${protocolos.length} protocolos.`;
   } catch (err) {
