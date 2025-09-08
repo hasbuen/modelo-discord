@@ -222,6 +222,3 @@ async function sendMessage() {
     addMessage("Skynet", `⚠️ Erro ao processar a mensagem: ${err.message}`, "bot");
   }
 }
-
-// Inicia
-loadModelAndData();
