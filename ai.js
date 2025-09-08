@@ -67,7 +67,7 @@ async function loadModelAndData() {
     useModel = await use.load();
 
     statusEl.textContent = "Carregando dados de intenções e respostas...";
-    // ...
+    await fetchAndIndexProtocols();
 
     statusEl.textContent = "✅ Pronto — pergunte algo!";
     // Habilitar a entrada do usuário e o botão de envio
@@ -191,14 +191,14 @@ async function sendMessage() {
     const resp = await getBotResponse(input);
     
     if (placeholder) chatEl.removeChild(placeholder);
-    addMessage("Bot", resp.text, "bot");
+    addMessage("Skynet", resp.text, "bot");
     
     // Removida a lógica de salvar histórico, pois não é suportada
     // na arquitetura atual.
   } catch (err) {
     console.error("Erro no sendMessage:", err);
     if (placeholder) chatEl.removeChild(placeholder);
-    addMessage("Bot", `⚠️ Erro ao processar a mensagem: ${err.message}`, "bot");
+    addMessage("Skynet", `⚠️ Erro ao processar a mensagem: ${err.message}`, "bot");
   }
 }
 
