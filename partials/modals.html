@@ -1,0 +1,41 @@
+<div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+  <div class="bg-gray-900 p-6 rounded-xl shadow-lg max-w-lg animate__animated animate__zoomIn">
+    <p id="confirmMessage" class="space-x-2 flex items-center">
+      <span id="confirmIcon"></span><span id="confirmText"></span>
+    </p>
+    <div class="mt-4 flex justify-end gap-2">
+      <button class="bg-gray-700 px-4 py-2 rounded" onclick="fecharConfirmModal()">Cancelar</button>
+      <button id="confirmBtn" class="bg-red-600 px-4 py-2 rounded" onclick="confirmarExclusao()">Ok</button>
+    </div>
+  </div>
+</div>
+
+<div id="errorModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+  <div class="bg-gray-900 p-6 rounded-xl shadow-lg max-w-lg animate__animated animate__zoomIn">
+    <p id="modalMessage" class="space-x-2 flex items-center">
+      <span id="modalIcon"></span><span id="modalText"></span>
+    </p>
+    <div class="mt-4 flex justify-end">
+      <button class="bg-gray-700 px-4 py-2 rounded" onclick="fecharModal()">Ok</button>
+    </div>
+  </div>
+</div>
+
+<div id="descricaoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+  <div class="bg-gray-900 p-6 rounded-xl shadow-lg max-w-lg animate__animated animate__zoomIn">
+    <div class="flex justify-between items-center mb-4">
+      <h3 id="descricaoModalTitulo" class="text-lg font-bold"></h3>
+      <button class="text-gray-400 hover:text-white" onclick="fecharDescricaoModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x">
+          <path d="M18 6 6 18" />
+          <path d="m6 6 12 12" />
+        </svg>
+      </button>
+    </div>
+    <div id="descricaoModalCorpo" class="whitespace-pre-wrap text-gray-300"></div>
+    <div class="mt-4 flex justify-end">
+      <button class="bg-gray-700 px-4 py-2 rounded" onclick="fecharDescricaoModal()">Fechar</button>
+    </div>
+  </div>
+</div>
