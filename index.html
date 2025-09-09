@@ -1,269 +1,47 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ProtoCord</title>
 
+  <!-- Normalize, Tailwind, Animate e fontes -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Ícones -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  
+
+  <!-- CSS customizado -->
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="p-6">
 
-  <div class="max-w-6xl mx-auto space-y-6">
-
-    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-      
-      <div class="flex justify-center items-center gap-2">
-        <i data-lucide="bandage" class="w-7 h-7 text-blue-400"></i>
-        <h1 class="text-3xl font-bold">ProtoCord</h1>
-      </div>
-
-      <div class="flex flex-wrap gap-3 justify-center">
-        <button onclick="mostrarPagina('home')" class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-blue-600 hover:bg-blue-500" id="btn-home">
-          <i data-lucide="home" class="w-4 h-4"></i> Início
-        </button>
-        <button onclick="mostrarPagina('historico')" class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700" id="btn-historico">
-          <i data-lucide="history" class="w-4 h-4"></i> Histórico
-        </button>
-        <button onclick="mostrarPagina('liberacoes')" class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700" id="btn-liberacoes">
-          <i data-lucide="folder-open" class="w-4 h-4"></i> Verificar release
-        </button>
-        <input type="file" id="arquivoRTF" accept=".rtf" class="hidden" onchange="processarRTF(event)" />
-        <button onclick="mostrarPagina('historico-liberacoes')" class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700" id="btn-historico-liberacoes">
-          <i data-lucide="archive" class="w-4 h-4"></i> Histórico de liberações
-        </button>
-        <button onclick="mostrarPagina('ia')" class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700" id="btn-ia">
-          <i data-lucide="bot" class="w-4 h-4"></i> IA
-        </button>
-
-      </div>
-      
-      <div class="flex gap-2 p-2 rounded-lg bg-gray-800">
-        <button id="tema-escuro" onclick="alternarTema('dark')" class="toggle-theme-btn p-2 rounded-lg transition duration-200">
-          <i data-lucide="moon" class="w-5 h-5"></i>
-        </button>
-        <button id="tema-claro" onclick="alternarTema('light')" class="toggle-theme-btn p-2 rounded-lg transition duration-200">
-          <i data-lucide="sun" class="w-5 h-5"></i>
-        </button>
-        <button id="tema-sistema" onclick="alternarTema('system')" class="toggle-theme-btn p-2 rounded-lg transition duration-200">
-          <i data-lucide="monitor" class="w-5 h-5"></i>
-        </button>
-      </div>
-    </div>
-
-    <div id="pagina-home" class="animate__animated animate__fadeIn">
-      <div class="flex flex-wrap gap-4 justify-center mt-6">
-        <div class="bg-red-700 rounded-xl p-6 text-center w-40 shadow-lg">
-          <h3 class="font-semibold text-lg">Erros</h3>
-          <p id="contador-erros" class="skeleton">&nbsp;</p>
-        </div>
-        <div class="bg-green-700 rounded-xl p-6 text-center w-40 shadow-lg">
-          <h3 class="font-semibold text-lg">Sugestões</h3>
-          <p id="contador-sugestoes" class="skeleton">&nbsp;</p>
-        </div>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-6 mt-6">
-        <div class="space-y-3">
-          <div class="flex gap-3 justify-center mb-4">
-            <button id="btn-erro" type="button" onclick="selecionarTipo('erro')"
-              class="px-4 py-2 rounded-full text-sm font-semibold bg-red-700 text-white hover:bg-red-600">
-              Erro
-            </button>
-            <button id="btn-sugestao" type="button" onclick="selecionarTipo('sugestao')"
-              class="px-4 py-2 rounded-full text-sm font-semibold bg-green-700 text-white hover:bg-green-600">
-              Sugestão
-            </button>
-          </div>
-          <input type="hidden" id="tipo" />
-
-          <div><label for="prt">PRT</label><input id="prt" type="text" class="w-full px-3 py-2 rounded-md bg-gray-800"/></div>
-          <div><label for="ticket">Ticket</label><input id="ticket" type="text" class="w-full px-3 py-2 rounded-md bg-gray-800"/></div>
-          <div><label for="descricao">Descrição</label><textarea id="descricao" class="w-full px-3 py-2 rounded-md bg-gray-800"></textarea></div>
-                  <div>
-            <label for="paliativo">Paliativo</label>
-            <input 
-                list="paliativosList" 
-                id="paliativo" 
-                type="text" 
-                placeholder="Selecione ou digite aqui..." 
-                class="w-full px-3 py-2 rounded-md bg-gray-800"
-            />
-            <datalist id="paliativosList">
-                <option value="Paliativo não encontrado."></option>
-                <option value="Nova funcionalidade."></option>
-            </datalist>
-        </div>
-
-        <div>
-            <label for="prazo">Prazo</label>
-            <input 
-                list="prazosList" 
-                id="prazo" 
-                type="text" 
-                placeholder="Selecione ou digite aqui..." 
-                class="w-full px-3 py-2 rounded-md bg-gray-800"
-            />
-            <datalist id="prazosList">
-                <option value="Encaminhado para avaliação de alocação."></option>
-                <option value="Registrado no banco de dados RhedeSAC."></option>
-            </datalist>
-        </div>
-          <div><label for="link">Link</label><input id="link" type="text" class="w-full px-3 py-2 rounded-md bg-gray-800"/></div>
-          <button onclick="gerarTexto()" class="w-full bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2">
-            <i data-lucide="wand-2" class="w-4 h-4"></i> Gerar
-          </button>
-        </div>
-
-        <div class="flex flex-col space-y-3">
-          <label for="output">Cole no Discord:</label>
-          <textarea id="output" readonly class="flex-1 px-3 py-2 rounded-md bg-gray-800"></textarea>
-          <button onclick="copiarTexto()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2">
-            <i data-lucide="copy" class="w-4 h-4"></i> Copiar
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div id="pagina-historico" class="hidden animate__animated animate__fadeIn">
-      <div id="tabela-container" class="bg-gray-900 p-4 rounded-xl">
-        <input type="text" id="busca" placeholder="Buscar..." onkeyup="filtrarTabela()"
-          class="w-full mb-3 px-3 py-2 rounded-md bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500"/>
-
-        <div class="overflow-y-auto max-h-96">
-          <table id="tabelaRegistros" class="w-full text-sm">
-            <thead class="bg-gray-800 sticky top-0">
-              <tr>
-                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(0)">Ticket</th>
-                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(1)">Protocolo</th>
-                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(2)">Tipo</th>
-                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(3)">Descrição</th>
-                <th class="py-2 px-3">Ações</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-700"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div id="pagina-liberacoes" class="hidden animate__animated animate__fadeIn">
-      <div id="liberacoes-container" class="bg-gray-900 p-4 rounded-xl"></div>
-    </div>
-
-    <div id="pagina-historico-liberacoes" class="hidden animate__animated animate__fadeIn">
-  <div id="historico-liberacoes-container" class="bg-gray-900 p-4 rounded-xl">
-    <h2 class="text-lg font-bold mb-4">Histórico de liberações</h2>
-    <div class="overflow-y-auto max-h-96">
-      <table class="w-full text-sm">
-        <thead class="bg-gray-800 sticky top-0">
-          <tr>
-            <th class="py-2 px-3 text-left">Release</th>
-            <th class="py-2 px-3 text-left">Protocolos liberados</th>
-          </tr>
-          </thead>
-            <tbody id="tabelaLiberados" class="divide-y divide-gray-700"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-<div id="pagina-ia" class="hidden animate__animated animate__fadeIn">
-  <div class="bg-gray-900 rounded-2xl flex flex-col shadow-2xl border border-gray-700 w-full max-w-4xl mx-auto h-[90vh]">
-
-    <!-- Cabeçalho -->
-    <div class="px-4 py-3 border-b border-gray-700 flex items-center gap-2 sticky top-0 bg-gray-900 z-10">
-      <i data-lucide="bot" class="w-5 h-5 text-blue-400"></i>
-      <h2 class="font-semibold text-lg text-white">Assistente IA</h2>
-    </div>
-
-    <!-- Área do chat -->
-    <div id="chat" 
-         class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-800 scroll-smooth"
-         style="max-height: calc(90vh - 160px);">
-      <!-- Mensagens aparecem aqui -->
-    </div>
-
-    <!-- Status -->
-    <div id="status" class="p-2 text-center text-sm text-gray-400 border-t border-gray-700">
-      Carregando...
-    </div>
-
-    <!-- Input -->
-    <div class="p-3 border-t border-gray-700 flex gap-2 bg-gray-900">
-      <input 
-        id="userInput"
-        type="text"
-        placeholder="Digite sua pergunta..."
-        class="flex-1 px-4 py-2 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition"
-        disabled
-      />
-      <button 
-        id="sendBtn"
-        disabled
-        class="bg-blue-600 hover:bg-blue-500 p-3 rounded-full flex items-center justify-center transition disabled:opacity-50 disabled:cursor-not-allowed">
-        <i data-lucide="send" class="w-5 h-5 text-white"></i>
-      </button>
-    </div>
-  </div>
-</div>
-
-
-
-</div>
-
+  <div class="max-w-6xl mx-auto space-y-6" id="app">
+    <div id="header"></div>
+    <div id="home"></div>
+    <div id="historico"></div>
+    <div id="liberacoes"></div>
+    <div id="historico-liberacoes"></div>
+    <div id="ia"></div>
+    <div id="modals"></div>
   </div>
 
-  <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-gray-900 p-6 rounded-xl shadow-lg max-w-lg animate__animated animate__zoomIn">
-      <p id="confirmMessage" class="space-x-2 flex items-center">
-        <span id="confirmIcon"></span><span id="confirmText"></span>
-      </p>
-      <div class="mt-4 flex justify-end gap-2">
-        <button class="bg-gray-700 px-4 py-2 rounded" onclick="fecharConfirmModal()">Cancelar</button>
-        <button id="confirmBtn" class="bg-red-600 px-4 py-2 rounded" onclick="confirmarExclusao()">Ok</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="errorModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-gray-900 p-6 rounded-xl shadow-lg max-w-lg animate__animated animate__zoomIn">
-      <p id="modalMessage" class="space-x-2 flex items-center">
-        <span id="modalIcon"></span><span id="modalText"></span>
-      </p>
-      <div class="mt-4 flex justify-end">
-        <button class="bg-gray-700 px-4 py-2 rounded" onclick="fecharModal()">Ok</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="descricaoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-  <div class="bg-gray-900 p-6 rounded-xl shadow-lg max-w-lg animate__animated animate__zoomIn">
-    <div class="flex justify-between items-center mb-4">
-      <h3 id="descricaoModalTitulo" class="text-lg font-bold"></h3>
-      <button class="text-gray-400 hover:text-white" onclick="fecharDescricaoModal()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-      </button>
-    </div>
-    <div id="descricaoModalCorpo" class="whitespace-pre-wrap text-gray-300"></div>
-    <div class="mt-4 flex justify-end">
-      <button class="bg-gray-700 px-4 py-2 rounded" onclick="fecharDescricaoModal()">Fechar</button>
-    </div>
-  </div>
-</div>
-
+  <!-- Dependências -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="mecanica.js"></script>
   <script src="verificacao_release.js"></script>
 
-  <!--<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0/dist/tf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder@1.3.3/dist/universal-sentence-encoder.js"></script>
+  <!-- TensorFlow e modelos -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0/dist/tf.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder@1.3.3/dist/universal-sentence-encoder.js"></script>
+
+  <!-- Scripts locais -->
   <script src="js/config.js"></script>
   <script src="js/dom.js"></script>
   <script src="js/history.js"></script>
@@ -271,43 +49,74 @@
   <script src="js/similarity.js"></script>
   <script src="js/responses.js"></script>
   <script src="js/main.js"></script>
-  <script src="ai.js"></script>-->
-  <link rel="stylesheet" href="style.css">
-  
+  <!-- <script src="ai.js"></script> -->
+
+  <script>
+    async function carregarParcial(id, arquivo) {
+      try {
+        const resp = await fetch(`partials/${arquivo}`);
+        if (!resp.ok) {
+          console.error(`Erro ao carregar ${arquivo}:`, resp.statusText);
+          return;
+        }
+        const html = await resp.text();
+        document.getElementById(id).innerHTML = html;
+      } catch (err) {
+        console.error(`Falha ao carregar ${arquivo}:`, err);
+      }
+    }
+
+    // Carregar todas as partes
+    window.addEventListener("DOMContentLoaded", () => {
+      carregarParcial("header", "header.html");
+      carregarParcial("home", "home.html");
+      carregarParcial("historico", "historico.html");
+      carregarParcial("liberacoes", "liberacoes.html");
+      carregarParcial("historico-liberacoes", "historico-liberacoes.html");
+      carregarParcial("ia", "ia.html");
+      carregarParcial("modals", "modals.html");
+    });
+  </script>
+
   <script>
     lucide.createIcons();
-    let iaModelLoaded = false; 
-    
+    let iaModelLoaded = false;
+
     function mostrarPagina(paginaId) {
+      // Esconde todas
       document.querySelectorAll('[id^="pagina-"]').forEach(p => p.classList.add('hidden'));
       document.getElementById(`pagina-${paginaId}`).classList.remove('hidden');
 
+      // Resetar botões
       document.querySelectorAll('.flex-wrap.gap-3.justify-center button').forEach(btn => {
         btn.classList.remove('bg-blue-600', 'hover:bg-blue-500');
         btn.classList.add('bg-gray-800', 'hover:bg-gray-700');
       });
 
+      // Ativar botão da página
       const botaoAtivo = document.getElementById(`btn-${paginaId}`);
       if (botaoAtivo) {
         botaoAtivo.classList.remove('bg-gray-800', 'hover:bg-gray-700');
         botaoAtivo.classList.add('bg-blue-600', 'hover:bg-blue-500');
       }
 
+      // Casos especiais
       if (paginaId === 'liberacoes') {
-        document.getElementById('arquivoRTF').click();
+        const input = document.getElementById('arquivoRTF');
+        if (input) input.click();
       }
 
-      if (paginaId === 'historico-liberacoes') {
+      if (paginaId === 'historico-liberacoes' && typeof carregarHistoricoLiberacoes === "function") {
         carregarHistoricoLiberacoes();
       }
 
-      if (paginaId === 'ia' && !iaModelLoaded) {
+      if (paginaId === 'ia' && !iaModelLoaded && typeof loadModelAndData === "function") {
         loadModelAndData();
         iaModelLoaded = true;
       }
-
     }
   </script>
 
 </body>
+
 </html>
