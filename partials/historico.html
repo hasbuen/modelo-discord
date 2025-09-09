@@ -1,0 +1,21 @@
+    <div id="pagina-historico" class="hidden animate__animated animate__fadeIn">
+      <div id="tabela-container" class="bg-gray-900 p-4 rounded-xl">
+        <input type="text" id="busca" placeholder="Buscar..." onkeyup="filtrarTabela()"
+          class="w-full mb-3 px-3 py-2 rounded-md bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500" />
+
+        <div class="overflow-y-auto max-h-96">
+          <table id="tabelaRegistros" class="w-full text-sm">
+            <thead class="bg-gray-800 sticky top-0">
+              <tr>
+                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(0)">Ticket</th>
+                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(1)">Protocolo</th>
+                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(2)">Tipo</th>
+                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(3)">Descrição</th>
+                <th class="py-2 px-3">Ações</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-700"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
