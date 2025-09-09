@@ -33,7 +33,7 @@
 
   <!-- Dependências -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="mecanica.js"></script>
+  <script type="module" src="js/main.js"></script>
   <script src="verificacao_release.js"></script>
 
   <!-- TensorFlow e modelos -->
@@ -48,8 +48,7 @@
   <script src="js/model.js"></script>
   <script src="js/similarity.js"></script>
   <script src="js/responses.js"></script>
-  <script src="js/main.js"></script>
-  <!-- <script src="ai.js"></script> -->
+  <script src="js/ml.js"></script>
 
   <script>
     async function carregarParcial(id, arquivo) {
@@ -73,7 +72,7 @@
       carregarParcial("historico", "historico.html");
       carregarParcial("liberacoes", "liberacoes.html");
       carregarParcial("historico-liberacoes", "historico-liberacoes.html");
-      carregarParcial("ia", "ia.html");
+      carregarParcial("ia", "ml.html");
       carregarParcial("modals", "modals.html");
     });
   </script>

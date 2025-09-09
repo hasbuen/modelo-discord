@@ -1,25 +1,33 @@
-// js/main.js
-async function sendMessage() {
-  const input = inputEl.value.trim();
-  if (!input) return;
+import { gerarTexto, salvarRegistro, copiarTexto, limparCampos } from "./formulario.js";
+import { filtrarTabela, ordenarTabela, renderizarTabela } from "./tabela.js";
+import { enviarPergunta } from "./chat.js";
+import { carregarTemaPreferido, alternarTema } from "./tema.js";
 
-  addMessage("Você", input, "user");
-  inputEl.value = "";
-  addMessage("Skynet", "<em>processando...</em>", "bot");
+// Inicialização da página
+window.addEventListener("DOMContentLoaded", async () => {
+  carregarTemaPreferido();
+  await renderizarTabela();
 
-  const placeholder = chatEl.lastElementChild;
+  // Liga os botões do formulário
+  document.getElementById("btn-gerar").onclick = gerarTexto;
+  document.getElementById("btn-salvar").onclick = salvarRegistro;
+  document.getElementById("btn-copiar").onclick = copiarTexto;
+  document.getElementById("btn-limpar").onclick = limparCampos;
 
-  try {
-    const resp = await getBotResponse(input);
-    if (placeholder) chatEl.removeChild(placeholder);
-    addMessage("Skynet", resp.text, "bot");
-  } catch (err) {
-    console.error("Erro no sendMessage:", err);
-    if (placeholder) chatEl.removeChild(placeholder);
-    addMessage("Skynet", `⚠️ Erro ao processar: ${err.message}`, "bot");
-  }
-}
+  // Busca e ordenação da tabela
+  document.getElementById("busca").oninput = filtrarTabela;
+  document.querySelectorAll("#tabelaRegistros th").forEach((th, i) => {
+    th.onclick = () => ordenarTabela(i);
+  });
 
-// Inicialização
-loadChatHistory();
-loadModelAndData();
+  // Chat
+  document.getElementById("btn-enviar").onclick = enviarPergunta;
+  document.getElementById("chat-input").addEventListener("keypress", (e) => {
+    if (e.key === "Enter") enviarPergunta();
+  });
+
+  // Tema
+  document.getElementById("tema-claro").onclick = () => alternarTema("claro");
+  document.getElementById("tema-escuro").onclick = () => alternarTema("escuro");
+  document.getElementById("tema-sistema").onclick = () => alternarTema("system");
+});
