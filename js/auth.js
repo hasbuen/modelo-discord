@@ -2,7 +2,7 @@
  * Sistema de Autenticação MD5 com Supabase
  * Valida a senha do usuário antes de permitir acesso ao app
  */
-const API_ENDPOINT = 'https://modelo-discord-server.vercel.app/api/autenticacao.js';
+const API_ENDPOINT = 'https://modelo-discord-server.vercel.app/api/autenticacao';
 
 /**
  * Converte string para MD5 usando crypto-js
