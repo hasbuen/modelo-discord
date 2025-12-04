@@ -2,9 +2,6 @@
  * Sistema de Autenticação MD5 com Supabase
  * Valida a senha do usuário antes de permitir acesso ao app
  */
-
-// ⚠️ IMPORTANTE: Atualize com sua URL de API real (Vercel/Cervel)
-// Exemplo: 'https://seu-projeto.vercel.app/api/auth'
 const API_ENDPOINT = 'https://modelo-discord-server.vercel.app/api/autenticacao.js';
 
 /**
