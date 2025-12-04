@@ -16,20 +16,19 @@
 </head>
 <body class="p-6">
 
- <div>
-  <label for="auth-senha" class="block text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
-    Senha
 
-    <!-- Badge de informação -->
-    <span class="relative group cursor-pointer">
-      <i data-lucide="info" class="w-4 h-4 text-blue-400"></i>
+  <div class="relative">
+  <label for="auth-senha" class="block text-sm font-medium text-gray-300 mb-2">Senha</label>
 
-      <!-- Tooltip -->
-      <span class="absolute left-6 top-1/2 -translate-y-1/2 bg-gray-800 text-gray-200 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg border border-gray-700">
-        É a mesma de acesso ao sistema i9
-      </span>
+  <!-- Badge de informação discreto -->
+  <span class="absolute right-0 top-0 mt-[-2px] cursor-pointer group">
+    <i data-lucide="info" class="w-4 h-4 text-blue-400 opacity-80 hover:opacity-100"></i>
+
+    <!-- Tooltip -->
+    <span class="absolute right-0 mt-6 bg-gray-800 text-gray-200 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity shadow-lg border border-gray-700 whitespace-nowrap z-50">
+      É a mesma de acesso ao sistema i9
     </span>
-  </label>
+  </span>
 
   <input 
     id="auth-senha" 
@@ -40,6 +39,7 @@
     autofocus
   />
 </div>
+
 
 
   <div class="max-w-6xl mx-auto space-y-6 hidden">
