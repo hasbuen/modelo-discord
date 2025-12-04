@@ -5,7 +5,7 @@
 
 // ⚠️ IMPORTANTE: Atualize com sua URL de API real (Vercel/Cervel)
 // Exemplo: 'https://seu-projeto.vercel.app/api/auth'
-const API_ENDPOINT = 'https://seu-endpoint-vercel.vercel.app/api/autenticacao.js';
+const API_ENDPOINT = 'https://modelo-discord-server.vercel.app/api/autenticacao.js';
 
 /**
  * Converte string para MD5 usando crypto-js
