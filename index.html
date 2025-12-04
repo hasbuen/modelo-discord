@@ -16,42 +16,31 @@
 </head>
 <body class="p-6">
 
-  <!-- Tela de Autenticação (Login) -->
-  <div id="auth-container" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
-    <div class="bg-gray-900 rounded-lg shadow-2xl p-8 w-full max-w-sm animate__animated animate__fadeIn">
-      <div class="flex justify-center mb-6">
-        <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
-          <i data-lucide="lock" class="w-8 h-8 text-white"></i>
-        </div>
-      </div>
-      <h1 class="text-3xl font-bold text-center mb-2">ProtoCord</h1>
-      <p class="text-gray-400 text-center mb-6">Digite sua senha para continuar</p>
-      
-      <form id="auth-form" onsubmit="event.preventDefault(); validarSenha()" class="space-y-4">
-        <div>
-          <label for="auth-senha" class="block text-sm font-medium text-gray-300 mb-2">Senha</label>
-          <input 
-            id="auth-senha" 
-            type="password" 
-            placeholder="Digite a senha" 
-            class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition"
-            autocomplete="off"
-            autofocus
-          />
-        </div>
-        
-        <div id="auth-erro" class="hidden text-red-500 text-sm p-2 bg-red-950 rounded"></div>
-        
-        <button 
-          type="submit" 
-          id="btn-auth-submit"
-          class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition flex items-center justify-center gap-2"
-        >
-          <i data-lucide="log-in" class="w-4 h-4"></i> Entrar
-        </button>
-      </form>
-    </div>
-  </div>
+ <div>
+  <label for="auth-senha" class="block text-sm font-medium text-gray-300 mb-2 flex items-center gap-2">
+    Senha
+
+    <!-- Badge de informação -->
+    <span class="relative group cursor-pointer">
+      <i data-lucide="info" class="w-4 h-4 text-blue-400"></i>
+
+      <!-- Tooltip -->
+      <span class="absolute left-6 top-1/2 -translate-y-1/2 bg-gray-800 text-gray-200 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg border border-gray-700">
+        É a mesma de acesso ao sistema i9
+      </span>
+    </span>
+  </label>
+
+  <input 
+    id="auth-senha" 
+    type="password" 
+    placeholder="Digite a senha" 
+    class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition"
+    autocomplete="off"
+    autofocus
+  />
+</div>
+
 
   <div class="max-w-6xl mx-auto space-y-6 hidden">
 
