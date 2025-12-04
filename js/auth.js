@@ -23,6 +23,11 @@ async function validarSenha() {
   const btnAuth = document.getElementById('btn-auth-submit');
   const msgErro = document.getElementById('auth-erro');
 
+  if (!btnAuth) {
+      console.error("Botão de autenticação não encontrado (ID: btn-auth-submit)");
+      return; // Sai da função para evitar o erro de null
+  }
+  
   if (!senha) {
     msgErro.textContent = 'Por favor, insira a senha.';
     msgErro.classList.remove('hidden');
