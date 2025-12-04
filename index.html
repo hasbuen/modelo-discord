@@ -16,31 +16,47 @@
 </head>
 <body class="p-6">
 
-
-  <div class="relative">
-  <label for="auth-senha" class="block text-sm font-medium text-gray-300 mb-2">Senha</label>
-
-  <!-- Badge de informação discreto -->
-  <span class="absolute right-0 top-0 mt-[-2px] cursor-pointer group">
-    <i data-lucide="info" class="w-4 h-4 text-blue-400 opacity-80 hover:opacity-100"></i>
-
-    <!-- Tooltip -->
-    <span class="absolute right-0 mt-6 bg-gray-800 text-gray-200 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity shadow-lg border border-gray-700 whitespace-nowrap z-50">
-      É a mesma de acesso ao sistema i9
-    </span>
-  </span>
-
-  <input 
-    id="auth-senha" 
-    type="password" 
-    placeholder="Digite a senha" 
-    class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition"
-    autocomplete="off"
-    autofocus
-  />
+<div id="auth-container" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+  <div class="bg-gray-900 rounded-lg shadow-2xl p-8 w-full max-w-sm animate__animated animate__fadeIn">
+    <div class="flex justify-center mb-6">
+      <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+        <i data-lucide="lock" class="w-8 h-8 text-white"></i>
+      </div>
+    </div>
+    <h1 class="text-3xl font-bold text-center mb-2">ProtoCord</h1>
+    <p class="text-gray-400 text-center mb-6">Digite sua senha para continuar</p>
+    
+    <div class="flex items-center justify-center mb-6">
+      <div class="flex items-center bg-yellow-900 bg-opacity-30 text-yellow-300 text-sm font-medium px-3 py-1 rounded-full border border-yellow-700">
+        <i data-lucide="info" class="w-4 h-4 mr-2"></i>
+        <span>Senha Sistema i9</span>
+      </div>
+    </div>
+    <form id="auth-form" onsubmit="event.preventDefault(); validarSenha()" class="space-y-4">
+      <div>
+        <label for="auth-senha" class="block text-sm font-medium text-gray-300 mb-2">Senha</label>
+        <input 
+          id="auth-senha" 
+          type="password" 
+          placeholder="Digite a senha" 
+          class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition"
+          autocomplete="off"
+          autofocus
+        />
+      </div>
+      
+      <div id="auth-erro" class="hidden text-red-500 text-sm p-2 bg-red-950 rounded"></div>
+      
+      <button 
+        type="submit" 
+        id="btn-auth-submit"
+        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition flex items-center justify-center gap-2"
+      >
+        <i data-lucide="log-in" class="w-4 h-4"></i> Entrar
+      </button>
+    </form>
+  </div>
 </div>
-
-
 
   <div class="max-w-6xl mx-auto space-y-6 hidden">
 
