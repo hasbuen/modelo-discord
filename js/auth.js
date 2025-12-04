@@ -4,6 +4,9 @@
  */
 const API_ENDPOINT = 'https://modelo-discord-server.vercel.app/api/autenticacao';
 
+// Assegure-se de que a biblioteca CryptoJS foi carregada antes deste script
+// Isso é garantido pela tag <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script> no seu HTML.
+
 /**
  * Converte string para MD5 usando crypto-js
  * @param {string} str - string para converter
@@ -39,10 +42,16 @@ async function validarSenha() {
     const senhamd5 = toMD5(senha);
 
     // Faz requisição GET para a API Supabase/Vercel
+    // OBS: O endpoint do Vercel DEVE estar configurado para aceitar o parâmetro 'pass'
     const response = await fetch(`${API_ENDPOINT}?pass=${encodeURIComponent(senhamd5)}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });
+
+    if (!response.ok) {
+        // Trata erros HTTP (ex: 404, 500) do endpoint Vercel
+        throw new Error(`Erro de rede: ${response.status} ${response.statusText}`);
+    }
 
     const resultado = await response.json();
 
@@ -102,17 +111,31 @@ function initAuth() {
   }
 
   // Mostra tela de login
-  document.getElementById('auth-container').classList.remove('hidden');
-  document.querySelector('.max-w-6xl').classList.add('hidden');
+  const authContainer = document.getElementById('auth-container');
+  const appContainer = document.querySelector('.max-w-6xl');
+  
+  if (authContainer) authContainer.classList.remove('hidden');
+  if (appContainer) appContainer.classList.add('hidden');
 
   // Adiciona listener para Enter na input de senha
   const senhaInput = document.getElementById('auth-senha');
   if (senhaInput) {
     senhaInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
+        // Previne a submissão padrão se for um form
+        e.preventDefault(); 
         validarSenha();
       }
     });
+  }
+
+  // ⭐ NOVO/CORRIGIDO: Adiciona o listener de evento de SUBMIT ao formulário
+  const authForm = document.getElementById('auth-form');
+  if (authForm) {
+      authForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          validarSenha();
+      });
   }
 }
 
@@ -122,8 +145,10 @@ function initAuth() {
 function fazerLogout() {
   localStorage.removeItem('authToken');
   localStorage.removeItem('authTime');
-  location.reload();
+  // Recarrega a página para voltar à tela de login
+  location.reload(); 
 }
 
 // Executa ao carregar a página
+// O DOMContentLoaded garante que o HTML está pronto antes de tentar manipular elementos
 window.addEventListener('DOMContentLoaded', initAuth);
