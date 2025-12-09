@@ -359,6 +359,7 @@
 
       if (paginaId === 'historico-liberacoes') {
         carregarHistoricoLiberacoes();
+        setTimeout(() => gerarDashboardLiberacoes(), 200);
       }
 
       if (paginaId === 'ia' && !iaModelLoaded) {
