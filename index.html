@@ -10,12 +10,49 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="p-6">
 
-  <div class="max-w-6xl mx-auto space-y-6">
+  <!-- Tela de Autenticação (Login) -->
+  <div id="auth-container" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+    <div class="bg-gray-900 rounded-lg shadow-2xl p-8 w-full max-w-sm animate__animated animate__fadeIn">
+      <div class="flex justify-center mb-6">
+        <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+          <i data-lucide="lock" class="w-8 h-8 text-white"></i>
+        </div>
+      </div>
+      <h1 class="text-3xl font-bold text-center mb-2">ProtoCord</h1>
+      <p class="text-gray-400 text-center mb-6">Digite sua senha para continuar</p>
+      
+      <form id="auth-form" onsubmit="event.preventDefault(); validarSenha()" class="space-y-4">
+        <div>
+          <label for="auth-senha" class="block text-sm font-medium text-gray-300 mb-2">Senha</label>
+          <input 
+            id="auth-senha" 
+            type="password" 
+            placeholder="Digite a senha" 
+            class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition"
+            autocomplete="off"
+            autofocus
+          />
+        </div>
+        
+        <div id="auth-erro" class="hidden text-red-500 text-sm p-2 bg-red-950 rounded"></div>
+        
+        <button 
+          type="submit" 
+          class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition flex items-center justify-center gap-2"
+        >
+          <i data-lucide="log-in" class="w-4 h-4"></i> Entrar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto space-y-6 hidden">
 
     <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
       
@@ -158,18 +195,82 @@
     </div>
 
     <div id="pagina-historico-liberacoes" class="hidden animate__animated animate__fadeIn">
-  <div id="historico-liberacoes-container" class="bg-gray-900 p-4 rounded-xl">
-    <h2 class="text-lg font-bold mb-4">Histórico de liberações</h2>
-    <div class="overflow-y-auto max-h-96">
-      <table class="w-full text-sm">
-        <thead class="bg-gray-800 sticky top-0">
-          <tr>
-            <th class="py-2 px-3 text-left">Release</th>
-            <th class="py-2 px-3 text-left">Protocolos liberados</th>
-          </tr>
-          </thead>
-            <tbody id="tabelaLiberados" class="divide-y divide-gray-700"></tbody>
-          </table>
+      <div id="historico-liberacoes-container" class="space-y-6">
+        <h2 class="text-2xl font-bold">Histórico de liberações</h2>
+
+        <!-- Cards Informativos -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-gradient-to-br from-blue-900 to-blue-800 p-6 rounded-xl shadow-lg">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-blue-200 text-sm font-semibold mb-1">Releases verificadas</p>
+                <p id="card-releases" class="text-3xl font-bold text-white">—</p>
+              </div>
+              <i data-lucide="calendar" class="w-8 h-8 text-blue-300 opacity-80"></i>
+            </div>
+          </div>
+          
+          <div class="bg-gradient-to-br from-green-900 to-green-800 p-6 rounded-xl shadow-lg">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-green-200 text-sm font-semibold mb-1">Total de liberações</p>
+                <p id="card-protocolos" class="text-3xl font-bold text-white">—</p>
+              </div>
+              <i data-lucide="check-circle-2" class="w-8 h-8 text-green-300 opacity-80"></i>
+            </div>
+          </div>
+          
+          <div class="bg-gradient-to-br from-purple-900 to-purple-800 p-6 rounded-xl shadow-lg">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-purple-200 text-sm font-semibold mb-1">Última liberação</p>
+                <p id="card-ultima" class="text-2xl font-bold text-white">—</p>
+              </div>
+              <i data-lucide="zap" class="w-8 h-8 text-purple-300 opacity-80"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráfico de Liberações por Data -->
+        <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
+          <h3 class="text-lg font-bold mb-4 text-white">Protocolos por Release</h3>
+          <div class="relative" style="height: 300px;">
+            <canvas id="chartLiberacoes"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico de Distribuição (Pie) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
+            <h3 class="text-lg font-bold mb-4 text-white">Top 5 Releases</h3>
+            <div class="relative" style="height: 280px;">
+              <canvas id="chartTop5"></canvas>
+            </div>
+          </div>
+
+          <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
+            <h3 class="text-lg font-bold mb-4 text-white">Evolução ao Longo do Tempo</h3>
+            <div class="relative" style="height: 280px;">
+              <canvas id="chartEvolucao"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabela de Detalhes -->
+        <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
+          <h3 class="text-lg font-bold mb-4 text-white">Detalhes das Liberações</h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-800">
+                <tr>
+                  <th class="py-3 px-4 text-left font-semibold text-gray-300">Release</th>
+                  <th class="py-3 px-4 text-center font-semibold text-gray-300">Protocolos</th>
+                  <th class="py-3 px-4 text-left font-semibold text-gray-300">Protocolos liberados</th>
+                </tr>
+              </thead>
+              <tbody id="tabelaLiberados" class="divide-y divide-gray-700"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -260,17 +361,37 @@
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="mecanica.js"></script>
+  <!-- Script de Autenticação MD5 (carregado primeiro) -->
+  <script src="auth.js"></script>
+
   <script src="verificacao_release.js"></script>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder@1.3.3/dist/universal-sentence-encoder.js"></script>
   <script src="js/config.js"></script>
+  
+  <!-- Define sendMessage se não existir em outro lugar -->
+  <script>
+    if (typeof sendMessage === 'undefined') {
+      window.sendMessage = function() {
+        const input = document.getElementById('userInput');
+        if (input && input.value.trim()) {
+          console.log('Mensagem:', input.value);
+          // Adicione lógica aqui ou remova se não for usar
+        }
+      };
+    }
+  </script>
+  
   <script src="js/dom.js"></script>
   <script src="js/history.js"></script>
+  <script src="js/protocolos.js"></script>
+  <script src="js/dashboard-liberacoes.js"></script>
   <script src="js/model.js"></script>
   <script src="js/similarity.js"></script>
   <script src="js/responses.js"></script>
-  <script src="js/main.js"></script>
+  <script type="module" src="js/main.js"></script>
   <!--<script src="ai.js"></script>-->
   <link rel="stylesheet" href="style.css">
   
