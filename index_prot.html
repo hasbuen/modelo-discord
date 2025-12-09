@@ -106,6 +106,7 @@
 
       if (paginaId === 'historico-liberacoes' && typeof carregarHistoricoLiberacoes === "function") {
         carregarHistoricoLiberacoes();
+        setTimeout(() => gerarDashboardLiberacoes(), 200);
       }
 
       if (paginaId === 'ia' && !iaModelLoaded && typeof loadModelAndData === "function") {
