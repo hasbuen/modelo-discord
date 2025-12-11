@@ -1,5 +1,3 @@
-import { exibirMensagem } from "./chat.js"; // autoimport para manter coesão
-
 export async function enviarPergunta() {
   const input = document.getElementById("chat-input");
   const pergunta = input.value.trim();
