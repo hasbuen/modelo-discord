@@ -15,9 +15,3 @@ export function exibirModal(mensagem, prt = "", tipo = "info") {
   modal.classList.remove("hidden");
   lucide.createIcons();
 }
-
-export const fecharModal = () =>
-  document.getElementById("errorModal").classList.add("hidden");
-
-export const fecharConfirmModal = () =>
-  document.getElementById("confirmModal").classList.add("hidden");

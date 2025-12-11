@@ -8,7 +8,6 @@ const sendBtn = document.getElementById("sendBtn");
 if (typeof window.sendMessage === 'undefined') {
   window.sendMessage = function() {
     if (inputEl && inputEl.value.trim()) {
-      console.log('Mensagem recebida:', inputEl.value);
       // Aqui você pode adicionar a lógica de envio
     }
   };

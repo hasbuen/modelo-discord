@@ -81,7 +81,6 @@ function abrirModalProtocolo(prt) {
   const protocolo = obterProtocolo(prt);
   
   if (!protocolo) {
-    console.warn(`Protocolo ${prt} não encontrado`);
     return;
   }
 
@@ -198,7 +197,6 @@ function abrirModalProtocolo(prt) {
 
   // Adiciona novo modal ao body
   document.body.insertAdjacentHTML('beforeend', modalHTML);
-  console.log(`Modal aberto para ${prt}`);
 }
 
 /**
@@ -208,7 +206,6 @@ function fecharModalProtocolo() {
   const modal = document.getElementById('modal-protocolo-overlay');
   if (modal) {
     modal.remove();
-    console.log('Modal fechado');
   }
 }
 
@@ -238,7 +235,6 @@ function inicializarClicksProtocolos() {
     }
   });
 
-  console.log('Sistema de protocolos inicializado');
 }
 
 // Expõe funções globalmente

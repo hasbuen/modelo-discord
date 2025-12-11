@@ -1,3 +1,4 @@
+
 // Mensagens
 const MENSAGEM_1 = "Selecione o tipo do protocolo!";
 const MENSAGEM_2 = "Preencha todos os campos!";
@@ -55,7 +56,7 @@ function alternarTema(tema) {
 function carregarTemaPreferido() {
   const temaSalvo = localStorage.getItem('theme');
   const html = document.documentElement;
-  
+
   if (temaSalvo) {
     html.setAttribute('data-theme', temaSalvo);
     const botaoTema = document.getElementById(`tema-${temaSalvo}`);
@@ -76,8 +77,8 @@ function validarURL(url) {
   return /^(http:\/\/|https:\/\/)[\w.-]+\.[a-zA-Z]{2,}(\/.*)?$/.test(url);
 }
 
-function validarNumeros(valor) { 
-  return /^\d+$/.test(valor); 
+function validarNumeros(valor) {
+  return /^\d+$/.test(valor);
 }
 
 // Modal
@@ -142,7 +143,7 @@ function gerarTexto() {
   const paliativoFormatado = formatar(paliativo.value);
 
 
-    let texto = "";
+  let texto = "";
   if (tipo === '1') {
     texto = `**\`\`\`diff
 + Protocolo [SUGESTÃO]:
@@ -200,28 +201,28 @@ async function salvarRegistro() {
 }
 
 function copiarTexto() {
-    const texto = document.getElementById('output').value;
-    if (!texto.trim()) return exibirModal(MENSAGEM_4, "", "info");
-    navigator.clipboard.writeText(texto)
-        .then(() => {
-            exibirModal(MENSAGEM_5, "", "sucesso");
-            salvarRegistro();
-            limparCampos(); 
-        })
-        .catch(() => exibirModal(MENSAGEM_6, "", "erro"));
+  const texto = document.getElementById('output').value;
+  if (!texto.trim()) return exibirModal(MENSAGEM_4, "", "info");
+  navigator.clipboard.writeText(texto)
+    .then(() => {
+      exibirModal(MENSAGEM_5, "", "sucesso");
+      salvarRegistro();
+      limparCampos();
+    })
+    .catch(() => exibirModal(MENSAGEM_6, "", "erro"));
 }
 
 function limparCampos() {
-    document.getElementById('prt').value = '';
-    document.getElementById('ticket').value = '';
-    document.getElementById('descricao').value = '';
-    document.getElementById('paliativo').value = '';
-    document.getElementById('prazo').value = '';
-    document.getElementById('link').value = '';
-    document.getElementById('output').value = '';
-    document.getElementById("btn-erro").classList.remove("ring-2", "ring-offset-2", "ring-red-400");
-    document.getElementById("btn-sugestao").classList.remove("ring-2", "ring-offset-2", "ring-green-400");
-    document.getElementById("tipo").value = ''; 
+  document.getElementById('prt').value = '';
+  document.getElementById('ticket').value = '';
+  document.getElementById('descricao').value = '';
+  document.getElementById('paliativo').value = '';
+  document.getElementById('prazo').value = '';
+  document.getElementById('link').value = '';
+  document.getElementById('output').value = '';
+  document.getElementById("btn-erro").classList.remove("ring-2", "ring-offset-2", "ring-red-400");
+  document.getElementById("btn-sugestao").classList.remove("ring-2", "ring-offset-2", "ring-green-400");
+  document.getElementById("tipo").value = '';
 }
 
 // Tabela
@@ -232,17 +233,17 @@ function filtrarTabela() {
   });
 }
 
-let ultimaColuna=-1, ordemAsc=true;
+let ultimaColuna = -1, ordemAsc = true;
 function ordenarTabela(idx) {
-  const tbody=document.querySelector("#tabelaRegistros tbody");
-  let linhas=[...tbody.querySelectorAll("tr")];
-  if(ultimaColuna===idx) ordemAsc=!ordemAsc; else {ordemAsc=true; ultimaColuna=idx;}
-  linhas.sort((a,b)=>{
-    let va=a.children[idx].textContent.trim().toLowerCase();
-    let vb=b.children[idx].textContent.trim().toLowerCase();
-    return ordemAsc?va.localeCompare(vb):vb.localeCompare(a);
+  const tbody = document.querySelector("#tabelaRegistros tbody");
+  let linhas = [...tbody.querySelectorAll("tr")];
+  if (ultimaColuna === idx) ordemAsc = !ordemAsc; else { ordemAsc = true; ultimaColuna = idx; }
+  linhas.sort((a, b) => {
+    let va = a.children[idx].textContent.trim().toLowerCase();
+    let vb = b.children[idx].textContent.trim().toLowerCase();
+    return ordemAsc ? va.localeCompare(vb) : vb.localeCompare(a);
   });
-  linhas.forEach(l=>tbody.appendChild(l));
+  linhas.forEach(l => tbody.appendChild(l));
 }
 
 function mostrarModalPaliativo(paliativo) {
@@ -255,8 +256,44 @@ function mostrarModalPaliativo(paliativo) {
   lucide.createIcons();
 }
 
-function copiarLinha(botao, paliativo) {
-  navigator.clipboard.writeText(paliativo.trim() || "")
+
+function copiarLinha(botao, reg) {
+  let objetoJson;
+
+  try {
+    objetoJson = JSON.parse(JSON.stringify(reg).replace(/\\"/g, '"').replace(/(^"|"$)/g, ''));
+  } catch (e) {
+    console.error("Erro ao converter para JSON:", e);
+  }
+
+    let texto = "";
+if (objetoJson.Tipo === 'Sugestão') {
+    texto = `**\`\`\`diff
++ Protocolo [SUGESTÃO]:
++ PRT: ${objetoJson.PRT}
++ Ticket: ${objetoJson.Ticket}
+\`\`\`**
+- **Descrição resumida:**
+${objetoJson.Descricao}
+
+- **Paliativo:**
+${objetoJson.Paliativo}
+`;
+  } else {
+    texto = `**\`\`\`diff
+- Protocolo [ERRO]:
+- PRT: ${objetoJson.PRT}
+- Ticket: ${objetoJson.Ticket}
+\`\`\`**
+- **Descrição resumida:**
+${objetoJson.Descricao}
+
+- **Paliativo:**
+${objetoJson.Paliativo}
+`;
+  }
+
+  navigator.clipboard.writeText(texto.trim())
     .then(() => {
       const originalText = botao.innerHTML;
       botao.innerHTML = "OK";
@@ -268,16 +305,16 @@ function copiarLinha(botao, paliativo) {
     .catch(() => exibirModal("Erro ao copiar o paliativo.", "", "erro"));
 }
 
-async function abrirModalExclusao(id, ticket) {  
+async function abrirModalExclusao(id, ticket) {
   const modal = document.getElementById("confirmModal");
   const confirmBtn = document.getElementById("confirmBtn");
-  
-  document.getElementById("confirmIcon").innerHTML = `<i data-lucide="trash-2" class="text-red-500 w-5 h-5"></i>`;
+
+  document.getElementById("confirmIcon").innerHTML = `< i data - lucide="trash-2" class="text-red-500 w-5 h-5" ></i > `;
   document.getElementById("confirmText").textContent = `Tem certeza que deseja excluir o registro do ticket ${ticket}?`;
 
   confirmBtn.onclick = async () => {
-     fecharConfirmModal();
-  
+    fecharConfirmModal();
+
     try {
       await fetch("https://modelo-discord-server.vercel.app/api/protocolos", {
         method: "DELETE",
@@ -288,7 +325,7 @@ async function abrirModalExclusao(id, ticket) {
       await renderizarTabela();
     } catch {
       exibirModal("Erro ao excluir registro.", "", "erro");
-    } 
+    }
   };
 
   modal.classList.remove("hidden");
@@ -297,17 +334,17 @@ async function abrirModalExclusao(id, ticket) {
 
 // Atualiza os contadores de erros e sugestões visíveis nos cards
 async function atualizarContadoresDosCards(registros) {
-    const totalErros = registros.filter(r => r.tipo === '0').length;
-    const totalSugestoes = registros.filter(r => r.tipo === '1').length;
+  const totalErros = registros.filter(r => r.tipo === '0').length;
+  const totalSugestoes = registros.filter(r => r.tipo === '1').length;
 
-    const erroEl = document.getElementById("contador-erros");
-    const sugestaoEl = document.getElementById("contador-sugestoes");
+  const erroEl = document.getElementById("contador-erros");
+  const sugestaoEl = document.getElementById("contador-sugestoes");
 
-    erroEl.classList.remove("skeleton");
-    sugestaoEl.classList.remove("skeleton");
-    
-    erroEl.textContent = totalErros;
-    sugestaoEl.textContent = totalSugestoes;
+  erroEl.classList.remove("skeleton");
+  sugestaoEl.classList.remove("skeleton");
+
+  erroEl.textContent = totalErros;
+  sugestaoEl.textContent = totalSugestoes;
 }
 
 async function renderizarTabela() {
@@ -316,41 +353,41 @@ async function renderizarTabela() {
 
   // INÍCIO DO LOADING: Insere o spinner colorido no corpo da tabela
   tbody.innerHTML = `
-    <tr>
+      < tr >
       <td colspan="5" class="text-center py-6 text-gray-400">
         <div class="flex items-center justify-center space-x-2">
           <div class="relative w-8 h-8 rounded-full">
             <div class="absolute inset-0 rounded-full border-2 border-transparent" style="background: linear-gradient(90deg, #1a1a1a 0%, #2e2e2e 20%, #444444 40%, #5a5a5a 60%, #444444 80%, #2e2e2e 90%, #1a1a1a 100%); animation: spin-soft 1.5s ease-in-out infinite;"></div>
             <div class="absolute inset-1 bg-gray-900 rounded-full"></div>
-            </div>
+          </div>
           <span class="text-white text-lg">Aguarde, em instantes...</span>
         </div>
       </td>
-    </tr>`;
+    </tr > `;
 
   try {
     // Cria uma Promise para o timer (2 segundos)
     const timerPromise = new Promise(resolve => setTimeout(resolve, 6000)); // 2000ms = 2 segundos
 
     // Executa as requisições e o timer em paralelo
-    const [registros, ] = await Promise.all([
+    const [registros,] = await Promise.all([
       carregarRegistrosProtocolos(),
       timerPromise // Garante que o loading apareça por no mínimo 2 segundos
     ]);
 
     await atualizarContadoresDosCards(registros);
-    
+
     // FIM DO LOADING: Limpa o conteúdo de loading antes de renderizar os dados
     tbody.innerHTML = "";
 
     // Mensagem quando não há registros
     if (!registros || registros.length === 0) {
       tbody.innerHTML = `
-        <tr>
-          <td colspan="5" class="text-center py-6 text-gray-400 italic">
-            No momento nenhum registro gravado.
-          </td>
-        </tr>
+      < tr >
+      <td colspan="5" class="text-center py-6 text-gray-400 italic">
+        No momento nenhum registro gravado.
+      </td>
+        </tr >
       `;
       return;
     }
@@ -378,11 +415,11 @@ async function renderizarTabela() {
       const descricaoTooltip = descricaoEsc.replace(/\n/g, "<br>");
 
       tr.innerHTML = `
-        <td class="py-2 px-3 align-top">
-          <a href="${escHTML(reg.link || '#')}" target="_blank" class="text-blue-400 underline">
-            ${escHTML(reg.ticket || '')}
-          </a>
-        </td>
+      < td class="py-2 px-3 align-top" >
+        <a href="${escHTML(reg.link || '#')}" target="_blank" class="text-blue-400 underline">
+          ${escHTML(reg.ticket || '')}
+        </a>
+        </td >
         <td class="py-2 px-3 align-top">${escHTML(reg.prt || '')}</td>
         <td class="py-2 px-3 align-top">${badgeHTML}</td>
         <td class="py-2 px-3 align-top">
@@ -397,20 +434,20 @@ async function renderizarTabela() {
             Ver
           </button>
           <button class="bg-green-600 hover:bg-green-500 px-2 py-1 rounded text-xs"
-                  onclick="copiarLinha(this, '${escHTML(reg.paliativo || '').replace(/'/g, "\\'")}')">
+                  onclick="copiarLinha(this, '${reg}')">
             <i data-lucide="copy" class="w-4 h-4"></i>
           </button>
           <button class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded text-xs">
             <i data-lucide="trash-2" class="w-4 h-4"></i>
           </button>
-        </td>
+        </td >
       `;
-      
+
       const btnExcluir = tr.querySelector('.bg-red-600');
       if (btnExcluir) {
-          btnExcluir.onclick = () => abrirModalExclusao(Number(reg.id), reg.ticket);
+        btnExcluir.onclick = () => abrirModalExclusao(Number(reg.id), reg.ticket);
       }
-      
+
       tbody.appendChild(tr);
     });
 
@@ -420,12 +457,12 @@ async function renderizarTabela() {
   } catch (error) {
     console.error("Erro ao carregar registros:", error);
     tbody.innerHTML = `
-      <tr>
-        <td colspan="5" class="text-center py-6 text-red-400">
-          Erro ao carregar os dados. Por favor, tente novamente.
-        </td>
-      </tr>
-    `;
+      < tr >
+      <td colspan="5" class="text-center py-6 text-red-400">
+        Erro ao carregar os dados. Por favor, tente novamente.
+      </td>
+      </tr >
+      `;
   }
 }
 
@@ -487,7 +524,7 @@ function exibirMensagem(remetente, texto) {
 
     // Cria um span para o nome do assistente e aplica um estilo de negrito
     const nomeAssistente = document.createElement("span");
-    nomeAssistente.textContent = "Skynet: "; 
+    nomeAssistente.textContent = "Skynet: ";
     nomeAssistente.style.fontWeight = "bold";
 
     // Adiciona o nome do assistente ao container
@@ -496,7 +533,7 @@ function exibirMensagem(remetente, texto) {
     // Usa marked.js para converter Markdown em HTML
     const respostaFormatada = document.createElement("span");
     respostaFormatada.innerHTML = marked.parse(texto);
-    
+
     // Adiciona a resposta formatada ao container
     content.appendChild(respostaFormatada);
 
@@ -514,12 +551,12 @@ function exibirMensagem(remetente, texto) {
 
 // Chamar a API assim que a página carregar
 window.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const registros = await carregarRegistrosProtocolos();
-        await atualizarContadoresDosCards(registros);
-        await renderizarTabela();
-        carregarTemaPreferido();
-    } catch (err) {
-        console.error("Erro ao inicializar a página:", err);
-    }
+  try {
+    const registros = await carregarRegistrosProtocolos();
+    await atualizarContadoresDosCards(registros);
+    await renderizarTabela();
+    carregarTemaPreferido();
+  } catch (err) {
+    console.error("Erro ao inicializar a página:", err);
+  }
 });

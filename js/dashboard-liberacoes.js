@@ -14,7 +14,6 @@ let chartsInstance = {
  */
 async function carregarDadosLiberacoes() {
   try {
-    console.log('Carregando dados da API...');
     const response = await fetch('https://modelo-discord-server.vercel.app/api/liberados');
     
     if (!response.ok) {
@@ -22,7 +21,6 @@ async function carregarDadosLiberacoes() {
     }
 
     const dadosAPI = await response.json();
-    console.log('Dados recebidos da API:', dadosAPI);
 
     // Converte formato da API para nosso formato
     const liberacoes = dadosAPI.map(item => ({
@@ -37,10 +35,8 @@ async function carregarDadosLiberacoes() {
       return dateB - dateA;
     });
 
-    console.log('Dados processados:', liberacoes);
     return liberacoes;
   } catch (error) {
-    console.error('Erro ao carregar dados da API:', error);
     return [];
   }
 }
@@ -52,7 +48,6 @@ function salvarDadosLiberacoes(dados) {
   try {
     localStorage.setItem('liberacoes_data', JSON.stringify(dados));
   } catch (e) {
-    console.warn('Erro ao salvar dados no localStorage:', e);
   }
 }
 
@@ -311,10 +306,8 @@ function renderizarGraficoEvolucao(liberacoes) {
  * Renderiza todo o dashboard
  */
 function renderizarDashboard(liberacoes) {
-  console.log('Renderizando dashboard com', liberacoes?.length, 'releases');
   
   if (!liberacoes || liberacoes.length === 0) {
-    console.warn('Nenhum dado de liberações para renderizar');
     return;
   }
 
@@ -328,7 +321,6 @@ function renderizarDashboard(liberacoes) {
         renderizarGraficoLiberacoes(liberacoes);
         renderizarGraficoTop5(liberacoes);
         renderizarGraficoEvolucao(liberacoes);
-        console.log('Gráficos renderizados com sucesso');
       } else {
         console.error('Chart.js não foi carregado');
       }
@@ -341,7 +333,6 @@ function renderizarDashboard(liberacoes) {
       // Inicializa sistema de protocolos (cliques e modal)
       if (typeof inicializarClicksProtocolos === 'function') {
         inicializarClicksProtocolos();
-        console.log('Sistema de protocolos ativado');
       }
     } catch (error) {
       console.error('Erro ao renderizar gráficos:', error);
@@ -353,17 +344,13 @@ function renderizarDashboard(liberacoes) {
  * Função pública para carregar histórico (chamada pelo main)
  */
 async function carregarHistoricoLiberacoes() {
-  console.log('carregarHistoricoLiberacoes chamado');
   
   // Carrega os protocolos antes de renderizar a tabela
   if (typeof carregarProtocolos === 'function') {
-    console.log('Carregando protocolos...');
     await carregarProtocolos();
-    console.log('Protocolos carregados e cacheados');
   }
 
   const liberacoes = await carregarDadosLiberacoes();
-  console.log('Dados carregados:', liberacoes);
   renderizarDashboard(liberacoes);
 }
 

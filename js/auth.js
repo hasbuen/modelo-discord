@@ -2,7 +2,6 @@
  * Sistema de Autenticação MD5 com Supabase
  * Valida a senha do usuário antes de permitir acesso ao app
  */
-const API_ENDPOINT = 'https://modelo-discord-server.vercel.app/api/autenticacao';
 
 /**
  * Converte string para MD5 usando crypto-js
@@ -24,7 +23,6 @@ async function validarSenha() {
   const msgErro = document.getElementById('auth-erro');
 
   if (!btnAuth) {
-      console.error("Botão de autenticação não encontrado (ID: btn-auth-submit)");
       return; // Sai da função para evitar o erro de null
   }
   
@@ -46,7 +44,7 @@ async function validarSenha() {
     const senhamd5 = toMD5(senha);
 
     // Faz requisição GET para a API no Vercel, passando o hash MD5 na query string
-    const response = await fetch(`${API_ENDPOINT}?pass=${encodeURIComponent(senhamd5)}`, {
+    const response = await fetch(`https://modelo-discord-server.vercel.app/api/autenticacao?pass=${encodeURIComponent(senhamd5)}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });
@@ -75,7 +73,6 @@ async function validarSenha() {
       msgErro.classList.remove('hidden');
     }
   } catch (error) {
-    console.error('Erro ao autenticar:', error);
     msgErro.textContent = 'Erro ao conectar com o servidor. Tente novamente.';
     msgErro.classList.remove('hidden');
   } finally {
