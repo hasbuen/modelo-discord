@@ -1,100 +1,106 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ProtoCord</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-  
+
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="p-6">
 
-<div id="auth-container" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
-  <div class="bg-gray-900 rounded-lg shadow-2xl p-8 w-full max-w-sm animate__animated animate__fadeIn">
-    <div class="flex justify-center mb-6">
-      <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
-        <i data-lucide="lock" class="w-8 h-8 text-white"></i>
+  <div id="auth-container" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
+    <div class="bg-gray-900 rounded-lg shadow-2xl p-8 w-full max-w-sm animate__animated animate__fadeIn">
+      <div class="flex justify-center mb-6">
+        <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
+          <i data-lucide="lock" class="w-8 h-8 text-white"></i>
+        </div>
       </div>
+      <h1 class="text-3xl font-bold text-center mb-2">ProtoCord</h1>
+      <p class="text-gray-400 text-center mb-6">Digite senha para continuar</p>
+
+      <div class="flex items-center justify-center mb-6">
+        <div
+          class="flex items-center bg-yellow-900 bg-opacity-30 text-yellow-300 text-sm font-medium px-3 py-1 rounded-full border border-yellow-700">
+          <i data-lucide="info" class="w-4 h-4 mr-2"></i>
+          <span>Senha Sistema i9</span>
+        </div>
+      </div>
+      <form id="auth-form" onsubmit="event.preventDefault(); validarSenha()" class="space-y-4">
+        <div>
+          <label for="auth-senha" class="block text-sm font-medium text-gray-300 mb-2">Senha</label>
+          <input id="auth-senha" type="password" placeholder="Digite a senha"
+            class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition"
+            autocomplete="off" autofocus />
+        </div>
+
+        <div id="auth-erro" class="hidden text-red-500 text-sm p-2 bg-red-950 rounded"></div>
+
+        <button type="submit" id="btn-auth-submit"
+          class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
+          <i data-lucide="log-in" class="w-4 h-4"></i> Entrar
+        </button>
+      </form>
     </div>
-    <h1 class="text-3xl font-bold text-center mb-2">ProtoCord</h1>
-    <p class="text-gray-400 text-center mb-6">Digite senha para continuar</p>
-    
-    <div class="flex items-center justify-center mb-6">
-      <div class="flex items-center bg-yellow-900 bg-opacity-30 text-yellow-300 text-sm font-medium px-3 py-1 rounded-full border border-yellow-700">
-        <i data-lucide="info" class="w-4 h-4 mr-2"></i>
-        <span>Senha Sistema i9</span>
-      </div>
-    </div>
-    <form id="auth-form" onsubmit="event.preventDefault(); validarSenha()" class="space-y-4">
-      <div>
-        <label for="auth-senha" class="block text-sm font-medium text-gray-300 mb-2">Senha</label>
-        <input 
-          id="auth-senha" 
-          type="password" 
-          placeholder="Digite a senha" 
-          class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition"
-          autocomplete="off"
-          autofocus
-        />
-      </div>
-      
-      <div id="auth-erro" class="hidden text-red-500 text-sm p-2 bg-red-950 rounded"></div>
-      
-      <button 
-        type="submit" 
-        id="btn-auth-submit"
-        class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition flex items-center justify-center gap-2"
-      >
-        <i data-lucide="log-in" class="w-4 h-4"></i> Entrar
-      </button>
-    </form>
   </div>
-</div>
 
   <div class="max-w-6xl mx-auto space-y-6 hidden">
 
     <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-      
+
       <div class="flex justify-center items-center gap-2">
         <i data-lucide="bandage" class="w-7 h-7 text-blue-400"></i>
         <h1 class="text-3xl font-bold">ProtoCord</h1>
       </div>
 
       <div class="flex flex-wrap gap-3 justify-center">
-        <button onclick="mostrarPagina('home')" class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-blue-600 hover:bg-blue-500" id="btn-home">
+        <button onclick="mostrarPagina('home')"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-blue-600 hover:bg-blue-500" id="btn-home">
           <i data-lucide="home" class="w-4 h-4"></i> Início
         </button>
-        <button onclick="mostrarPagina('historico')" class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700" id="btn-historico">
+        <button onclick="mostrarPagina('historico')"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700"
+          id="btn-historico">
           <i data-lucide="history" class="w-4 h-4"></i> Histórico
         </button>
-        <button onclick="mostrarPagina('liberacoes')" class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700" id="btn-liberacoes">
+        <button onclick="mostrarPagina('liberacoes')"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700"
+          id="btn-liberacoes">
           <i data-lucide="folder-open" class="w-4 h-4"></i> Verificar release
         </button>
         <input type="file" id="arquivoRTF" accept=".rtf" class="hidden" onchange="processarRTF(event)" />
-        <button onclick="mostrarPagina('historico-liberacoes')" class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700" id="btn-historico-liberacoes">
+        <button onclick="mostrarPagina('historico-liberacoes')"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700"
+          id="btn-historico-liberacoes">
           <i data-lucide="archive" class="w-4 h-4"></i> Histórico de liberações
         </button>
-        <button onclick="mostrarPagina('ia')" class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700" id="btn-ia">
+        <button onclick="mostrarPagina('ia')"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700" id="btn-ia">
           <i data-lucide="bot" class="w-4 h-4"></i> IA
         </button>
 
       </div>
-      
+
       <div class="flex gap-2 p-2 rounded-lg bg-gray-800">
-        <button id="tema-escuro" onclick="alternarTema('dark')" class="toggle-theme-btn p-2 rounded-lg transition duration-200">
+        <button id="tema-escuro" onclick="alternarTema('dark')"
+          class="toggle-theme-btn p-2 rounded-lg transition duration-200">
           <i data-lucide="moon" class="w-5 h-5"></i>
         </button>
-        <button id="tema-claro" onclick="alternarTema('light')" class="toggle-theme-btn p-2 rounded-lg transition duration-200">
+        <button id="tema-claro" onclick="alternarTema('light')"
+          class="toggle-theme-btn p-2 rounded-lg transition duration-200">
           <i data-lucide="sun" class="w-5 h-5"></i>
         </button>
-        <button id="tema-sistema" onclick="alternarTema('system')" class="toggle-theme-btn p-2 rounded-lg transition duration-200">
+        <button id="tema-sistema" onclick="alternarTema('system')"
+          class="toggle-theme-btn p-2 rounded-lg transition duration-200">
           <i data-lucide="monitor" class="w-5 h-5"></i>
         </button>
       </div>
@@ -126,40 +132,35 @@
           </div>
           <input type="hidden" id="tipo" />
 
-          <div><label for="prt">PRT</label><input id="prt" type="text" class="w-full px-3 py-2 rounded-md bg-gray-800"/></div>
-          <div><label for="ticket">Ticket</label><input id="ticket" type="text" class="w-full px-3 py-2 rounded-md bg-gray-800"/></div>
-          <div><label for="descricao">Descrição</label><textarea id="descricao" class="w-full px-3 py-2 rounded-md bg-gray-800"></textarea></div>
-                  <div>
+          <div><label for="prt">PRT</label><input id="prt" type="text"
+              class="w-full px-3 py-2 rounded-md bg-gray-800" /></div>
+          <div><label for="ticket">Ticket</label><input id="ticket" type="text"
+              class="w-full px-3 py-2 rounded-md bg-gray-800" /></div>
+          <div><label for="descricao">Descrição</label><textarea id="descricao"
+              class="w-full px-3 py-2 rounded-md bg-gray-800"></textarea></div>
+          <div>
             <label for="paliativo">Paliativo</label>
-            <input 
-                list="paliativosList" 
-                id="paliativo" 
-                type="text" 
-                placeholder="Selecione ou digite aqui..." 
-                class="w-full px-3 py-2 rounded-md bg-gray-800"
-            />
+            <input list="paliativosList" id="paliativo" type="text" placeholder="Selecione ou digite aqui..."
+              class="w-full px-3 py-2 rounded-md bg-gray-800" />
             <datalist id="paliativosList">
-                <option value="Paliativo não encontrado."></option>
-                <option value="Nova funcionalidade."></option>
+              <option value="Paliativo não encontrado."></option>
+              <option value="Nova funcionalidade."></option>
             </datalist>
-        </div>
+          </div>
 
-        <div>
+          <div>
             <label for="prazo">Prazo</label>
-            <input 
-                list="prazosList" 
-                id="prazo" 
-                type="text" 
-                placeholder="Selecione ou digite aqui..." 
-                class="w-full px-3 py-2 rounded-md bg-gray-800"
-            />
+            <input list="prazosList" id="prazo" type="text" placeholder="Selecione ou digite aqui..."
+              class="w-full px-3 py-2 rounded-md bg-gray-800" />
             <datalist id="prazosList">
-                <option value="Encaminhado para avaliação de alocação."></option>
-                <option value="Registrado no banco de dados RhedeSAC."></option>
+              <option value="Encaminhado para avaliação de alocação."></option>
+              <option value="Registrado no banco de dados RhedeSAC."></option>
             </datalist>
-        </div>
-          <div><label for="link">Link</label><input id="link" type="text" class="w-full px-3 py-2 rounded-md bg-gray-800"/></div>
-          <button onclick="gerarTexto()" class="w-full bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2">
+          </div>
+          <div><label for="link">Link</label><input id="link" type="text"
+              class="w-full px-3 py-2 rounded-md bg-gray-800" /></div>
+          <button onclick="gerarTexto()"
+            class="w-full bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2">
             <i data-lucide="wand-2" class="w-4 h-4"></i> Gerar
           </button>
         </div>
@@ -167,7 +168,8 @@
         <div class="flex flex-col space-y-3">
           <label for="output">Cole no Discord:</label>
           <textarea id="output" readonly class="flex-1 px-3 py-2 rounded-md bg-gray-800"></textarea>
-          <button onclick="copiarTexto()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2">
+          <button onclick="copiarTexto()"
+            class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2">
             <i data-lucide="copy" class="w-4 h-4"></i> Copiar
           </button>
         </div>
@@ -175,11 +177,29 @@
     </div>
 
     <div id="pagina-historico" class="hidden animate__animated animate__fadeIn">
+
+
+      <div class="bg-gray-900 p-1">
+        <h2 class="text-2xl text-gray-200 text-center font-bold mb-4"> 
+          Protocolos por Módulo
+        </h2>
+
+        <div class="w-full flex justify-center">
+          <div class="w-full w-[100px] h-[100px] md:w-150 md:h-150 relative" style="max-width: 2800px; max-height: 280px;">
+            <canvas id="grafico-modulos"></canvas>
+          </div>
+        </div>
+
+        <div id="legenda-modulos" class="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm"> </div>
+      </div>
+
+
+
       <div id="tabela-container" class="bg-gray-900 p-4 rounded-xl">
         <input type="text" id="busca" placeholder="Buscar..." onkeyup="filtrarTabela()"
-          class="w-full mb-3 px-3 py-2 rounded-md bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500"/>
+          class="w-full mb-3 px-3 py-2 rounded-md bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500" />
 
-        <div class="overflow-y-auto max-h-96">
+        <div class="overflow-y-auto max-h-100">
           <table id="tabelaRegistros" class="w-full text-sm">
             <thead class="bg-gray-800 sticky top-0">
               <tr>
@@ -215,7 +235,7 @@
               <i data-lucide="calendar" class="w-8 h-8 text-blue-300 opacity-80"></i>
             </div>
           </div>
-          
+
           <div class="bg-gradient-to-br from-green-900 to-green-800 p-6 rounded-xl shadow-lg">
             <div class="flex items-center justify-between">
               <div>
@@ -225,7 +245,7 @@
               <i data-lucide="check-circle-2" class="w-8 h-8 text-green-300 opacity-80"></i>
             </div>
           </div>
-          
+
           <div class="bg-gradient-to-br from-purple-900 to-purple-800 p-6 rounded-xl shadow-lg">
             <div class="flex items-center justify-between">
               <div>
@@ -281,49 +301,43 @@
       </div>
     </div>
 
-<div id="pagina-ia" class="hidden animate__animated animate__fadeIn">
-  <div class="bg-gray-900 rounded-2xl flex flex-col shadow-2xl border border-gray-700 w-full max-w-4xl mx-auto h-[90vh]">
+    <div id="pagina-ia" class="hidden animate__animated animate__fadeIn">
+      <div
+        class="bg-gray-900 rounded-2xl flex flex-col shadow-2xl border border-gray-700 w-full max-w-4xl mx-auto h-[90vh]">
 
-    <!-- Cabeçalho -->
-    <div class="px-4 py-3 border-b border-gray-700 flex items-center gap-2 sticky top-0 bg-gray-900 z-10">
-      <i data-lucide="bot" class="w-5 h-5 text-blue-400"></i>
-      <h2 class="font-semibold text-lg text-white">Assistente IA</h2>
+        <!-- Cabeçalho -->
+        <div class="px-4 py-3 border-b border-gray-700 flex items-center gap-2 sticky top-0 bg-gray-900 z-10">
+          <i data-lucide="bot" class="w-5 h-5 text-blue-400"></i>
+          <h2 class="font-semibold text-lg text-white">Assistente IA</h2>
+        </div>
+
+        <!-- Área do chat -->
+        <div id="chat" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-800 scroll-smooth"
+          style="max-height: calc(90vh - 160px);">
+          <!-- Mensagens aparecem aqui -->
+        </div>
+
+        <!-- Status -->
+        <div id="status" class="p-2 text-center text-sm text-gray-400 border-t border-gray-700">
+          Carregando...
+        </div>
+
+        <!-- Input -->
+        <div class="p-3 border-t border-gray-700 flex gap-2 bg-gray-900">
+          <input id="userInput" type="text" placeholder="Digite sua pergunta..."
+            class="flex-1 px-4 py-2 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition"
+            disabled />
+          <button id="sendBtn" disabled
+            class="bg-blue-600 hover:bg-blue-500 p-3 rounded-full flex items-center justify-center transition disabled:opacity-50 disabled:cursor-not-allowed">
+            <i data-lucide="send" class="w-5 h-5 text-white"></i>
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- Área do chat -->
-    <div id="chat" 
-         class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-800 scroll-smooth"
-         style="max-height: calc(90vh - 160px);">
-      <!-- Mensagens aparecem aqui -->
-    </div>
 
-    <!-- Status -->
-    <div id="status" class="p-2 text-center text-sm text-gray-400 border-t border-gray-700">
-      Carregando...
-    </div>
 
-    <!-- Input -->
-    <div class="p-3 border-t border-gray-700 flex gap-2 bg-gray-900">
-      <input 
-        id="userInput"
-        type="text"
-        placeholder="Digite sua pergunta..."
-        class="flex-1 px-4 py-2 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition"
-        disabled
-      />
-      <button 
-        id="sendBtn"
-        disabled
-        class="bg-blue-600 hover:bg-blue-500 p-3 rounded-full flex items-center justify-center transition disabled:opacity-50 disabled:cursor-not-allowed">
-        <i data-lucide="send" class="w-5 h-5 text-white"></i>
-      </button>
-    </div>
   </div>
-</div>
-
-
-
-</div>
 
   </div>
 
@@ -351,19 +365,24 @@
   </div>
 
   <div id="descricaoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-  <div class="bg-gray-900 p-6 rounded-xl shadow-lg max-w-lg animate__animated animate__zoomIn">
-    <div class="flex justify-between items-center mb-4">
-      <h3 id="descricaoModalTitulo" class="text-lg font-bold"></h3>
-      <button class="text-gray-400 hover:text-white" onclick="fecharDescricaoModal()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-      </button>
-    </div>
-    <div id="descricaoModalCorpo" class="whitespace-pre-wrap text-gray-300"></div>
-    <div class="mt-4 flex justify-end">
-      <button class="bg-gray-700 px-4 py-2 rounded" onclick="fecharDescricaoModal()">Fechar</button>
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg max-w-lg animate__animated animate__zoomIn">
+      <div class="flex justify-between items-center mb-4">
+        <h3 id="descricaoModalTitulo" class="text-lg font-bold"></h3>
+        <button class="text-gray-400 hover:text-white" onclick="fecharDescricaoModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-x">
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
+      </div>
+      <div id="descricaoModalCorpo" class="whitespace-pre-wrap text-gray-300"></div>
+      <div class="mt-4 flex justify-end">
+        <button class="bg-gray-700 px-4 py-2 rounded" onclick="fecharDescricaoModal()">Fechar</button>
+      </div>
     </div>
   </div>
-</div>
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="js/mecanica.js"></script>
@@ -372,13 +391,14 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0/dist/tf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder@1.3.3/dist/universal-sentence-encoder.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder@1.3.3/dist/universal-sentence-encoder.js"></script>
   <script src="js/config.js"></script>
-  
+
   <!-- Define sendMessage se não existir em outro lugar -->
   <script>
     if (typeof sendMessage === 'undefined') {
-      window.sendMessage = function() {
+      window.sendMessage = function () {
         const input = document.getElementById('userInput');
         if (input && input.value.trim()) {
           console.log('Mensagem:', input.value);
@@ -387,7 +407,7 @@
       };
     }
   </script>
-  
+
   <script src="js/dom.js"></script>
   <script src="js/history.js"></script>
   <script src="js/protocolos.js"></script>
@@ -399,11 +419,11 @@
   <script type="module" src="js/main.js"></script>
   <script src="js/auth.js"></script>
   <link rel="stylesheet" href="style.css">
-  
+
   <script>
     lucide.createIcons();
-    let iaModelLoaded = false; 
-    
+    let iaModelLoaded = false;
+
     function mostrarPagina(paginaId) {
       document.querySelectorAll('[id^="pagina-"]').forEach(p => p.classList.add('hidden'));
       document.getElementById(`pagina-${paginaId}`).classList.remove('hidden');
@@ -437,4 +457,5 @@
   </script>
 
 </body>
+
 </html>
