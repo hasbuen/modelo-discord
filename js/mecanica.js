@@ -9,6 +9,12 @@ const MENSAGEM_6 = "Erro ao copiar o texto!";
 const MENSAGEM_7 = "O protocolo deve conter apenas números!";
 const MENSAGEM_8 = "O ticket deve conter apenas números!";
 
+// Paleta de cores para os módulos (suficiente para cerca de 30 módulos)
+const CORES_GRAFICO = [
+  '#39FF14', '#00FFFF', '#FFFD37', '#7C00FF', '#00B7FF', '#F000FF', '#00FF7F', '#FF6EC7',
+  '#A6FF00', '#09FBD3', '#00FFEF', '#4D4DFF', '#3600FF', '#00FFC8', '#2BFF00', '#80FF00'
+];
+
 let registrosCache = [];
 
 // Seleção de tipo com badges
@@ -266,8 +272,8 @@ function copiarLinha(botao, reg) {
     console.error("Erro ao converter para JSON:", e);
   }
 
-    let texto = "";
-if (objetoJson.Tipo === 'Sugestão') {
+  let texto = "";
+  if (objetoJson.Tipo === 'Sugestão') {
     texto = `**\`\`\`diff
 + Protocolo [SUGESTÃO]:
 + PRT: ${objetoJson.PRT}
@@ -345,6 +351,149 @@ async function atualizarContadoresDosCards(registros) {
 
   erroEl.textContent = totalErros;
   sugestaoEl.textContent = totalSugestoes;
+}
+
+async function carregarModulos() {
+  try {
+    const res = await fetch("https://modelo-discord-server.vercel.app/api/modulos");
+    return await res.json();
+  } catch {
+    return [];
+  }
+}
+
+function montarGraficoModulos(registros, modulos) {
+  const contagem = {};
+  registros.forEach(r => {
+    const id = String(r.modulo || '0');
+    contagem[id] = (contagem[id] || 0) + 1;
+  });
+
+  const labels = [];
+  const valores = [];
+
+  Object.keys(contagem).forEach(id => {
+    const modulo = modulos.find(m => String(m.id) === id);
+    const nome = modulo ? modulo.modulo : "Desconhecido";
+    labels.push(nome);
+    valores.push(contagem[id]);
+  });
+
+  const coresDoModulo = labels.map((_, index) => CORES_GRAFICO[index % CORES_GRAFICO.length]);
+
+  if (window.graficoModulos) {
+    window.graficoModulos.destroy();
+  }
+
+  const canvas = document.getElementById("grafico-modulos");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  window.graficoModulos = new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: labels,
+      datasets: [{
+        data: valores,
+        borderWidth: 0,
+        backgroundColor: coresDoModulo,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'nearest',
+        intersect: false
+      },
+      elements: {
+        arc: {
+          hoverOffset: 20,
+        }
+      },
+      plugins: {
+        legend: {
+          display: false,
+        },
+        tooltip: {
+          enabled: true,
+          backgroundColor: '#1f2937',
+          titleColor: '#ffffff',
+          bodyColor: '#cccccc',
+        }
+      },
+
+      animation: {
+        duration: 250,
+      }
+    },
+  });
+
+  criarLegendaModulos(window.graficoModulos);
+}
+
+function criarLegendaModulos(chart) {
+  const legendaContainer = document.getElementById('legenda-modulos');
+  if (!legendaContainer || !chart) return;
+
+  legendaContainer.innerHTML = '';
+
+  const labels = chart.data.labels || [];
+  const backgroundColors = chart.data.datasets && chart.data.datasets[0]
+    ? chart.data.datasets[0].backgroundColor
+    : [];
+
+  if (labels.length === 0) {
+    legendaContainer.innerHTML = '<p class="text-gray-400">Nenhum dado disponível para a legenda.</p>';
+    return;
+  }
+
+  labels.forEach((label, index) => {
+    const color = backgroundColors[index] || '#999';
+
+    const item = document.createElement('span');
+    item.className = 'flex items-center space-x-1 p-1 rounded-md transition duration-150 cursor-pointer hover:bg-gray-700';
+    item.dataset.index = String(index);
+
+    const colorIndicator = document.createElement('span');
+    colorIndicator.className = 'w-15 h-15 rounded-full flex-shrink-0';
+    colorIndicator.style.backgroundColor = color;
+
+    const text = document.createElement('span');
+    text.className = 'text-gray-300 whitespace-nowrap';
+    text.textContent = label;
+
+    item.appendChild(colorIndicator);
+    item.appendChild(text);
+
+    item.addEventListener('mouseover', () => {
+      const idx = parseInt(item.dataset.index, 10);
+      if (isNaN(idx) || idx < 0) return;
+      chart.setActiveElements([{ datasetIndex: 0, index: idx }]);
+      chart.update('none');
+    });
+
+    item.addEventListener('mouseout', () => {
+      chart.setActiveElements([]);
+      if (chart.tooltip) {
+        chart.tooltip.setActiveElements([], {x:0, y:0});
+      }
+      chart.update('none');
+    });
+
+    item.addEventListener('click', () => {
+      const idx = parseInt(item.dataset.index, 10);
+      const current = chart.getActiveElements && chart.getActiveElements()[0];
+      if (current && current.index === idx) {
+        chart.setActiveElements([]);
+      } else {
+        chart.setActiveElements([{ datasetIndex: 0, index: idx }]);
+      }
+      chart.update('none');
+    });
+
+    legendaContainer.appendChild(item);
+  });
 }
 
 async function renderizarTabela() {
@@ -553,6 +702,9 @@ function exibirMensagem(remetente, texto) {
 window.addEventListener('DOMContentLoaded', async () => {
   try {
     const registros = await carregarRegistrosProtocolos();
+    const modulos = await carregarModulos();
+    montarGraficoModulos(registros, modulos);
+
     await atualizarContadoresDosCards(registros);
     await renderizarTabela();
     carregarTemaPreferido();
