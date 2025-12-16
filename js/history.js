@@ -85,4 +85,3 @@ function gerarDashboardLiberacoes() {
 document.addEventListener("DOMContentLoaded", () => {
   gerarDashboardLiberacoes();
 });
-

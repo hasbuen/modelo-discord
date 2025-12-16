@@ -4,10 +4,11 @@ const MENSAGEM_1 = "Selecione o tipo do protocolo!";
 const MENSAGEM_2 = "Preencha todos os campos!";
 const MENSAGEM_3 = "Por favor, insira um link válido!";
 const MENSAGEM_4 = "Nenhum texto para copiar!";
-const MENSAGEM_5 = "Texto copiado com sucesso!";
+const MENSAGEM_5 = "Texto copiado e registrado com sucesso!";
 const MENSAGEM_6 = "Erro ao copiar o texto!";
 const MENSAGEM_7 = "O protocolo deve conter apenas números!";
 const MENSAGEM_8 = "O ticket deve conter apenas números!";
+const MENSAGEM_9 = "Trâmite copiado com sucesso!";
 
 // Paleta de cores para os módulos (suficiente para cerca de 30 módulos)
 const CORES_GRAFICO = [
@@ -201,9 +202,13 @@ async function salvarRegistro() {
     await fetch('https://modelo-discord-server.vercel.app/api/protocolos', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(registro)
     });
-    exibirModal("Registro salvo com sucesso!", "", "sucesso");
+    exibirModal(MENSAGEM_5, "", "sucesso");
+    limparCampos();
     await renderizarTabela();
-  } catch { exibirModal("Erro ao salvar registro.", "", "erro"); }
+  } catch (err) {
+    exibirModal("Erro ao salvar registro.", "", "erro");
+    console.error(err);
+  }
 }
 
 function copiarTexto() {
@@ -211,9 +216,7 @@ function copiarTexto() {
   if (!texto.trim()) return exibirModal(MENSAGEM_4, "", "info");
   navigator.clipboard.writeText(texto)
     .then(() => {
-      exibirModal(MENSAGEM_5, "", "sucesso");
       salvarRegistro();
-      limparCampos();
     })
     .catch(() => exibirModal(MENSAGEM_6, "", "erro"));
 }
@@ -263,6 +266,7 @@ function mostrarModalPaliativo(paliativo) {
 }
 
 
+
 function copiarLinha(botao, reg) {
   let objetoJson;
 
@@ -310,12 +314,59 @@ ${objetoJson.Paliativo}
     })
     .catch(() => exibirModal("Erro ao copiar o paliativo.", "", "erro"));
 }
+/*
+function copiarLinha(botao, reg) {
+  let objetoJson;
+  try {
+    objetoJson = JSON.parse(JSON.stringify(reg).replace(/\\"/g, '"').replace(/(^"|"$)/g, ''));
+  } catch (e) {
+    console.error("Erro ao converter para JSON:", e);
+  }
+
+  let texto = "";
+  if (objetoJson.tipo === '1') {
+    texto = `**\`\`\`diff
++ Protocolo [SUGESTÃO]:
++ PRT: ${objetoJson.PRT}
++ Ticket: ${objetoJson.Ticket}
+\`\`\`**
+- **Descrição resumida:**
+${objetoJson.Descricao}
+
+- **Paliativo:**
+${objetoJson.Paliativo}
+`;
+  } else {
+    texto = `**\`\`\`diff
+- Protocolo [ERRO]:
+- PRT: ${objetoJson.PRT}
+- Ticket: ${objetoJson.Ticket}
+\`\`\`**
+- **Descrição resumida:**
+${objetoJson.Descricao}
+
+- **Paliativo:**
+${objetoJson.Paliativo}
+`;
+  }
+
+  navigator.clipboard.writeText(texto.trim())
+    .then(() => {
+      const originalText = botao.innerHTML;
+      botao.innerHTML = "OK";
+      setTimeout(() => {
+        botao.innerHTML = originalText;
+        lucide.createIcons();
+      }, 1000);
+    })
+    .catch(() => exibirModal("Erro ao copiar o paliativo.", "", "erro"));
+}*/
 
 async function abrirModalExclusao(id, ticket) {
   const modal = document.getElementById("confirmModal");
   const confirmBtn = document.getElementById("confirmBtn");
 
-  document.getElementById("confirmIcon").innerHTML = `< i data - lucide="trash-2" class="text-red-500 w-5 h-5" ></i > `;
+  document.getElementById("confirmIcon").innerHTML = `<i data - lucide="trash-2" class="text-red-500 w-5 h-5" ></i > `;
   document.getElementById("confirmText").textContent = `Tem certeza que deseja excluir o registro do ticket ${ticket}?`;
 
   confirmBtn.onclick = async () => {
@@ -476,7 +527,7 @@ function criarLegendaModulos(chart) {
     item.addEventListener('mouseout', () => {
       chart.setActiveElements([]);
       if (chart.tooltip) {
-        chart.tooltip.setActiveElements([], {x:0, y:0});
+        chart.tooltip.setActiveElements([], { x: 0, y: 0 });
       }
       chart.update('none');
     });
@@ -498,11 +549,10 @@ function criarLegendaModulos(chart) {
 
 async function renderizarTabela() {
   const tbody = document.querySelector("#tabelaRegistros tbody");
-  registrosCache = []; // força recarregamento
+  registrosCache = [];
 
-  // INÍCIO DO LOADING: Insere o spinner colorido no corpo da tabela
   tbody.innerHTML = `
-      < tr >
+      <tr>
       <td colspan="5" class="text-center py-6 text-gray-400">
         <div class="flex items-center justify-center space-x-2">
           <div class="relative w-8 h-8 rounded-full">
@@ -512,7 +562,7 @@ async function renderizarTabela() {
           <span class="text-white text-lg">Aguarde, em instantes...</span>
         </div>
       </td>
-    </tr > `;
+    </tr> `;
 
   try {
     // Cria uma Promise para o timer (2 segundos)
@@ -532,11 +582,11 @@ async function renderizarTabela() {
     // Mensagem quando não há registros
     if (!registros || registros.length === 0) {
       tbody.innerHTML = `
-      < tr >
+      <tr>
       <td colspan="5" class="text-center py-6 text-gray-400 italic">
         No momento nenhum registro gravado.
       </td>
-        </tr >
+        </tr>
       `;
       return;
     }
@@ -564,11 +614,11 @@ async function renderizarTabela() {
       const descricaoTooltip = descricaoEsc.replace(/\n/g, "<br>");
 
       tr.innerHTML = `
-      < td class="py-2 px-3 align-top" >
+      <td class="py-2 px-3 align-top">
         <a href="${escHTML(reg.link || '#')}" target="_blank" class="text-blue-400 underline">
           ${escHTML(reg.ticket || '')}
         </a>
-        </td >
+        </td>
         <td class="py-2 px-3 align-top">${escHTML(reg.prt || '')}</td>
         <td class="py-2 px-3 align-top">${badgeHTML}</td>
         <td class="py-2 px-3 align-top">
@@ -580,7 +630,7 @@ async function renderizarTabela() {
         <td class="py-2 px-3 align-top flex gap-2">
           <button class="bg-blue-600 hover:bg-blue-500 px-2 py-1 rounded text-xs"
                   onclick="mostrarModalPaliativo('${escHTML(reg.paliativo || '').replace(/'/g, "\\'")}')">
-            Ver
+            Paliativo
           </button>
           <button class="bg-green-600 hover:bg-green-500 px-2 py-1 rounded text-xs"
                   onclick="copiarLinha(this, '${reg}')">
@@ -589,7 +639,7 @@ async function renderizarTabela() {
           <button class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded text-xs">
             <i data-lucide="trash-2" class="w-4 h-4"></i>
           </button>
-        </td >
+        </td>
       `;
 
       const btnExcluir = tr.querySelector('.bg-red-600');
@@ -606,11 +656,11 @@ async function renderizarTabela() {
   } catch (error) {
     console.error("Erro ao carregar registros:", error);
     tbody.innerHTML = `
-      < tr >
+      <tr>
       <td colspan="5" class="text-center py-6 text-red-400">
         Erro ao carregar os dados. Por favor, tente novamente.
       </td>
-      </tr >
+      </tr>
       `;
   }
 }
@@ -696,6 +746,75 @@ function exibirMensagem(remetente, texto) {
 
   chat.appendChild(msg);
   chat.scrollTop = chat.scrollHeight;
+}
+
+function carregarTemplateProtocolo(tipo) {
+  const templateArea = document.getElementById("descricao-protocolar");
+  const btnErro = document.getElementById("btn-erro-template");
+  const btnSugestao = document.getElementById("btn-sugestao-template");
+
+  // Resetar estados visuais
+  if (btnErro) btnErro.classList.remove("ring-2", "ring-offset-2", "ring-red-400");
+  if (btnSugestao) btnSugestao.classList.remove("ring-2", "ring-offset-2", "ring-green-400");
+
+  let template = "";
+
+  if (tipo === "erro") {
+    template = `1- DESCRIÇÃO DETALHADA. (Preenchimento obrigatório):
+
+2 - INFORMAÇÕES PARA TESTE (Preenchimento obrigatório):
+
+  Versão do executável:
+  Versão do banco de dados:
+  Caminho do backup do cliente:
+
+  2.1 Testes realizados:
+
+  2.2 Testes com versões anteriores. O erro já ocorria?
+
+  2.3 Se o erro não ocorria em versões anteriores,
+      informe a versão utilizada para testes.
+
+3 - QUANDO O ERRO COMEÇOU A ACONTECER?
+    COMO O CLIENTE CONSEGUIA EFETUAR A OPERAÇÃO ANTES?
+
+4 - SOLUÇÃO PALIATIVA (Se houver, descrever em detalhes):
+
+5 - SUGESTÃO DE SOLUÇÃO:
+`;
+    if (btnErro) btnErro.classList.add("ring-2", "ring-offset-2", "ring-red-400");
+  } else if (tipo === "sugestao") {
+    template = `1 - DESCRIÇÃO DETALHADA.(Preenchimento obrigatório):
+
+2 - JUSTIFICATIVA DA SOLICITAÇÃO. INFORMAÇÃO ADICIONAL SOBRE A RELEVÂNCIA PARA O SISTEMA.
+(Descreva aqui algum comentário adicional que ajude a explicar a relevância da sugestão):
+
+
+3 - FREQUÊNCIA E VOLUME DE UTILIZAÇÃO:
+
+4 - SUGESTÃO OU DICA PARA IMPLEMENTAÇÃO:
+`;
+    if (btnSugestao) btnSugestao.classList.add("ring-2", "ring-offset-2", "ring-green-400");
+  }
+
+  templateArea.value = template.trim();
+}
+
+function copiarTramite() {
+  const texto = document.getElementById('descricao-protocolar').value;
+  if (!texto.trim()) return exibirModal(MENSAGEM_4, "", "info");
+
+  // Tenta copiar o texto para a área de transferência do sistema
+  navigator.clipboard.writeText(texto)
+    .then(() => {
+      exibirModal(MENSAGEM_9, "", "sucesso");
+    })
+    .catch(() => exibirModal(MENSAGEM_6, "", "erro"));
+}
+
+function limparTramite() {
+  const templateArea = document.getElementById("descricao-protocolar");
+  templateArea.value = "";
 }
 
 // Chamar a API assim que a página carregar

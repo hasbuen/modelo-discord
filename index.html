@@ -9,17 +9,19 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
   <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="p-6">
+<body class="bg-gray-900 text-gray-200">
 
   <div id="auth-container" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
-    <div class="bg-gray-900 rounded-lg shadow-2xl p-8 w-full max-w-sm animate__animated animate__fadeIn">
+    <div
+      class="bg-gray-900 rounded-lg shadow-2xl p-8 w-full max-w-sm animate__animated animate__fadeIn border border-gray-700">
       <div class="flex justify-center mb-6">
         <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center">
           <i data-lucide="lock" class="w-8 h-8 text-white"></i>
@@ -30,21 +32,20 @@
 
       <div class="flex items-center justify-center mb-6">
         <div
-          class="flex items-center bg-yellow-900 bg-opacity-30 text-yellow-300 text-sm font-medium px-3 py-1 rounded-full border border-yellow-700">
-          <i data-lucide="info" class="w-4 h-4 mr-2"></i>
+          class="flex items-center bg-yellow-900 bg-opacity-30 text-yellow-300 text-xs font-medium px-3 py-1 rounded-full border border-yellow-700">
+          <i data-lucide="info" class="w-3 h-3 mr-2"></i>
           <span>Senha Sistema i9</span>
         </div>
       </div>
+
       <form id="auth-form" onsubmit="event.preventDefault(); validarSenha()" class="space-y-4">
         <div>
           <label for="auth-senha" class="block text-sm font-medium text-gray-300 mb-2">Senha</label>
           <input id="auth-senha" type="password" placeholder="Digite a senha"
-            class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none transition"
-            autocomplete="off" autofocus />
+            class="w-full px-4 py-2 rounded-lg outline-none transition" autocomplete="off" autofocus />
         </div>
-
-        <div id="auth-erro" class="hidden text-red-500 text-sm p-2 bg-red-950 rounded"></div>
-
+        <div id="auth-erro"
+          class="hidden text-red-500 text-sm p-2 bg-red-900 bg-opacity-20 rounded border border-red-800"></div>
         <button type="submit" id="btn-auth-submit"
           class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition flex items-center justify-center gap-2">
           <i data-lucide="log-in" class="w-4 h-4"></i> Entrar
@@ -53,292 +54,536 @@
     </div>
   </div>
 
-  <div class="max-w-6xl mx-auto space-y-6 hidden">
+  <div class="min-h-screen flex">
 
-    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+    <header id="desktop-header"
+      class="hidden md:flex items-center justify-between fixed top-0 right-0 z-20 px-6 py-3 h-16 w-auto left-56">
+      <div class="flex items-center gap-3">
+        <div class="bg-blue-600 p-1.5 rounded-lg">
+          <i data-lucide="bandage" class="w-5 h-5 text-white"></i>
+        </div>
+        <h1 class="text-xl font-bold tracking-tight">ProtoCord</h1>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-sm text-gray-400">v2.0</span>
+      </div>
+    </header>
 
-      <div class="flex justify-center items-center gap-2">
-        <i data-lucide="bandage" class="w-7 h-7 text-blue-400"></i>
-        <h1 class="text-3xl font-bold">ProtoCord</h1>
+    <aside id="sidebar" class="hidden md:flex flex-col w-56 min-h-screen fixed left-0 top-0 p-3 gap-2">
+
+      <div id="sidebar-header" class="flex items-center justify-end h-10 mb-2 px-2">
+        <button id="btn-collapse" class="p-1.5 rounded-md hover:bg-gray-700 text-gray-400 hover:text-white transition">
+          <i data-lucide="chevrons-left" class="w-5 h-5"></i>
+        </button>
       </div>
 
-      <div class="flex flex-wrap gap-3 justify-center">
-        <button onclick="mostrarPagina('home')"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-blue-600 hover:bg-blue-500" id="btn-home">
-          <i data-lucide="home" class="w-4 h-4"></i> Início
+      <nav class="flex-1 flex flex-col gap-1 overflow-y-auto overflow-x-hidden">
+
+        <button onclick="mostrarPagina('historico-liberacoes')" data-tooltip="Histórico Liberações "
+          class="sidebar-item active" id="btn-historico-liberacoes">
+          <i data-lucide="layout-dashboard" class="sidebar-icon"></i>
+          <span class="sidebar-label"> KPI</span>
         </button>
-        <button onclick="mostrarPagina('historico')"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700"
-          id="btn-historico">
-          <i data-lucide="history" class="w-4 h-4"></i> Histórico
+
+        <button onclick="mostrarPagina('home')" data-tooltip="Início" class="sidebar-item" id="btn-home">
+          <i data-lucide="message-square-quote" class="sidebar-icon"></i>
+          <span class="sidebar-label">Registrar</span>
         </button>
-        <button onclick="mostrarPagina('liberacoes')"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700"
-          id="btn-liberacoes">
-          <i data-lucide="folder-open" class="w-4 h-4"></i> Verificar release
+
+        <button onclick="mostrarPagina('protocolar')" data-tooltip="Protocolar" class="sidebar-item"
+          id="btn-protocolar">
+          <i data-lucide="pen-line" class="sidebar-icon"></i>
+          <span class="sidebar-label">Layout PRT</span>
+        </button>
+
+        <button onclick="mostrarPagina('historico')" data-tooltip="Histórico" class="sidebar-item" id="btn-historico">
+          <i data-lucide="history" class="sidebar-icon"></i>
+          <span class="sidebar-label">Histórico</span>
+        </button>
+
+        <button onclick="document.getElementById('arquivoRTF').click()" data-tooltip="Verificar Release"
+          class="sidebar-item" id="btn-liberacoes">
+          <i data-lucide="package-open" class="sidebar-icon"></i>
+          <span class="sidebar-label">Analisar RLS</span>
         </button>
         <input type="file" id="arquivoRTF" accept=".rtf" class="hidden" onchange="processarRTF(event)" />
-        <button onclick="mostrarPagina('historico-liberacoes')"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700"
-          id="btn-historico-liberacoes">
-          <i data-lucide="archive" class="w-4 h-4"></i> Histórico de liberações
+
+        <button onclick="mostrarPagina('sefaz')" data-tooltip="IA Inteligente" class="sidebar-item" id="btn-sefaz">
+          <i data-lucide="activity" class="sidebar-icon"></i>
+          <span class="sidebar-label flex items-center">
+            SEFAZ
+            <span class="bg-green-500 text-black text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Novo</span>
+          </span>
         </button>
-        <button onclick="mostrarPagina('ia')"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg transition bg-gray-800 hover:bg-gray-700" id="btn-ia">
-          <i data-lucide="bot" class="w-4 h-4"></i> IA
+
+        <button onclick="mostrarPagina('ia')" data-tooltip="IA Inteligente" class="sidebar-item" id="btn-ia">
+          <i data-lucide="bot" class="sidebar-icon"></i>
+          <span class="sidebar-label flex items-center">
+            IA
+            <span class="bg-yellow-500 text-black text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Quase
+              lá</span>
+          </span>
         </button>
 
-      </div>
+      </nav>
 
-      <div class="flex gap-2 p-2 rounded-lg bg-gray-800">
-        <button id="tema-escuro" onclick="alternarTema('dark')"
-          class="toggle-theme-btn p-2 rounded-lg transition duration-200">
-          <i data-lucide="moon" class="w-5 h-5"></i>
-        </button>
-        <button id="tema-claro" onclick="alternarTema('light')"
-          class="toggle-theme-btn p-2 rounded-lg transition duration-200">
-          <i data-lucide="sun" class="w-5 h-5"></i>
-        </button>
-        <button id="tema-sistema" onclick="alternarTema('system')"
-          class="toggle-theme-btn p-2 rounded-lg transition duration-200">
-          <i data-lucide="monitor" class="w-5 h-5"></i>
-        </button>
-      </div>
-    </div>
-
-    <div id="pagina-home" class="animate__animated animate__fadeIn">
-      <div class="flex flex-wrap gap-4 justify-center mt-6">
-        <div class="bg-red-700 rounded-xl p-6 text-center w-40 shadow-lg">
-          <h3 class="font-semibold text-lg">Erros</h3>
-          <p id="contador-erros" class="skeleton">&nbsp;</p>
-        </div>
-        <div class="bg-green-700 rounded-xl p-6 text-center w-40 shadow-lg">
-          <h3 class="font-semibold text-lg">Sugestões</h3>
-          <p id="contador-sugestoes" class="skeleton">&nbsp;</p>
-        </div>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-6 mt-6">
-        <div class="space-y-3">
-          <div class="flex gap-3 justify-center mb-4">
-            <button id="btn-erro" type="button" onclick="selecionarTipo('erro')"
-              class="px-4 py-2 rounded-full text-sm font-semibold bg-red-700 text-white hover:bg-red-600">
-              Erro
-            </button>
-            <button id="btn-sugestao" type="button" onclick="selecionarTipo('sugestao')"
-              class="px-4 py-2 rounded-full text-sm font-semibold bg-green-700 text-white hover:bg-green-600">
-              Sugestão
-            </button>
-          </div>
-          <input type="hidden" id="tipo" />
-
-          <div><label for="prt">PRT</label><input id="prt" type="text"
-              class="w-full px-3 py-2 rounded-md bg-gray-800" /></div>
-          <div><label for="ticket">Ticket</label><input id="ticket" type="text"
-              class="w-full px-3 py-2 rounded-md bg-gray-800" /></div>
-          <div><label for="descricao">Descrição</label><textarea id="descricao"
-              class="w-full px-3 py-2 rounded-md bg-gray-800"></textarea></div>
-          <div>
-            <label for="paliativo">Paliativo</label>
-            <input list="paliativosList" id="paliativo" type="text" placeholder="Selecione ou digite aqui..."
-              class="w-full px-3 py-2 rounded-md bg-gray-800" />
-            <datalist id="paliativosList">
-              <option value="Paliativo não encontrado."></option>
-              <option value="Nova funcionalidade."></option>
-            </datalist>
-          </div>
-
-          <div>
-            <label for="prazo">Prazo</label>
-            <input list="prazosList" id="prazo" type="text" placeholder="Selecione ou digite aqui..."
-              class="w-full px-3 py-2 rounded-md bg-gray-800" />
-            <datalist id="prazosList">
-              <option value="Encaminhado para avaliação de alocação."></option>
-              <option value="Registrado no banco de dados RhedeSAC."></option>
-            </datalist>
-          </div>
-          <div><label for="link">Link</label><input id="link" type="text"
-              class="w-full px-3 py-2 rounded-md bg-gray-800" /></div>
-          <button onclick="gerarTexto()"
-            class="w-full bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2">
-            <i data-lucide="wand-2" class="w-4 h-4"></i> Gerar
+      <div class="mt-auto border-t border-gray-700 pt-3">
+        <div class="theme-toggles-container flex justify-center bg-gray-800 rounded-lg p-1 gap-1">
+          <button onclick="alternarTema('dark')" class="flex-1 p-2 rounded hover:bg-gray-700 flex justify-center"
+            title="Escuro">
+            <i data-lucide="moon" class="w-4 h-4"></i>
           </button>
-        </div>
-
-        <div class="flex flex-col space-y-3">
-          <label for="output">Cole no Discord:</label>
-          <textarea id="output" readonly class="flex-1 px-3 py-2 rounded-md bg-gray-800"></textarea>
-          <button onclick="copiarTexto()"
-            class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2">
-            <i data-lucide="copy" class="w-4 h-4"></i> Copiar
+          <button onclick="alternarTema('light')" class="flex-1 p-2 rounded hover:bg-gray-700 flex justify-center"
+            title="Claro">
+            <i data-lucide="sun" class="w-4 h-4"></i>
+          </button>
+          <button onclick="alternarTema('system')" class="flex-1 p-2 rounded hover:bg-gray-700 flex justify-center"
+            title="Sistema">
+            <i data-lucide="monitor" class="w-4 h-4"></i>
           </button>
         </div>
       </div>
-    </div>
+    </aside>
 
-    <div id="pagina-historico" class="hidden animate__animated animate__fadeIn">
+    <header
+      class="w-full md:hidden fixed top-0 left-0 right-0 z-40 bg-gray-900 border-b border-gray-700 h-16 flex items-center justify-between px-4">
+      <div class="flex items-center gap-3">
+        <button id="btn-mobile-menu" class="p-2 -ml-2 rounded-md hover:bg-gray-800">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <span class="font-bold text-lg">ProtoCord</span>
+      </div>
+      <button id="mobile-theme-btn" class="p-2 rounded-md hover:bg-gray-800">
+        <i data-lucide="sun" class="w-5 h-5"></i>
+      </button>
+    </header>
 
+    <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
+    <aside id="mobile-sidebar"
+      class="fixed inset-y-0 left-0 w-64 bg-gray-900 border-r border-gray-700 z-50 transform -translate-x-full transition-transform duration-300 md:hidden p-4">
+      <div class="flex items-center justify-between mb-6">
+        <span class="font-bold text-xl">Menu</span>
+        <button id="btn-mobile-close" class="p-2 hover:bg-gray-800 rounded">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <nav class="flex flex-col gap-2">
+        <button onclick="mostrarPagina('historico-liberacoes')" class="sidebar-item active"
+          id="btn-historico-liberacoes-mobile">
+          <i data-lucide="layout-dashboard" class="sidebar-icon"></i> KPI
+        </button>
+        <button onclick="mostrarPagina('home')" class="sidebar-item active" id="btn-home-mobile">
+          <i data-lucide="message-square-quote" class="sidebar-icon"></i> Registrar
+        </button>
+        <button onclick="mostrarPagina('protocolar')" class="sidebar-item" id="btn-protocolar-mobile">
+          <i data-lucide="pen-line" class="sidebar-icon"></i> Layout PRT
+        </button>
+        <button onclick="mostrarPagina('historico')" class="sidebar-item" id="btn-historico-mobile">
+          <i data-lucide="history" class="sidebar-icon"></i> Histórico
+        </button>
+        <button onclick="document.getElementById('arquivoRTF').click()" class="sidebar-item">
+          <i data-lucide="package-open" class="sidebar-icon"></i> Analisar RLS
+        </button>
+        <button onclick="mostrarPagina('sefaz')" data-tooltip="Monitorar SEFAZ" class="sidebar-item"
+          id="btn-sefaz-mobile">
+          <i data-lucide="activity" class="sidebar-icon"></i>
+          <span class="sidebar-label flex items-center">
+            SEFAZ
+            <span class="bg-green-500 text-black text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Novo</span>
+          </span>
+        </button>
+        <button onclick="mostrarPagina('ia')" class="sidebar-item" id="btn-ia-mobile">
+          <i data-lucide="bot" class="sidebar-icon"></i> IA
+        </button>
+      </nav>
+    </aside>
 
-      <div class="bg-gray-900 p-1">
-        <h2 class="text-2xl text-gray-200 text-center font-bold mb-4"> 
-          Protocolos por Módulo
-        </h2>
+    <main id="main-content" class="flex-1 min-h-screen pt-20 md:pt-20 md:pl-56 transition-all duration-300">
 
-        <div class="w-full flex justify-center">
-          <div class="w-full w-[100px] h-[100px] md:w-150 md:h-150 relative" style="max-width: 2800px; max-height: 280px;">
-            <canvas id="grafico-modulos"></canvas>
+      <div class="max-w-7xl mx-auto p-6 space-y-6">
+
+        <div id="pagina-home" class="animate__animated animate__fadeIn">
+          <div class="flex flex-wrap gap-4 justify-center mt-6">
+            <div class="bg-red-700 rounded-xl p-6 text-center w-40 shadow-lg">
+              <h3 class="font-semibold text-lg">Erros</h3>
+              <p id="contador-erros" class="skeleton">&nbsp;</p>
+            </div>
+            <div class="bg-green-700 rounded-xl p-6 text-center w-40 shadow-lg">
+              <h3 class="font-semibold text-lg">Sugestões</h3>
+              <p id="contador-sugestoes" class="skeleton">&nbsp;</p>
+            </div>
           </div>
-        </div>
 
-        <div id="legenda-modulos" class="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm"> </div>
-      </div>
+          <div class="grid md:grid-cols-2 gap-6 mt-6 min-h-[70vh]">
 
-
-
-      <div id="tabela-container" class="bg-gray-900 p-4 rounded-xl">
-        <input type="text" id="busca" placeholder="Buscar..." onkeyup="filtrarTabela()"
-          class="w-full mb-3 px-3 py-2 rounded-md bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500" />
-
-        <div class="overflow-y-auto max-h-100">
-          <table id="tabelaRegistros" class="w-full text-sm">
-            <thead class="bg-gray-800 sticky top-0">
-              <tr>
-                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(0)">Ticket</th>
-                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(1)">Protocolo</th>
-                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(2)">Tipo</th>
-                <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(3)">Descrição</th>
-                <th class="py-2 px-3"> </th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-700"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div id="pagina-liberacoes" class="hidden animate__animated animate__fadeIn">
-      <div id="liberacoes-container" class="bg-gray-900 p-4 rounded-xl"></div>
-    </div>
-
-    <div id="pagina-historico-liberacoes" class="hidden animate__animated animate__fadeIn">
-      <div id="historico-liberacoes-container" class="space-y-6">
-        <h2 class="text-2xl font-bold">Histórico de liberações</h2>
-
-        <!-- Cards Informativos -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="bg-gradient-to-br from-blue-900 to-blue-800 p-6 rounded-xl shadow-lg">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-blue-200 text-sm font-semibold mb-1">Releases verificadas</p>
-                <p id="card-releases" class="text-3xl font-bold text-white">—</p>
+            <div class="space-y-4">
+              <div class="flex gap-3 justify-center mb-4">
+                <button id="btn-erro" type="button" onclick="selecionarTipo('erro')"
+                  class="px-4 py-2 rounded-full text-sm font-semibold bg-red-700 text-white hover:bg-red-600">
+                  Erro
+                </button>
+                <button id="btn-sugestao" type="button" onclick="selecionarTipo('sugestao')"
+                  class="px-4 py-2 rounded-full text-sm font-semibold bg-green-700 text-white hover:bg-green-600">
+                  Sugestão
+                </button>
               </div>
-              <i data-lucide="calendar" class="w-8 h-8 text-blue-300 opacity-80"></i>
-            </div>
-          </div>
+              <input type="hidden" id="tipo" />
 
-          <div class="bg-gradient-to-br from-green-900 to-green-800 p-6 rounded-xl shadow-lg">
-            <div class="flex items-center justify-between">
+              <div><label for="prt" class="block text-sm text-gray-400 mb-1">PRT</label><input id="prt" type="text"
+                  class="w-full px-3 py-2 rounded-md bg-gray-800" /></div>
+              <div><label for="ticket" class="block text-sm text-gray-400 mb-1">Ticket</label><input id="ticket"
+                  type="text" class="w-full px-3 py-2 rounded-md bg-gray-800" /></div>
+              <div><label for="descricao" class="block text-sm text-gray-400 mb-1">Descrição</label><textarea
+                  id="descricao" rows="3" class="w-full px-3 py-2 rounded-md bg-gray-800 resize-none"></textarea></div>
               <div>
-                <p class="text-green-200 text-sm font-semibold mb-1">Total de liberações</p>
-                <p id="card-protocolos" class="text-3xl font-bold text-white">—</p>
+                <label for="paliativo" class="block text-sm text-gray-400 mb-1">Paliativo</label>
+                <input list="paliativosList" id="paliativo" type="text" placeholder="Selecione ou digite aqui..."
+                  class="w-full px-3 py-2 rounded-md bg-gray-800" />
+                <datalist id="paliativosList">
+                  <option value="Paliativo não encontrado."></option>
+                  <option value="Nova funcionalidade."></option>
+                </datalist>
               </div>
-              <i data-lucide="check-circle-2" class="w-8 h-8 text-green-300 opacity-80"></i>
-            </div>
-          </div>
 
-          <div class="bg-gradient-to-br from-purple-900 to-purple-800 p-6 rounded-xl shadow-lg">
-            <div class="flex items-center justify-between">
               <div>
-                <p class="text-purple-200 text-sm font-semibold mb-1">Última liberação</p>
-                <p id="card-ultima" class="text-2xl font-bold text-white">—</p>
+                <label for="prazo" class="block text-sm text-gray-400 mb-1">Prazo</label>
+                <input list="prazosList" id="prazo" type="text" placeholder="Selecione ou digite aqui..."
+                  class="w-full px-3 py-2 rounded-md bg-gray-800" />
+                <datalist id="prazosList">
+                  <option value="Encaminhado para avaliação de alocação."></option>
+                  <option value="Registrado no banco de dados RhedeSAC."></option>
+                </datalist>
               </div>
-              <i data-lucide="zap" class="w-8 h-8 text-purple-300 opacity-80"></i>
+              <div><label for="link" class="block text-sm text-gray-400 mb-1">Link</label><input id="link" type="text"
+                  class="w-full px-3 py-2 rounded-md bg-gray-800" /></div>
+              <button onclick="gerarTexto()"
+                class="w-full bg-green-600 hover:bg-green-500 px-4 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition">
+                <i data-lucide="wand-2" class="w-4 h-4"></i> Gerar trâmite
+              </button>
+            </div>
+
+            <div class="flex flex-col space-y-3 h-full">
+              <label for="output" class="block text-sm text-gray-400 mb-1">Resultado (Discord)</label>
+              <textarea id="output" readonly
+                class="flex-1 px-3 py-2 rounded-md bg-gray-800 resize-none min-h-0"></textarea>
+              <button onclick="copiarTexto()"
+                class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2 transition">
+                <i data-lucide="copy" class="w-4 h-4"></i> Copiar
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- Gráfico de Liberações por Data -->
-        <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
-          <h3 class="text-lg font-bold mb-4 text-white">Protocolos por Release</h3>
-          <div class="relative" style="height: 300px;">
-            <canvas id="chartLiberacoes"></canvas>
-          </div>
-        </div>
+        <div id="pagina-protocolar" class="hidden animate__animated animate__fadeIn">
+          <div
+            class="bg-gray-900 rounded-2xl flex flex-col shadow-2xl border border-gray-700 w-full max-w-4xl mx-auto h-[90vh]">
 
-        <!-- Gráfico de Distribuição (Pie) -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
-            <h3 class="text-lg font-bold mb-4 text-white">Top 5 Releases</h3>
-            <div class="relative" style="height: 280px;">
-              <canvas id="chartTop5"></canvas>
+            <div class="px-4 py-3 border-b border-gray-700 flex items-center gap-2 sticky top-0 bg-gray-900 z-10">
+              <div class="flex gap-3 justify-center mb-4">
+                <button id="btn-erro-template" type="button" onclick="carregarTemplateProtocolo('erro')"
+                  class="px-4 py-2 rounded-full text-sm font-semibold bg-red-700 text-white hover:bg-red-600">
+                  Erro
+                </button>
+                <button id="btn-sugestao-template" type="button" onclick="carregarTemplateProtocolo('sugestao')"
+                  class="px-4 py-2 rounded-full text-sm font-semibold bg-green-700 text-white hover:bg-green-600">
+                  Sugestão
+                </button>
+              </div>
+            </div>
+
+            <div class="flex-grow p-4 overflow-y-auto">
+              <label for="descricao-protocolar" class="block text-white mb-2">Descrição</label>
+              <textarea id="descricao-protocolar" rows="20"
+                class="w-full px-3 py-2 rounded-md bg-gray-800 text-white resize-none h-full focus:ring-blue-500 focus:border-blue-500 border-gray-700"
+                placeholder="Selecione 'Erro' ou 'Sugestão' para carregar o modelo de protocolo."></textarea>
+            </div>
+
+            <div class="p-3 border-t border-gray-700 flex gap-2 bg-gray-900">
+              <button onclick="copiarTramite()"
+                class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2 text-white">
+                <i data-lucide="copy" class="w-4 h-4"></i> Copiar
+              </button>
+              <button onclick="limparTramite()"
+                class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2 text-white">
+                <i data-lucide="eraser" class="w-4 h-4"></i>
+              </button>
             </div>
           </div>
+        </div>
 
-          <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
-            <h3 class="text-lg font-bold mb-4 text-white">Evolução ao Longo do Tempo</h3>
-            <div class="relative" style="height: 280px;">
-              <canvas id="chartEvolucao"></canvas>
+        <div id="pagina-historico" class="hidden animate__animated animate__fadeIn">
+
+
+          <div class="bg-gray-900 p-1">
+            <h2 class="text-2xl text-gray-200 text-center font-bold mb-4">
+              Protocolos por módulo
+            </h2>
+
+            <div class="w-full flex justify-center">
+              <div class="w-full w-[100px] h-[100px] md:w-150 md:h-150 relative"
+                style="max-width: 2800px; max-height: 280px;">
+                <canvas id="grafico-modulos"></canvas>
+              </div>
+            </div>
+
+            <div id="legenda-modulos" class="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm"> </div>
+          </div>
+
+
+
+          <div id="tabela-container" class="bg-gray-900 p-4 rounded-xl">
+            <input type="text" id="busca" placeholder="Buscar..." onkeyup="filtrarTabela()"
+              class="w-full mb-3 px-3 py-2 rounded-md bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500" />
+
+            <div class="overflow-y-auto max-h-100">
+              <table id="tabelaRegistros" class="w-full text-sm">
+                <thead class="bg-gray-800 sticky top-0">
+                  <tr>
+                    <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(0)">Ticket</th>
+                    <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(1)">Protocolo</th>
+                    <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(2)">Tipo</th>
+                    <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(3)">Descrição</th>
+                    <th class="py-2 px-3"> </th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700"></tbody>
+              </table>
             </div>
           </div>
         </div>
 
-        <!-- Tabela de Detalhes -->
-        <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
-          <h3 class="text-lg font-bold mb-4 text-white">Detalhes das Liberações</h3>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead class="bg-gray-800">
-                <tr>
-                  <th class="py-3 px-4 text-left font-semibold text-gray-300">Release</th>
-                  <th class="py-3 px-4 text-center font-semibold text-gray-300">Protocolos</th>
-                  <th class="py-3 px-4 text-left font-semibold text-gray-300">Protocolos liberados</th>
-                </tr>
-              </thead>
-              <tbody id="tabelaLiberados" class="divide-y divide-gray-700"></tbody>
-            </table>
+        <div id="pagina-liberacoes" class="hidden animate__animated animate__fadeIn">
+          <div id="liberacoes-container" class="bg-gray-900 p-4 rounded-xl"></div>
+        </div>
+
+        <div id="pagina-liberacoes" class="hidden animate__animated animate__fadeIn">
+          <div id="liberacoes-container" class="bg-gray-800 p-6 rounded-xl border border-gray-700 text-center">
+            <i data-lucide="upload-cloud" class="w-16 h-16 mx-auto text-gray-500 mb-4"></i>
+            <p class="text-lg text-gray-300">Nenhum arquivo RTF carregado.</p>
+            <p class="text-sm text-gray-500">Utilize o menu lateral para selecionar um arquivo.</p>
           </div>
         </div>
+
+        <div id="pagina-historico-liberacoes" class="hidden animate__animated animate__fadeIn">
+          <div id="historico-liberacoes-container" class="space-y-3">
+
+            <!-- Cards Informativos -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div class="bg-gradient-to-br from-blue-900 to-blue-800 p-6 rounded-xl shadow-lg">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-blue-200 text-sm font-semibold mb-1">Releases verificadas</p>
+                    <p id="card-releases" class="text-3xl font-bold text-white">—</p>
+                  </div>
+                  <i data-lucide="calendar" class="w-8 h-8 text-blue-300 opacity-80"></i>
+                </div>
+              </div>
+
+              <div class="bg-gradient-to-br from-green-900 to-green-800 p-6 rounded-xl shadow-lg">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-green-200 text-sm font-semibold mb-1">Total de liberações</p>
+                    <p id="card-protocolos" class="text-3xl font-bold text-white">—</p>
+                  </div>
+                  <i data-lucide="check-circle-2" class="w-8 h-8 text-green-300 opacity-80"></i>
+                </div>
+              </div>
+
+              <div class="bg-gradient-to-br from-purple-900 to-purple-800 p-6 rounded-xl shadow-lg">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-purple-200 text-sm font-semibold mb-1">Última liberação</p>
+                    <p id="card-ultima" class="text-2xl font-bold text-white">—</p>
+                  </div>
+                  <i data-lucide="zap" class="w-8 h-8 text-purple-300 opacity-80"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gráfico de Distribuição (Pie) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-bold mb-4 text-white">Top 5 Releases</h3>
+                <div class="relative" style="height: 180px;">
+                  <canvas id="chartTop5"></canvas>
+                </div>
+              </div>
+
+              <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-bold mb-4 text-white">Evolução ao Longo do Tempo</h3>
+                <div class="relative" style="height: 180px;">
+                  <canvas id="chartEvolucao"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gráfico de Liberações por Data -->
+            <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
+              <h3 class="text-lg font-bold mb-4 text-white">Protocolos por Release</h3>
+              <div class="relative" style="height: 300px;">
+                <canvas id="chartLiberacoes"></canvas>
+              </div>
+            </div>
+
+            <!-- Tabela de Detalhes -->
+            <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
+              <h3 class="text-lg font-bold mb-4 text-white">Detalhes das Liberações</h3>
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead class="bg-gray-800">
+                    <tr>
+                      <th class="py-3 px-4 text-left font-semibold text-gray-300">Release</th>
+                      <th class="py-3 px-4 text-center font-semibold text-gray-300">Protocolos</th>
+                      <th class="py-3 px-4 text-left font-semibold text-gray-300">Protocolos liberados</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tabelaLiberados" class="divide-y divide-gray-700"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="pagina-sefaz" class="hidden animate__animated animate__fadeIn">
+          <div class="min-h-screen bg-gray-900 text-gray-200 p-6">
+            <div class="max-w-7xl mx-auto">
+
+              <div class="bg-gray-800 rounded-lg shadow-xl p-6 mb-6 border border-gray-700">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center gap-3">
+                    <i data-lucide="activity" class="w-8 h-8 text-blue-500"></i>
+                    <div>
+                      <h1 class="text-2xl font-bold text-white">Monitor de Status NF-e/NFC-e</h1>
+                      <p class="text-sm text-gray-400">Acompanhamento em tempo real dos serviços da SEFAZ</p>
+                    </div>
+                  </div>
+                  <button id="btn-fetch-status" onclick="fetchStatus()"
+                    class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50">
+                    <i data-lucide="refresh-cw" id="icon-refresh" class="w-4 h-4"></i>
+                    Atualizar
+                  </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                  <div class="bg-gradient-to-br from-blue-700 to-indigo-800 rounded-lg p-4 text-white">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-sm opacity-90">Status Geral</p>
+                        <p id="overall-status-count" class="text-2xl font-bold">--/--</p>
+                        <p class="text-xs opacity-80">Serviços Disponíveis</p>
+                      </div>
+                      <div id="overall-status-icon">
+                        <i data-lucide="help-circle" class="w-6 h-6 text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-sm text-gray-400">Última Atualização</p>
+                        <p id="last-update-time" class="text-lg font-semibold text-white">--:--:--</p>
+                        <p id="last-update-date" class="text-xs text-gray-400"></p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-sm text-gray-400">Atualização Automática</p>
+                        <p class="text-lg font-semibold text-white">A cada 60s</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-gray-800 rounded-lg shadow-xl overflow-hidden border border-gray-700">
+                <div class="overflow-x-auto">
+                  <table class="w-full">
+                    <thead class="bg-gray-700 text-gray-200">
+                      <tr>
+                        <th class="px-4 py-3 text-left text-sm font-semibold sticky left-0 bg-gray-700">UF</th>
+                        <th class="px-4 py-3 text-left text-sm font-semibold">Estado/Ambiente</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Autorização NF-e</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Retorno Aut.</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Consulta Prot.</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Status Serviço</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">NFC-e</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Tempo Médio</th>
+                      </tr>
+                    </thead>
+                    <tbody id="services-table-body" class="divide-y divide-gray-700">
+                      <tr>
+                        <td colspan="8" class="px-4 py-8 text-center text-gray-400">
+                          <i data-lucide="loader-2" class="w-5 h-5 animate-spin inline-block mr-2 text-blue-500"></i>
+                          Carregando status dos serviços...
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="mt-6 bg-gray-800 rounded-lg shadow-xl p-6 border border-gray-700">
+                <h3 class="text-lg font-semibold text-white mb-4">Legenda</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+                    <span class="text-sm text-gray-300">Serviço Disponível</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="alert-circle" class="w-5 h-5 text-yellow-500"></i>
+                    <span class="text-sm text-gray-300">Serviço Instável</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="x-circle" class="w-5 h-5 text-red-500"></i>
+                    <span class="text-sm text-gray-300">Serviço Indisponível</span>
+                  </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-4">
+                  * Este é um painel demonstrativo. Os dados são simulados.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="pagina-ia" class="hidden animate__animated animate__fadeIn">
+          <div class="bg-gray-800 p-8 rounded-xl border border-gray-700 text-center">
+            <div class="bg-blue-900/30 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i data-lucide="bot" class="w-10 h-10 text-blue-400"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-2">Assistente IA</h2>
+            <p class="text-gray-400 max-w-md mx-auto">Esta funcionalidade irá carregar modelos de aprendizado de máquina
+              para auxiliar na categorização automática.</p>
+            <div class="mt-6 p-4 bg-gray-900 rounded-lg text-left font-mono text-xs text-green-400">
+              > Loading TensorFlow.js...<br>
+              > Initializing model...
+            </div>
+          </div>
+        </div>
+
       </div>
-    </div>
-
-    <div id="pagina-ia" class="hidden animate__animated animate__fadeIn">
-      <div
-        class="bg-gray-900 rounded-2xl flex flex-col shadow-2xl border border-gray-700 w-full max-w-4xl mx-auto h-[90vh]">
-
-        <!-- Cabeçalho -->
-        <div class="px-4 py-3 border-b border-gray-700 flex items-center gap-2 sticky top-0 bg-gray-900 z-10">
-          <i data-lucide="bot" class="w-5 h-5 text-blue-400"></i>
-          <h2 class="font-semibold text-lg text-white">Assistente IA</h2>
-        </div>
-
-        <!-- Área do chat -->
-        <div id="chat" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-800 scroll-smooth"
-          style="max-height: calc(90vh - 160px);">
-          <!-- Mensagens aparecem aqui -->
-        </div>
-
-        <!-- Status -->
-        <div id="status" class="p-2 text-center text-sm text-gray-400 border-t border-gray-700">
-          Carregando...
-        </div>
-
-        <!-- Input -->
-        <div class="p-3 border-t border-gray-700 flex gap-2 bg-gray-900">
-          <input id="userInput" type="text" placeholder="Digite sua pergunta..."
-            class="flex-1 px-4 py-2 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none transition"
-            disabled />
-          <button id="sendBtn" disabled
-            class="bg-blue-600 hover:bg-blue-500 p-3 rounded-full flex items-center justify-center transition disabled:opacity-50 disabled:cursor-not-allowed">
-            <i data-lucide="send" class="w-5 h-5 text-white"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-
-
+    </main>
   </div>
 
+  <div id="errorModal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4">
+    <div
+      class="bg-gray-800 p-6 rounded-lg shadow-xl max-w-sm w-full border border-gray-700 animate__animated animate__fadeInDown">
+      <div class="flex items-center gap-4 mb-4 border-b border-gray-700 pb-3">
+        <div id="modalIcon">
+        </div>
+        <h3 class="text-xl font-bold text-white">Atenção!</h3>
+      </div>
+      <p id="modalText" class="text-gray-300 mb-6 text-sm"></p>
+      <div class="flex justify-end">
+        <button onclick="fecharModal()"
+          class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition">Entendido</button>
+      </div>
+    </div>
   </div>
 
   <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -353,107 +598,132 @@
     </div>
   </div>
 
-  <div id="errorModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-gray-900 p-6 rounded-xl shadow-lg max-w-lg animate__animated animate__zoomIn">
-      <p id="modalMessage" class="space-x-2 flex items-center">
-        <span id="modalIcon"></span><span id="modalText"></span>
-      </p>
-      <div class="mt-4 flex justify-end">
-        <button class="bg-gray-700 px-4 py-2 rounded" onclick="fecharModal()">Ok</button>
+  <div id="descricaoModal"
+    class="hidden fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-xl max-w-lg w-full border border-gray-700 flex flex-col max-h-[90vh]">
+      <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
+        <h3 id="descricaoModalTitulo" class="text-lg font-bold">Detalhes</h3>
+        <button onclick="fecharDescricaoModal()" class="text-gray-400 hover:text-white"><i data-lucide="x"></i></button>
       </div>
-    </div>
-  </div>
-
-  <div id="descricaoModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-gray-900 p-6 rounded-xl shadow-lg max-w-lg animate__animated animate__zoomIn">
-      <div class="flex justify-between items-center mb-4">
-        <h3 id="descricaoModalTitulo" class="text-lg font-bold"></h3>
-        <button class="text-gray-400 hover:text-white" onclick="fecharDescricaoModal()">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            class="lucide lucide-x">
-            <path d="M18 6 6 18" />
-            <path d="m6 6 12 12" />
-          </svg>
-        </button>
-      </div>
-      <div id="descricaoModalCorpo" class="whitespace-pre-wrap text-gray-300"></div>
-      <div class="mt-4 flex justify-end">
-        <button class="bg-gray-700 px-4 py-2 rounded" onclick="fecharDescricaoModal()">Fechar</button>
-      </div>
+      <div id="descricaoModalCorpo" class="whitespace-pre-wrap text-sm text-gray-300 overflow-y-auto flex-1"></div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="js/mecanica.js"></script>
-
-  <script src="verificacao_release.js"></script>
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0/dist/tf.min.js"></script>
   <script
     src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder@1.3.3/dist/universal-sentence-encoder.js"></script>
+
+  <script src="js/auth.js"></script>
   <script src="js/config.js"></script>
-
-  <!-- Define sendMessage se não existir em outro lugar -->
-  <script>
-    if (typeof sendMessage === 'undefined') {
-      window.sendMessage = function () {
-        const input = document.getElementById('userInput');
-        if (input && input.value.trim()) {
-          console.log('Mensagem:', input.value);
-          // Adicione lógica aqui ou remova se não for usar
-        }
-      };
-    }
-  </script>
-
+  <script src="js/mecanica.js"></script>
+  <script src="js/verificacao_release.js"></script>
   <script src="js/dom.js"></script>
   <script src="js/history.js"></script>
   <script src="js/protocolos.js"></script>
   <script src="js/dashboard-liberacoes.js"></script>
-  <script type="module" src="js/modal.js"></script>
   <script src="js/similarity.js"></script>
   <script src="js/responses.js"></script>
-  <script src="js/auth.js"></script>
-  <script type="module" src="js/main.js"></script>
-  <script src="js/auth.js"></script>
-  <link rel="stylesheet" href="style.css">
+  <script src="js/monitor_sefaz.js"></script>
+  <script type="module" src="js/modal.js"></script>
+
 
   <script>
     lucide.createIcons();
-    let iaModelLoaded = false;
 
-    function mostrarPagina(paginaId) {
-      document.querySelectorAll('[id^="pagina-"]').forEach(p => p.classList.add('hidden'));
-      document.getElementById(`pagina-${paginaId}`).classList.remove('hidden');
+    const sidebar = document.getElementById('sidebar');
+    const mobileSidebar = document.getElementById('mobile-sidebar');
+    const mainContent = document.getElementById('main-content');
+    const desktopHeader = document.getElementById('desktop-header');
 
-      document.querySelectorAll('.flex-wrap.gap-3.justify-center button').forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'hover:bg-blue-500');
-        btn.classList.add('bg-gray-800', 'hover:bg-gray-700');
-      });
+    // Controle Collapse Sidebar
+    document.getElementById('btn-collapse')?.addEventListener('click', () => {
+      sidebar.classList.toggle('sidebar-collapsed');
 
-      const botaoAtivo = document.getElementById(`btn-${paginaId}`);
-      if (botaoAtivo) {
-        botaoAtivo.classList.remove('bg-gray-800', 'hover:bg-gray-700');
-        botaoAtivo.classList.add('bg-blue-600', 'hover:bg-blue-500');
+      const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
+
+      if (!isCollapsed) {
+        // Ajusta margem do conteúdo
+        mainContent.classList.remove('md:pl-56');
+        mainContent.classList.add('md:pl-[72px]'); // 72px = width da sidebar colapsada
+        // Ajusta posição do header
+        desktopHeader.style.left = '72px';
+      } else {
+        mainContent.classList.remove('md:pl-[72px]');
+        mainContent.classList.add('md:pl-56');
+        desktopHeader.style.left = '14rem'; // 14rem = 56 tailwind
       }
 
-      if (paginaId === 'liberacoes') {
-        document.getElementById('arquivoRTF').click();
-      }
+      localStorage.setItem('sidebar_collapsed', !isCollapsed);
+    });
+
+    // Controle Mobile
+    document.getElementById('btn-mobile-menu')?.addEventListener('click', () => {
+      mobileSidebar.classList.remove('-translate-x-full');
+      document.getElementById('mobile-overlay').classList.remove('hidden');
+    });
+
+    const closeMobile = () => {
+      mobileSidebar.classList.add('-translate-x-full');
+      document.getElementById('mobile-overlay').classList.add('hidden');
+    };
+
+    document.getElementById('btn-mobile-close')?.addEventListener('click', closeMobile);
+    document.getElementById('mobile-overlay')?.addEventListener('click', closeMobile);
+
+    // Controle de Navegação e Estado Ativo
+    window.mostrarPagina = function (paginaId) {
+      // Esconde todas
+      document.querySelectorAll('[id^="pagina-"]').forEach(el => el.classList.add('hidden'));
+      // Mostra atual
+      const target = document.getElementById(`pagina-${paginaId}`);
+      if (target) target.classList.remove('hidden');
+
+      // Atualiza botões (Desktop e Mobile)
+      document.querySelectorAll('.sidebar-item').forEach(btn => btn.classList.remove('active'));
+
+      const btnDesktop = document.getElementById(`btn-${paginaId}`);
+      const btnMobile = document.getElementById(`btn-${paginaId}-mobile`);
+
+      if (btnDesktop) btnDesktop.classList.add('active');
+      if (btnMobile) btnMobile.classList.add('active');
 
       if (paginaId === 'historico-liberacoes') {
         carregarHistoricoLiberacoes();
         setTimeout(() => gerarDashboardLiberacoes(), 200);
       }
 
-      if (paginaId === 'ia' && !iaModelLoaded) {
-        loadModelAndData();
-        iaModelLoaded = true;
-      }
+      // Fecha mobile se aberto
+      closeMobile();
+    };
 
-    }
+    // Controle de Tema
+    window.alternarTema = function (theme) {
+      const root = document.documentElement;
+      if (theme === 'system') {
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+      } else {
+        root.setAttribute('data-theme', theme);
+      }
+      localStorage.setItem('theme', theme);
+    };
+
+    // Load inicial
+    document.addEventListener('DOMContentLoaded', () => {
+      // Recupera sidebar
+      if (localStorage.getItem('sidebar_collapsed') === 'true') {
+        document.getElementById('btn-collapse').click();
+      }
+      // Recupera tema
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      alternarTema(savedTheme);
+
+      // Página inicial
+      mostrarPagina('historico-liberacoes');
+      lucide.createIcons();
+    });
   </script>
 
 </body>
