@@ -92,7 +92,7 @@ function atualizarCards(liberacoes) {
 /**
  * Renderiza tabela de liberações com protocolos clicáveis
  */
-function renderizarTabela(liberacoes) {
+function renderizarTabelaLiberacoes(liberacoes) {
   const tbody = document.getElementById('tabelaLiberados');
   if (!tbody) {
     console.warn('Elemento tabelaLiberados não encontrado');
@@ -312,7 +312,7 @@ function renderizarDashboard(liberacoes) {
   }
 
   atualizarCards(liberacoes);
-  renderizarTabela(liberacoes);
+  renderizarTabelaLiberacoes(liberacoes);
   
   // Aguarda um tempo para garantir que Chart.js está disponível
   setTimeout(() => {
