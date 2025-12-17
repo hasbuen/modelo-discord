@@ -396,7 +396,8 @@ async function atualizarContadoresDosCards(registros) {
 
   const erroEl = document.getElementById("contador-erros");
   const sugestaoEl = document.getElementById("contador-sugestoes");
-
+  document.getElementById('card-total-registrado').innerText = registrosCache.length;
+  
   erroEl.classList.remove("skeleton");
   sugestaoEl.classList.remove("skeleton");
 

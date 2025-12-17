@@ -203,17 +203,6 @@
       <div class="max-w-7xl mx-auto p-6 space-y-6">
 
         <div id="pagina-home" class="animate__animated animate__fadeIn">
-          <div class="flex flex-wrap gap-4 justify-center mt-6">
-            <div class="bg-red-700 rounded-xl p-6 text-center w-40 shadow-lg">
-              <h3 class="font-semibold text-lg">Erros</h3>
-              <p id="contador-erros" class="skeleton">&nbsp;</p>
-            </div>
-            <div class="bg-green-700 rounded-xl p-6 text-center w-40 shadow-lg">
-              <h3 class="font-semibold text-lg">Sugestões</h3>
-              <p id="contador-sugestoes" class="skeleton">&nbsp;</p>
-            </div>
-          </div>
-
           <div class="grid md:grid-cols-2 gap-6 mt-6 min-h-[70vh]">
 
             <div class="space-y-4">
@@ -349,34 +338,55 @@
           <div id="historico-liberacoes-container" class="space-y-3">
 
             <!-- Cards Informativos -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div class="bg-gradient-to-br from-blue-900 to-blue-800 p-6 rounded-xl shadow-lg">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
+
+              <div class="bg-transparent p-4 border-none">
+                <p class="text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">Total registros</p>
                 <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-blue-200 text-sm font-semibold mb-1">Releases verificadas</p>
-                    <p id="card-releases" class="text-3xl font-bold text-white">—</p>
-                  </div>
-                  <i data-lucide="calendar" class="w-8 h-8 text-blue-300 opacity-80"></i>
+                  <p id="card-total-registrado" class="text-2xl font-bold text-white">0</p>
+                  <i data-lucide="database" class="w-5 h-5 text-gray-400 opacity-60"></i>
                 </div>
               </div>
 
-              <div class="bg-gradient-to-br from-green-900 to-green-800 p-6 rounded-xl shadow-lg">
+              <div class="bg-transparent p-4 border-none">
+                <p class="text-red-200 text-xs font-semibold mb-1 uppercase tracking-wider">Total erros</p>
                 <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-green-200 text-sm font-semibold mb-1">Total de liberações</p>
-                    <p id="card-protocolos" class="text-3xl font-bold text-white">—</p>
-                  </div>
-                  <i data-lucide="check-circle-2" class="w-8 h-8 text-green-300 opacity-80"></i>
+                  <p id="contador-erros" class="text-2xl font-bold text-red-300">—</p>
+                  <i data-lucide="bug" class="w-5 h-5 text-red-300 opacity-60"></i>
                 </div>
               </div>
 
-              <div class="bg-gradient-to-br from-purple-900 to-purple-800 p-6 rounded-xl shadow-lg">
+              <div class="bg-transparent p-4 border-none">
+                <p class="text-green-200 text-xs font-semibold mb-1 uppercase tracking-wider">Total sugestões</p>
                 <div class="flex items-center justify-between">
-                  <div>
-                    <p class="text-purple-200 text-sm font-semibold mb-1">Última liberação</p>
-                    <p id="card-ultima" class="text-2xl font-bold text-white">—</p>
-                  </div>
-                  <i data-lucide="zap" class="w-8 h-8 text-purple-300 opacity-80"></i>
+                  <p id="contador-sugestoes" class="text-2xl font-bold text-green-300">—</p>
+                  <i data-lucide="layers-plus" class="w-5 h-5 text-green-300 opacity-60"></i>
+                </div>
+              </div>
+
+              <div class="bg-gradient-to-br from-blue-900 to-blue-800 p-4 rounded-xl shadow-lg border border-blue-700">
+                <p class="text-blue-200 text-xs font-semibold mb-1 uppercase tracking-wider">Releases verificadas</p>
+                <div class="flex items-center justify-between">
+                  <p id="card-releases" class="text-2xl font-bold text-white">—</p>
+                  <i data-lucide="calendar" class="w-5 h-5 text-blue-300 opacity-60"></i>
+                </div>
+              </div>
+
+              <div
+                class="bg-gradient-to-br from-green-900 to-green-800 p-4 rounded-xl shadow-lg border border-green-700">
+                <p class="text-green-200 text-xs font-semibold mb-1 uppercase tracking-wider">Liberações</p>
+                <div class="flex items-center justify-between">
+                  <p id="card-protocolos" class="text-2xl font-bold text-white">—</p>
+                  <i data-lucide="check-circle-2" class="w-5 h-5 text-green-300 opacity-60"></i>
+                </div>
+              </div>
+
+              <div
+                class="bg-gradient-to-br from-purple-900 to-purple-800 p-4 rounded-xl shadow-lg border border-purple-700">
+                <p class="text-purple-200 text-xs font-semibold mb-1 uppercase tracking-wider">Último RLS liberado</p>
+                <div class="flex items-center justify-between">
+                  <p id="card-ultima" class="text-lg font-bold text-white truncate">—</p>
+                  <i data-lucide="zap" class="w-5 h-5 text-purple-300 opacity-60"></i>
                 </div>
               </div>
             </div>
