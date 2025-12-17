@@ -20,7 +20,32 @@ let registrosCache = [];
 
 // Seleção de tipo com badges
 function selecionarTipo(tipo) {
+
   const hiddenInput = document.getElementById("tipo");
+  const selectModulo = document.getElementById("modulo");
+  const setaModulo = document.getElementById("seta-modulo");
+
+  hiddenInput.value = tipo;
+
+  // 1. Reset de classes anteriores
+  selectModulo.classList.remove('focus:border-red-500', 'focus:ring-red-500/20', 'hover:border-red-600');
+  selectModulo.classList.remove('focus:border-green-500', 'focus:ring-green-500/20', 'hover:border-green-600');
+  selectModulo.classList.remove('focus:border-gray-500', 'focus:ring-gray-500/20', 'hover:border-gray-400');
+  setaModulo.classList.remove('text-red-500', 'text-green-500', 'text-gray-400');
+
+  // 2. Aplica as novas cores baseadas no tipo
+  if (tipo === 'erro') {
+    selectModulo.classList.add('focus:border-red-500', 'focus:ring-red-500/20', 'hover:border-red-600');
+    setaModulo.classList.add('text-red-500');
+  } else if (tipo === 'sugestao') {
+    selectModulo.classList.add('focus:border-green-500', 'focus:ring-green-500/20', 'hover:border-green-600');
+    setaModulo.classList.add('text-green-500');
+  } else {
+    // Caso neutro (cinza)
+    selectModulo.classList.add('focus:border-gray-500', 'focus:ring-gray-500/20', 'hover:border-gray-400');
+    setaModulo.classList.add('text-gray-400');
+  }
+
   hiddenInput.value = tipo;
 
   // Resetar estados
@@ -130,6 +155,7 @@ function gerarTexto() {
   const tipoElement = document.getElementById('tipo').value.trim();
   const tipo = tipoElement === "erro" ? '0' : '1';
 
+  const moduloId = document.getElementById('modulo').value;
   const prt = document.getElementById('prt');
   const ticket = document.getElementById('ticket');
   const descricao = document.getElementById('descricao');
@@ -138,6 +164,7 @@ function gerarTexto() {
   const link = document.getElementById('link');
   const campos = [prt, ticket, descricao, paliativo, prazo, link];
 
+  if (moduloId === "") return exibirModal("Selecione o módulo!", "", "erro");
   if (!tipoElement) return exibirModal(MENSAGEM_1, "", "erro");
   if (campos.some(f => !f.value.trim())) return exibirModal(MENSAGEM_2, "", "erro");
   if (!validarURL(link.value)) return exibirModal(MENSAGEM_3, "", "erro");
@@ -182,11 +209,13 @@ ${paliativoFormatado}
 - **Link >> ** ${link.value.trim()}
 `;
   }
+
   document.getElementById('output').value = texto;
 }
 
 async function salvarRegistro() {
   const tipo = document.getElementById("tipo").value;
+  const modulo = parseInt(document.getElementById("modulo").value);
   const prt = "#PRT" + document.getElementById("prt").value.trim();
   const ticket = "#" + document.getElementById("ticket").value.trim();
   const descricao = document.getElementById("descricao").value.trim();
@@ -196,7 +225,7 @@ async function salvarRegistro() {
   const registros = await carregarRegistrosProtocolos();
   if (registros.some(r => r.prt === prt)) return exibirModal("Já gravado!", prt, "info");
 
-  const registro = { tipo: tipo === "erro" ? 0 : 1, prt, ticket, descricao, paliativo, link };
+  const registro = { tipo: tipo === "erro" ? 0 : 1, prt, ticket, descricao, paliativo, link, modulo };
 
   try {
     await fetch('https://modelo-discord-server.vercel.app/api/protocolos', {
@@ -222,6 +251,7 @@ function copiarTexto() {
 }
 
 function limparCampos() {
+  document.getElementById('modulo').value = '';
   document.getElementById('prt').value = '';
   document.getElementById('ticket').value = '';
   document.getElementById('descricao').value = '';
@@ -232,6 +262,27 @@ function limparCampos() {
   document.getElementById("btn-erro").classList.remove("ring-2", "ring-offset-2", "ring-red-400");
   document.getElementById("btn-sugestao").classList.remove("ring-2", "ring-offset-2", "ring-green-400");
   document.getElementById("tipo").value = '';
+}
+
+async function popularModulosSelect() {
+  const select = document.getElementById('modulo');
+  if (!select) return;
+
+  const modulos = await carregarModulos();
+
+  if (modulos.length === 0) {
+    select.innerHTML = '<option value="">Erro ao carregar módulos</option>';
+    return;
+  }
+
+  select.innerHTML = '<option value=""> </option>';
+
+  modulos.forEach(m => {
+    const option = document.createElement('option');
+    option.value = m.id;
+    option.textContent = m.modulo;
+    select.appendChild(option);
+  });
 }
 
 // Tabela
@@ -397,7 +448,7 @@ async function atualizarContadoresDosCards(registros) {
   const erroEl = document.getElementById("contador-erros");
   const sugestaoEl = document.getElementById("contador-sugestoes");
   document.getElementById('card-total-registrado').innerText = registrosCache.length;
-  
+
   erroEl.classList.remove("skeleton");
   sugestaoEl.classList.remove("skeleton");
 
@@ -821,6 +872,7 @@ function limparTramite() {
 // Chamar a API assim que a página carregar
 window.addEventListener('DOMContentLoaded', async () => {
   try {
+    await popularModulosSelect();
     const registros = await carregarRegistrosProtocolos();
     const modulos = await carregarModulos();
     montarGraficoModulos(registros, modulos);

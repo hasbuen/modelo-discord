@@ -32,13 +32,13 @@ const ESTADOS = [
 
 let autoRefreshInterval = null;
 let tempoMedioChartInstance = null;
-let chartData = []; 
+let chartData = [];
 let favoritoRefreshInterval = null;
-let ufFavorita = ''; 
+let ufFavorita = '';
 let currentView = 'cards';
 
 // Aumentamos para 30 pontos, pois a atualização é a cada 1 segundo (30s de histórico)
-const CHART_MAX_POINTS = 30; 
+const CHART_MAX_POINTS = 30;
 
 // =========================================================
 // Funções de Utilitário e Status
@@ -157,10 +157,10 @@ function renderCardsView(mockData) {
 
     cardsContainer.innerHTML = mockData.map(service => {
         const statuses = [
-            service.autorizacao, 
-            service.retAutorizacao, 
-            service.consultaProtocolo, 
-            service.statusServico, 
+            service.autorizacao,
+            service.retAutorizacao,
+            service.consultaProtocolo,
+            service.statusServico,
             service.nfce,
             service.inutilizacao,
             service.consultaCadastro,
@@ -168,7 +168,7 @@ function renderCardsView(mockData) {
         ];
         let cardColor = 'bg-green-800 border-green-700';
         let cardIcon = 'check-circle';
-        
+
         if (statuses.includes('offline')) {
             cardColor = 'bg-red-800 border-red-700';
             cardIcon = 'x-circle';
@@ -222,9 +222,9 @@ function renderCardsView(mockData) {
 
 function initializeTempoMedioChart() {
     const ctx = document.getElementById('tempoMedioChart').getContext('2d');
-    
+
     // Inicializa chartData com valores iniciais ou zeros
-    for (let i = 0; i < CHART_MAX_POINTS; i++) { 
+    for (let i = 0; i < CHART_MAX_POINTS; i++) {
         chartData.push({ time: '', value: 0 });
     }
 
@@ -235,7 +235,7 @@ function initializeTempoMedioChart() {
             datasets: [{
                 label: 'Tempo Médio (ms)', // O rótulo da UF é no título
                 data: chartData.map(d => d.value),
-                borderColor: 'rgba(59, 130, 246, 1)', 
+                borderColor: 'rgba(59, 130, 246, 1)',
                 backgroundColor: 'rgba(59, 130, 246, 0.2)',
                 borderWidth: 2,
                 pointRadius: 0,
@@ -257,7 +257,7 @@ function initializeTempoMedioChart() {
                         color: '#9CA3AF'
                     },
                     grid: {
-                        color: '#374151' 
+                        color: '#374151'
                     },
                     ticks: {
                         color: '#9CA3AF'
@@ -281,7 +281,7 @@ function initializeTempoMedioChart() {
                 tooltip: {
                     mode: 'index',
                     intersect: false,
-                    backgroundColor: 'rgba(31, 41, 55, 0.9)', 
+                    backgroundColor: 'rgba(31, 41, 55, 0.9)',
                     titleColor: '#FFFFFF',
                     bodyColor: '#D1D5DB'
                 }
@@ -297,13 +297,13 @@ function updateChartTitle(ufName) {
     const titleEl = document.getElementById('chart-uf-title');
     if (titleEl) {
         if (!ufName || ufName === 'Global') {
-             titleEl.textContent = '(Global - Média Geral)';
-             titleEl.classList.remove('text-yellow-400');
-             titleEl.classList.add('text-blue-400');
+            titleEl.textContent = '(Global - Média Geral)';
+            titleEl.classList.remove('text-yellow-400');
+            titleEl.classList.add('text-blue-400');
         } else {
-             titleEl.textContent = `(${ufName})`;
-             titleEl.classList.remove('text-blue-400');
-             titleEl.classList.add('text-yellow-400');
+            titleEl.textContent = `(${ufName})`;
+            titleEl.classList.remove('text-blue-400');
+            titleEl.classList.add('text-yellow-400');
         }
     }
 }
@@ -316,15 +316,15 @@ function updateChartTitle(ufName) {
  */
 function updateTempoMedioChart(newTime, newAverageTime, reset = false) {
     if (reset) {
-        chartData = []; 
+        chartData = [];
         for (let i = 0; i < CHART_MAX_POINTS; i++) {
-            chartData.push({ time: '', value: 0 }); 
+            chartData.push({ time: '', value: 0 });
         }
     } else {
         if (chartData.length >= CHART_MAX_POINTS) {
             chartData.shift();
         }
-        
+
         chartData.push({ time: newTime, value: newAverageTime });
     }
 
@@ -346,7 +346,7 @@ window.toggleView = function (view) {
     const btnCards = document.getElementById('btn-view-cards');
     const btnTable = document.getElementById('btn-view-table');
 
-    if (currentView === view) return; 
+    if (currentView === view) return;
 
     if (view === 'cards') {
         cardsView?.classList.remove('hidden');
@@ -365,9 +365,9 @@ window.toggleView = function (view) {
         btnCards?.classList.add('bg-gray-700', 'hover:bg-gray-600');
         currentView = 'table';
     }
-    
+
     // Chama fetchStatus para popular a nova view
-    window.fetchStatus(); 
+    window.fetchStatus();
 };
 
 window.fetchStatus = async function () {
@@ -387,7 +387,7 @@ window.fetchStatus = async function () {
     if (cardsContainer) {
         cardsContainer.innerHTML = `<div class="px-4 py-8 text-center text-gray-400 col-span-full">${loadingHtml}</div>`;
     }
-    
+
     if (refreshButton) refreshButton.disabled = true;
     if (refreshIcon) refreshIcon.classList.add('animate-spin');
 
@@ -412,7 +412,7 @@ window.fetchStatus = async function () {
             recepcaoEvento: generateStatus(),
             statusServico: generateStatus(),
             tempoMedio: Math.floor(Math.random() * 3000) + 500,
-            nfce: Math.random() > 0.1 ? 'online' : 'offline', 
+            nfce: Math.random() > 0.1 ? 'online' : 'offline',
         };
     });
 
@@ -424,7 +424,7 @@ window.fetchStatus = async function () {
 
     const overall = getOverallStatus(mockData);
     const now = new Date();
-    
+
     // O gráfico NÃO É MAIS ATUALIZADO AQUI, mas o status geral sim
     document.getElementById('overall-status-count').innerText = `${overall.count}/${overall.total}`;
 
@@ -448,7 +448,7 @@ function setupAutoRefresh() {
     const startInterval = () => {
         if (autoRefreshInterval) clearInterval(autoRefreshInterval);
         // Intervalo principal de 30 segundos
-        autoRefreshInterval = setInterval(window.fetchStatus, 30000); 
+        autoRefreshInterval = setInterval(window.fetchStatus, 30000);
     };
 
     startInterval();
@@ -464,7 +464,7 @@ function loadUfFavorita() {
     if (!select) return;
 
     // Preenche o Select
-    if (select.options.length <= 1) { 
+    if (select.options.length <= 1) {
         ESTADOS.forEach(estado => {
             const option = document.createElement('option');
             option.value = estado.uf;
@@ -478,7 +478,7 @@ function loadUfFavorita() {
     if (savedUf && ESTADOS.some(e => e.uf === savedUf)) {
         ufFavorita = savedUf;
         select.value = savedUf;
-        
+
         startFavoritoMonitor();
     } else {
         ufFavorita = '';
@@ -506,7 +506,7 @@ window.salvarUfFavorita = function (uf) {
 
 function startFavoritoMonitor() {
     stopFavoritoMonitor();
-    window.fetchStatusFavorito(); 
+    window.fetchStatusFavorito();
     favoritoRefreshInterval = setInterval(window.fetchStatusFavorito, 1000); // 1 segundo
 }
 
@@ -541,11 +541,11 @@ window.fetchStatusFavorito = function () {
         retAutorizacao: generateQuickStatus(),
         tempoMedio: Math.floor(Math.random() * 500) + 50,
     };
-    
+
     const now = new Date();
 
     updateFavoritoDisplay(favoritoData);
-    
+
     // **NOVO:** Atualiza o título e o gráfico com os dados da UF Favorita (a cada 1s)
     updateChartTitle(`${favoritoData.uf} - ${favoritoData.nome}`);
     updateTempoMedioChart(now.toLocaleTimeString('pt-BR'), favoritoData.tempoMedio);
@@ -565,13 +565,13 @@ function updateFavoritoDisplay(data) {
             autIconEl.innerHTML = getStatusIconHTML(data.autorizacao);
             retIconEl.innerHTML = getStatusIconHTML(data.retAutorizacao);
             tempoMedioEl.textContent = `${data.tempoMedio}ms`;
-            displayEl.style.borderColor = 'rgb(59, 130, 246)'; 
+            displayEl.style.borderColor = 'rgb(59, 130, 246)';
         } else {
             nomeEl.textContent = 'Nenhuma UF selecionada';
             autIconEl.innerHTML = getStatusIconHTML('unknown');
             retIconEl.innerHTML = getStatusIconHTML('unknown');
             tempoMedioEl.textContent = '--ms';
-            displayEl.style.borderColor = 'rgb(75, 85, 99)'; 
+            displayEl.style.borderColor = 'rgb(75, 85, 99)';
         }
     }
     if (typeof lucide !== 'undefined') {
@@ -579,16 +579,11 @@ function updateFavoritoDisplay(data) {
     }
 }
 
-
-// =========================================================
-// Inicialização
-// =========================================================
-
 function initSefazMonitor() {
-    initializeTempoMedioChart(); 
-    loadUfFavorita(); // Chama loadUfFavorita ANTES do fetchStatus, pois ele define o que o gráfico mostra
-    window.toggleView(currentView); 
-    setupAutoRefresh(); 
+    initializeTempoMedioChart();
+    loadUfFavorita();
+    window.toggleView(currentView);
+    setupAutoRefresh();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
