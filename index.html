@@ -312,25 +312,6 @@
         </div>
 
         <div id="pagina-historico" class="hidden animate__animated animate__fadeIn">
-
-
-          <div class="bg-gray-900 p-1">
-            <h2 class="text-2xl text-gray-200 text-center font-bold mb-4">
-              Protocolos por módulo
-            </h2>
-
-            <div class="w-full flex justify-center">
-              <div class="w-full w-[100px] h-[100px] md:w-150 md:h-150 relative"
-                style="max-width: 2800px; max-height: 280px;">
-                <canvas id="grafico-modulos"></canvas>
-              </div>
-            </div>
-
-            <div id="legenda-modulos" class="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm"> </div>
-          </div>
-
-
-
           <div id="tabela-container" class="bg-gray-900 p-4 rounded-xl">
             <input type="text" id="busca" placeholder="Buscar..." onkeyup="filtrarTabela()"
               class="w-full mb-3 px-3 py-2 rounded-md bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500" />
@@ -425,6 +406,21 @@
               </div>
             </div>
 
+            <div class="bg-gray-900 p-1">
+              <h2 class="text-2xl text-gray-200 text-center font-bold mb-4">
+                Protocolos por módulo
+              </h2>
+
+              <div class="w-full flex justify-center">
+                <div class="w-full w-[100px] h-[100px] md:w-150 md:h-150 relative"
+                  style="max-width: 2800px; max-height: 280px;">
+                  <canvas id="grafico-modulos"></canvas>
+                </div>
+              </div>
+
+              <div id="legenda-modulos" class="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm"> </div>
+            </div>
+
             <!-- Tabela de Detalhes -->
             <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
               <h3 class="text-lg font-bold mb-4 text-white">Detalhes das Liberações</h3>
@@ -445,201 +441,206 @@
         </div>
 
         <div id="pagina-sefaz" class="hidden animate__animated animate__fadeIn">
-    <div class="min-h-screen bg-gray-900 text-gray-200 p-6">
-        <div class="max-w-7xl mx-auto">
+          <div class="min-h-screen bg-gray-900 text-gray-200 p-6">
+            <div class="max-w-7xl mx-auto">
 
-            <div class="bg-gray-800 rounded-lg shadow-xl p-6 mb-6 border border-gray-700">
+              <div class="bg-gray-800 rounded-lg shadow-xl p-6 mb-6 border border-gray-700">
                 <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-3">
-                        <i data-lucide="activity" class="w-8 h-8 text-blue-500"></i>
-                        <div>
-                            <h1 class="text-2xl font-bold text-white">Monitor de Status NF-e/NFC-e</h1>
-                            <p class="text-sm text-gray-400">Acompanhamento em tempo real dos serviços da SEFAZ</p>
-                        </div>
+                  <div class="flex items-center gap-3">
+                    <i data-lucide="activity" class="w-8 h-8 text-blue-500"></i>
+                    <div>
+                      <h1 class="text-2xl font-bold text-white">Monitor de Status NF-e/NFC-e</h1>
+                      <p class="text-sm text-gray-400">Acompanhamento em tempo real dos serviços da SEFAZ</p>
                     </div>
-                    <button id="btn-fetch-status" onclick="fetchStatus()"
-                        class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50">
-                        <i data-lucide="refresh-cw" id="icon-refresh" class="w-4 h-4"></i>
-                        Atualizar
-                    </button>
+                  </div>
+                  <button id="btn-fetch-status" onclick="fetchStatus()"
+                    class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50">
+                    <i data-lucide="refresh-cw" id="icon-refresh" class="w-4 h-4"></i>
+                    Atualizar
+                  </button>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
 
-                    <div class="bg-gradient-to-br from-blue-700 to-indigo-800 rounded-lg p-4 text-white">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm opacity-90">Status Geral</p>
-                                <p id="overall-status-count" class="text-2xl font-bold">--/--</p>
-                                <p class="text-xs opacity-80">Serviços Disponíveis</p>
-                            </div>
-                            <div id="overall-status-icon">
-                                <i data-lucide="help-circle" class="w-6 h-6 text-gray-300"></i>
-                            </div>
-                        </div>
+                  <div class="bg-gradient-to-br from-blue-700 to-indigo-800 rounded-lg p-4 text-white">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-sm opacity-90">Status Geral</p>
+                        <p id="overall-status-count" class="text-2xl font-bold">--/--</p>
+                        <p class="text-xs opacity-80">Serviços Disponíveis</p>
+                      </div>
+                      <div id="overall-status-icon">
+                        <i data-lucide="help-circle" class="w-6 h-6 text-gray-300"></i>
+                      </div>
                     </div>
+                  </div>
 
-                    <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-400">Última Atualização</p>
-                                <p id="last-update-time" class="text-lg font-semibold text-white">--:--:--</p>
-                                <p id="last-update-date" class="text-xs text-gray-400"></p>
-                            </div>
-                        </div>
+                  <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-sm text-gray-400">Última Atualização</p>
+                        <p id="last-update-time" class="text-lg font-semibold text-white">--:--:--</p>
+                        <p id="last-update-date" class="text-xs text-gray-400"></p>
+                      </div>
                     </div>
+                  </div>
 
-                    <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-gray-400">Atualização Automática</p>
-                                <p class="text-lg font-semibold text-white">A cada 30s</p>
-                            </div>
-                        </div>
+                  <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                      <div>
+                        <p class="text-sm text-gray-400">Atualização Automática</p>
+                        <p class="text-lg font-semibold text-white">A cada 30s</p>
+                      </div>
                     </div>
+                  </div>
                 </div>
-                
-                <div class="bg-gray-700 border border-gray-600 rounded-lg p-4 mb-6">
-                    <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
-                        <i data-lucide="star" class="w-5 h-5 text-yellow-400"></i>
-                        Monitor Rápido (1s) - UF Favorita
-                    </h3>
-                    
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
-                        <div class="flex-grow w-full sm:w-auto">
-                            <label for="uf-favorita-select" class="block text-sm text-gray-400 mb-1">Selecione a UF Favorita</label>
-                            <select id="uf-favorita-select" onchange="salvarUfFavorita(this.value)"
-                                class="w-full sm:w-auto px-3 py-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
-                                <option value="">(Nenhuma)</option>
-                                </select>
-                        </div>
 
-                        <div id="favorito-status-display" class="w-full sm:w-auto mt-2 sm:mt-0 p-3 rounded-lg flex items-center justify-between text-white border border-gray-600">
-                            <span id="favorito-uf-nome" class="font-bold text-xl text-blue-400">Selecione...</span>
-                            <div class="flex items-center gap-4">
-                                <div>
-                                    <p class="text-xs text-gray-400">Autorização NF-e</p>
-                                    <div id="favorito-aut-icon" class="flex justify-center mt-1">
-                                        <i data-lucide="help-circle" class="w-5 h-5 text-gray-400"></i>
-                                    </div>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-gray-400">Retorno Aut.</p>
-                                    <div id="favorito-ret-icon" class="flex justify-center mt-1">
-                                        <i data-lucide="help-circle" class="w-5 h-5 text-gray-400"></i>
-                                    </div>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-gray-400">Tempo Médio</p>
-                                    <span id="favorito-tempo-medio" class="text-sm font-semibold text-gray-300 block text-center mt-1">--ms</span>
-                                </div>
-                            </div>
-                        </div>
+                <div class="bg-gray-700 border border-gray-600 rounded-lg p-4 mb-6">
+                  <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
+                    <i data-lucide="star" class="w-5 h-5 text-yellow-400"></i>
+                    Monitor Rápido (1s) - UF Favorita
+                  </h3>
+
+                  <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
+                    <div class="flex-grow w-full sm:w-auto">
+                      <label for="uf-favorita-select" class="block text-sm text-gray-400 mb-1">Selecione a UF
+                        Favorita</label>
+                      <select id="uf-favorita-select" onchange="salvarUfFavorita(this.value)"
+                        class="w-full sm:w-auto px-3 py-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">(Nenhuma)</option>
+                      </select>
                     </div>
+
+                    <div id="favorito-status-display"
+                      class="w-full sm:w-auto mt-2 sm:mt-0 p-3 rounded-lg flex items-center justify-between text-white border border-gray-600">
+                      <span id="favorito-uf-nome" class="font-bold text-xl text-blue-400">Selecione...</span>
+                      <div class="flex items-center gap-4">
+                        <div>
+                          <p class="text-xs text-gray-400">Autorização NF-e</p>
+                          <div id="favorito-aut-icon" class="flex justify-center mt-1">
+                            <i data-lucide="help-circle" class="w-5 h-5 text-gray-400"></i>
+                          </div>
+                        </div>
+                        <div>
+                          <p class="text-xs text-gray-400">Retorno Aut.</p>
+                          <div id="favorito-ret-icon" class="flex justify-center mt-1">
+                            <i data-lucide="help-circle" class="w-5 h-5 text-gray-400"></i>
+                          </div>
+                        </div>
+                        <div>
+                          <p class="text-xs text-gray-400">Tempo Médio</p>
+                          <span id="favorito-tempo-medio"
+                            class="text-sm font-semibold text-gray-300 block text-center mt-1">--ms</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div class="flex justify-center md:justify-end gap-2 p-2">
-                    <button id="btn-view-cards" onclick="toggleView('cards')"
-                        class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                        <i data-lucide="layout-grid" class="w-4 h-4"></i> Cards
-                    </button>
-                    <button id="btn-view-table" onclick="toggleView('table')"
-                        class="flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors">
-                        <i data-lucide="list-checks" class="w-4 h-4"></i> Tabela
-                    </button>
+                  <button id="btn-view-cards" onclick="toggleView('cards')"
+                    class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <i data-lucide="layout-grid" class="w-4 h-4"></i> Cards
+                  </button>
+                  <button id="btn-view-table" onclick="toggleView('table')"
+                    class="flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors">
+                    <i data-lucide="list-checks" class="w-4 h-4"></i> Tabela
+                  </button>
                 </div>
-            </div>
+              </div>
 
-            <div class="bg-gray-800 rounded-lg shadow-xl p-6 mb-6 border border-gray-700">
+              <div class="bg-gray-800 rounded-lg shadow-xl p-6 mb-6 border border-gray-700">
                 <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <i data-lucide="trending-up" class="w-6 h-6 text-green-500"></i>
-                    Gráfico de Tempo Médio 
-                    <span id="chart-uf-title" class="text-blue-400"> (Global - Média Geral)</span>
+                  <i data-lucide="trending-up" class="w-6 h-6 text-green-500"></i>
+                  Gráfico de Tempo Médio
+                  <span id="chart-uf-title" class="text-blue-400"> (Global - Média Geral)</span>
                 </h3>
                 <div class="relative" style="height: 200px;">
-                    <canvas id="tempoMedioChart"></canvas>
+                  <canvas id="tempoMedioChart"></canvas>
                 </div>
-            </div>
-            <div id="sefaz-view-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
+              </div>
+              <div id="sefaz-view-cards"
+                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
                 <div colspan="11" class="px-4 py-8 text-center text-gray-400 col-span-full">
-                    <i data-lucide="loader-2" class="w-5 h-5 animate-spin inline-block mr-2 text-blue-500"></i>
-                    Carregando status dos serviços...
+                  <i data-lucide="loader-2" class="w-5 h-5 animate-spin inline-block mr-2 text-blue-500"></i>
+                  Carregando status dos serviços...
                 </div>
-            </div>
+              </div>
 
-            <div id="sefaz-view-table"
+              <div id="sefaz-view-table"
                 class="bg-gray-800 rounded-lg shadow-xl overflow-hidden border border-gray-700 hidden">
                 <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-gray-700 text-gray-200">
-                            <tr>
-                                <th class="px-4 py-3 text-left text-sm font-semibold sticky left-0 bg-gray-700">UF</th>
-                                <th class="px-4 py-3 text-left text-sm font-semibold">Estado/Ambiente</th>
-                                <th class="px-4 py-3 text-center text-sm font-semibold">Autorização NF-e</th>
-                                <th class="px-4 py-3 text-center text-sm font-semibold">Retorno Aut.</th>
-                                <th class="px-4 py-3 text-center text-sm font-semibold">Consulta Prot.</th>
-                                <th class="px-4 py-3 text-center text-sm font-semibold">Inutilização</th>
-                                <th class="px-4 py-3 text-center text-sm font-semibold">Consulta Cad.</th>
-                                <th class="px-4 py-3 text-center text-sm font-semibold">Recep. Evento</th>
-                                <th class="px-4 py-3 text-center text-sm font-semibold">Status Serviço</th>
-                                <th class="px-4 py-3 text-center text-sm font-semibold">NFC-e</th>
-                                <th class="px-4 py-3 text-center text-sm font-semibold">Tempo Médio</th>
-                            </tr>
-                        </thead>
-                        <tbody id="services-table-body" class="divide-y divide-gray-700">
-                            <tr>
-                                <td colspan="11" class="px-4 py-8 text-center text-gray-400">
-                                    <i data-lucide="loader-2"
-                                        class="w-5 h-5 animate-spin inline-block mr-2 text-blue-500"></i>
-                                    Carregando status dos serviços...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                  <table class="w-full">
+                    <thead class="bg-gray-700 text-gray-200">
+                      <tr>
+                        <th class="px-4 py-3 text-left text-sm font-semibold sticky left-0 bg-gray-700">UF</th>
+                        <th class="px-4 py-3 text-left text-sm font-semibold">Estado/Ambiente</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Autorização NF-e</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Retorno Aut.</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Consulta Prot.</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Inutilização</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Consulta Cad.</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Recep. Evento</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Status Serviço</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">NFC-e</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Tempo Médio</th>
+                      </tr>
+                    </thead>
+                    <tbody id="services-table-body" class="divide-y divide-gray-700">
+                      <tr>
+                        <td colspan="11" class="px-4 py-8 text-center text-gray-400">
+                          <i data-lucide="loader-2" class="w-5 h-5 animate-spin inline-block mr-2 text-blue-500"></i>
+                          Carregando status dos serviços...
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
-            </div>
+              </div>
 
-            <div class="mt-6 bg-gray-800 rounded-lg shadow-xl p-6 border border-gray-700">
+              <div class="mt-6 bg-gray-800 rounded-lg shadow-xl p-6 border border-gray-700">
                 <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <i data-lucide="book-open" class="w-5 h-5 text-gray-400"></i>
-                    Legenda Geral de Status dos Serviços
+                  <i data-lucide="book-open" class="w-5 h-5 text-gray-400"></i>
+                  Legenda Geral de Status dos Serviços
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
-                        <span class="text-sm text-gray-300">Serviço **Disponível** (Online)</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="alert-circle" class="w-5 h-5 text-yellow-500"></i>
-                        <span class="text-sm text-gray-300">Serviço **Instável** (Lento ou com Falhas)</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="x-circle" class="w-5 h-5 text-red-500"></i>
-                        <span class="text-sm text-gray-300">Serviço **Indisponível** (Offline)</span>
-                    </div>
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+                    <span class="text-sm text-gray-300">Serviço **Disponível** (Online)</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="alert-circle" class="w-5 h-5 text-yellow-500"></i>
+                    <span class="text-sm text-gray-300">Serviço **Instável** (Lento ou com Falhas)</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="x-circle" class="w-5 h-5 text-red-500"></i>
+                    <span class="text-sm text-gray-300">Serviço **Indisponível** (Offline)</span>
+                  </div>
                 </div>
-                
+
                 <hr class="my-4 border-gray-700">
 
                 <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <i data-lucide="bar-chart-2" class="w-5 h-5 text-blue-400"></i>
-                    Legenda do Gráfico de Desempenho
+                  <i data-lucide="bar-chart-2" class="w-5 h-5 text-blue-400"></i>
+                  Legenda do Gráfico de Desempenho
                 </h3>
                 <p class="text-sm text-gray-400 mb-2">
-                    O gráfico exibe o desempenho de latência (Tempo Médio) da UF selecionada.
+                  O gráfico exibe o desempenho de latência (Tempo Médio) da UF selecionada.
                 </p>
                 <ul class="list-disc list-inside text-sm text-gray-300 ml-4 space-y-1">
-                    <li>**Eixo Y (Vertical):** Tempo em milissegundos (ms). Indica o tempo de resposta da SEFAZ.</li>
-                    <li>**Eixo X (Horizontal):** Hora da atualização. A leitura do gráfico é feita a cada **1 segundo**.</li>
-                    <li>**Foco:** O gráfico acompanha exclusivamente o desempenho do serviço de **Autorização NF-e** da **UF Favorita**.</li>
+                  <li>**Eixo Y (Vertical):** Tempo em milissegundos (ms). Indica o tempo de resposta da SEFAZ.</li>
+                  <li>**Eixo X (Horizontal):** Hora da atualização. A leitura do gráfico é feita a cada **1 segundo**.
+                  </li>
+                  <li>**Foco:** O gráfico acompanha exclusivamente o desempenho do serviço de **Autorização NF-e** da
+                    **UF Favorita**.</li>
                 </ul>
 
                 <p class="text-xs text-gray-500 mt-4">
-                    * Este é um painel demonstrativo. Os dados e tempos de atualização são simulados.
+                  * Este é um painel demonstrativo. Os dados e tempos de atualização são simulados.
                 </p>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
-</div>
 
         <div id="pagina-ia" class="hidden animate__animated animate__fadeIn">
           <div class="bg-gray-800 p-8 rounded-xl border border-gray-700 text-center">
