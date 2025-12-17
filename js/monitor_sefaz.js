@@ -246,7 +246,7 @@ function initializeTempoMedioChart() {
         options: {
             maintainAspectRatio: false,
             animation: {
-                duration: 0 // Desativa animação para parecer mais em tempo real
+                duration: 30000 // Desativa animação para parecer mais em tempo real
             },
             scales: {
                 y: {
