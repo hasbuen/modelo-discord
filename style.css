@@ -240,3 +240,19 @@ input:focus, textarea:focus {
 thead { background-color: var(--bg-card); border-bottom: 2px solid var(--border-default); }
 tbody tr { border-bottom: 1px solid var(--border-default); }
 tbody tr:hover { background-color: var(--sidebar-hover); }
+
+/* Quando o tipo for ERRO, as opções ficam com fundo avermelhado ao selecionar */
+#tipo[value="erro"] ~ div #modulo option:checked {
+  background-color: #b91c1c !important; /* red-700 */
+}
+
+/* Quando o tipo for SUGESTÃO, as opções ficam com fundo esverdeado ao selecionar */
+#tipo[value="sugestao"] ~ div #modulo option:checked {
+  background-color: #15803d !important; /* green-700 */
+}
+
+/* Estilo geral das options para manter o tema Dark */
+#modulo option {
+  background-color: #1f2937;
+  color: white;
+}
