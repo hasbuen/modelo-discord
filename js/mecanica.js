@@ -413,6 +413,71 @@ ${objetoJson.Paliativo}
     .catch(() => exibirModal("Erro ao copiar o paliativo.", "", "erro"));
 }*/
 
+function copiarLinhaSafe(botao, reg) {
+  let objetoJson = {};
+
+  // Se recebeu uma string, tenta parsear
+  if (typeof reg === 'string') {
+    try {
+      objetoJson = JSON.parse(reg);
+    } catch (e) {
+      try {
+        objetoJson = JSON.parse(reg.replace(/\\"/g, '"').replace(/(^"|"$)/g, ''));
+      } catch (e2) {
+        console.error("Erro ao converter para JSON:", e2);
+        objetoJson = {};
+      }
+    }
+  } else if (typeof reg === 'object' && reg !== null) {
+    objetoJson = reg;
+  }
+
+  // Normaliza campos
+  const tipo = objetoJson.tipo ?? objetoJson.Tipo ?? "";
+  const prt = objetoJson.prt ?? objetoJson.PRT ?? "";
+  const ticket = objetoJson.ticket ?? objetoJson.Ticket ?? "";
+  const descricao = objetoJson.descricao ?? objetoJson.Descricao ?? "";
+  const paliativo = objetoJson.paliativo ?? objetoJson.Paliativo ?? "";
+
+  let texto = "";
+  if (tipo == '1' || String(tipo).toLowerCase() === 'sugestão' || String(tipo).toLowerCase() === 'sugestao') {
+    texto = `**\`\`\`diff
++ Protocolo [SUGESTÃO]:
++ PRT: ${prt}
++ Ticket: ${ticket}
+\`\`\`**
+- **Descrição resumida:**
+${descricao}
+
+- **Paliativo:**
+${paliativo}
+`;
+  } else {
+    texto = `**\`\`\`diff
+- Protocolo [ERRO]:
+- PRT: ${prt}
+- Ticket: ${ticket}
+\`\`\`**
+- **Descrição resumida:**
+${descricao}
+
+- **Paliativo:**
+${paliativo}
+`;
+  }
+
+  navigator.clipboard.writeText(texto.trim())
+    .then(() => {
+      const originalHTML = botao.innerHTML;
+      botao.innerHTML = "OK";
+      setTimeout(() => {
+        botao.innerHTML = originalHTML;
+        if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+      }, 1000);
+    })
+    .catch(() => exibirModal("Erro ao copiar o paliativo.", "", "erro"));
+}
+
 async function abrirModalExclusao(id, ticket) {
   const modal = document.getElementById("confirmModal");
   const confirmBtn = document.getElementById("confirmBtn");
@@ -684,8 +749,7 @@ async function renderizarTabela() {
                   onclick="mostrarModalPaliativo('${escHTML(reg.paliativo || '').replace(/'/g, "\\'")}')">
             Paliativo
           </button>
-          <button class="bg-green-600 hover:bg-green-500 px-2 py-1 rounded text-xs"
-                  onclick="copiarLinha(this, '${reg}')">
+          <button class="bg-green-600 copy-btn hover:bg-green-500 px-2 py-1 rounded text-xs" type="button">
             <i data-lucide="copy" class="w-4 h-4"></i>
           </button>
           <button class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded text-xs">
@@ -697,6 +761,12 @@ async function renderizarTabela() {
       const btnExcluir = tr.querySelector('.bg-red-600');
       if (btnExcluir) {
         btnExcluir.onclick = () => abrirModalExclusao(Number(reg.id), reg.ticket);
+      }
+
+      // Configura o botão de cópia para receber o objeto "reg" original
+      const btnCopy = tr.querySelector('.copy-btn');
+      if (btnCopy) {
+        btnCopy.onclick = () => copiarLinhaSafe(btnCopy, reg);
       }
 
       tbody.appendChild(tr);

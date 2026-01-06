@@ -256,3 +256,89 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
   background-color: #1f2937;
   color: white;
 }
+
+.prt-badge {
+  position: relative;
+}
+
+.prt-badge:hover .prt-tooltip {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.prt-tooltip {
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  background: #111827;
+  color: #e5e7eb;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  border: 1px solid #374151;
+  z-index: 50;
+}
+/* Tooltip para a coluna Descrição no Histórico */
+.tooltip-container { position: relative; }
+
+.desc-clamp {
+  display: block;
+  max-height: 5.5rem; /* limita a altura da pré-visualização */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.tooltip-container .tooltip-text {
+  display: none; /* escondido por padrão para evitar repetição */
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  z-index: 1000; /* mais alto para ficar acima do resto */
+  background: var(--bg-card);
+  color: var(--text-main);
+  padding: 10px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  max-width: 40rem;
+  border: 1px solid transparent; /* removido borda padrão para o neon ficar visível */
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+  overflow: visible; /* permite o pseudo-element ficar fora do box */
+}
+
+/* Borda neon animada (pseudo-elemento) */
+.tooltip-container .tooltip-text::before {
+  content: "";
+  position: absolute;
+  inset: -3px; /* espaço ao redor para a borda neon */
+  border-radius: 10px;
+  padding: 1px; /* espessura da borda neon */
+  background: linear-gradient(90deg, #5EC26A, #10DF29, #009B12, #BE0001, #DC154A, #C02F30, #009dff);
+  background-size: 300% 300%;
+  animation: neon-border 4s linear infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 999; /* ligeiramente abaixo do conteúdo da tooltip */
+}
+
+/* Sombra suave para reforçar o brilho */
+.tooltip-container .tooltip-text::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 12px;
+  background: radial-gradient(ellipse at center, rgba(58, 138, 255, 0.06), rgba(220,21,74,0.04), transparent 40%);
+  filter: blur(8px);
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 998;
+}
+
+.tooltip-container:hover .tooltip-text { display: block; }
