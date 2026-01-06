@@ -128,20 +128,8 @@
       </nav>
 
       <div class="mt-auto border-t border-gray-700 pt-3">
-        <div class="theme-toggles-container flex justify-center bg-gray-800 rounded-lg p-1 gap-1">
-          <button onclick="alternarTema('dark')" class="flex-1 p-2 rounded hover:bg-gray-700 flex justify-center"
-            title="Escuro">
-            <i data-lucide="moon" class="w-4 h-4"></i>
-          </button>
-          <button onclick="alternarTema('light')" class="flex-1 p-2 rounded hover:bg-gray-700 flex justify-center"
-            title="Claro">
-            <i data-lucide="sun" class="w-4 h-4"></i>
-          </button>
-          <button onclick="alternarTema('system')" class="flex-1 p-2 rounded hover:bg-gray-700 flex justify-center"
-            title="Sistema">
-            <i data-lucide="monitor" class="w-4 h-4"></i>
-          </button>
-        </div>
+        <!-- Tema fixo: escuro (removido visual) -->
+        <div class="theme-toggles-container flex justify-center bg-gray-800 rounded-lg p-1 gap-1" aria-hidden="true"></div>
       </div>
     </aside>
 
@@ -153,9 +141,7 @@
         </button>
         <span class="font-bold text-lg">ProtoCord</span>
       </div>
-      <button id="mobile-theme-btn" class="p-2 rounded-md hover:bg-gray-800">
-        <i data-lucide="sun" class="w-5 h-5"></i>
-      </button>
+      <!-- Mobile theme button removed (tema fixo: escuro) -->
     </header>
 
     <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
@@ -849,15 +835,9 @@
     };
 
     // Controle de Tema
-    window.alternarTema = function (theme) {
-      const root = document.documentElement;
-      if (theme === 'system') {
-        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        root.setAttribute('data-theme', isDark ? 'dark' : 'light');
-      } else {
-        root.setAttribute('data-theme', theme);
-      }
-      localStorage.setItem('theme', theme);
+    window.alternarTema = function () {
+      // Tema fixo: sempre escuro
+      document.documentElement.setAttribute('data-theme', 'dark');
     };
 
     // Load inicial
@@ -866,9 +846,8 @@
       if (localStorage.getItem('sidebar_collapsed') === 'true') {
         document.getElementById('btn-collapse').click();
       }
-      // Recupera tema
-      const savedTheme = localStorage.getItem('theme') || 'dark';
-      alternarTema(savedTheme);
+      // Tema fixo: configura sempre para escuro
+      alternarTema();
 
       // Página inicial
       mostrarPagina('historico-liberacoes');
