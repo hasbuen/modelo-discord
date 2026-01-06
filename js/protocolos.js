@@ -21,11 +21,102 @@ async function carregarProtocolos() {
       protocolosCache[p.prt] = p;
     });
 
+    // Cria índice utilizado por outros módulos (ex.: dashboard)
+    if (typeof criarIndiceProtocolos === 'function') {
+      await criarIndiceProtocolos(protocolos);
+    }
+
     return protocolos;
   } catch (error) {
     return [];
   }
 }
+
+async function criarIndiceProtocolos(protocolos) {
+  protocolosIndex = {};
+
+  // Tenta buscar os nomes dos módulos da API para mostrar nomes legíveis nos filtros
+  let modulos = [];
+  try {
+    const res = await fetch('https://modelo-discord-server.vercel.app/api/modulos');
+    if (res.ok) modulos = await res.json();
+  } catch (e) {
+    console.warn('Não foi possível carregar nomes de módulos, usarei o código disponível.');
+  }
+
+  // Cria um mapa id -> nome para lookup
+  const modMap = {};
+  modulos.forEach(m => {
+    modMap[String(m.id)] = m.modulo;
+  });
+
+  protocolos.forEach(p => {
+    const modId = String(p.modulo ?? '');
+    protocolosIndex[p.prt] = {
+      modulo: modMap[modId] || p.modulo || 'Desconhecido',
+      tipo: p.tipo,
+      descricao: p.descricao
+    };
+  });
+}
+
+function renderizarFiltroModulos() {
+  const container = document.getElementById('filtro-modulos');
+  container.innerHTML = '';
+
+  const modulos = new Set(
+    Object.values(protocolosIndex).map(p => p.modulo)
+  );
+
+  const criarChip = (label, ativo) => {
+    const safeLabel = String(label).replace(/'/g, "\\'");
+    return `
+      <button
+        onclick="selecionarModulo('${safeLabel}')"
+        class="px-3 py-1.5 rounded-full text-xs font-semibold transition
+        ${ativo 
+          ? 'bg-blue-600 text-white shadow' 
+          : 'bg-gray-800 text-gray-300 hover:bg-gray-700'}">
+        ${label}
+      </button>
+    `;
+  };
+
+  container.innerHTML += criarChip('TODOS', moduloSelecionado === 'TODOS');
+
+  [...modulos].sort().forEach(modulo => {
+    container.innerHTML += criarChip(modulo, moduloSelecionado === modulo);
+  });
+}
+
+function selecionarModulo(modulo) {
+  moduloSelecionado = modulo;
+  aplicarFiltroModulo();
+  renderizarFiltroModulos();
+}
+
+function aplicarFiltroModulo() {
+  if (moduloSelecionado === 'TODOS') {
+    renderizarTabelaLiberacoes(liberacoesOriginais);
+    return;
+  }
+
+  const filtradas = liberacoesOriginais
+    .map(release => {
+      const protocolosFiltrados = release.protocolos.filter(prt => {
+        return protocolosIndex[prt]?.modulo === moduloSelecionado;
+      });
+
+      return {
+        ...release,
+        protocolos: protocolosFiltrados
+      };
+    })
+    .filter(r => r.protocolos.length > 0);
+
+  renderizarTabelaLiberacoes(filtradas);
+}
+
 
 /**
  * Obtém informações de um protocolo específico
