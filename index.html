@@ -883,8 +883,7 @@
     const container = document.getElementById('conteudo-comparador');
     
     try {
-        // Ajuste o caminho aqui se o arquivo estiver em 'js/' ou 'html/'
-        const response = await fetch('js/comparador-textos.html'); 
+        const response = await fetch('html/comparador-textos.html'); 
         const text = await response.text();
         
         const parser = new DOMParser();
@@ -893,12 +892,10 @@
         const style = doc.querySelector('style').innerHTML;
         const mainContent = doc.querySelector('main').innerHTML;
         
-        // Pegamos todos os scripts do arquivo externo
         const scriptsExternos = doc.querySelectorAll('script');
 
         container.innerHTML = `
             <style>
-                /* Pequeno ajuste para integrar ao seu fundo */
                 .comparador-wrapper main { background: transparent !important; padding: 0 !important; }
                 ${style}
             </style>
@@ -906,8 +903,6 @@
                 ${mainContent}
             </div>
         `;
-
-        // Executa os scripts (especialmente o que contém a lógica de diff)
         scriptsExternos.forEach(velhoScript => {
             const novoScript = document.createElement('script');
             if (velhoScript.src) {
