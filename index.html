@@ -108,7 +108,15 @@
         </button>
         <input type="file" id="arquivoRTF" accept=".rtf" class="hidden" onchange="processarRTF(event)" />
 
-        <button onclick="mostrarPagina('sefaz')" data-tooltip="IA Inteligente" class="sidebar-item" id="btn-sefaz">
+        <button onclick="mostrarPagina('compara-textos')" data-tooltip="Compara textos" class="sidebar-item" id="btn-compara">
+          <i data-lucide="activity" class="sidebar-icon"></i>
+          <span class="sidebar-label flex items-center">
+            Compara textos
+            <span class="bg-green-500 text-black text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Novo</span>
+          </span>
+        </button>
+        
+        <button onclick="mostrarPagina('sefaz')" data-tooltip="SEFAZ" class="sidebar-item" id="btn-sefaz">
           <i data-lucide="activity" class="sidebar-icon"></i>
           <span class="sidebar-label flex items-center">
             SEFAZ
@@ -169,6 +177,14 @@
         </button>
         <button onclick="document.getElementById('arquivoRTF').click()" class="sidebar-item">
           <i data-lucide="package-open" class="sidebar-icon"></i> Analisar RLS
+        </button>
+        <button onclick="mostrarPagina('compara')" data-tooltip="Compara textos" class="sidebar-item"
+          id="btn-compara-mobile">
+          <i data-lucide="activity" class="sidebar-icon"></i>
+          <span class="sidebar-label flex items-center">
+            Compara textos
+            <span class="bg-green-500 text-black text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Novo</span>
+          </span>
         </button>
         <button onclick="mostrarPagina('sefaz')" data-tooltip="Monitorar SEFAZ" class="sidebar-item"
           id="btn-sefaz-mobile">
@@ -481,6 +497,14 @@
                   <tbody id="tabelaLiberados" class="divide-y divide-gray-700"></tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        </div>
+        
+         <div id="pagina-compara" class="hidden animate__animated animate__fadeIn">
+          <div class="min-h-screen bg-gray-900 text-gray-200 p-6">
+            <div class="max-w-7xl mx-auto">
+              
             </div>
           </div>
         </div>
