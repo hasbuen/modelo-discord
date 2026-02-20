@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparador de Textos</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Fraunces:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0e11;
+    --surface: #16161a;
+    --border: #2a2a32;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --accent: #f5c518;
+    --add: #22c55e;
+    --add-bg: rgba(34,197,94,0.12);
+    --del: #f87171;
+    --del-bg: rgba(248,113,113,0.12);
+    --mod: #60a5fa;
+    --mod-bg: rgba(96,165,250,0.1);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    padding: 2.5rem 3rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: baseline;
+    gap: 1.2rem;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  h1 span {
+    color: var(--accent);
+  }
+
+  .subtitle {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .workspace {
+    flex: 1;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    padding: 2rem 3rem;
+    gap: 1.5rem;
+  }
+
+  .controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .mode-btns {
+    display: flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .mode-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-right: 1px solid var(--border);
+  }
+
+  .mode-btn:last-child { border-right: none; }
+  .mode-btn.active { background: var(--accent); color: #000; font-weight: 700; }
+  .mode-btn:not(.active):hover { color: var(--text); background: rgba(255,255,255,0.04); }
+
+  .btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 0.55rem 1.4rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+
+  .legend {
+    display: flex;
+    gap: 1.2rem;
+    margin-left: auto;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--muted);
+  }
+
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+  }
+
+  .editors {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .editor-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .editor-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-left: 2px;
+  }
+
+  textarea {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    padding: 1.2rem;
+    resize: vertical;
+    min-height: 200px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  textarea:focus { border-color: var(--accent); }
+  textarea::placeholder { color: var(--muted); }
+
+  /* Result */
+  .result-section {
+    margin-top: 0;
+  }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .result-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .stats {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+  }
+
+  .stat { color: var(--muted); }
+  .stat span { font-weight: 700; }
+  .stat.adds span { color: var(--add); }
+  .stat.dels span { color: var(--del); }
+  .stat.mods span { color: var(--mod); }
+
+  /* Inline / split view */
+  .diff-view {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .diff-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .diff-panel {
+    padding: 1.2rem;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    overflow: auto;
+    min-height: 180px;
+    font-family: 'Space Mono', monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .diff-panel + .diff-panel {
+    border-left: 1px solid var(--border);
+  }
+
+  .diff-panel-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.6rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .diff-inline {
+    padding: 1.2rem;
+    font-size: 0.82rem;
+    line-height: 1.9;
+    font-family: 'Space Mono', monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 180px;
+  }
+
+  .diff-line {
+    display: block;
+    border-radius: 3px;
+    padding: 0 4px;
+    margin: 1px 0;
+  }
+
+  .diff-line-add { background: var(--add-bg); color: var(--add); }
+  .diff-line-del { background: var(--del-bg); color: var(--del); }
+  .diff-line-eq { color: var(--text); }
+
+  .mark-add {
+    background: var(--add-bg);
+    color: var(--add);
+    border-radius: 3px;
+    padding: 0 2px;
+    border-bottom: 1px solid var(--add);
+  }
+
+  .mark-del {
+    background: var(--del-bg);
+    color: var(--del);
+    border-radius: 3px;
+    padding: 0 2px;
+    border-bottom: 1px solid var(--del);
+    text-decoration: line-through;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+  }
+
+  @media (max-width: 768px) {
+    .workspace { padding: 1.2rem; }
+    header { padding: 1.5rem 1.2rem; flex-wrap: wrap; }
+    .editors { grid-template-columns: 1fr; }
+    .diff-split { grid-template-columns: 1fr; }
+    .diff-panel + .diff-panel { border-left: none; border-top: 1px solid var(--border); }
+    .legend { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Compara<span>.</span></h1>
+  <p class="subtitle">Comparador de Textos</p>
+</header>
+
+<div class="workspace">
+  <div class="controls">
+    <div class="mode-btns">
+      <button class="mode-btn active" data-mode="inline">Inline</button>
+      <button class="mode-btn" data-mode="split">Dividido</button>
+      <button class="mode-btn" data-mode="word">Palavra</button>
+    </div>
+    <button class="btn" id="compareBtn">Comparar</button>
+    <button class="btn btn-ghost" id="clearBtn">Limpar</button>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--add)"></div> Adicionado</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--del)"></div> Removido</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--text)"></div> Igual</div>
+    </div>
+  </div>
+
+  <div class="editors">
+    <div class="editor-wrap">
+      <div class="editor-label">Texto Original</div>
+      <textarea id="text1" placeholder="Cole o texto original aqui…" rows="10"></textarea>
+    </div>
+    <div class="editor-wrap">
+      <div class="editor-label">Texto Modificado</div>
+      <textarea id="text2" placeholder="Cole o texto modificado aqui…" rows="10"></textarea>
+    </div>
+  </div>
+
+  <div class="result-section" id="resultSection" style="display:none">
+    <div class="result-header">
+      <div class="result-label">Resultado</div>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="diff-view" id="diffView"></div>
+  </div>
+</div>
+
+<script>
+  let currentMode = 'inline';
+
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentMode = btn.dataset.mode;
+      // re-render if result visible
+      const t1 = document.getElementById('text1').value;
+      const t2 = document.getElementById('text2').value;
+      if (t1 || t2) compare(t1, t2);
+    });
+  });
+
+  document.getElementById('compareBtn').addEventListener('click', () => {
+    const t1 = document.getElementById('text1').value;
+    const t2 = document.getElementById('text2').value;
+    compare(t1, t2);
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    document.getElementById('text1').value = '';
+    document.getElementById('text2').value = '';
+    document.getElementById('resultSection').style.display = 'none';
+  });
+
+  // LCS-based diff
+  function diffLines(a, b) {
+    const linesA = a === '' ? [] : a.split('\n');
+    const linesB = b === '' ? [] : b.split('\n');
+    return computeDiff(linesA, linesB);
+  }
+
+  function diffWords(a, b) {
+    const wordsA = tokenize(a);
+    const wordsB = tokenize(b);
+    return computeDiff(wordsA, wordsB);
+  }
+
+  function tokenize(str) {
+    return str.match(/(\s+|\S+)/g) || [];
+  }
+
+  function computeDiff(seqA, seqB) {
+    const m = seqA.length, n = seqB.length;
+    // dp
+    const dp = Array.from({length: m+1}, () => new Array(n+1).fill(0));
+    for (let i = m-1; i >= 0; i--)
+      for (let j = n-1; j >= 0; j--)
+        dp[i][j] = seqA[i] === seqB[j]
+          ? dp[i+1][j+1] + 1
+          : Math.max(dp[i+1][j], dp[i][j+1]);
+
+    const ops = [];
+    let i = 0, j = 0;
+    while (i < m || j < n) {
+      if (i < m && j < n && seqA[i] === seqB[j]) {
+        ops.push({ type: 'eq', val: seqA[i] });
+        i++; j++;
+      } else if (j < n && (i >= m || dp[i][j+1] >= dp[i+1][j])) {
+        ops.push({ type: 'add', val: seqB[j] });
+        j++;
+      } else {
+        ops.push({ type: 'del', val: seqA[i] });
+        i++;
+      }
+    }
+    return ops;
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function compare(t1, t2) {
+    const section = document.getElementById('resultSection');
+    const view = document.getElementById('diffView');
+    section.style.display = 'block';
+
+    if (!t1 && !t2) {
+      view.innerHTML = '<div class="empty-state">Insira textos nos campos acima para comparar.</div>';
+      document.getElementById('stats').innerHTML = '';
+      return;
+    }
+
+    if (currentMode === 'word') {
+      renderWordDiff(t1, t2, view);
+    } else if (currentMode === 'split') {
+      renderSplitDiff(t1, t2, view);
+    } else {
+      renderInlineDiff(t1, t2, view);
+    }
+  }
+
+  function renderInlineDiff(t1, t2, view) {
+    const ops = diffLines(t1, t2);
+    let adds = 0, dels = 0;
+    let html = '<div class="diff-inline">';
+    ops.forEach(op => {
+      const line = escHtml(op.val);
+      if (op.type === 'add') { html += `<span class="diff-line diff-line-add">+ ${line}</span>\n`; adds++; }
+      else if (op.type === 'del') { html += `<span class="diff-line diff-line-del">- ${line}</span>\n`; dels++; }
+      else { html += `<span class="diff-line diff-line-eq">  ${line}</span>\n`; }
+    });
+    html += '</div>';
+    view.innerHTML = html;
+    showStats(adds, dels);
+  }
+
+  function renderSplitDiff(t1, t2, view) {
+    const linesA = t1 === '' ? [] : t1.split('\n');
+    const linesB = t2 === '' ? [] : t2.split('\n');
+    const ops = computeDiff(linesA, linesB);
+
+    let leftLines = [], rightLines = [];
+    ops.forEach(op => {
+      if (op.type === 'eq') { leftLines.push({type:'eq',val:op.val}); rightLines.push({type:'eq',val:op.val}); }
+      else if (op.type === 'del') { leftLines.push({type:'del',val:op.val}); rightLines.push({type:'empty',val:''}); }
+      else { leftLines.push({type:'empty',val:''}); rightLines.push({type:'add',val:op.val}); }
+    });
+
+    let adds = ops.filter(o=>o.type==='add').length;
+    let dels = ops.filter(o=>o.type==='del').length;
+
+    function renderPanel(lines) {
+      return lines.map(l => {
+        if (l.type === 'add') return `<span class="diff-line diff-line-add">+ ${escHtml(l.val)}</span>`;
+        if (l.type === 'del') return `<span class="diff-line diff-line-del">- ${escHtml(l.val)}</span>`;
+        if (l.type === 'empty') return `<span class="diff-line" style="color:transparent">·</span>`;
+        return `<span class="diff-line diff-line-eq">  ${escHtml(l.val)}</span>`;
+      }).join('\n');
+    }
+
+    view.innerHTML = `
+      <div class="diff-split">
+        <div>
+          <div class="diff-panel-label">Original</div>
+          <div class="diff-panel">${renderPanel(leftLines)}</div>
+        </div>
+        <div>
+          <div class="diff-panel-label">Modificado</div>
+          <div class="diff-panel">${renderPanel(rightLines)}</div>
+        </div>
+      </div>`;
+    showStats(adds, dels);
+  }
+
+  function renderWordDiff(t1, t2, view) {
+    const ops = diffWords(t1, t2);
+    let adds = 0, dels = 0;
+    let html = '<div class="diff-inline">';
+    ops.forEach(op => {
+      const w = escHtml(op.val);
+      if (op.type === 'add') { html += `<mark class="mark-add">${w}</mark>`; if(!/^\s+$/.test(op.val)) adds++; }
+      else if (op.type === 'del') { html += `<mark class="mark-del">${w}</mark>`; if(!/^\s+$/.test(op.val)) dels++; }
+      else html += w;
+    });
+    html += '</div>';
+    view.innerHTML = html;
+    showStats(adds, dels);
+  }
+
+  function showStats(adds, dels) {
+    document.getElementById('stats').innerHTML = `
+      <div class="stat adds"><span>+${adds}</span> adicionado${adds !== 1 ? 's' : ''}</div>
+      <div class="stat dels"><span>-${dels}</span> removido${dels !== 1 ? 's' : ''}</div>`;
+  }
+
+  // Example
+  document.getElementById('text1').value = `O rato roeu a roupa do rei de Roma.
+A linguagem JavaScript é dinâmica.
+Este texto será removido.
+Todos os homens são mortais.`;
+  document.getElementById('text2').value = `O rato roeu a roupa do rei de Portugal.
+A linguagem TypeScript é dinâmica e tipada.
+Todos os homens são mortais.
+Esta linha foi adicionada ao final.`;
+
+  compare(document.getElementById('text1').value, document.getElementById('text2').value);
+</script>
+</body>
+</html>
