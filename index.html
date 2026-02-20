@@ -501,8 +501,9 @@
           </div>
         </div>
         
-        <div id="pagina-compara-textos" class="hidden animate__animated animate__fadeIn min-h-screen p-6">
-          <div id="conteudo-comparador" class="max-w-7xl mx-auto">
+        <div id="pagina-compara-textos" class="hidden animate__animated animate__fadeIn">
+          <div class="bg-gray-900 text-gray-200 min-h-screen">
+            <div id="conteudo-comparador" class="max-w-7xl mx-auto p-4 lg:p-8"></div>
           </div>
         </div>
 
@@ -876,51 +877,59 @@
     });
   </script>
 
+  <script>
 
-<!-- === EXTENSÕES DASHBOARD (EXPORTAÇÃO + RANKING) === -->
-<script>
-  async function carregarComparadorNativo() {
+    async function carregarComparadorNativo() {
     const container = document.getElementById('conteudo-comparador');
-    
+    if (!container) return;
+
     try {
+        
         const response = await fetch('html/comparador-textos.html'); 
         const text = await response.text();
         
         const parser = new DOMParser();
         const doc = parser.parseFromString(text, 'text/html');
         
-        const style = doc.querySelector('style').innerHTML;
-        const mainContent = doc.querySelector('main').innerHTML;
-        
-        const scriptsExternos = doc.querySelectorAll('script');
+        const styleTag = doc.querySelector('style');
+        const mainContent = doc.querySelector('main');
+        const scripts = doc.querySelectorAll('script');
 
         container.innerHTML = `
             <style>
-                .comparador-wrapper main { background: transparent !important; padding: 0 !important; }
-                ${style}
+                ${styleTag ? styleTag.innerHTML : ''}
+                :root { --bg: transparent !important; }
+                body { background: transparent !important; }
+                main { padding: 0 !important; max-width: 100% !important; height: auto !important; overflow: visible !important; }
+                .container { max-width: 100% !important; padding: 0 !important; }
             </style>
-            <div class="comparador-wrapper">
-                ${mainContent}
+            <div class="comparador-integrado">
+                ${mainContent ? mainContent.innerHTML : 'Conteúdo não encontrado.'}
             </div>
         `;
-        scriptsExternos.forEach(velhoScript => {
-            const novoScript = document.createElement('script');
-            if (velhoScript.src) {
-                novoScript.src = velhoScript.src;
+
+        scripts.forEach(oldScript => {
+            const newScript = document.createElement('script');
+            if (oldScript.src) {
+                newScript.src = oldScript.src;
             } else {
-                novoScript.innerHTML = velhoScript.innerHTML;
+                newScript.innerHTML = oldScript.innerHTML;
             }
-            document.body.appendChild(novoScript);
+            document.body.appendChild(newScript);
         });
 
     } catch (e) {
-        console.error("Erro ao integrar comparador:", e);
+        console.error("Erro ao integrar o comparador:", e);
+        container.innerHTML = "<p class='text-red-500'>Erro ao carregar o comparador.</p>";
     }
-  }
+}
 
-  // Inicializa a carga
-  carregarComparadorNativo();
-  
+document.addEventListener('DOMContentLoaded', carregarComparadorNativo);
+    
+  </script>
+
+<!-- === EXTENSÕES DASHBOARD (EXPORTAÇÃO + RANKING) === -->
+<script>
   document.addEventListener('DOMContentLoaded', () => {
     const tabelaCard = document.querySelector('#pagina-historico-liberacoes .bg-gray-900.p-6.rounded-xl.shadow-lg');
     if (!tabelaCard) return;
