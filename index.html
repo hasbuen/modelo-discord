@@ -502,8 +502,9 @@
         </div>
         
         <div id="pagina-compara-textos" class="hidden animate__animated animate__fadeIn">
-          <div class="bg-gray-900 text-gray-200 min-h-screen">
-            <div id="conteudo-comparador" class="max-w-7xl mx-auto p-4 lg:p-8"></div>
+          <div class="bg-gray-900 min-h-screen p-4 lg:p-8">
+            <div id="conteudo-comparador" class="max-w-7xl mx-auto">
+            </div>
           </div>
         </div>
 
@@ -880,50 +881,53 @@
   <script>
 
     async function carregarComparadorNativo() {
-    const container = document.getElementById('conteudo-comparador');
-    if (!container) return;
+  const container = document.getElementById('conteudo-comparador');
+  
+  try {
+    // Busca o arquivo externo
+    const response = await fetch('html/comparador-textos.html');
+    const htmlText = await response.text();
+    
+    // Converte o texto em um documento HTML real para manipularmos
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlText, 'text/html');
+    
+    // Extrai as partes que interessam
+    const css = doc.querySelector('style').innerHTML;
+    const conteudo = doc.querySelector('main').innerHTML;
+    const scripts = doc.querySelectorAll('script');
 
-    try {
-        
-        const response = await fetch('html/comparador-textos.html'); 
-        const text = await response.text();
-        
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(text, 'text/html');
-        
-        const styleTag = doc.querySelector('style');
-        const mainContent = doc.querySelector('main');
-        const scripts = doc.querySelectorAll('script');
+    // Injeta na página com ajustes de "limpeza"
+    container.innerHTML = `
+      <style>
+        ${css}
+        /* Ajustes para fundir com o ProtoCord */
+        :root { --bg: transparent !important; }
+        main { padding: 0 !important; height: auto !important; overflow: visible !important; }
+        body { background: transparent !important; }
+      </style>
+      <div class="comparador-wrapper">
+        ${conteudo}
+      </div>
+    `;
 
-        container.innerHTML = `
-            <style>
-                ${styleTag ? styleTag.innerHTML : ''}
-                :root { --bg: transparent !important; }
-                body { background: transparent !important; }
-                main { padding: 0 !important; max-width: 100% !important; height: auto !important; overflow: visible !important; }
-                .container { max-width: 100% !important; padding: 0 !important; }
-            </style>
-            <div class="comparador-integrado">
-                ${mainContent ? mainContent.innerHTML : 'Conteúdo não encontrado.'}
-            </div>
-        `;
+    // Re-executa os scripts do comparador para as funções de botão funcionarem
+    scripts.forEach(oldScript => {
+      const newScript = document.createElement('script');
+      if (oldScript.src) {
+        newScript.src = oldScript.src;
+      } else {
+        newScript.innerHTML = oldScript.innerHTML;
+      }
+      document.body.appendChild(newScript);
+    });
 
-        scripts.forEach(oldScript => {
-            const newScript = document.createElement('script');
-            if (oldScript.src) {
-                newScript.src = oldScript.src;
-            } else {
-                newScript.innerHTML = oldScript.innerHTML;
-            }
-            document.body.appendChild(newScript);
-        });
-
-    } catch (e) {
-        console.error("Erro ao integrar o comparador:", e);
-        container.innerHTML = "<p class='text-red-500'>Erro ao carregar o comparador.</p>";
-    }
+  } catch (err) {
+    console.error("Erro ao carregar comparador:", err);
+  }
 }
 
+// Chama a função assim que o site abrir
 document.addEventListener('DOMContentLoaded', carregarComparadorNativo);
     
   </script>
