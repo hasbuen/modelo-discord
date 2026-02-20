@@ -501,18 +501,8 @@
           </div>
         </div>
         
-        <div id="pagina-compara-textos" class="hidden animate__animated animate__fadeIn h-screen">
-          <div class="flex flex-col h-full bg-gray-900 p-4">
-            <div class="max-w-7xl mx-auto w-full flex-grow pb-8">
-      
-              <iframe 
-                src="html/comparador-textos.html" 
-                class="w-full h-full border border-gray-700 rounded-xl shadow-2xl bg-gray-900"
-                style="min-height: 80vh;"
-                title="Comparador de Textos">
-              </iframe>
-
-            </div>
+        <div id="pagina-compara-textos" class="hidden animate__animated animate__fadeIn min-h-screen p-6">
+          <div id="conteudo-comparador" class="max-w-7xl mx-auto">
           </div>
         </div>
 
@@ -889,6 +879,53 @@
 
 <!-- === EXTENSÕES DASHBOARD (EXPORTAÇÃO + RANKING) === -->
 <script>
+  async function carregarComparadorNativo() {
+    const container = document.getElementById('conteudo-comparador');
+    
+    try {
+        // Ajuste o caminho aqui se o arquivo estiver em 'js/' ou 'html/'
+        const response = await fetch('js/comparador-textos.html'); 
+        const text = await response.text();
+        
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+        
+        const style = doc.querySelector('style').innerHTML;
+        const mainContent = doc.querySelector('main').innerHTML;
+        
+        // Pegamos todos os scripts do arquivo externo
+        const scriptsExternos = doc.querySelectorAll('script');
+
+        container.innerHTML = `
+            <style>
+                /* Pequeno ajuste para integrar ao seu fundo */
+                .comparador-wrapper main { background: transparent !important; padding: 0 !important; }
+                ${style}
+            </style>
+            <div class="comparador-wrapper">
+                ${mainContent}
+            </div>
+        `;
+
+        // Executa os scripts (especialmente o que contém a lógica de diff)
+        scriptsExternos.forEach(velhoScript => {
+            const novoScript = document.createElement('script');
+            if (velhoScript.src) {
+                novoScript.src = velhoScript.src;
+            } else {
+                novoScript.innerHTML = velhoScript.innerHTML;
+            }
+            document.body.appendChild(novoScript);
+        });
+
+    } catch (e) {
+        console.error("Erro ao integrar comparador:", e);
+    }
+  }
+
+  // Inicializa a carga
+  carregarComparadorNativo();
+  
   document.addEventListener('DOMContentLoaded', () => {
     const tabelaCard = document.querySelector('#pagina-historico-liberacoes .bg-gray-900.p-6.rounded-xl.shadow-lg');
     if (!tabelaCard) return;
