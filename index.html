@@ -113,7 +113,7 @@
           <i data-lucide="file-text" class="sidebar-icon"></i>
           <span class="sidebar-label flex items-center">
             Relatórios
-            <span class="bg-green-500 text-slate-950 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Plus</span>
+              <span class="bg-green-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Plus</span>
           </span>
         </button>
 
@@ -121,7 +121,7 @@
           <i data-lucide="activity" class="sidebar-icon"></i>
           <span class="sidebar-label flex items-center">
             SEFAZ
-            <span class="bg-green-500 text-slate-950 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Plus</span>
+              <span class="bg-green-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Plus</span>
           </span>
         </button>
 
@@ -129,7 +129,7 @@
           <i data-lucide="bot" class="sidebar-icon"></i>
           <span class="sidebar-label flex items-center">
             Transcrever
-            <span class="bg-green-500 text-slate-950 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Plus</span>
+              <span class="bg-green-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Plus</span>
           </span>
         </button>
 
@@ -137,7 +137,7 @@
           <i data-lucide="messages-square" class="sidebar-icon"></i>
           <span class="sidebar-label flex items-center">
             CordIA
-            <span class="bg-green-500 text-slate-950 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Plus</span>
+              <span class="bg-green-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Plus</span>
           </span>
         </button>
 
@@ -192,18 +192,21 @@
           <i data-lucide="activity" class="sidebar-icon"></i>
           <span class="sidebar-label flex items-center">
             SEFAZ
-            <span class="bg-green-500 text-black text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Novo</span>
+              <span class="bg-green-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Plus</span>
           </span>
         </button>
         <button onclick="mostrarPagina('ia')" class="sidebar-item" id="btn-ia-mobile">
-          <i data-lucide="bot" class="sidebar-icon"></i> Transcrever
-        </button>
-        <button onclick="mostrarPagina('assistente')" class="sidebar-item" id="btn-assistente-mobile">
-          <i data-lucide="messages-square" class="sidebar-icon"></i> CordIA
-        </button>
-        <button onclick="mostrarPagina('relatorios')" class="sidebar-item" id="btn-relatorios-mobile">
-          <i data-lucide="file-text" class="sidebar-icon"></i> Relatórios
-        </button>
+            <i data-lucide="bot" class="sidebar-icon"></i> Transcrever
+            <span class="bg-green-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Plus</span>
+          </button>
+          <button onclick="mostrarPagina('assistente')" class="sidebar-item" id="btn-assistente-mobile">
+            <i data-lucide="messages-square" class="sidebar-icon"></i> CordIA
+            <span class="bg-green-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Plus</span>
+          </button>
+          <button onclick="mostrarPagina('relatorios')" class="sidebar-item" id="btn-relatorios-mobile">
+            <i data-lucide="file-text" class="sidebar-icon"></i> Relatórios
+            <span class="bg-green-500 text-white text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Plus</span>
+          </button>
       </nav>
     </aside>
 
@@ -553,7 +556,7 @@
               </article>
             </section>
 
-            <section class="reports-grid">
+            <section class="reports-grid reports-grid-primary">
               <article class="reports-card reports-card-filters">
                 <div class="reports-card-header">
                   <div>
@@ -632,7 +635,7 @@
               </article>
             </section>
 
-            <section class="reports-grid">
+            <section class="reports-grid-full">
               <article class="reports-card">
                 <div class="reports-card-header">
                   <div>
@@ -663,9 +666,11 @@
                     </thead>
                     <tbody id="reports-preview-body"></tbody>
                   </table>
-                </div>
-              </article>
+                  </div>
+                </article>
+              </section>
 
+            <section class="reports-grid-full">
               <article class="reports-card">
                 <div class="reports-card-header">
                   <div>
@@ -673,7 +678,7 @@
                     <p class="reports-card-subtitle">Distribuição por módulo e releases mais densos no recorte atual.</p>
                   </div>
                 </div>
-                <div class="reports-side-grid">
+                <div class="reports-side-grid reports-side-grid-wide">
                   <div>
                     <h4 class="reports-mini-title">Módulos com mais incidência</h4>
                     <div id="reports-module-ranking" class="reports-ranking-list"></div>
