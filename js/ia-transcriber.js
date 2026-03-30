@@ -452,9 +452,17 @@
     const formData = new FormData();
 
     try {
-      if (file.size > COMPRESS_FROM_BYTES || !isAlreadyCompactAudio(file)) {
+      await pingBackendHealth();
+
+      if (file.size <= MAX_UPLOAD_BYTES && isUploadFriendlyAudio(file)) {
+        uploadFile = file;
+      } else if (file.size > COMPRESS_FROM_BYTES || !isAlreadyCompactAudio(file)) {
         notify("Convertendo áudio para Opus reduzido...", "info");
-        uploadFile = await compressAudioForUpload(file);
+        uploadFile = await withTimeout(
+          compressAudioForUpload(file),
+          20000,
+          "A conversão local do áudio demorou demais e foi interrompida."
+        );
       }
 
       if (uploadFile.size > MAX_UPLOAD_BYTES) {
@@ -463,6 +471,8 @@
 
       formData.append("audio", uploadFile);
       formData.append("modo", "openai");
+
+      notify("Enviando áudio para a API...", "info");
 
       const response = await fetch(`${apiBaseUrl}/transcrever`, {
         method: "POST",
@@ -756,6 +766,40 @@
   function isAlreadyCompactAudio(file) {
     const type = String(file?.type || "").toLowerCase();
     return type.includes("ogg") || type.includes("opus") || type.includes("webm");
+  }
+
+  function isUploadFriendlyAudio(file) {
+    const type = String(file?.type || "").toLowerCase();
+    return (
+      type.includes("mpeg") ||
+      type.includes("mp3") ||
+      type.includes("ogg") ||
+      type.includes("opus") ||
+      type.includes("webm") ||
+      type.includes("wav") ||
+      type.includes("mp4") ||
+      type.includes("m4a")
+    );
+  }
+
+  async function pingBackendHealth() {
+    try {
+      await fetch(`${apiBaseUrl}/health`, {
+        method: "GET",
+        cache: "no-store",
+      });
+    } catch (error) {
+      // noop
+    }
+  }
+
+  function withTimeout(promise, timeoutMs, message) {
+    return Promise.race([
+      promise,
+      new Promise((_, reject) => {
+        setTimeout(() => reject(new Error(message)), timeoutMs);
+      }),
+    ]);
   }
 
   function pickRecorderMimeType() {
