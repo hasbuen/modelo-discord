@@ -3,7 +3,6 @@
   const FALLBACK_API_URL = "https://modelo-discord-server.vercel.app/api";
   const MAX_UPLOAD_BYTES = 2.5 * 1024 * 1024;
   const COMPRESS_FROM_BYTES = 256 * 1024;
-  const DIRECT_UPLOAD_LIMIT_BYTES = 4 * 1024 * 1024;
   const TARGET_SAMPLE_RATE = 16000;
   const apiBaseUrl = (window.PROTOCORD_TRANSCRIBER_API || localStorage.getItem("PROTOCORD_TRANSCRIBER_API") || FALLBACK_API_URL).replace(/\/$/, "");
 
@@ -457,7 +456,7 @@
 
       let data;
 
-      if (file.size <= DIRECT_UPLOAD_LIMIT_BYTES && isUploadFriendlyAudio(file)) {
+      if (isUploadFriendlyAudio(file)) {
         notify("Enviando Ã¡udio original para a API...", "info");
         try {
           data = await sendTranscriptionRequest(file);
@@ -481,10 +480,10 @@
           data = await sendTranscriptionRequest(uploadFile);
         }
       } else {
-        notify("Convertendo Ã¡udio para Opus reduzido...", "info");
+        notify("Formato de Ã¡udio sem envio direto. Convertendo para Opus reduzido...", "info");
         uploadFile = await withTimeout(
           compressAudioForUpload(file),
-            180000,
+          180000,
           "A conversÃ£o local do Ã¡udio demorou demais e foi interrompida."
         );
 
