@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   const STORAGE_KEY = "protocord_ia_transcriber_v1";
   const FALLBACK_API_URL = "https://modelo-discord-server.vercel.app/api";
   const MAX_UPLOAD_BYTES = 2.5 * 1024 * 1024;
@@ -381,7 +381,7 @@
     els.activeTitle.textContent = active.customName || active.phone || "Ticket";
     els.activeDate.textContent = active.createdAt || "";
     els.toggleRegisteredBtn.querySelector("span").textContent = active.isRegistered ? "Registrado" : "Marcar Registro";
-    els.uploadAudioBtn.querySelector("span").textContent = state.uploading ? "Processando..." : "Transcrição";
+    els.uploadAudioBtn.querySelector("span").textContent = state.uploading ? "Processando..." : "TranscriÃ§Ã£o";
 
     renderImageViewer(active);
     renderReport(active);
@@ -417,12 +417,12 @@
       els.reportView.classList.add("hidden");
       els.reportEditor.classList.remove("hidden");
       els.reportEditor.value = text;
-      els.editReportBtn.querySelector("span").textContent = "Salvar Edição";
+      els.editReportBtn.querySelector("span").textContent = "Salvar EdiÃ§Ã£o";
       els.cancelReportBtn.classList.remove("hidden");
     } else {
       els.reportView.classList.remove("hidden");
       els.reportEditor.classList.add("hidden");
-      els.reportView.textContent = text || "Aguardando transcrição...";
+      els.reportView.textContent = text || "Aguardando transcriÃ§Ã£o...";
       els.editReportBtn.querySelector("span").textContent = "Editar";
       els.cancelReportBtn.classList.add("hidden");
     }
@@ -458,7 +458,7 @@
       let data;
 
       if (file.size <= DIRECT_UPLOAD_LIMIT_BYTES && isUploadFriendlyAudio(file)) {
-        notify("Enviando áudio original para a API...", "info");
+        notify("Enviando Ã¡udio original para a API...", "info");
         try {
           data = await sendTranscriptionRequest(file);
           uploadFile = file;
@@ -470,26 +470,26 @@
           notify("Upload direto excedeu o limite. Convertendo para Opus reduzido...", "warning");
           uploadFile = await withTimeout(
             compressAudioForUpload(file),
-            20000,
-            "A conversão local do áudio demorou demais e foi interrompida."
+            180000,
+            "A conversÃ£o local do Ã¡udio demorou demais e foi interrompida."
           );
 
           if (uploadFile.size > MAX_UPLOAD_BYTES) {
-            throw new Error("O áudio continua acima do limite de upload. Tente um arquivo menor.");
+            throw new Error("O Ã¡udio continua acima do limite de upload. Tente um arquivo menor.");
           }
 
           data = await sendTranscriptionRequest(uploadFile);
         }
       } else {
-        notify("Convertendo áudio para Opus reduzido...", "info");
+        notify("Convertendo Ã¡udio para Opus reduzido...", "info");
         uploadFile = await withTimeout(
           compressAudioForUpload(file),
-          20000,
-          "A conversão local do áudio demorou demais e foi interrompida."
+            180000,
+          "A conversÃ£o local do Ã¡udio demorou demais e foi interrompida."
         );
 
         if (uploadFile.size > MAX_UPLOAD_BYTES) {
-          throw new Error("O áudio continua acima do limite de upload. Tente um arquivo menor.");
+          throw new Error("O Ã¡udio continua acima do limite de upload. Tente um arquivo menor.");
         }
 
         data = await sendTranscriptionRequest(uploadFile);
@@ -511,9 +511,9 @@
       state.reportDraft = "";
       persist();
       render();
-      notify("Transcrição concluída.", "success");
+      notify("TranscriÃ§Ã£o concluÃ­da.", "success");
     } catch (error) {
-      console.error("Falha no fluxo de transcrição:", error);
+      console.error("Falha no fluxo de transcriÃ§Ã£o:", error);
       notify(error.message || "Falha ao transcrever.", "error");
     } finally {
       state.uploading = false;
@@ -526,7 +526,7 @@
     formData.append("audio", file);
     formData.append("modo", "openai");
 
-    notify("Enviando áudio para a API...", "info");
+    notify("Enviando Ã¡udio para a API...", "info");
 
     const response = await fetch(`${apiBaseUrl}/transcrever`, {
       method: "POST",
@@ -541,7 +541,7 @@
     }
 
     if (!response.ok || !data?.sucesso) {
-      const message = data?.erro || `Falha ao transcrever o áudio. Status ${response.status}`;
+      const message = data?.erro || `Falha ao transcrever o Ã¡udio. Status ${response.status}`;
       const error = new Error(message);
       error.status = response.status;
       throw error;
@@ -581,7 +581,7 @@
     state.editingReport = false;
     state.reportDraft = "";
     persist();
-    notify("Relatório atualizado.", "success");
+    notify("RelatÃ³rio atualizado.", "success");
   }
 
   function getActiveTicketWithDraft(persistDraft) {
@@ -681,12 +681,12 @@
 
   async function compressAudioForUpload(file) {
     if (typeof MediaRecorder === "undefined") {
-      throw new Error("Seu navegador não suporta conversão local deste áudio.");
+      throw new Error("Seu navegador nÃ£o suporta conversÃ£o local deste Ã¡udio.");
     }
 
     const mimeType = pickRecorderMimeType();
     if (!mimeType) {
-      throw new Error("Nenhum codec compatível encontrado para converter o áudio.");
+      throw new Error("Nenhum codec compatÃ­vel encontrado para converter o Ã¡udio.");
     }
 
     const arrayBuffer = await file.arrayBuffer();
@@ -713,7 +713,7 @@
       }
 
       if (!bestBlob) {
-        throw new Error("Não foi possível converter o áudio para um formato menor.");
+        throw new Error("NÃ£o foi possÃ­vel converter o Ã¡udio para um formato menor.");
       }
 
       const extension = mimeType.includes("ogg") ? "ogg" : "webm";
@@ -775,7 +775,7 @@
           } catch (error) {
             // noop
           }
-          reject(new Error("Tempo esgotado ao converter o áudio para Opus."));
+          reject(new Error("Tempo esgotado ao converter o Ã¡udio para Opus."));
         }, Math.max(15000, Math.ceil(audioBuffer.duration * 2000)));
 
         recorder.addEventListener("dataavailable", (event) => {
@@ -789,7 +789,7 @@
 
         recorder.addEventListener("error", () => {
           clearTimeout(timeoutId);
-          reject(new Error("Falha ao codificar o áudio em Opus."));
+          reject(new Error("Falha ao codificar o Ã¡udio em Opus."));
         });
 
         source.addEventListener("ended", () => {
@@ -905,3 +905,5 @@
 
   document.addEventListener("DOMContentLoaded", init);
 })();
+
+
