@@ -108,15 +108,16 @@
         </button>
         <input type="file" id="arquivoRTF" accept=".rtf" class="hidden" onchange="processarRTF(event)" />
 
-        <button onclick="mostrarPagina('compara-textos')" data-tooltip="Compara textos" class="sidebar-item" id="btn-compara">
-          <i data-lucide="scale" class="sidebar-icon"></i>
+        <button onclick="mostrarPagina('relatorios')" data-tooltip="Relatórios" class="sidebar-item"
+          id="btn-relatorios">
+          <i data-lucide="file-text" class="sidebar-icon"></i>
           <span class="sidebar-label flex items-center">
-            Comparar
+            Relatórios
             <span class="bg-green-500 text-black text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Novo</span>
           </span>
         </button>
-        
-        <button onclick="mostrarPagina('sefaz')" data-tooltip="SEFAZ" class="sidebar-item" id="btn-sefaz">
+
+        <button onclick="mostrarPagina('sefaz')" data-tooltip="IA Inteligente" class="sidebar-item" id="btn-sefaz">
           <i data-lucide="activity" class="sidebar-icon"></i>
           <span class="sidebar-label flex items-center">
             SEFAZ
@@ -128,8 +129,7 @@
           <i data-lucide="bot" class="sidebar-icon"></i>
           <span class="sidebar-label flex items-center">
             IA
-            <span class="bg-yellow-500 text-black text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Quase
-              lá</span>
+            <span class="bg-green-500 text-black text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Novo</span>
           </span>
         </button>
 
@@ -137,7 +137,8 @@
 
       <div class="mt-auto border-t border-gray-700 pt-3">
         <!-- Tema fixo: escuro (removido visual) -->
-        <div class="theme-toggles-container flex justify-center bg-gray-800 rounded-lg p-1 gap-1" aria-hidden="true"></div>
+        <div class="theme-toggles-container flex justify-center bg-gray-800 rounded-lg p-1 gap-1" aria-hidden="true">
+        </div>
       </div>
     </aside>
 
@@ -178,14 +179,6 @@
         <button onclick="document.getElementById('arquivoRTF').click()" class="sidebar-item">
           <i data-lucide="package-open" class="sidebar-icon"></i> Analisar RLS
         </button>
-        <button onclick="mostrarPagina('compara-textos')" data-tooltip="Compara textos" class="sidebar-item"
-          id="btn-compara-mobile">
-          <i data-lucide="activity" class="sidebar-icon"></i>
-          <span class="sidebar-label flex items-center">
-            Comparar
-            <span class="bg-green-500 text-black text-xs font-semibold px-2 py-0.5 rounded-full ml-2">Novo</span>
-          </span>
-        </button>
         <button onclick="mostrarPagina('sefaz')" data-tooltip="Monitorar SEFAZ" class="sidebar-item"
           id="btn-sefaz-mobile">
           <i data-lucide="activity" class="sidebar-icon"></i>
@@ -196,6 +189,9 @@
         </button>
         <button onclick="mostrarPagina('ia')" class="sidebar-item" id="btn-ia-mobile">
           <i data-lucide="bot" class="sidebar-icon"></i> IA
+        </button>
+        <button onclick="mostrarPagina('relatorios')" class="sidebar-item" id="btn-relatorios-mobile">
+          <i data-lucide="file-text" class="sidebar-icon"></i> Relatórios
         </button>
       </nav>
     </aside>
@@ -437,14 +433,15 @@
                 <div class="flex items-center justify-between mb-2">
                   <h4 class="text-sm font-semibold text-white">Tendência por Módulo</h4>
                   <div class="flex items-center gap-2">
-                    <small id="trend-current" class="text-xs text-gray-400">Exibindo: <span id="trend-modulo-name">—</span></small>
+                    <small id="trend-current" class="text-xs text-gray-400">Exibindo: <span
+                        id="trend-modulo-name">—</span></small>
                   </div>
                 </div>
                 <div class="relative" style="height: 180px;">
                   <canvas id="chartTrendModulo"></canvas>
                 </div>
               </div>
-            </div> 
+            </div>
 
             <div class="bg-gray-900 p-1">
               <h2 class="text-2xl text-gray-200 text-center font-bold mb-4">
@@ -500,11 +497,64 @@
             </div>
           </div>
         </div>
-        
-        <div id="pagina-compara-textos" class="hidden animate__animated animate__fadeIn">
-          <div class="bg-gray-900 min-h-screen p-4 lg:p-8">
-            <div id="conteudo-comparador" class="max-w-7xl mx-auto">
+
+        <!-- Página: Relatórios -->
+        <div id="pagina-relatorios" class="hidden animate__animated animate__fadeIn">
+          <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
+            <h2 class="text-2xl font-bold text-white mb-4">Relatórios</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                <h3 class="text-lg font-semibold text-white mb-2">Protocolos por Release</h3>
+                <p class="text-sm text-gray-400 mb-4">Exporta um PDF com o gráfico "Protocolos por Release".</p>
+                <button onclick="exportarProtocolosPDF()"
+                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Exportar PDF</button>
+              </div>
+
+              <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                <h3 class="text-lg font-semibold text-white mb-2">Ranking de Módulos</h3>
+                <p class="text-sm text-gray-400 mb-4">Exporta o conteúdo atual do ranking como PDF.</p>
+                <button onclick="exportarRankingPDF()"
+                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Exportar PDF</button>
+              </div>
+
+              <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
+                <h3 class="text-lg font-semibold text-white mb-2">Top 5 Releases</h3>
+                <p class="text-sm text-gray-400 mb-4">Exporta o gráfico "Top 5 Releases" como PDF.</p>
+                <button onclick="exportarTop5PDF()"
+                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Exportar PDF</button>
+              </div>
             </div>
+
+            <!-- Relatório de Detalhes (Ticket / PRT / Descrição / Tipo / Release) -->
+            <div class="mt-6 bg-gray-900 p-4 rounded-xl shadow-lg">
+              <h3 class="text-lg font-semibold text-white mb-3">Relatório de Detalhes</h3>
+              <p class="text-sm text-gray-400 mb-3">Gera um PDF com a lista de protocolos (Ticket, PRT, Descrição, Tipo, Release). Use os filtros para exportar somente erros/sugestões ou um release específico.</p>
+
+              <div class="flex flex-col md:flex-row gap-3 items-center">
+                <div class="flex items-center gap-2">
+                  <label for="relatorio-tipo-select" class="text-sm text-gray-300 mr-2">Tipo:</label>
+                  <select id="relatorio-tipo-select" class="bg-gray-800 text-gray-200 px-3 py-2 rounded">
+                    <option value="todos">Todos</option>
+                    <option value="erro">Apenas Erros</option>
+                    <option value="sugestao">Apenas Sugestões</option>
+                  </select>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <label for="relatorio-release-select" class="text-sm text-gray-300 mr-2">Release:</label>
+                  <select id="relatorio-release-select" class="bg-gray-800 text-gray-200 px-3 py-2 rounded">
+                    <option value="todas">Todas</option>
+                  </select>
+                </div>
+
+                <div class="ml-auto flex gap-2">
+                  <button id="btn-export-det" onclick="exportarDetalhesPDF()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Exportar Detalhes (PDF)</button>
+                  <button onclick="exportarDetalhesCSV()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded">Exportar CSV</button>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -711,16 +761,138 @@
         </div>
 
         <div id="pagina-ia" class="hidden animate__animated animate__fadeIn">
-          <div class="bg-gray-800 p-8 rounded-xl border border-gray-700 text-center">
-            <div class="bg-blue-900/30 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <i data-lucide="bot" class="w-10 h-10 text-blue-400"></i>
-            </div>
-            <h2 class="text-2xl font-bold mb-2">Assistente IA</h2>
-            <p class="text-gray-400 max-w-md mx-auto">Esta funcionalidade irá carregar modelos de aprendizado de máquina
-              para auxiliar na categorização automática.</p>
-            <div class="mt-6 p-4 bg-gray-900 rounded-lg text-left font-mono text-xs text-green-400">
-              > Loading TensorFlow.js...<br>
-              > Initializing model...
+          <div class="ia-workspace">
+            <div class="ia-shell">
+              <aside class="ia-sidebar">
+                <div class="ia-sidebar-top">
+                  <button id="ia-new-ticket-btn" class="ia-btn-primary" type="button">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    Novo Ticket
+                  </button>
+
+                  <label class="ia-search">
+                    <i data-lucide="search" class="w-4 h-4 ia-search-icon"></i>
+                    <input id="ia-search-input" type="text" placeholder="Buscar nome ou telefone..." />
+                  </label>
+                </div>
+
+                <div id="ia-ticket-list" class="ia-ticket-list"></div>
+              </aside>
+
+              <section class="ia-main">
+                <header class="ia-main-header">
+                  <div>
+                    <p class="ia-eyebrow">Central de Transcrição</p>
+                    <h2 id="ia-active-title" class="ia-main-title">Selecione ou crie um ticket</h2>
+                    <p id="ia-active-date" class="ia-main-date">A página IA agora usa o fluxo do projeto enviado.</p>
+                  </div>
+
+                  <div class="ia-header-actions">
+                    <button id="ia-toggle-registered-btn" class="ia-btn-secondary" type="button" disabled>
+                      <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                      <span>Marcar Registro</span>
+                    </button>
+                    <button id="ia-upload-audio-btn" class="ia-btn-secondary" type="button" disabled>
+                      <i data-lucide="headphones" class="w-4 h-4"></i>
+                      <span>Transcrição</span>
+                    </button>
+                    <button id="ia-copy-znuny-btn" class="ia-btn-secondary ia-btn-warm" type="button" disabled>
+                      <i data-lucide="clipboard-plus" class="w-4 h-4"></i>
+                      <span>Transportar</span>
+                    </button>
+                    <button id="ia-copy-html-btn" class="ia-btn-secondary" type="button" disabled>
+                      <i data-lucide="clipboard" class="w-4 h-4"></i>
+                      <span>Copiar HTML</span>
+                    </button>
+                    <input id="ia-audio-input" type="file" accept="audio/*" class="hidden" />
+                  </div>
+                </header>
+
+                <div id="ia-empty-state" class="ia-empty-state">
+                  <i data-lucide="bot" class="w-10 h-10"></i>
+                  <div>
+                    <h3>Fila pronta para atendimento</h3>
+                    <p>Crie um ticket, cole evidências com `Ctrl+V` e envie o áudio para gerar o relatório.</p>
+                  </div>
+                </div>
+
+                <div id="ia-content" class="ia-content hidden">
+                  <section class="ia-card">
+                    <div class="ia-section-header">
+                      <div>
+                        <h3 class="ia-section-title">
+                          <i data-lucide="image" class="w-4 h-4"></i>
+                          Evidências
+                        </h3>
+                        <p class="ia-section-subtitle">Cole imagens com `Ctrl+V`. Elas ficam vinculadas ao ticket ativo.</p>
+                      </div>
+
+                      <div class="ia-carousel-controls">
+                        <button id="ia-prev-image-btn" class="ia-icon-btn" type="button" disabled>
+                          <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                        </button>
+                        <span id="ia-image-counter" class="ia-image-counter">0 / 0</span>
+                        <button id="ia-next-image-btn" class="ia-icon-btn" type="button" disabled>
+                          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div id="ia-image-empty" class="ia-image-empty">Nenhuma evidência colada ainda.</div>
+                    <div id="ia-image-stage" class="ia-image-stage hidden">
+                      <img id="ia-active-image" class="ia-active-image" alt="Evidência do ticket" />
+                      <div class="ia-image-actions">
+                        <button id="ia-copy-image-btn" class="ia-icon-btn" type="button" title="Copiar imagem">
+                          <i data-lucide="copy" class="w-4 h-4"></i>
+                        </button>
+                        <button id="ia-delete-image-btn" class="ia-icon-btn ia-icon-danger" type="button" title="Excluir imagem">
+                          <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section class="ia-card">
+                    <div class="ia-section-header">
+                      <div>
+                        <h3 class="ia-section-title">
+                          <i data-lucide="file-text" class="w-4 h-4"></i>
+                          Relatório Gerado
+                        </h3>
+                        <p class="ia-section-subtitle">Edite manualmente antes de transportar para o Znuny, se necessário.</p>
+                      </div>
+
+                      <div class="ia-report-actions">
+                        <button id="ia-edit-report-btn" class="ia-btn-secondary" type="button">
+                          <i data-lucide="square-pen" class="w-4 h-4"></i>
+                          <span>Editar</span>
+                        </button>
+                        <button id="ia-cancel-report-btn" class="ia-btn-secondary hidden" type="button">
+                          <i data-lucide="x" class="w-4 h-4"></i>
+                          <span>Cancelar</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <pre id="ia-report-view" class="ia-report-view"></pre>
+                    <textarea id="ia-report-editor" class="ia-report-editor hidden"></textarea>
+                  </section>
+
+                  <section id="ia-audio-card" class="ia-card hidden">
+                    <div class="ia-section-header">
+                      <div>
+                        <h3 class="ia-section-title">
+                          <i data-lucide="volume-2" class="w-4 h-4"></i>
+                          Áudio Original
+                        </h3>
+                        <p class="ia-section-subtitle">O arquivo fica acessível pelo backend de transcrição.</p>
+                      </div>
+                    </div>
+
+                    <audio id="ia-audio-player" class="ia-audio-player" controls></audio>
+                  </section>
+                </div>
+              </section>
             </div>
           </div>
         </div>
@@ -768,8 +940,21 @@
     </div>
   </div>
 
+  <!-- Loader para geração de PDF -->
+  <div id="pdfLoader" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
+    <div class="bg-gray-800 p-4 rounded-lg flex items-center gap-3 border border-gray-700">
+      <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-blue-400"></i>
+      <span id="pdfLoaderMessage" class="text-sm text-gray-200">Gerando PDF...</span>
+    </div>
+  </div>
+
+  <!-- Container para toasts de notificação -->
+  <div id="toastContainer" class="fixed bottom-6 right-6 flex flex-col gap-2 z-60 pointer-events-none"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0/dist/tf.min.js"></script>
   <script
     src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder@1.3.3/dist/universal-sentence-encoder.js"></script>
@@ -785,6 +970,7 @@
   <script src="js/similarity.js"></script>
   <script src="js/responses.js"></script>
   <script src="js/monitor_sefaz.js"></script>
+  <script src="js/ia-transcriber.js"></script>
   <script type="module" src="js/modal.js"></script>
 
 
@@ -853,6 +1039,10 @@
         setTimeout(() => gerarDashboardLiberacoes(), 200);
       }
 
+      if (paginaId === 'relatorios') {
+        if (typeof window.populateRelatoriosFilters === 'function') window.populateRelatoriosFilters();
+      }
+
       // Fecha mobile se aberto
       closeMobile();
     };
@@ -878,70 +1068,68 @@
     });
   </script>
 
+
+  <!-- Emergency fallbacks + EXTENSÕES DASHBOARD (EXPORTAÇÃO + RANKING) -->
   <script>
+    // Emergency fallbacks to keep exports and filters usable if the main script fails to parse
+    (function(){
+      window.showToast = window.showToast || function(message, type = 'info', duration = 3500) {
+        // Minimal non-visual fallback - logs to console
+        /* showToast fallback - no console output */
+      };
 
-    async function carregarComparadorNativo() {
-  const container = document.getElementById('conteudo-comparador');
-  
-  try {
-    // Busca o arquivo externo
-    const response = await fetch('html/comparador-textos.html');
-    const htmlText = await response.text();
-    
-    // Converte o texto em um documento HTML real para manipularmos
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlText, 'text/html');
-    
-    // Extrai as partes que interessam
-    const css = doc.querySelector('style').innerHTML;
-    const conteudo = doc.querySelector('main').innerHTML;
-    const scripts = doc.querySelectorAll('script');
+      window.showLoader = window.showLoader || function(msg = '') { /* loader fallback - no console output */ };
+      window.hideLoader = window.hideLoader || function() { /* loader hide fallback - no console output */ };
 
-    // Injeta na página com ajustes de "limpeza"
-    container.innerHTML = `
-      <style>
-        ${css}
-        /* Ajustes para fundir com o ProtoCord */
-        :root { --bg: transparent !important; }
-        main { padding: 0 !important; height: auto !important; overflow: visible !important; }
-        body { background: transparent !important; }
-      </style>
-      <div class="comparador-wrapper">
-        ${conteudo}
-      </div>
-    `;
+      window.normalizeLabel = window.normalizeLabel || function(s) {
+        if (!s) return '';
+        try { return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g,' ').trim(); }
+        catch(e){ return String(s).toLowerCase().replace(/\s+/g,' ').trim(); }
+      };
 
-    // Re-executa os scripts do comparador para as funções de botão funcionarem
-    scripts.forEach(oldScript => {
-      const newScript = document.createElement('script');
-      if (oldScript.src) {
-        newScript.src = oldScript.src;
-      } else {
-        newScript.innerHTML = oldScript.innerHTML;
-      }
-      document.body.appendChild(newScript);
-    });
+      // Try to populate Relatórios release select on DOMContentLoaded as a safe fallback
+      document.addEventListener('DOMContentLoaded', async () => {
+        const sel = document.getElementById('relatorio-release-select');
+        if (!sel) return;
+        try {
+          if (!Array.isArray(window.liberacoesOriginais) || window.liberacoesOriginais.length === 0) {
+            try {
+              const resp = await fetch('https://modelo-discord-server.vercel.app/api/liberados');
+              if (resp.ok) {
+                const dadosAPI = await resp.json();
+                window.liberacoesOriginais = dadosAPI.map(item => ({ release: item.release, protocolos: String(item.prts || '').split(' ').filter(p => p.trim().length>0) }));
+              } else {
+                window.liberacoesOriginais = [];
+              }
+            } catch (err) {
+              window.showToast && window.showToast('Falha ao buscar releases','warning');
+              window.liberacoesOriginais = [];
+            }
+          }
 
-  } catch (err) {
-    console.error("Erro ao carregar comparador:", err);
-  }
-}
-
-// Chama a função assim que o site abrir
-document.addEventListener('DOMContentLoaded', carregarComparadorNativo);
-    
+          if (!Array.isArray(window.liberacoesOriginais) || window.liberacoesOriginais.length === 0) return;
+          const uniq = [...new Set(window.liberacoesOriginais.map(r => r.release))].sort((a,b) => new Date(a.split('/').reverse().join('-')) - new Date(b.split('/').reverse().join('-'))).reverse();
+          sel.innerHTML = '<option value="todas">Todas</option>';
+          uniq.forEach(rel => {
+            const opt = document.createElement('option'); opt.value = rel; opt.textContent = rel; sel.appendChild(opt);
+          });
+        } catch (e) {
+          window.showToast && window.showToast('Falha ao popular filtros de Relatórios','warning');
+        }
+      });
+    })();
   </script>
 
-<!-- === EXTENSÕES DASHBOARD (EXPORTAÇÃO + RANKING) === -->
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const tabelaCard = document.querySelector('#pagina-historico-liberacoes .bg-gray-900.p-6.rounded-xl.shadow-lg');
-    if (!tabelaCard) return;
+  <!-- === EXTENSÕES DASHBOARD (EXPORTAÇÃO + RANKING) === -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabelaCard = document.querySelector('#pagina-historico-liberacoes .bg-gray-900.p-6.rounded-xl.shadow-lg');
+      if (!tabelaCard) return;
 
-    // Botões de exportação
-    const exportDiv = document.createElement('div');
-    exportDiv.className = 'flex justify-end gap-2 mb-3';
-    exportDiv.innerHTML = `
+      // Botões de exportação
+      const exportDiv = document.createElement('div');
+      exportDiv.className = 'flex justify-end gap-2 mb-3';
+      exportDiv.innerHTML = `
       <button onclick="exportarCSV()" class="px-3 py-2 text-xs rounded bg-gray-700 hover:bg-gray-600">
         Exportar CSV
       </button>
@@ -949,28 +1137,854 @@ document.addEventListener('DOMContentLoaded', carregarComparadorNativo);
         Exportar Excel
       </button>
     `;
-    tabelaCard.insertBefore(exportDiv, tabelaCard.children[1]);
+      tabelaCard.insertBefore(exportDiv, tabelaCard.children[1]);
 
-    // Ranking de módulos
-    const ranking = document.createElement('div');
-    ranking.className = 'bg-gray-900 p-4 rounded-xl mt-4';
-    ranking.innerHTML = `
+      // Ranking de módulos
+      const ranking = document.createElement('div');
+      ranking.className = 'bg-gray-900 p-4 rounded-xl mt-4';
+      ranking.innerHTML = `
       <h3 class="text-sm font-bold mb-3 text-gray-300 uppercase">Ranking de Módulos</h3>
       <div id="ranking-modulos" class="space-y-2"></div>
     `;
 
-    // Tenta inserir abaixo do card "Protocolos por Release" (canvas #chartLiberacoes)
-    const protocolosCanvas = document.getElementById('chartLiberacoes');
-    const protocolosCard = protocolosCanvas?.closest('.bg-gray-900.p-6.rounded-xl.shadow-lg');
-    if (protocolosCard && protocolosCard.parentElement) {
-      protocolosCard.parentElement.insertBefore(ranking, protocolosCard.nextElementSibling);
-    } else {
-      // Fallback: mantém comportamento anterior
-      tabelaCard.parentElement.appendChild(ranking);
-    }
-  });
-</script>
+      // Tenta inserir abaixo do card "Protocolos por Release" (canvas #chartLiberacoes)
+      const protocolosCanvas = document.getElementById('chartLiberacoes');
+      const protocolosCard = protocolosCanvas?.closest('.bg-gray-900.p-6.rounded-xl.shadow-lg');
+      if (protocolosCard && protocolosCard.parentElement) {
+        protocolosCard.parentElement.insertBefore(ranking, protocolosCard.nextElementSibling);
+      } else {
+        // Fallback: mantém comportamento anterior
+        tabelaCard.parentElement.appendChild(ranking);
+      }
+    });
+  </script>
 
+  <script>
+    // Funções de exportação de PDF (append)
+    // Loader utilities
+    window.showLoader = function(message = 'Gerando PDF...') {
+      const el = document.getElementById('pdfLoader');
+      if (!el) return;
+      const msg = document.getElementById('pdfLoaderMessage');
+      if (msg) msg.textContent = message;
+      el.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.hideLoader = function() {
+      const el = document.getElementById('pdfLoader');
+      if (!el) return;
+      el.classList.add('hidden');
+      document.body.style.overflow = '';
+    };
+
+    // Simple toast notifications
+    window.showToast = function(message, type = 'info', duration = 3500) {
+      const container = document.getElementById('toastContainer');
+      if (!container) { return; }
+      const toast = document.createElement('div');
+      toast.className = 'min-w-[200px] max-w-md px-4 py-2 rounded shadow-lg text-sm pointer-events-auto flex items-center gap-3 transition-transform transform';
+      let bg = 'bg-gray-800 text-white';
+      if (type === 'success') bg = 'bg-green-600 text-white';
+      if (type === 'error') bg = 'bg-red-600 text-white';
+      if (type === 'warning') bg = 'bg-yellow-500 text-black';
+      toast.className += ' ' + bg;
+      toast.style.opacity = '1';
+      toast.innerHTML = `<div class="flex-1">${message}</div><button class="ml-2 text-xs opacity-80">Fechar</button>`;
+      container.appendChild(toast);
+      const remove = () => {
+        toast.style.transition = 'opacity 220ms ease, transform 220ms ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(8px)';
+        setTimeout(() => toast.remove(), 260);
+      };
+      toast.querySelector('button').addEventListener('click', remove);
+      setTimeout(remove, duration);
+    };
+
+    // Normaliza labels para comparações (remove acentos, trim e lowercase)
+    window.normalizeLabel = function (s) { if (!s) return ''; try { return String(s).toLowerCase().normalize('NFD').replace(/[ -FFFF]/g,'').replace(/[ -]/g,'').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim(); } catch(e){ return String(s).toLowerCase().replace(/\s+/g,' ').trim(); } };
+      if (!s) return '';
+      try {
+/[\u0300-\u036f]/g, ''),/[ -\u036f]/g, '').replace(/\s+/g, ' ').trim();
+      } catch (e) {
+        return String(s).toLowerCase().replace(/\s+/g, ' ').trim();
+      }
+    };
+
+
+    window.exportarProtocolosPDF = async function() {
+      const canvas = document.getElementById('chartLiberacoes');
+      if (!canvas) return showToast('Gráfico "Protocolos por Release" não encontrado', 'warning');
+      showLoader('Gerando PDF: Protocolos por Release...');
+      try {
+        let useImage = false;
+        let imgData = null;
+        try {
+          imgData = canvas.toDataURL('image/png', 1.0);
+          // quick validation
+          const { jsPDF } = window.jspdf;
+          const _pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+          _pdf.getImageProperties(imgData);
+          useImage = true;
+        } catch (innerErr) {
+          console.warn('Canvas/image export failed, falling back to text PDF:', innerErr);
+        }
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+
+        if (useImage) {
+          const imgProps = pdf.getImageProperties(imgData);
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+          pdf.setFontSize(14);
+          pdf.text('Relatório: Protocolos por Release', 40, 30);
+          pdf.addImage(imgData, 'PNG', 40, 50, pdfWidth - 80, pdfHeight);
+        } else {
+          // Fallback: text table of releases and counts
+          const liberacoes = Array.isArray(window.liberacoesOriginais) ? window.liberacoesOriginais : [];
+          pdf.setFontSize(12);
+          pdf.text('Relatório: Protocolos por Release (Texto)', 40, 30);
+          pdf.setFontSize(10);
+          const lineH = 14;
+          let y = 60;
+          const marginRight = 40;
+          liberacoes.forEach(l => {
+            if (y > pdf.internal.pageSize.getHeight() - 40) {
+              pdf.addPage();
+              y = 40;
+            }
+            pdf.text(String(l.release || '—'), 40, y);
+            pdf.text(String((l.protocolos || []).length), pdfWidth - marginRight - 20, y);
+            y += lineH;
+          });
+        }
+
+        const filename = `protocolos_por_release_${new Date().toISOString().slice(0,10)}.pdf`;
+        pdf.save(filename);
+        showToast('PDF gerado com sucesso!', 'success');
+      } catch (err) {
+        console.error('Erro ao gerar PDF Protocolos:', err);
+        showToast('Erro ao gerar o PDF. Veja o console para detalhes.', 'error');
+      } finally {
+        hideLoader();
+      }
+    }
+
+    window.exportarTop5PDF = async function() {
+      const canvas = document.getElementById('chartTop5');
+      if (!canvas) return showToast('Gráfico "Top 5 Releases" não encontrado', 'warning');
+      showLoader('Gerando PDF: Top 5 Releases...');
+      try {
+        let useImage = false;
+        let imgData = null;
+        try {
+          imgData = canvas.toDataURL('image/png', 1.0);
+          const { jsPDF } = window.jspdf;
+          const _pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+          _pdf.getImageProperties(imgData);
+          useImage = true;
+        } catch (innerErr) {
+          console.warn('Canvas/image export failed, falling back to text PDF:', innerErr);
+        }
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+
+        if (useImage) {
+          const imgProps = pdf.getImageProperties(imgData);
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+          pdf.setFontSize(14);
+          pdf.text('Relatório: Top 5 Releases', 40, 30);
+          pdf.addImage(imgData, 'PNG', 40, 50, pdfWidth - 80, pdfHeight);
+        } else {
+          // Fallback: use chart data (labels + values)
+          const chart = chartsInstance?.chartTop5;
+          if (!chart) {
+            throw new Error('Dados do gráfico Top 5 não disponíveis para gerar PDF');
+          }
+          const labels = chart.data.labels || [];
+          const data = chart.data.datasets?.[0]?.data || [];
+
+          pdf.setFontSize(12);
+          pdf.text('Relatório: Top 5 Releases (Texto)', 40, 30);
+          pdf.setFontSize(10);
+          const lineH = 16;
+          let y = 60;
+          for (let i = 0; i < labels.length; i++) {
+            if (y > pdf.internal.pageSize.getHeight() - 40) {
+              pdf.addPage();
+              y = 40;
+            }
+            pdf.text(`${i+1}. ${labels[i]}`, 40, y);
+            pdf.text(String(data[i] ?? ''), pdfWidth - 80, y);
+            y += lineH;
+          }
+        }
+
+        const filename = `top5_releases_${new Date().toISOString().slice(0,10)}.pdf`;
+        pdf.save(filename);
+        showToast('PDF gerado com sucesso!', 'success');
+      } catch (err) {
+        console.error('Erro ao gerar PDF Top 5:', err);
+        showToast('Erro ao gerar o PDF. Veja o console para detalhes.', 'error');
+      } finally {
+        hideLoader();
+      }
+    }
+
+    window.exportarRankingPDF = async function() {
+      const el = document.getElementById('ranking-modulos');
+      if (!el) return showToast('Ranking não encontrado', 'warning');
+      showLoader('Calculando páginas...');
+
+      const btn = document.querySelector('button[onclick="exportarRankingPDF()"]');
+      if (btn) btn.disabled = true;
+
+      try {
+        // Recria dados do ranking a partir dos dados filtrados (mesma lógica de renderizarRankingModulos)
+        const liberacoes = (typeof obterLiberacoesFiltradasAtuais === 'function') ? obterLiberacoesFiltradasAtuais() : (window.liberacoesOriginais || []);
+        const details = {};
+        (liberacoes || []).forEach(rel => {
+          (rel.protocolos || []).forEach(prt => {
+            const modulo = window.protocolosIndex?.[prt]?.modulo;
+            if (!modulo) return;
+            if (!details[modulo]) details[modulo] = { count: 0, prts: new Set(), releases: new Set() };
+            details[modulo].count += 1;
+            details[modulo].prts.add(prt);
+            details[modulo].releases.add(rel.release);
+          });
+        });
+
+        const ordenado = Object.entries(details).sort((a, b) => b[1].count - a[1].count);
+        if (!ordenado.length) {
+          showToast('Nenhum dado encontrado para exportar', 'warning');
+          return;
+        }
+
+        // Prepara linhas para o PDF
+        const rows = ordenado.map(([mod, info], idx) => ({ pos: idx + 1, modulo: mod, prts: info.prts.size, releases: info.releases.size }));
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+        const pageW = doc.internal.pageSize.getWidth();
+        const pageH = doc.internal.pageSize.getHeight();
+        const marginLeft = 40;
+        const marginRight = 40;
+        const marginTop = 60;
+        const marginBottom = 50;
+
+        doc.setFont('helvetica');
+        doc.setFontSize(10);
+        const fontSize = 10;
+        const lineHeight = fontSize * 1.4;
+
+        // Colunas: Pos | Módulo | PRTs | Releases
+        const colPos = 30;
+        const colPRTs = 50;
+        const colReleases = 60;
+        const gap = 8;
+        const colModulo = pageW - marginLeft - marginRight - (colPos + colPRTs + colReleases) - (gap * 4);
+
+        const processed = rows.map(r => {
+          const moduloLines = doc.splitTextToSize(String(r.modulo || ''), colModulo);
+          const h = Math.max(1, moduloLines.length) * lineHeight + 6;
+          return { ...r, moduloLines, height: h };
+        });
+
+        // Calcula páginas (simulação)
+        const headerHeight = 30 + 18; // título + header
+        const avail = pageH - marginTop - marginBottom - headerHeight;
+        let pages = 1;
+        let acc = 0;
+        processed.forEach(r => {
+          if (acc + r.height > avail) { pages++; acc = r.height; } else { acc += r.height; }
+        });
+
+        // Renderiza por páginas
+        let currentPage = 1;
+        let yStart = marginTop;
+
+        function renderHeader(pageNum) {
+          doc.setFontSize(12);
+          doc.text('Relatório: Ranking de Módulos', marginLeft, yStart);
+          yStart += 18;
+
+          doc.setFontSize(10);
+          const headerY = yStart;
+          let x = marginLeft;
+          doc.text('Pos', x, headerY);
+          x += colPos + gap;
+          doc.text('Módulo', x, headerY);
+          x += colModulo + gap;
+          doc.text('PRTs', x, headerY);
+          x += colPRTs + gap;
+          doc.text('Releases', x, headerY);
+
+          yStart += 18;
+          doc.setDrawColor(110);
+          doc.setLineWidth(0.5);
+          doc.line(marginLeft, yStart - 8, pageW - marginRight, yStart - 8);
+
+          showLoader(`Gerando PDF: Página ${pageNum} / ${pages}`);
+        }
+
+        // Start first page
+        renderHeader(currentPage);
+        let y = yStart;
+
+        for (let i = 0; i < processed.length; i++) {
+          const r = processed[i];
+          if (y + r.height > pageH - marginBottom) {
+            doc.setFontSize(9);
+            doc.text(`Página ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
+            doc.addPage();
+            currentPage++;
+            y = marginTop;
+            yStart = marginTop;
+            renderHeader(currentPage);
+            y = yStart;
+          }
+
+          // escreve a linha
+          let x = marginLeft;
+          doc.setFontSize(fontSize);
+          doc.text(String(r.pos), x, y + lineHeight * 0.8);
+          x += colPos + gap;
+          doc.text(r.moduloLines, x, y + lineHeight * 0.8);
+          const prtsX = marginLeft + colPos + gap + colModulo + gap;
+          doc.text(String(r.prts), prtsX, y + lineHeight * 0.8);
+          const relX = prtsX + colPRTs + gap;
+          doc.text(String(r.releases), relX, y + lineHeight * 0.8);
+
+          y += r.height;
+        }
+
+        // Footer
+        doc.setFontSize(9);
+        doc.text(`Página ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
+
+        const filename = `ranking_modulos_${new Date().toISOString().slice(0,10)}.pdf`;
+        doc.save(filename);
+        showToast(`PDF gerado com sucesso! (${pages} página${pages>1?'s':''})`, 'success');
+      } catch (err) {
+        console.error('Erro ao gerar PDF do ranking:', err);
+        showToast('Erro ao gerar o PDF. Veja o console para detalhes.', 'error');
+      } finally {
+        if (btn) btn.disabled = false;
+        hideLoader();
+      }
+    }
+
+    // Popula selects da página Relatórios com releases atuais (busca quando necessário)
+    window.populateRelatoriosFilters = async function() {
+      const selRelease = document.getElementById('relatorio-release-select');
+      if (!selRelease) return;
+      selRelease.innerHTML = '<option value="todas">Todas</option>';
+
+      // Se não temos dados locais, tenta buscar pela API (sem re-render completo)
+      if (!Array.isArray(window.liberacoesOriginais) || window.liberacoesOriginais.length === 0) {
+        try {
+          showLoader('Carregando releases...');
+          if (typeof carregarDadosLiberacoes === 'function') {
+            window.liberacoesOriginais = await carregarDadosLiberacoes();
+          } else {
+            const resp = await fetch('https://modelo-discord-server.vercel.app/api/liberados');
+            if (resp.ok) {
+              const dadosAPI = await resp.json();
+              window.liberacoesOriginais = dadosAPI.map(item => ({ release: item.release, protocolos: item.prts.split(' ').filter(p => p.trim().length > 0) }));
+            } else {
+              window.liberacoesOriginais = [];
+            }
+          }
+        } catch (err) {
+          console.error('Erro ao buscar releases para filtros:', err);
+        } finally {
+          hideLoader();
+        }
+      }
+
+      if (!Array.isArray(window.liberacoesOriginais) || window.liberacoesOriginais.length === 0) return;
+
+      const releases = window.liberacoesOriginais.map(r => r.release);
+      const uniq = [...new Set(releases)].sort((a,b) => new Date(a.split('/').reverse().join('-')) - new Date(b.split('/').reverse().join('-'))).reverse();
+      uniq.forEach(rel => {
+        const opt = document.createElement('option');
+        opt.value = rel;
+        opt.textContent = rel;
+        selRelease.appendChild(opt);
+      });
+    };
+
+    // Auto-popula releases ao iniciar (não bloqueante)
+    (async () => {
+      try {
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+          await window.populateRelatoriosFilters();
+        } else {
+          document.addEventListener('DOMContentLoaded', () => { if (typeof window.populateRelatoriosFilters === 'function') window.populateRelatoriosFilters(); });
+        }
+      } catch (e) {
+        console.warn('Auto populate releases falhou', e);
+      }
+    })();
+
+    function _sliceCanvasToPdf(canvas, pdf, marginLeft = 40, marginTop = 50) {
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = pdfWidth - marginLeft * 2;
+      const scale = imgWidth / canvas.width;
+      const imgHeight = canvas.height * scale;
+      const pageHeight = pdfHeight - marginTop * 2;
+      const totalPages = Math.ceil(imgHeight / pageHeight);
+
+      for (let i = 0; i < totalPages; i++) {
+        const sourceY = Math.floor((i * pageHeight) / scale);
+        const sourceH = Math.floor(pageHeight / scale);
+        const tmpCanvas = document.createElement('canvas');
+        tmpCanvas.width = canvas.width;
+        tmpCanvas.height = sourceH;
+        const ctx = tmpCanvas.getContext('2d');
+        ctx.fillStyle = '#0b1220';
+        ctx.fillRect(0,0,tmpCanvas.width,tmpCanvas.height);
+        ctx.drawImage(canvas, 0, sourceY, canvas.width, sourceH, 0, 0, canvas.width, sourceH);
+        const imgData = tmpCanvas.toDataURL('image/png', 1.0);
+        const imgProps = pdf.getImageProperties(imgData);
+        const renderedHeight = (imgProps.height * imgWidth) / imgProps.width;
+        if (i > 0) pdf.addPage();
+        pdf.addImage(imgData, 'PNG', marginLeft, marginTop, imgWidth, renderedHeight);
+      }
+    }
+
+    // Exporta detalhes (Ticket, PRT, Descrição, Tipo, Release) como CSV
+    window.exportarDetalhesCSV = async function() {
+      const tipo = document.getElementById('relatorio-tipo-select')?.value || 'todos';
+      const releaseSel = document.getElementById('relatorio-release-select')?.value || 'todas';
+
+      // Garante que temos protocolos carregados (para ticket/descrição)
+      if (typeof carregarProtocolos === 'function') await carregarProtocolos();
+
+      const rows = [];
+      (window.liberacoesOriginais || []).forEach(rel => {
+        if (releaseSel !== 'todas' && rel.release !== releaseSel) return;
+        rel.protocolos.forEach(prt => {
+          // usa a função pública para obter protocolo (vai ao cache interno)
+          const pObj = (typeof obterProtocolo === 'function') ? (obterProtocolo(prt) || {}) : (window.protocolosCache?.[prt] || {});
+          const tipoLabel = (typeof getTipoLabel === 'function') ? getTipoLabel(pObj.tipo || '') : (pObj.tipo === '0' ? 'Erro' : 'Sugestão');
+
+          const normTipo = window.normalizeLabel(tipoLabel);
+          if (tipo === 'erro' && normTipo !== 'erro') return;
+          if (tipo === 'sugestao' && normTipo !== 'sugestao') return;
+
+          rows.push([pObj.ticket || '', prt, (pObj.descricao || '').replace(/\n/g, ' '), tipoLabel, rel.release]);
+        });
+      });
+
+      if (!rows.length) {
+        showToast('Nenhum registro encontrado para os filtros selecionados', 'warning');
+        return;
+      }
+
+      let csv = 'Ticket;PRT;Descrição;Tipo;Release\n';
+      rows.forEach(r => csv += `${r.map(c => '"'+String(c).replace(/"/g, '""')+'"').join(';')}\n`);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.setAttribute('download', `relatorio_detalles_${new Date().toISOString().slice(0,10)}.csv`);
+      link.click();
+    }
+
+    // Exporta detalhes como PDF (jsPDF tabela nativa)
+    window.exportarDetalhesPDF = async function() {
+      const tipo = document.getElementById('relatorio-tipo-select')?.value || 'todos';
+      const releaseSel = document.getElementById('relatorio-release-select')?.value || 'todas';
+
+      // Garante que temos protocolos carregados
+      if (typeof carregarProtocolos === 'function') await carregarProtocolos();
+
+      const rows = [];
+
+      (window.liberacoesOriginais || []).forEach(rel => {
+        if (releaseSel !== 'todas' && rel.release !== releaseSel) return;
+        rel.protocolos.forEach(prt => {
+          const pObj = (typeof obterProtocolo === 'function') ? (obterProtocolo(prt) || {}) : (window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {});
+          const tipoLabel = (typeof getTipoLabel === 'function') ? getTipoLabel(pObj.tipo || '') : (pObj.tipo === '0' ? 'Erro' : 'Sugestão');
+
+          const normTipo = window.normalizeLabel(tipoLabel);
+          if (tipo === 'erro' && normTipo !== 'erro') return;
+          if (tipo === 'sugestao' && normTipo !== 'sugestao') return;
+
+          rows.push({ ticket: pObj.ticket || '', prt, descricao: (pObj.descricao || '').replace(/\n/g, ' '), tipo: tipoLabel, release: rel.release });
+        });
+      });
+
+      if (!rows.length) {
+        showToast('Nenhum registro encontrado para os filtros selecionados', 'warning');
+        return;
+      }
+
+      // Prepara PDF
+      showLoader('Calculando páginas...');
+      const btn = document.getElementById('btn-export-det');
+      if (btn) btn.disabled = true;
+
+      try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+        const pageW = doc.internal.pageSize.getWidth();
+        const pageH = doc.internal.pageSize.getHeight();
+        const marginLeft = 40;
+        const marginRight = 40;
+        const marginTop = 60;
+        const marginBottom = 50;
+
+        doc.setFont('helvetica');
+        doc.setFontSize(10);
+        const fontSize = 10;
+        const lineHeight = fontSize * 1.4; // ~14
+
+        // Columns: Ticket | PRT | Descrição | Tipo | Release
+        const colTicket = 60;
+        const colPRT = 70;
+        const colTipo = 60;
+        const colRelease = 80;
+        const gap = 8;
+        const descWidth = pageW - marginLeft - marginRight - (colTicket + colPRT + colTipo + colRelease) - (gap * 4);
+
+        // Preprocessa para calcular quantas linhas cada registro ocupará
+        const processed = rows.map(r => {
+          const descLines = doc.splitTextToSize(String(r.descricao || ''), descWidth);
+          const h = Math.max(1, descLines.length) * lineHeight + 6; // padding
+          return { ...r, descLines, height: h };
+        });
+
+        // Calcula total de páginas (simulação)
+        const headerHeight = 30 + 18; // título + header
+        const avail = pageH - marginTop - marginBottom - headerHeight;
+        let pages = 1;
+        let acc = 0;
+        processed.forEach(r => {
+          if (acc + r.height > avail) { pages++; acc = r.height; } else { acc += r.height; }
+        });
+
+        // Renderiza por páginas, atualiza loader com página atual
+        let currentPage = 1;
+        let yStart = marginTop;
+
+        function renderHeader(pageNum) {
+          doc.setFontSize(12);
+          const title = `Relatório de Detalhes - ${tipo === 'todos' ? 'Todos' : (tipo === 'erro' ? 'Erros' : 'Sugestões')} ${releaseSel !== 'todas' ? ' - ' + releaseSel : ''}`;
+          doc.text(title, marginLeft, yStart);
+          yStart += 18;
+
+          // Column headers
+          doc.setFontSize(10);
+          const headerY = yStart;
+          let x = marginLeft;
+          doc.text('Ticket', x, headerY);
+          x += colTicket + gap;
+          doc.text('PRT', x, headerY);
+          x += colPRT + gap;
+          doc.text('Descrição', x, headerY);
+          x += descWidth + gap;
+          doc.text('Tipo', x, headerY);
+          x += colTipo + gap;
+          doc.text('Release', x, headerY);
+
+          yStart += 18;
+          doc.setDrawColor(110);
+          doc.setLineWidth(0.5);
+          doc.line(marginLeft, yStart - 8, pageW - marginRight, yStart - 8);
+
+          showLoader(`Gerando PDF: Página ${pageNum} / ${pages}`);
+        }
+
+        // Start first page
+        renderHeader(currentPage);
+        let y = yStart;
+
+        for (let i = 0; i < processed.length; i++) {
+          const r = processed[i];
+          if (y + r.height > pageH - marginBottom) {
+            // footer page number
+            doc.setFontSize(9);
+            doc.text(`Página ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
+            doc.addPage();
+            currentPage++;
+            y = marginTop;
+            yStart = marginTop;
+            renderHeader(currentPage);
+            y = yStart;
+          }
+
+          // escreve a linha
+          let x = marginLeft;
+          doc.setFontSize(fontSize);
+          doc.text(String(r.ticket), x, y + lineHeight * 0.8);
+          x += colTicket + gap;
+          doc.text(String(r.prt), x, y + lineHeight * 0.8);
+          x += colPRT + gap;
+          // Descrição (pode ter múltiplas linhas)
+          doc.text(r.descLines, x, y + lineHeight * 0.8);
+          // Tipo e Release (alinha no topo)
+          const tipoX = marginLeft + colTicket + gap + colPRT + gap + descWidth + gap;
+          doc.text(String(r.tipo), tipoX, y + lineHeight * 0.8);
+          const relX = tipoX + colTipo + gap;
+          doc.text(String(r.release), relX, y + lineHeight * 0.8);
+
+          y += r.height;
+        }
+
+        // final footer
+        doc.setFontSize(9);
+        doc.text(`Página ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
+
+        const filename = `relatorio_detalhes_${new Date().toISOString().slice(0,10)}.pdf`;
+        doc.save(filename);
+        showToast(`PDF gerado com sucesso! (${pages} página${pages>1?'s':''})`, 'success');
+      } catch (err) {
+        console.error('Erro ao gerar PDF de detalhes:', err);
+        showToast('Erro ao gerar o PDF. Veja o console para detalhes.', 'error');
+      } finally {
+        if (btn) btn.disabled = false;
+        hideLoader();
+      }
+    }
+  </script>
+
+  <!-- Fallback fixes: corrige normalizeLabel e garante wrappers de export (em caso de SyntaxError anterior) -->
+  <script>
+    (function(){
+      // Safe normalizeLabel (removes diacritics)
+      window.normalizeLabel = function(s) {
+        if (!s) return '';
+        try {
+          return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
+        } catch (e) {
+          return String(s).toLowerCase().replace(/\s+/g, ' ').trim();
+        }
+      };
+
+      // Ensure export functions exist: add lightweight wrappers that attempt to reload data and retry
+      function makeWrapper(name) {
+        if (typeof window[name] === 'function') return;
+        const wrapperFn = function(...args) {
+          window.showToast && window.showToast(name + ' ainda não disponível','warning');
+          // Try to (re)load supporting data, then retry
+          try {
+            if (typeof carregarProtocolos === 'function') carregarProtocolos().catch(()=>{});
+            if (typeof carregarDadosLiberacoes === 'function') carregarDadosLiberacoes().catch(()=>{});
+          } catch(e) { /* ignore */ }
+          setTimeout(() => {
+            const current = window[name];
+            if (typeof current === 'function' && current !== wrapperFn) {
+              // If original appeared, call it
+              current(...args);
+            } else {
+              // Fallback UX
+              if (typeof showToast === 'function') showToast('Exportação não disponível no momento. Recarregue a página e tente novamente.', 'warning');
+              else console.warn('Exportação indisponível e showToast não definido.');
+            }
+          }, 800);
+        };
+        wrapperFn._isWrapper = true;
+        window[name] = wrapperFn;
+      }
+
+      ['exportarProtocolosPDF','exportarTop5PDF','exportarRankingPDF','exportarDetalhesPDF','exportarDetalhesCSV'].forEach(makeWrapper);
+    })();
+  </script>
+
+  <script>
+    // Final robust exports: override any wrappers and provide reliable, text-based PDF/CSV exports
+    (function(){
+      function safe(msg){ try{}catch(e){} }
+      const ensureReleases = async () => {
+        if (Array.isArray(window.liberacoesOriginais) && window.liberacoesOriginais.length) return window.liberacoesOriginais;
+        if (typeof carregarDadosLiberacoes === 'function') {
+          try { window.liberacoesOriginais = await carregarDadosLiberacoes(); return window.liberacoesOriginais; } catch(e) { window.liberacoesOriginais = []; }
+        }
+        try { const r = await fetch('https://modelo-discord-server.vercel.app/api/liberados'); if (r.ok) { const d = await r.json(); window.liberacoesOriginais = d.map(item=>({release:item.release, protocolos: String(item.prts||'').split(/\s+/).filter(Boolean)})); return window.liberacoesOriginais; } } catch(e){ window.liberacoesOriginais = []; }
+        return window.liberacoesOriginais || [];
+      };
+
+      const normalizeLabel = window.normalizeLabel || function(s){ if (!s) return ''; try { return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim(); } catch(e) { return String(s).toLowerCase().replace(/\s+/g,' ').trim(); } };
+
+      window.exportarProtocolosPDF = async function(){
+        window.showLoader && window.showLoader('Gerando PDF: Protocolos por Release...');
+        try {
+          const liberacoes = await ensureReleases(); if (!liberacoes.length) { window.showToast && window.showToast('Nenhum dado para exportar','warning'); return; }
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF({unit:'pt',format:'a4'});
+          doc.setFontSize(12); doc.text('Protocolos por Release',40,40); doc.setFontSize(10);
+          let y=70; const lineH=14, pageH=doc.internal.pageSize.getHeight();
+          liberacoes.forEach(l=>{ if (y>pageH-40){ doc.addPage(); y=40; } doc.text(String(l.release||''),40,y); doc.text(String((l.protocolos||[]).length), doc.internal.pageSize.getWidth()-80, y); y+=lineH; });
+          doc.save(`protocolos_por_release_${new Date().toISOString().slice(0,10)}.pdf`);
+          window.showToast && window.showToast('PDF gerado com sucesso!','success');
+        } catch(e){ window.showToast && window.showToast('Erro ao gerar PDF','error'); }
+        finally{ window.hideLoader && window.hideLoader(); }
+      };
+
+      window.exportarTop5PDF = async function(){
+        window.showLoader && window.showLoader('Gerando PDF: Top 5...');
+        try {
+          const liberacoes = await ensureReleases(); const sorted = (liberacoes||[]).slice().sort((a,b)=>b.protocolos.length-a.protocolos.length).slice(0,5);
+          if (!sorted.length){ window.showToast && window.showToast('Nenhum dado para exportar','warning'); return; }
+          const { jsPDF } = window.jspdf; const doc = new jsPDF({unit:'pt',format:'a4'});
+          doc.setFontSize(12); doc.text('Top 5 Releases',40,40); doc.setFontSize(10);
+          let y=70; const lineH=16, pageH=doc.internal.pageSize.getHeight();
+          sorted.forEach((r,i)=>{ if (y>pageH-40){ doc.addPage(); y=40; } doc.text(`${i+1}. ${r.release}`,40,y); doc.text(String(r.protocolos.length), doc.internal.pageSize.getWidth()-80, y); y+=lineH; });
+          doc.save(`top5_releases_${new Date().toISOString().slice(0,10)}.pdf`);
+          window.showToast && window.showToast('PDF gerado com sucesso!','success');
+        } catch(e){ window.showToast && window.showToast('Erro ao gerar PDF','error'); }
+        finally{ window.hideLoader && window.hideLoader(); }
+      };
+
+      window.exportarRankingPDF = async function(){
+        window.showLoader && window.showLoader('Gerando PDF: Ranking de Módulos...');
+        try {
+          if (typeof carregarProtocolos === 'function') await carregarProtocolos();
+          const liberacoes = await ensureReleases(); const counts={};
+          (liberacoes||[]).forEach(rel=>{ (rel.protocolos||[]).forEach(prt=>{ const mod = window.protocolosIndex?.[prt]?.modulo || window.protocolosCache?.[prt]?.modulo || 'Desconhecido'; counts[mod]=(counts[mod]||0)+1; }); });
+          const rows = Object.entries(counts).sort((a,b)=>b[1]-a[1]); if (!rows.length){ window.showToast && window.showToast('Nenhum dado para exportar','warning'); return; }
+          const { jsPDF } = window.jspdf; const doc = new jsPDF({unit:'pt',format:'a4'});
+          doc.setFontSize(12); doc.text('Ranking de Módulos',40,40); doc.setFontSize(10);
+          let y=70; const lineH=16, pageH=doc.internal.pageSize.getHeight(); rows.forEach((r,i)=>{ if (y>pageH-40){ doc.addPage(); y=40; } doc.text(`${i+1}. ${r[0]}`,40,y); doc.text(String(r[1]), doc.internal.pageSize.getWidth()-80, y); y+=lineH; });
+          doc.save(`ranking_modulos_${new Date().toISOString().slice(0,10)}.pdf`);
+          window.showToast && window.showToast('PDF gerado com sucesso!','success');
+        } catch(e){ window.showToast && window.showToast('Erro ao gerar PDF','error'); }
+        finally{ window.hideLoader && window.hideLoader(); }
+      };
+
+      window.exportarDetalhesCSV = window.exportarDetalhesCSV || async function(){
+        try{
+          if (typeof carregarProtocolos==='function') await carregarProtocolos();
+          const tipo = document.getElementById('relatorio-tipo-select')?.value||'todos';
+          const releaseSel = document.getElementById('relatorio-release-select')?.value||'todas';
+          const rows = [];
+          const liberacoes = await ensureReleases();
+          for (const rel of (liberacoes||[])){
+            if (releaseSel!=='todas' && rel.release!==releaseSel) continue;
+            for (const prt of (rel.protocolos||[])){
+              // robust lookup: prefer protocolosCache, fall back to protocolosIndex
+              let p = window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {};
+              if ((!p || Object.keys(p).length===0) && typeof carregarProtocolos === 'function'){
+                try{ await carregarProtocolos(); } catch(e){}
+                p = window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {};
+              }
+
+              const tipoRaw = (p && p.tipo !== undefined) ? p.tipo : (window.protocolosIndex?.[prt]?.tipo ?? '');
+              const tipoLabel = (typeof getTipoLabel==='function')? getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugestão');
+              const normTipo = normalizeLabel(tipoLabel);
+              if (tipo==='erro' && normTipo!=='erro') continue;
+              if (tipo==='sugestao' && normTipo!=='sugestao') continue;
+
+              const ticket = p.ticket || '';
+              const descricao = (p.descricao || window.protocolosIndex?.[prt]?.descricao || '').replace(/\r?\n/g,' ');
+
+              rows.push([ticket, prt, descricao, tipoLabel, rel.release]);
+            }
+          }
+
+          if (!rows.length){ window.showToast && window.showToast('Nenhum registro encontrado para os filtros selecionados','warning'); return; }
+          // Add UTF-8 BOM so Excel opens it correctly
+          let csv = '\uFEFF' + 'Ticket;PRT;Descrição;Tipo;Release\n';
+          rows.forEach(r=> csv += r.map(c=> '"'+String(c).replace(/"/g,'""')+'"').join(';')+'\n');
+          const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+          const link=document.createElement('a'); link.href = URL.createObjectURL(blob); link.setAttribute('download', `relatorio_detalhes_${new Date().toISOString().slice(0,10)}.csv`); link.click();
+          window.showToast && window.showToast('CSV gerado com sucesso!','success');
+        } catch(e){ window.showToast && window.showToast('Erro ao gerar CSV','error'); }
+      };
+
+      window.exportarDetalhesPDF = async function(){
+        window.showLoader && window.showLoader('Gerando PDF de Detalhes...'); const btn = document.getElementById('btn-export-det'); if (btn) btn.disabled = true;
+        try{
+          if (typeof carregarProtocolos==='function') await carregarProtocolos();
+          const tipo = document.getElementById('relatorio-tipo-select')?.value||'todos';
+          const releaseSel = document.getElementById('relatorio-release-select')?.value||'todas';
+
+          const items = [];
+          const liberacoes = await ensureReleases();
+          for (const rel of (liberacoes||[])){
+            if (releaseSel!=='todas' && rel.release!==releaseSel) continue;
+            for (const prt of (rel.protocolos||[])){
+              let p = window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {};
+              if ((!p || Object.keys(p).length===0) && typeof carregarProtocolos === 'function'){
+                try{ await carregarProtocolos(); } catch(e){}
+                p = window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {};
+              }
+
+              const tipoRaw = (p && p.tipo !== undefined) ? p.tipo : (window.protocolosIndex?.[prt]?.tipo ?? '');
+              const tipoLabel = (typeof getTipoLabel==='function')? getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugestão');
+              const normTipo = normalizeLabel(tipoLabel);
+              if (tipo==='erro' && normTipo!=='erro') continue;
+              if (tipo==='sugestao' && normTipo!=='sugestao') continue;
+
+              items.push({ ticket: p.ticket||'', prt, descricao: (p.descricao||window.protocolosIndex?.[prt]?.descricao||'').replace(/\r?\n/g,' '), tipo: tipoLabel, release: rel.release });
+            }
+          }
+
+          if (!items.length){ window.showToast && window.showToast('Nenhum registro encontrado para os filtros selecionados','warning'); return; }
+
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF({unit:'pt',format:'a4'});
+          const pdfWidth = doc.internal.pageSize.getWidth();
+          const pageH = doc.internal.pageSize.getHeight();
+
+          // Column positions
+          const xTicket = 40;
+          const xPRT = 110;
+          const xDesc = 160;
+          const xTipo = pdfWidth - 180;
+          const xRelease = pdfWidth - 60;
+          const descWidth = xTipo - xDesc - 10;
+
+          const lineH = 14;
+          let y = 60;
+
+          const drawHeader = (title) => {
+            doc.setFont('helvetica','bold'); doc.setFontSize(12);
+            doc.text(title, xTicket, 36);
+            doc.setFontSize(10);
+            doc.setFont('helvetica','bold');
+            doc.text('Ticket', xTicket, y);
+            doc.text('PRT', xPRT, y);
+            doc.text('Descrição', xDesc, y);
+            doc.text('Tipo', xTipo, y);
+            doc.text('Release', xRelease, y);
+            y += lineH;
+            doc.setDrawColor(200);
+            doc.line(36, y-8, pdfWidth-36, y-8);
+            doc.setFont('helvetica','normal');
+          };
+
+          drawHeader('Relatório de Detalhes');
+
+          items.forEach(it=>{
+            const descLines = doc.splitTextToSize(String(it.descricao||''), descWidth);
+            const blockH = Math.max(lineH, (descLines.length||1) * lineH);
+            if (y + blockH > pageH - 40){ doc.addPage(); y = 60; drawHeader('Relatório de Detalhes (cont.)'); }
+
+            doc.text(String(it.ticket), xTicket, y);
+            doc.text(String(it.prt), xPRT, y);
+            doc.text(descLines, xDesc, y);
+            doc.text(String(it.tipo), xTipo, y);
+            doc.text(String(it.release), xRelease, y);
+
+            y += blockH;
+          });
+
+          doc.save(`relatorio_detalhes_${new Date().toISOString().slice(0,10)}.pdf`);
+          window.showToast && window.showToast('PDF gerado com sucesso!','success');
+        }
+        catch(e){ window.showToast && window.showToast('Erro ao gerar PDF','error'); }
+        finally{ if (btn) btn.disabled = false; window.hideLoader && window.hideLoader(); }
+      };
+
+    })();
+  </script>
 </body>
 
 </html>

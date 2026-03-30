@@ -261,6 +261,377 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
   position: relative;
 }
 
+/* =========================================================
+   IA WORKSPACE
+   ========================================================= */
+.ia-workspace {
+  position: relative;
+}
+
+.ia-shell {
+  display: grid;
+  grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+  gap: 16px;
+  min-height: calc(100vh - 168px);
+}
+
+.ia-sidebar,
+.ia-main-header,
+.ia-card,
+.ia-empty-state {
+  background: linear-gradient(160deg, rgba(18, 29, 56, 0.92), rgba(11, 18, 35, 0.9));
+  border: 1px solid rgba(139, 166, 220, 0.16);
+  border-radius: 18px;
+  box-shadow: 0 18px 48px rgba(2, 8, 23, 0.28);
+}
+
+.ia-sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ia-sidebar-top {
+  padding: 18px;
+  border-bottom: 1px solid rgba(139, 166, 220, 0.12);
+}
+
+.ia-btn-primary,
+.ia-btn-secondary,
+.ia-icon-btn {
+  border: 1px solid rgba(139, 166, 220, 0.18);
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.ia-btn-primary:hover,
+.ia-btn-secondary:hover,
+.ia-icon-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(67, 207, 255, 0.45);
+}
+
+.ia-btn-primary {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #7dd3fc, #38bdf8 55%, #22d3ee);
+  color: #082032;
+  font-weight: 800;
+}
+
+.ia-search {
+  position: relative;
+  display: block;
+  margin-top: 12px;
+}
+
+.ia-search input {
+  width: 100%;
+  padding: 11px 14px 11px 38px;
+  border-radius: 12px;
+  background: rgba(9, 15, 29, 0.78) !important;
+}
+
+.ia-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.ia-ticket-list {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: auto;
+}
+
+.ia-ticket-item {
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: linear-gradient(160deg, rgba(10, 18, 34, 0.88), rgba(9, 15, 28, 0.68));
+  cursor: pointer;
+}
+
+.ia-ticket-item:hover {
+  border-color: rgba(67, 207, 255, 0.24);
+}
+
+.ia-ticket-item.active {
+  border-color: rgba(67, 207, 255, 0.52);
+  background: linear-gradient(160deg, rgba(27, 58, 93, 0.5), rgba(10, 18, 34, 0.84));
+}
+
+.ia-ticket-line {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ia-ticket-main {
+  min-width: 0;
+}
+
+.ia-ticket-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.ia-ticket-title span:last-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ia-ticket-meta {
+  margin-top: 6px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.ia-ticket-actions,
+.ia-header-actions,
+.ia-report-actions,
+.ia-carousel-controls,
+.ia-image-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ia-main {
+  min-width: 0;
+}
+
+.ia-main-header {
+  padding: 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.ia-eyebrow {
+  margin: 0 0 4px;
+  color: #43cfff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.ia-main-title {
+  margin: 0;
+  font-size: clamp(1.4rem, 2vw, 1.9rem);
+  font-weight: 800;
+  color: #eff6ff;
+}
+
+.ia-main-date {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.ia-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(13, 22, 42, 0.84);
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.ia-btn-secondary:disabled,
+.ia-icon-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ia-btn-warm {
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.ia-empty-state {
+  margin-top: 16px;
+  padding: 26px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 12px;
+  color: var(--text-muted);
+}
+
+.ia-empty-state h3 {
+  margin: 0 0 4px;
+  color: var(--text-main);
+}
+
+.ia-content {
+  margin-top: 16px;
+  display: grid;
+  gap: 16px;
+}
+
+.ia-card {
+  padding: 18px;
+}
+
+.ia-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.ia-section-title {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.02rem;
+  color: #eaf3ff;
+}
+
+.ia-section-subtitle {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.ia-image-empty,
+.ia-report-view,
+.ia-report-editor,
+.ia-audio-player {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(139, 166, 220, 0.14);
+  background: rgba(8, 14, 27, 0.76);
+}
+
+.ia-image-empty {
+  padding: 48px 18px;
+  text-align: center;
+  color: var(--text-muted);
+  border-style: dashed;
+}
+
+.ia-image-stage {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  border: 1px solid rgba(139, 166, 220, 0.14);
+  background: radial-gradient(circle at top, rgba(23, 36, 67, 0.8), rgba(8, 14, 27, 0.92));
+}
+
+.ia-active-image {
+  width: 100%;
+  display: block;
+  object-fit: contain;
+  max-height: 560px;
+  min-height: 280px;
+}
+
+.ia-image-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.ia-icon-btn {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgba(17, 24, 39, 0.84);
+  color: #e5edf9;
+}
+
+.ia-icon-danger {
+  color: #fda4af;
+  border-color: rgba(251, 113, 133, 0.24);
+}
+
+.ia-image-counter {
+  min-width: 62px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+.ia-report-view {
+  margin: 0;
+  padding: 16px;
+  min-height: 220px;
+  white-space: pre-wrap;
+  line-height: 1.7;
+  color: #ebf3ff;
+  font-family: 'Inter', sans-serif;
+}
+
+.ia-report-editor {
+  min-height: 220px;
+  padding: 16px;
+  resize: vertical;
+  line-height: 1.7;
+}
+
+.ia-audio-player {
+  padding: 10px;
+}
+
+.ia-ticket-input {
+  width: 100%;
+  border-radius: 10px;
+  padding: 7px 10px;
+  font-size: 0.92rem;
+}
+
+@media (max-width: 1024px) {
+  .ia-shell {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .ia-main-header,
+  .ia-card,
+  .ia-sidebar-top {
+    padding: 14px;
+  }
+
+  .ia-header-actions {
+    width: 100%;
+  }
+
+  .ia-btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 .prt-badge:hover .prt-tooltip {
   opacity: 1;
   transform: translateY(0);
