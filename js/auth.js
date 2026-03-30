@@ -1,6 +1,6 @@
-/**
- * Sistema de Autenticação MD5 com Supabase
- * Valida a senha do usuário antes de permitir acesso ao app
+﻿/**
+ * Sistema de AutenticaÃ§Ã£o MD5 com Supabase
+ * Valida a senha do usuÃ¡rio antes de permitir acesso ao app
  */
 
 /**
@@ -9,7 +9,7 @@
  * @returns {string} hash MD5
  */
 function toMD5(str) {
-  // Assumimos que CryptoJS está carregado via <script> tag no HTML
+  // Assumimos que CryptoJS estÃ¡ carregado via <script> tag no HTML
   return CryptoJS.MD5(str).toString();
 }
 
@@ -23,7 +23,7 @@ async function validarSenha() {
   const msgErro = document.getElementById('auth-erro');
 
   if (!btnAuth) {
-      return; // Sai da função para evitar o erro de null
+      return; // Sai da funÃ§Ã£o para evitar o erro de null
   }
   
   if (!senha) {
@@ -32,10 +32,10 @@ async function validarSenha() {
     return;
   }
 
-  // Desabilita botão e mostra loading
+  // Desabilita botÃ£o e mostra loading
   btnAuth.disabled = true;
   btnAuth.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Autenticando...';
-  // Recria os ícones do lucide após a atualização do innerHTML
+  // Recria os Ã­cones do lucide apÃ³s a atualizaÃ§Ã£o do innerHTML
   lucide.createIcons(); 
   msgErro.classList.add('hidden');
 
@@ -43,7 +43,7 @@ async function validarSenha() {
     // Converte a senha em texto plano para MD5 antes de enviar
     const senhamd5 = toMD5(senha);
 
-    // Faz requisição GET para a API no Vercel, passando o hash MD5 na query string
+    // Faz requisiÃ§Ã£o GET para a API no Vercel, passando o hash MD5 na query string
     const response = await fetch(`https://modelo-discord-server.vercel.app/api/autenticacao?pass=${encodeURIComponent(senhamd5)}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
@@ -57,18 +57,18 @@ async function validarSenha() {
     const resultado = await response.json(); 
 
     if (resultado === true) {
-      // Autenticação bem-sucedida
+      // AutenticaÃ§Ã£o bem-sucedida
       localStorage.setItem('authToken', 'authenticated-' + Date.now());
       localStorage.setItem('authTime', new Date().toISOString());
       
       // Esconde a tela de login e mostra o app
-      document.getElementById('auth-container').classList.add('hidden');
-      document.querySelector('.max-w-6xl').classList.remove('hidden');
+      const authContainer = document.getElementById('auth-container');
+      if (authContainer) authContainer.classList.add('hidden');
       
       // Limpa o input
       senhaInput.value = '';
     } else {
-      // Autenticação falhou
+      // AutenticaÃ§Ã£o falhou
       msgErro.textContent = 'Senha incorreta. Tente novamente.';
       msgErro.classList.remove('hidden');
     }
@@ -76,7 +76,7 @@ async function validarSenha() {
     msgErro.textContent = 'Erro ao conectar com o servidor. Tente novamente.';
     msgErro.classList.remove('hidden');
   } finally {
-    // Re-habilita botão
+    // Re-habilita botÃ£o
     btnAuth.disabled = false;
     btnAuth.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i> Entrar';
     lucide.createIcons();
@@ -84,11 +84,18 @@ async function validarSenha() {
 }
 
 /**
- * Inicializa o sistema de autenticação ao carregar a página
+ * Inicializa o sistema de autenticaÃ§Ã£o ao carregar a pÃ¡gina
  */
 function initAuth() {
   const token = localStorage.getItem('authToken');
   const tempo = localStorage.getItem('authTime');
+  const authContainer = document.getElementById('auth-container');
+  const appContainers = [
+    document.getElementById('desktop-header'),
+    document.getElementById('sidebar'),
+    document.getElementById('mobile-sidebar'),
+    document.getElementById('main-content')
+  ].filter(Boolean);
 
   if (token && tempo) {
     const agora = new Date();
@@ -97,8 +104,8 @@ function initAuth() {
     const diffHoras = diffMs / (1000 * 60 * 60);
 
     if (diffHoras < 24) {
-      document.getElementById('auth-container').classList.add('hidden');
-      document.querySelector('.max-w-6xl').classList.remove('hidden');
+      if (authContainer) authContainer.classList.add('hidden');
+      appContainers.forEach((el) => el.classList.remove('hidden'));
       return;
     } else {
       localStorage.removeItem('authToken');
@@ -107,22 +114,19 @@ function initAuth() {
   }
 
   // Mostra tela de login
-  const authContainer = document.getElementById('auth-container');
-  const appContainer = document.querySelector('.max-w-6xl');
-  
   if (authContainer) authContainer.classList.remove('hidden');
-  if (appContainer) appContainer.classList.add('hidden');
+  appContainers.forEach((el) => el.classList.remove('hidden'));
 
-  // Adiciona listener de SUBMIT ao formulário
+  // Adiciona listener de SUBMIT ao formulÃ¡rio
   const authForm = document.getElementById('auth-form');
   if (authForm) {
       authForm.addEventListener('submit', (e) => {
-          e.preventDefault(); // Previne o comportamento padrão do form
+          e.preventDefault(); // Previne o comportamento padrÃ£o do form
           validarSenha();
       });
   }
 
-  // Adiciona listener para Enter na input de senha (redundância segura)
+  // Adiciona listener para Enter na input de senha (redundÃ¢ncia segura)
   const senhaInput = document.getElementById('auth-senha');
   if (senhaInput) {
     senhaInput.addEventListener('keypress', (e) => {
@@ -135,7 +139,7 @@ function initAuth() {
 }
 
 /**
- * Faz logout (limpa a sessão)
+ * Faz logout (limpa a sessÃ£o)
  */
 function fazerLogout() {
   localStorage.removeItem('authToken');
@@ -143,5 +147,6 @@ function fazerLogout() {
   location.reload();
 }
 
-// Executa ao carregar a página
+// Executa ao carregar a pÃ¡gina
 window.addEventListener('DOMContentLoaded', initAuth);
+

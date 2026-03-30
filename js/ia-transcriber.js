@@ -1,6 +1,7 @@
 (function () {
   const STORAGE_KEY = "protocord_ia_transcriber_v1";
   const FALLBACK_API_URL = "https://modelo-discord-server.vercel.app/api";
+  const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
   const apiBaseUrl = (window.PROTOCORD_TRANSCRIBER_API || localStorage.getItem("PROTOCORD_TRANSCRIBER_API") || FALLBACK_API_URL).replace(/\/$/, "");
 
   const state = {
@@ -442,11 +443,23 @@
     state.uploading = true;
     renderActiveTicket();
 
+    let uploadFile = file;
+
     const formData = new FormData();
-    formData.append("audio", file);
-    formData.append("modo", "groq");
 
     try {
+      if (file.size > MAX_UPLOAD_BYTES) {
+        notify("Compactando áudio para envio...", "info");
+        uploadFile = await compressAudioForUpload(file);
+      }
+
+      if (uploadFile.size > MAX_UPLOAD_BYTES) {
+        throw new Error("O áudio continua acima do limite de upload. Tente um arquivo menor.");
+      }
+
+      formData.append("audio", uploadFile);
+      formData.append("modo", "openai");
+
       const response = await fetch(`${apiBaseUrl}/transcrever`, {
         method: "POST",
         body: formData,
@@ -466,7 +479,7 @@
       active.resumo = (data.resumo || "").substring(0, 255);
       active.phone = data.telefone || active.phone;
       active.nomeArquivoNoServidor = data.nomeArquivoNoServidor || "";
-      active.audioUrl = URL.createObjectURL(file);
+      active.audioUrl = URL.createObjectURL(uploadFile);
       state.editingReport = false;
       state.reportDraft = "";
       persist();
@@ -587,6 +600,70 @@
     if (url && url.startsWith("blob:")) {
       URL.revokeObjectURL(url);
     }
+  }
+
+  async function compressAudioForUpload(file) {
+    if (typeof MediaRecorder === "undefined") {
+      throw new Error("Seu navegador não suporta compactação local deste áudio.");
+    }
+
+    const mimeType = pickRecorderMimeType();
+    if (!mimeType) {
+      throw new Error("Nenhum codec compatível encontrado para compactar o áudio.");
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    try {
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer.slice(0));
+      const destination = audioContext.createMediaStreamDestination();
+      const source = audioContext.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(destination);
+
+      const chunks = [];
+      const recorder = new MediaRecorder(destination.stream, {
+        mimeType,
+        audioBitsPerSecond: 24000,
+      });
+
+      const recordedBlob = await new Promise((resolve, reject) => {
+        recorder.addEventListener("dataavailable", (event) => {
+          if (event.data?.size) chunks.push(event.data);
+        });
+        recorder.addEventListener("stop", () => resolve(new Blob(chunks, { type: mimeType })));
+        recorder.addEventListener("error", () => reject(new Error("Falha ao compactar o áudio.")));
+
+        source.addEventListener("ended", () => {
+          if (recorder.state !== "inactive") recorder.stop();
+        });
+
+        recorder.start(250);
+        source.start(0);
+      });
+
+      const extension = mimeType.includes("ogg") ? "ogg" : "webm";
+      return new File([recordedBlob], replaceExtension(file.name, extension), { type: mimeType });
+    } finally {
+      try { await audioContext.close(); } catch (error) { /* noop */ }
+    }
+  }
+
+  function pickRecorderMimeType() {
+    const mimeTypes = [
+      "audio/webm;codecs=opus",
+      "audio/ogg;codecs=opus",
+      "audio/webm",
+      "audio/ogg",
+    ];
+
+    return mimeTypes.find((type) => MediaRecorder.isTypeSupported(type)) || "";
+  }
+
+  function replaceExtension(filename, extension) {
+    const base = String(filename || "audio").replace(/\.[^.]+$/, "");
+    return `${base}.${extension}`;
   }
 
   function buildHtml(ticket) {
