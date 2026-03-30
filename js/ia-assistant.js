@@ -71,7 +71,7 @@
     if (!state.messages.length) {
       els.messages.innerHTML = `
         <article class="assistant-message system">
-          Pergunte sobre PRTs, releases, módulos ou histórico operacional. O assistente usa apenas o contexto interno disponível no ProtoCord.
+          Pergunte sobre PRTs, releases, módulos, histórico operacional ou artigos da FAQ pública do Znuny. O assistente combina o contexto interno do ProtoCord com a base pública disponível.
         </article>
       `;
       lucide.createIcons();
