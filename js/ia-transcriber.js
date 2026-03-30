@@ -2,7 +2,8 @@
   const STORAGE_KEY = "protocord_ia_transcriber_v1";
   const FALLBACK_API_URL = "https://modelo-discord-server.vercel.app/api";
   const MAX_UPLOAD_BYTES = 2.5 * 1024 * 1024;
-  const COMPRESS_FROM_BYTES = 256 * 1024;
+  const SAFE_DIRECT_UPLOAD_BYTES = 1.5 * 1024 * 1024;
+  const SAFE_COMPACT_DIRECT_UPLOAD_BYTES = 2.25 * 1024 * 1024;
   const TARGET_SAMPLE_RATE = 16000;
   const apiBaseUrl = (window.PROTOCORD_TRANSCRIBER_API || localStorage.getItem("PROTOCORD_TRANSCRIBER_API") || FALLBACK_API_URL).replace(/\/$/, "");
 
@@ -456,7 +457,7 @@
 
       let data;
 
-      if (isUploadFriendlyAudio(file)) {
+      if (canUploadDirectly(file)) {
         notify("Enviando Ã¡udio original para a API...", "info");
         try {
           data = await sendTranscriptionRequest(file);
@@ -820,6 +821,18 @@
       type.includes("mp4") ||
       type.includes("m4a")
     );
+  }
+
+  function canUploadDirectly(file) {
+    if (!isUploadFriendlyAudio(file)) {
+      return false;
+    }
+
+    if (file.size <= SAFE_DIRECT_UPLOAD_BYTES) {
+      return true;
+    }
+
+    return isAlreadyCompactAudio(file) && file.size <= SAFE_COMPACT_DIRECT_UPLOAD_BYTES;
   }
 
   async function pingBackendHealth() {
