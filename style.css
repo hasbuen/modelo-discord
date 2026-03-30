@@ -1320,13 +1320,21 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
   border-radius: 16px;
   border: 1px solid rgba(139, 166, 220, 0.12);
   background: rgba(8, 14, 27, 0.72);
+  padding: 0;
 }
 
 .reports-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
+  table-layout: auto;
 }
+
+.reports-col-ticket { width: 11%; }
+.reports-col-prt { width: 11%; }
+.reports-col-tipo { width: 11%; }
+.reports-col-modulo { width: 18%; }
+.reports-col-release { width: 10%; }
+.reports-col-descricao { width: 39%; }
 
 .reports-table thead {
   background: rgba(17, 24, 39, 0.88);
@@ -1351,12 +1359,67 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
   vertical-align: top;
   overflow-wrap: anywhere;
   word-break: break-word;
+  line-height: 1.45;
 }
 
 .reports-desc-cell {
   color: #a9bbd8;
-  max-width: 480px;
   white-space: normal;
+}
+
+.reports-cell-ticket,
+.reports-cell-prt,
+.reports-cell-release {
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.reports-cell-prt {
+  color: #93c5fd;
+}
+
+.reports-cell-tipo {
+  white-space: nowrap;
+}
+
+.reports-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.reports-pill-error {
+  background: rgba(239, 68, 68, 0.18);
+  color: #fecaca;
+  border: 1px solid rgba(248, 113, 113, 0.24);
+}
+
+.reports-pill-suggestion {
+  background: rgba(16, 185, 129, 0.18);
+  color: #bbf7d0;
+  border: 1px solid rgba(52, 211, 153, 0.24);
+}
+
+.reports-cell-modulo {
+  color: #e2ecfb;
+  font-weight: 600;
+}
+
+.reports-cell-desc {
+  min-width: 280px;
+}
+
+.reports-cell-desc-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: #b7c7df;
 }
 
 .reports-side-grid {
@@ -1428,5 +1491,9 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
   .reports-summary-grid,
   .reports-side-grid {
     grid-template-columns: 1fr;
+  }
+
+  .reports-table {
+    min-width: 940px;
   }
 }

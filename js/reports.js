@@ -280,12 +280,18 @@
 
     body.innerHTML = rows.slice(0, 14).map((row) => `
       <tr>
-        <td>${escapeHtml(row.ticket || "--")}</td>
-        <td>${escapeHtml(row.prt)}</td>
-        <td>${escapeHtml(row.tipo)}</td>
-        <td>${escapeHtml(row.modulo)}</td>
-        <td>${escapeHtml(row.release)}</td>
-        <td class="reports-desc-cell">${escapeHtml((row.descricao || "Sem descrição.").slice(0, 260))}</td>
+        <td class="reports-cell-ticket">${escapeHtml(row.ticket || "--")}</td>
+        <td class="reports-cell-prt">${escapeHtml(row.prt)}</td>
+        <td class="reports-cell-tipo">
+          <span class="reports-pill ${row.tipoRaw === "0" ? "reports-pill-error" : "reports-pill-suggestion"}">
+            ${escapeHtml(row.tipo)}
+          </span>
+        </td>
+        <td class="reports-cell-modulo">${escapeHtml(row.modulo)}</td>
+        <td class="reports-cell-release">${escapeHtml(row.release)}</td>
+        <td class="reports-desc-cell reports-cell-desc">
+          <div class="reports-cell-desc-text">${escapeHtml(row.descricao || "Sem descrição.")}</div>
+        </td>
       </tr>
     `).join("");
   }
