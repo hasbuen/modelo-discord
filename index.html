@@ -362,141 +362,208 @@
         </div>
 
         <div id="pagina-historico-liberacoes" class="hidden animate__animated animate__fadeIn">
-          <div id="historico-liberacoes-container" class="space-y-3">
+          <div id="historico-liberacoes-container" class="kpi-shell">
+            <section class="kpi-hero">
+              <div class="kpi-hero-copy">
+                <p class="kpi-eyebrow">Painel Operacional</p>
+                <h2 class="kpi-title">KPI de releases, protocolos e comportamento da base</h2>
+                <p class="kpi-subtitle">Leitura consolidada das rotas do Supabase para acompanhar volume, concentração por módulo, evolução de releases e saúde da operação com recortes visuais mais claros e consistentes.</p>
+              </div>
+              <div class="kpi-hero-metrics">
+                <span id="kpi-sync-badge" class="kpi-badge">Sincronizando base</span>
+                <span id="kpi-highlight-module" class="kpi-badge kpi-badge-soft">Módulo foco: --</span>
+                <span id="kpi-highlight-release" class="kpi-badge kpi-badge-soft">Release líder: --</span>
+              </div>
+            </section>
 
-            <!-- Cards Informativos -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-
-              <div class="bg-transparent p-4 border-none">
-                <p class="text-gray-300 text-xs font-semibold mb-1 uppercase tracking-wider">Total registros</p>
-                <div class="flex items-center justify-between">
-                  <p id="card-total-registrado" class="text-2xl font-bold text-white">0</p>
-                  <i data-lucide="database" class="w-5 h-5 text-gray-400 opacity-60"></i>
+            <section class="kpi-stat-grid">
+              <article class="kpi-stat-card">
+                <div class="kpi-stat-head">
+                  <p class="kpi-stat-label">Total de registros</p>
+                  <span class="kpi-stat-icon"><i data-lucide="database" class="w-5 h-5"></i></span>
                 </div>
-              </div>
-
-              <div class="bg-transparent p-4 border-none">
-                <p class="text-red-200 text-xs font-semibold mb-1 uppercase tracking-wider">Total erros</p>
-                <div class="flex items-center justify-between">
-                  <p id="contador-erros" class="text-2xl font-bold text-red-300">--</p>
-                  <i data-lucide="bug" class="w-5 h-5 text-red-300 opacity-60"></i>
+                <div class="kpi-stat-value-row">
+                  <p id="card-total-registrado" class="kpi-stat-value">0</p>
+                  <span id="kpi-delta-total" class="kpi-stat-delta">Base completa</span>
                 </div>
-              </div>
+                <small id="kpi-note-total" class="kpi-stat-note">Protocolos consolidados no ambiente.</small>
+              </article>
 
-              <div class="bg-transparent p-4 border-none">
-                <p class="text-green-200 text-xs font-semibold mb-1 uppercase tracking-wider">Total sugest?es</p>
-                <div class="flex items-center justify-between">
-                  <p id="contador-sugestoes" class="text-2xl font-bold text-green-300">--</p>
-                  <i data-lucide="layers-plus" class="w-5 h-5 text-green-300 opacity-60"></i>
+              <article class="kpi-stat-card kpi-stat-card-danger">
+                <div class="kpi-stat-head">
+                  <p class="kpi-stat-label">Total de erros</p>
+                  <span class="kpi-stat-icon"><i data-lucide="bug" class="w-5 h-5"></i></span>
                 </div>
-              </div>
-
-              <div class="bg-gradient-to-br from-blue-900 to-blue-800 p-4 rounded-xl shadow-lg border border-blue-700">
-                <p class="text-blue-200 text-xs font-semibold mb-1 uppercase tracking-wider">Releases verificadas</p>
-                <div class="flex items-center justify-between">
-                  <p id="card-releases" class="text-2xl font-bold text-white">--</p>
-                  <i data-lucide="calendar" class="w-5 h-5 text-blue-300 opacity-60"></i>
+                <div class="kpi-stat-value-row">
+                  <p id="contador-erros" class="kpi-stat-value">--</p>
+                  <span id="kpi-delta-erros" class="kpi-stat-delta">0%</span>
                 </div>
-              </div>
+                <small id="kpi-note-erros" class="kpi-stat-note">Participação sobre o total de protocolos.</small>
+              </article>
 
-              <div
-                class="bg-gradient-to-br from-green-900 to-green-800 p-4 rounded-xl shadow-lg border border-green-700">
-                <p class="text-green-200 text-xs font-semibold mb-1 uppercase tracking-wider">PRTs liberados</p>
-                <div class="flex items-center justify-between">
-                  <p id="card-protocolos" class="text-2xl font-bold text-white">--</p>
-                  <i data-lucide="check-circle-2" class="w-5 h-5 text-green-300 opacity-60"></i>
+              <article class="kpi-stat-card kpi-stat-card-success">
+                <div class="kpi-stat-head">
+                  <p class="kpi-stat-label">Total de sugestões</p>
+                  <span class="kpi-stat-icon"><i data-lucide="layers-plus" class="w-5 h-5"></i></span>
                 </div>
-              </div>
-
-              <div
-                class="bg-gradient-to-br from-purple-900 to-purple-800 p-4 rounded-xl shadow-lg border border-purple-700">
-                <p class="text-purple-200 text-xs font-semibold mb-1 uppercase tracking-wider">Último RLS liberado</p>
-                <div class="flex items-center justify-between">
-                  <p id="card-ultima" class="text-lg font-bold text-white truncate">--</p>
-                  <i data-lucide="zap" class="w-5 h-5 text-purple-300 opacity-60"></i>
+                <div class="kpi-stat-value-row">
+                  <p id="contador-sugestoes" class="kpi-stat-value">--</p>
+                  <span id="kpi-delta-sugestoes" class="kpi-stat-delta">0%</span>
                 </div>
-              </div>
-            </div>
+                <small id="kpi-note-sugestoes" class="kpi-stat-note">Participação sobre o total de protocolos.</small>
+              </article>
 
-            <!-- Gráfico de Distribuição (Pie) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
-                <h3 class="text-lg font-bold mb-4 text-white">Top 5 Releases</h3>
-                <div class="relative" style="height: 180px;">
-                  <canvas id="chartTop5"></canvas>
+              <article class="kpi-stat-card kpi-stat-card-primary">
+                <div class="kpi-stat-head">
+                  <p class="kpi-stat-label">Releases verificadas</p>
+                  <span class="kpi-stat-icon"><i data-lucide="calendar" class="w-5 h-5"></i></span>
                 </div>
-              </div>
-
-              <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
-                <h3 class="text-lg font-bold mb-4 text-white">Evolução ao Longo do Tempo</h3>
-                <div class="relative" style="height: 180px;">
-                  <canvas id="chartEvolucao"></canvas>
+                <div class="kpi-stat-value-row">
+                  <p id="card-releases" class="kpi-stat-value">--</p>
+                  <span id="kpi-delta-releases" class="kpi-stat-delta">0 densidade</span>
                 </div>
-              </div>
-            </div>
+                <small id="kpi-note-releases" class="kpi-stat-note">Quantidade de datas cobertas na base de liberações.</small>
+              </article>
 
-            <!-- Gráfico de Liberações por Data -->
-            <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
-              <h3 class="text-lg font-bold mb-4 text-white">Protocolos por Release</h3>
-              <div class="relative" style="height: 300px;">
-                <canvas id="chartLiberacoes"></canvas>
-              </div>
+              <article class="kpi-stat-card kpi-stat-card-emerald">
+                <div class="kpi-stat-head">
+                  <p class="kpi-stat-label">PRTs liberados</p>
+                  <span class="kpi-stat-icon"><i data-lucide="check-circle-2" class="w-5 h-5"></i></span>
+                </div>
+                <div class="kpi-stat-value-row">
+                  <p id="card-protocolos" class="kpi-stat-value">--</p>
+                  <span id="kpi-delta-protocolos" class="kpi-stat-delta">0 cobertura</span>
+                </div>
+                <small id="kpi-note-protocolos" class="kpi-stat-note">PRTs únicos presentes nas releases publicadas.</small>
+              </article>
 
-              <!-- Tendência por Módulo (linha) -->
-              <div class="mt-4 bg-gray-800 p-4 rounded-xl">
-                <div class="flex items-center justify-between mb-2">
-                  <h4 class="text-sm font-semibold text-white">Tendência por Módulo</h4>
-                  <div class="flex items-center gap-2">
-                    <small id="trend-current" class="text-xs text-gray-400">Exibindo: <span
-                        id="trend-modulo-name">--</span></small>
+              <article class="kpi-stat-card kpi-stat-card-violet">
+                <div class="kpi-stat-head">
+                  <p class="kpi-stat-label">Último RLS liberado</p>
+                  <span class="kpi-stat-icon"><i data-lucide="zap" class="w-5 h-5"></i></span>
+                </div>
+                <div class="kpi-stat-value-row">
+                  <p id="card-ultima" class="kpi-stat-value kpi-stat-value-date">--</p>
+                  <span id="kpi-delta-ultima" class="kpi-stat-delta">Mais recente</span>
+                </div>
+                <small id="kpi-note-ultima" class="kpi-stat-note">Release de maior recência identificada na base.</small>
+              </article>
+            </section>
+
+            <section class="kpi-chart-grid">
+              <article class="kpi-panel">
+                <div class="kpi-panel-header">
+                  <div>
+                    <h3 class="kpi-panel-title">Top 5 releases</h3>
+                    <p class="kpi-panel-subtitle">Concentração de protocolos por release com leitura rápida do peso relativo.</p>
                   </div>
                 </div>
-                <div class="relative" style="height: 180px;">
-                  <canvas id="chartTrendModulo"></canvas>
+                <div class="kpi-canvas kpi-canvas-sm">
+                  <canvas id="chartTop5"></canvas>
                 </div>
-              </div>
-            </div>
+              </article>
 
-            <div class="bg-gray-900 p-1">
-              <h2 class="text-2xl text-gray-200 text-center font-bold mb-4">
-                Protocolos por m?dulo
-              </h2>
+              <article class="kpi-panel">
+                <div class="kpi-panel-header">
+                  <div>
+                    <h3 class="kpi-panel-title">Evolução ao longo do tempo</h3>
+                    <p class="kpi-panel-subtitle">Acúmulo de protocolos publicados conforme a sequência histórica de releases.</p>
+                  </div>
+                </div>
+                <div class="kpi-canvas kpi-canvas-sm">
+                  <canvas id="chartEvolucao"></canvas>
+                </div>
+              </article>
+            </section>
 
-              <div class="w-full flex justify-center">
-                <div class="w-full w-[100px] h-[100px] md:w-150 md:h-150 relative"
-                  style="max-width: 2800px; max-height: 280px;">
+            <section class="kpi-main-grid">
+              <article class="kpi-panel kpi-panel-wide">
+                <div class="kpi-panel-header">
+                  <div>
+                    <h3 class="kpi-panel-title">Protocolos por release</h3>
+                    <p class="kpi-panel-subtitle">Distribuição cronológica do volume por release, com foco em leitura de pico e estabilidade.</p>
+                  </div>
+                </div>
+                <div class="kpi-canvas kpi-canvas-lg">
+                  <canvas id="chartLiberacoes"></canvas>
+                </div>
+
+                <div class="kpi-subpanel">
+                  <div class="kpi-panel-header">
+                    <div>
+                      <h4 class="kpi-subpanel-title">Tendência por módulo</h4>
+                      <p class="kpi-panel-subtitle">Exibe automaticamente o módulo com maior concentração ou o filtro atual.</p>
+                    </div>
+                    <small id="trend-current" class="kpi-inline-note">Exibindo: <span id="trend-modulo-name">--</span></small>
+                  </div>
+                  <div class="kpi-canvas kpi-canvas-md">
+                    <canvas id="chartTrendModulo"></canvas>
+                  </div>
+                </div>
+              </article>
+
+              <aside class="kpi-side-stack">
+                <article class="kpi-panel">
+                  <div class="kpi-panel-header">
+                    <div>
+                      <h3 class="kpi-panel-title">Leitura executiva</h3>
+                      <p class="kpi-panel-subtitle">Resumo automático baseado no volume atual de releases, módulos e classificação.</p>
+                    </div>
+                  </div>
+                  <div id="kpi-executive-summary" class="kpi-summary-list">
+                    <p class="kpi-summary-line">Aguardando sincronização da base.</p>
+                  </div>
+                </article>
+
+                <article class="kpi-panel">
+                  <div class="kpi-panel-header">
+                    <div>
+                      <h3 class="kpi-panel-title">Ranking de módulos</h3>
+                      <p class="kpi-panel-subtitle">Módulos com maior incidência no recorte atual.</p>
+                    </div>
+                  </div>
+                  <div id="ranking-modulos" class="kpi-ranking-list"></div>
+                </article>
+              </aside>
+            </section>
+
+            <section class="kpi-detail-grid">
+              <article class="kpi-panel">
+                <div class="kpi-panel-header">
+                  <div>
+                    <h3 class="kpi-panel-title">Protocolos por módulo</h3>
+                    <p class="kpi-panel-subtitle">Participação dos principais módulos na base consolidada.</p>
+                  </div>
+                </div>
+                <div class="kpi-canvas kpi-canvas-md">
                   <canvas id="grafico-modulos"></canvas>
                 </div>
-              </div>
+                <div id="legenda-modulos" class="kpi-legend"></div>
+              </article>
+            </section>
 
-              <div id="legenda-modulos" class="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm"> </div>
-            </div>
-
-
-            <!-- Tabela de Detalhes -->
-            <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
-              <!-- Filtro de Módulos + Busca -->
+            <section class="kpi-panel">
               <div class="mb-5 space-y-3">
-
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                   <div>
-                    <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">
-                      Filtrar por módulo
-                    </p>
+                    <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Filtrar por módulo</p>
                     <div id="filtro-modulos" class="flex flex-wrap gap-2 mt-2"></div>
                   </div>
 
-                  <div class="w-full md:w-72">
-                    <input id="busca-modulo" type="text" placeholder="Buscar PRT, módulo ou descrição..." class="w-full px-4 py-2 rounded-lg bg-gray-800 text-gray-200
-               focus:ring-2 focus:ring-blue-500 outline-none transition" />
+                  <div class="w-full md:w-80">
+                    <input id="busca-modulo" type="text" placeholder="Buscar PRT, módulo ou descrição..." class="w-full px-4 py-3 rounded-xl bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition" />
                   </div>
                 </div>
-
               </div>
 
-              <h3 class="text-lg font-bold mb-4 text-white">Detalhes das Liberações</h3>
-              <div class="overflow-x-auto">
+              <div class="kpi-panel-header">
+                <div>
+                  <h3 class="kpi-panel-title">Detalhes das liberações</h3>
+                  <p class="kpi-panel-subtitle">Tabela consolidada para auditoria e rastreio dos PRTs por release.</p>
+                </div>
+              </div>
 
+              <div class="kpi-table-wrap">
                 <table class="w-full text-sm">
                   <thead class="bg-gray-800">
                     <tr>
@@ -508,7 +575,7 @@
                   <tbody id="tabelaLiberados" class="divide-y divide-gray-700"></tbody>
                 </table>
               </div>
-            </div>
+            </section>
           </div>
         </div>
 
@@ -1229,6 +1296,7 @@
       if (paginaId === 'historico-liberacoes') {
         carregarHistoricoLiberacoes();
         setTimeout(() => gerarDashboardLiberacoes(), 200);
+        setTimeout(() => window.renderKpiWorkspace && window.renderKpiWorkspace(), 420);
       }
 
       if (paginaId === 'relatorios') {
@@ -1331,22 +1399,23 @@
     `;
       tabelaCard.insertBefore(exportDiv, tabelaCard.children[1]);
 
-      // Ranking de m?dulos
-      const ranking = document.createElement('div');
-      ranking.className = 'bg-gray-900 p-4 rounded-xl mt-4';
-      ranking.innerHTML = `
-      <h3 class="text-sm font-bold mb-3 text-gray-300 uppercase">Ranking de Módulos</h3>
-      <div id="ranking-modulos" class="space-y-2"></div>
-    `;
+      // Ranking de módulos
+      if (!document.getElementById('ranking-modulos')) {
+        const ranking = document.createElement('div');
+        ranking.className = 'bg-gray-900 p-4 rounded-xl mt-4';
+        ranking.innerHTML = `
+        <h3 class="text-sm font-bold mb-3 text-gray-300 uppercase">Ranking de Módulos</h3>
+        <div id="ranking-modulos" class="space-y-2"></div>
+      `;
 
-      // Tenta inserir abaixo do card "Protocolos por Release" (canvas #chartLiberacoes)
-      const protocolosCanvas = document.getElementById('chartLiberacoes');
-      const protocolosCard = protocolosCanvas?.closest('.bg-gray-900.p-6.rounded-xl.shadow-lg');
-      if (protocolosCard && protocolosCard.parentElement) {
-        protocolosCard.parentElement.insertBefore(ranking, protocolosCard.nextElementSibling);
-      } else {
-        // Fallback: mant?m comportamento anterior
-        tabelaCard.parentElement.appendChild(ranking);
+        // Tenta inserir abaixo do card "Protocolos por Release" (canvas #chartLiberacoes)
+        const protocolosCanvas = document.getElementById('chartLiberacoes');
+        const protocolosCard = protocolosCanvas?.closest('.bg-gray-900.p-6.rounded-xl.shadow-lg');
+        if (protocolosCard && protocolosCard.parentElement) {
+          protocolosCard.parentElement.insertBefore(ranking, protocolosCard.nextElementSibling);
+        } else {
+          tabelaCard.parentElement.appendChild(ranking);
+        }
       }
     });
   </script>
@@ -2176,6 +2245,7 @@
     })();
   </script>
   <script src="js/reports.js"></script>
+  <script src="js/kpi-modern.js"></script>
 </body>
 
 </html>
