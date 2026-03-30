@@ -361,6 +361,8 @@
   function renderActiveTicket() {
     const active = getActiveTicket();
     const hasActive = Boolean(active);
+    els.page?.classList.toggle("is-uploading", state.uploading);
+    els.page?.setAttribute("aria-busy", state.uploading ? "true" : "false");
 
     toggleDisabled(els.toggleRegisteredBtn, !hasActive);
     toggleDisabled(els.uploadAudioBtn, !hasActive || state.uploading);
@@ -380,7 +382,7 @@
     els.activeTitle.textContent = active.customName || active.phone || "Ticket";
     els.activeDate.textContent = active.createdAt || "";
     els.toggleRegisteredBtn.querySelector("span").textContent = active.isRegistered ? "Registrado" : "Marcar Registro";
-    els.uploadAudioBtn.querySelector("span").textContent = state.uploading ? "Processando..." : "TranscriÃ§Ã£o";
+    els.uploadAudioBtn.querySelector("span").textContent = state.uploading ? "Processando..." : "Transcrição";
 
     renderImageViewer(active);
     renderReport(active);
@@ -416,12 +418,12 @@
       els.reportView.classList.add("hidden");
       els.reportEditor.classList.remove("hidden");
       els.reportEditor.value = text;
-      els.editReportBtn.querySelector("span").textContent = "Salvar EdiÃ§Ã£o";
+      els.editReportBtn.querySelector("span").textContent = "Salvar Edição";
       els.cancelReportBtn.classList.remove("hidden");
     } else {
       els.reportView.classList.remove("hidden");
       els.reportEditor.classList.add("hidden");
-      els.reportView.textContent = text || "Aguardando transcriÃ§Ã£o...";
+      els.reportView.textContent = text || "Aguardando transcrição...";
       els.editReportBtn.querySelector("span").textContent = "Editar";
       els.cancelReportBtn.classList.add("hidden");
     }
@@ -450,13 +452,13 @@
     try {
       await pingBackendHealth();
       if (file.size > OPENAI_MAX_AUDIO_BYTES) {
-        throw new Error("O Ã¡udio estÃ¡ acima do limite suportado para transcriÃ§Ã£o. Envie um arquivo menor que 24 MB.");
+        throw new Error("O áudio está acima do limite suportado para transcrição. Envie um arquivo menor que 24 MB.");
       }
 
-      notify("Enviando Ã¡udio para o Blob da Vercel...", "info");
+      notify("Enviando áudio para o Blob da Vercel...", "info");
       const blobUpload = await uploadAudioToBlob(file);
 
-      notify("Solicitando transcriÃ§Ã£o do Ã¡udio armazenado...", "info");
+      notify("Solicitando transcrição do áudio armazenado...", "info");
       const data = await requestBlobTranscription(blobUpload, file);
 
       if (active.nomeArquivoNoServidor && active.nomeArquivoNoServidor !== data.nomeArquivoNoServidor) {
@@ -475,9 +477,9 @@
       state.reportDraft = "";
       persist();
       render();
-      notify("TranscriÃ§Ã£o concluÃ­da.", "success");
+      notify("Transcrição concluída.", "success");
     } catch (error) {
-      console.error("Falha no fluxo de transcriÃ§Ã£o:", error);
+      console.error("Falha no fluxo de transcrição:", error);
       notify(error.message || "Falha ao transcrever.", "error");
     } finally {
       state.uploading = false;
@@ -490,7 +492,7 @@
     formData.append("audio", file);
     formData.append("modo", "openai");
 
-    notify("Enviando Ã¡udio para a API...", "info");
+    notify("Enviando áudio para a API...", "info");
 
     const response = await fetch(`${apiBaseUrl}/transcrever`, {
       method: "POST",
@@ -505,7 +507,7 @@
     }
 
     if (!response.ok || !data?.sucesso) {
-      const message = data?.erro || `Falha ao transcrever o Ã¡udio. Status ${response.status}`;
+      const message = data?.erro || `Falha ao transcrever o áudio. Status ${response.status}`;
       const error = new Error(message);
       error.status = response.status;
       throw error;
@@ -536,7 +538,7 @@
     }
 
     if (!response.ok || !data?.sucesso) {
-      throw new Error(data?.erro || `Falha ao transcrever o Ã¡udio armazenado. Status ${response.status}`);
+      throw new Error(data?.erro || `Falha ao transcrever o áudio armazenado. Status ${response.status}`);
     }
 
     return data;
@@ -573,7 +575,7 @@
     state.editingReport = false;
     state.reportDraft = "";
     persist();
-    notify("RelatÃ³rio atualizado.", "success");
+    notify("Relatório atualizado.", "success");
   }
 
   function getActiveTicketWithDraft(persistDraft) {
@@ -673,12 +675,12 @@
 
   async function compressAudioForUpload(file) {
     if (typeof MediaRecorder === "undefined") {
-      throw new Error("Seu navegador nÃ£o suporta conversÃ£o local deste Ã¡udio.");
+      throw new Error("Seu navegador não suporta conversão local deste áudio.");
     }
 
     const mimeType = pickRecorderMimeType();
     if (!mimeType) {
-      throw new Error("Nenhum codec compatÃ­vel encontrado para converter o Ã¡udio.");
+      throw new Error("Nenhum codec compatível encontrado para converter o áudio.");
     }
 
     const arrayBuffer = await file.arrayBuffer();
@@ -705,7 +707,7 @@
       }
 
       if (!bestBlob) {
-        throw new Error("NÃ£o foi possÃ­vel converter o Ã¡udio para um formato menor.");
+        throw new Error("Não foi possível converter o áudio para um formato menor.");
       }
 
       const extension = mimeType.includes("ogg") ? "ogg" : "webm";
@@ -767,7 +769,7 @@
           } catch (error) {
             // noop
           }
-          reject(new Error("Tempo esgotado ao converter o Ã¡udio para Opus."));
+          reject(new Error("Tempo esgotado ao converter o áudio para Opus."));
         }, Math.max(15000, Math.ceil(audioBuffer.duration * 2000)));
 
         recorder.addEventListener("dataavailable", (event) => {
@@ -781,7 +783,7 @@
 
         recorder.addEventListener("error", () => {
           clearTimeout(timeoutId);
-          reject(new Error("Falha ao codificar o Ã¡udio em Opus."));
+          reject(new Error("Falha ao codificar o áudio em Opus."));
         });
 
         source.addEventListener("ended", () => {
@@ -817,7 +819,7 @@
 
   async function uploadAudioToBlob(file) {
     if (!isUploadFriendlyAudio(file)) {
-      throw new Error("Formato de Ã¡udio nÃ£o suportado para upload.");
+      throw new Error("Formato de áudio não suportado para upload.");
     }
 
     const { upload } = await loadBlobClient();
