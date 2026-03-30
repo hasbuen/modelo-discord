@@ -3,6 +3,7 @@
   const FALLBACK_API_URL = "https://modelo-discord-server.vercel.app/api";
   const MAX_UPLOAD_BYTES = 2.5 * 1024 * 1024;
   const COMPRESS_FROM_BYTES = 256 * 1024;
+  const DIRECT_UPLOAD_LIMIT_BYTES = 4 * 1024 * 1024;
   const TARGET_SAMPLE_RATE = 16000;
   const apiBaseUrl = (window.PROTOCORD_TRANSCRIBER_API || localStorage.getItem("PROTOCORD_TRANSCRIBER_API") || FALLBACK_API_URL).replace(/\/$/, "");
 
@@ -454,34 +455,44 @@
     try {
       await pingBackendHealth();
 
-      if (file.size <= MAX_UPLOAD_BYTES && isUploadFriendlyAudio(file)) {
-        uploadFile = file;
-      } else if (file.size > COMPRESS_FROM_BYTES || !isAlreadyCompactAudio(file)) {
+      let data;
+
+      if (file.size <= DIRECT_UPLOAD_LIMIT_BYTES && isUploadFriendlyAudio(file)) {
+        notify("Enviando áudio original para a API...", "info");
+        try {
+          data = await sendTranscriptionRequest(file);
+          uploadFile = file;
+        } catch (error) {
+          if (!isPayloadTooLargeError(error)) {
+            throw error;
+          }
+
+          notify("Upload direto excedeu o limite. Convertendo para Opus reduzido...", "warning");
+          uploadFile = await withTimeout(
+            compressAudioForUpload(file),
+            20000,
+            "A conversão local do áudio demorou demais e foi interrompida."
+          );
+
+          if (uploadFile.size > MAX_UPLOAD_BYTES) {
+            throw new Error("O áudio continua acima do limite de upload. Tente um arquivo menor.");
+          }
+
+          data = await sendTranscriptionRequest(uploadFile);
+        }
+      } else {
         notify("Convertendo áudio para Opus reduzido...", "info");
         uploadFile = await withTimeout(
           compressAudioForUpload(file),
           20000,
           "A conversão local do áudio demorou demais e foi interrompida."
         );
-      }
 
-      if (uploadFile.size > MAX_UPLOAD_BYTES) {
-        throw new Error("O áudio continua acima do limite de upload. Tente um arquivo menor.");
-      }
+        if (uploadFile.size > MAX_UPLOAD_BYTES) {
+          throw new Error("O áudio continua acima do limite de upload. Tente um arquivo menor.");
+        }
 
-      formData.append("audio", uploadFile);
-      formData.append("modo", "openai");
-
-      notify("Enviando áudio para a API...", "info");
-
-      const response = await fetch(`${apiBaseUrl}/transcrever`, {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-      if (!response.ok || !data?.sucesso) {
-        throw new Error(data?.erro || "Falha ao transcrever o áudio.");
+        data = await sendTranscriptionRequest(uploadFile);
       }
 
       if (active.nomeArquivoNoServidor && active.nomeArquivoNoServidor !== data.nomeArquivoNoServidor) {
@@ -502,11 +513,41 @@
       render();
       notify("Transcrição concluída.", "success");
     } catch (error) {
+      console.error("Falha no fluxo de transcrição:", error);
       notify(error.message || "Falha ao transcrever.", "error");
     } finally {
       state.uploading = false;
       renderActiveTicket();
     }
+  }
+
+  async function sendTranscriptionRequest(file) {
+    const formData = new FormData();
+    formData.append("audio", file);
+    formData.append("modo", "openai");
+
+    notify("Enviando áudio para a API...", "info");
+
+    const response = await fetch(`${apiBaseUrl}/transcrever`, {
+      method: "POST",
+      body: formData,
+    });
+
+    let data = null;
+    try {
+      data = await response.json();
+    } catch (error) {
+      data = null;
+    }
+
+    if (!response.ok || !data?.sucesso) {
+      const message = data?.erro || `Falha ao transcrever o áudio. Status ${response.status}`;
+      const error = new Error(message);
+      error.status = response.status;
+      throw error;
+    }
+
+    return data;
   }
 
   function buildSingleReportText(ticket) {
@@ -800,6 +841,10 @@
         setTimeout(() => reject(new Error(message)), timeoutMs);
       }),
     ]);
+  }
+
+  function isPayloadTooLargeError(error) {
+    return error?.status === 413 || /413|payload too large|function_payload_too_large/i.test(String(error?.message || ""));
   }
 
   function pickRecorderMimeType() {
