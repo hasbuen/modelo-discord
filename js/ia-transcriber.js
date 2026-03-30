@@ -2,9 +2,12 @@
   const STORAGE_KEY = "protocord_ia_transcriber_v1";
   const FALLBACK_API_URL = "https://modelo-discord-server.vercel.app/api";
   const OPENAI_MAX_AUDIO_BYTES = 24 * 1024 * 1024;
+  const AUDIO_DB_NAME = "protocord_ia_audio_v1";
+  const AUDIO_STORE_NAME = "ticket_audio";
   const TARGET_SAMPLE_RATE = 16000;
   const apiBaseUrl = (window.PROTOCORD_TRANSCRIBER_API || localStorage.getItem("PROTOCORD_TRANSCRIBER_API") || FALLBACK_API_URL).replace(/\/$/, "");
   let blobClientPromise = null;
+  let audioDbPromise = null;
 
   const state = {
     tickets: [],
@@ -176,7 +179,11 @@
   function restoreState() {
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-      state.tickets = Array.isArray(parsed.tickets) ? parsed.tickets : [];
+      state.tickets = Array.isArray(parsed.tickets) ? parsed.tickets.map((ticket) => ({
+        ...ticket,
+        audioUrl: "",
+        blobUrl: "",
+      })) : [];
       state.activeId = parsed.activeId || null;
     } catch (error) {
       state.tickets = [];
@@ -186,7 +193,11 @@
 
   function persist() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      tickets: state.tickets,
+      tickets: state.tickets.map((ticket) => ({
+        ...ticket,
+        audioUrl: "",
+        blobUrl: "",
+      })),
       activeId: state.activeId,
     }));
   }
@@ -210,6 +221,7 @@
       audioUrl: "",
       blobUrl: "",
       nomeArquivoNoServidor: "",
+      localAudioKey: id,
     };
 
     state.tickets.unshift(ticket);
@@ -320,10 +332,8 @@
         const ticket = state.tickets.find((entry) => entry.id === ticketId);
         if (!ticket) return;
 
-      if (ticket.nomeArquivoNoServidor) {
-          await deleteStoredAudio(ticket);
-          revokeObjectUrlIfNeeded(ticket.audioUrl);
-        }
+        await deleteLocalAudio(ticket.localAudioKey || ticket.id);
+        revokeObjectUrlIfNeeded(ticket.audioUrl);
 
         state.tickets = state.tickets.filter((entry) => entry.id !== ticketId);
 
@@ -361,7 +371,8 @@
   function renderActiveTicket() {
     const active = getActiveTicket();
     const hasActive = Boolean(active);
-    els.page?.classList.toggle("is-uploading", state.uploading);
+    const workspace = els.page?.querySelector(".ia-workspace");
+    workspace?.classList.toggle("is-uploading", state.uploading);
     els.page?.setAttribute("aria-busy", state.uploading ? "true" : "false");
 
     toggleDisabled(els.toggleRegisteredBtn, !hasActive);
@@ -430,13 +441,23 @@
   }
 
   function renderAudio(active) {
-    if (active?.audioUrl) {
-      els.audioCard.classList.remove("hidden");
-      els.audioPlayer.src = active.audioUrl;
-    } else {
+    if (!active) {
       els.audioCard.classList.add("hidden");
       els.audioPlayer.removeAttribute("src");
+      return;
     }
+
+    if (active.audioUrl) {
+      els.audioCard.classList.remove("hidden");
+      if (els.audioPlayer.src !== active.audioUrl) {
+        els.audioPlayer.src = active.audioUrl;
+      }
+      return;
+    }
+
+    els.audioCard.classList.remove("hidden");
+    els.audioPlayer.removeAttribute("src");
+    hydrateLocalAudio(active);
   }
 
   async function uploadAudio(file) {
@@ -455,24 +476,27 @@
         throw new Error("O áudio está acima do limite suportado para transcrição. Envie um arquivo menor que 24 MB.");
       }
 
-      notify("Enviando áudio para o Blob da Vercel...", "info");
+      notify("Enviando áudio temporário para processamento...", "info");
       const blobUpload = await uploadAudioToBlob(file);
 
       notify("Solicitando transcrição do áudio armazenado...", "info");
       const data = await requestBlobTranscription(blobUpload, file);
 
-      if (active.nomeArquivoNoServidor && active.nomeArquivoNoServidor !== data.nomeArquivoNoServidor) {
-        await deleteStoredAudio(active);
+      if (active.localAudioKey) {
+        await deleteLocalAudio(active.localAudioKey);
         revokeObjectUrlIfNeeded(active.audioUrl);
       }
+
+      const localAudioKey = await saveLocalAudio(active.id, file);
 
       active.analysis = data.analise || "";
       active.solucao = data.solucao || "";
       active.resumo = (data.resumo || "").substring(0, 255);
       active.phone = data.telefone || active.phone;
-      active.nomeArquivoNoServidor = data.nomeArquivoNoServidor || "";
-      active.blobUrl = data.blobUrl || data.audioUrl || "";
-      active.audioUrl = data.audioUrl || data.blobUrl || blobUpload.url || URL.createObjectURL(file);
+      active.nomeArquivoNoServidor = "";
+      active.blobUrl = "";
+      active.localAudioKey = localAudioKey;
+      active.audioUrl = URL.createObjectURL(file);
       state.editingReport = false;
       state.reportDraft = "";
       persist();
@@ -670,6 +694,96 @@
       });
     } catch (error) {
       // noop
+    }
+  }
+
+  function openAudioDatabase() {
+    if (!audioDbPromise) {
+      audioDbPromise = new Promise((resolve, reject) => {
+        const request = indexedDB.open(AUDIO_DB_NAME, 1);
+
+        request.onupgradeneeded = () => {
+          const db = request.result;
+          if (!db.objectStoreNames.contains(AUDIO_STORE_NAME)) {
+            db.createObjectStore(AUDIO_STORE_NAME, { keyPath: "id" });
+          }
+        };
+
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error("Falha ao abrir IndexedDB."));
+      });
+    }
+
+    return audioDbPromise;
+  }
+
+  async function saveLocalAudio(ticketId, file) {
+    const db = await openAudioDatabase();
+    const id = String(ticketId || Date.now());
+
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction(AUDIO_STORE_NAME, "readwrite");
+      tx.objectStore(AUDIO_STORE_NAME).put({
+        id,
+        blob: file,
+        filename: file.name || "audio",
+        type: file.type || "application/octet-stream",
+        updatedAt: Date.now(),
+      });
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error || new Error("Falha ao salvar áudio local."));
+    });
+
+    return id;
+  }
+
+  async function readLocalAudio(audioKey) {
+    if (!audioKey) return null;
+    const db = await openAudioDatabase();
+
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(AUDIO_STORE_NAME, "readonly");
+      const request = tx.objectStore(AUDIO_STORE_NAME).get(audioKey);
+      request.onsuccess = () => resolve(request.result || null);
+      request.onerror = () => reject(request.error || new Error("Falha ao ler áudio local."));
+    });
+  }
+
+  async function deleteLocalAudio(audioKey) {
+    if (!audioKey) return;
+    const db = await openAudioDatabase();
+
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction(AUDIO_STORE_NAME, "readwrite");
+      tx.objectStore(AUDIO_STORE_NAME).delete(audioKey);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error || new Error("Falha ao excluir áudio local."));
+    });
+  }
+
+  async function hydrateLocalAudio(ticket) {
+    if (!ticket?.localAudioKey) {
+      els.audioCard.classList.add("hidden");
+      return;
+    }
+
+    try {
+      const localAudio = await readLocalAudio(ticket.localAudioKey);
+      if (!localAudio?.blob) {
+        els.audioCard.classList.add("hidden");
+        return;
+      }
+
+      const active = getActiveTicket();
+      if (!active || active.id !== ticket.id) return;
+
+      revokeObjectUrlIfNeeded(active.audioUrl);
+      active.audioUrl = URL.createObjectURL(localAudio.blob);
+      els.audioCard.classList.remove("hidden");
+      els.audioPlayer.src = active.audioUrl;
+    } catch (error) {
+      console.error("Falha ao hidratar áudio local:", error);
+      els.audioCard.classList.add("hidden");
     }
   }
 

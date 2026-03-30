@@ -133,6 +133,14 @@
           </span>
         </button>
 
+        <button onclick="mostrarPagina('assistente')" data-tooltip="Assistente IA" class="sidebar-item" id="btn-assistente">
+          <i data-lucide="messages-square" class="sidebar-icon"></i>
+          <span class="sidebar-label flex items-center">
+            Assistente
+            <span class="bg-sky-400 text-slate-950 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">IA</span>
+          </span>
+        </button>
+
       </nav>
 
       <div class="mt-auto border-t border-gray-700 pt-3">
@@ -189,6 +197,9 @@
         </button>
         <button onclick="mostrarPagina('ia')" class="sidebar-item" id="btn-ia-mobile">
           <i data-lucide="bot" class="sidebar-icon"></i> IA
+        </button>
+        <button onclick="mostrarPagina('assistente')" class="sidebar-item" id="btn-assistente-mobile">
+          <i data-lucide="messages-square" class="sidebar-icon"></i> Assistente
         </button>
         <button onclick="mostrarPagina('relatorios')" class="sidebar-item" id="btn-relatorios-mobile">
           <i data-lucide="file-text" class="sidebar-icon"></i> Relatórios
@@ -787,7 +798,7 @@
                     <p id="ia-active-date" class="ia-main-date">A página IA agora usa o fluxo do projeto enviado.</p>
                     <div class="ia-hero-pills">
                       <span class="ia-pill">GitHub Pages</span>
-                      <span class="ia-pill">Vercel Blob</span>
+                      <span class="ia-pill">Áudio local</span>
                       <span class="ia-pill">Groq Cloud</span>
                     </div>
                   </div>
@@ -812,6 +823,11 @@
                     <input id="ia-audio-input" type="file" accept="audio/*" class="hidden" />
                   </div>
                 </header>
+
+                <div class="ia-privacy-note">
+                  <i data-lucide="shield-check" class="w-4 h-4"></i>
+                  <span>Privacidade local: o áudio e os cards desta transcrição ficam armazenados somente neste navegador. Apenas o analista que transcreveu nesta máquina consegue ouvir e revisar esse conteúdo local.</span>
+                </div>
 
                 <div id="ia-empty-state" class="ia-empty-state">
                   <i data-lucide="bot" class="w-10 h-10"></i>
@@ -890,7 +906,7 @@
                           <i data-lucide="volume-2" class="w-4 h-4"></i>
                           Áudio Original
                         </h3>
-                        <p class="ia-section-subtitle">O arquivo fica acessível pelo backend de transcrição.</p>
+                        <p class="ia-section-subtitle">O arquivo é mantido localmente neste navegador para preservar privacidade e isolamento entre analistas.</p>
                       </div>
                     </div>
 
@@ -899,6 +915,53 @@
                 </div>
               </section>
             </div>
+          </div>
+        </div>
+
+        <div id="pagina-assistente" class="hidden animate__animated animate__fadeIn">
+          <div class="assistant-shell">
+            <section class="assistant-hero">
+              <div>
+                <p class="assistant-eyebrow">Assistente IA</p>
+                <h2 class="assistant-title">Consulta inteligente com base no Supabase</h2>
+                <p class="assistant-subtitle">Pergunte sobre protocolos, módulos, releases e contexto operacional. A resposta é gerada pela Groq com base nos dados disponíveis nas rotas internas.</p>
+              </div>
+              <div class="assistant-hero-pills">
+                <span class="assistant-pill">Groq</span>
+                <span class="assistant-pill">Supabase</span>
+                <span class="assistant-pill">Contexto interno</span>
+              </div>
+            </section>
+
+            <section class="assistant-layout">
+              <aside class="assistant-sidecard">
+                <h3 class="assistant-side-title">Sugestões rápidas</h3>
+                <div class="assistant-suggestions">
+                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais releases recentes liberaram mais PRTs?">Releases com mais PRTs</button>
+                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Existe protocolo relacionado ao módulo fiscal com certificado digital?">Protocolos por módulo</button>
+                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais PRTs aparecem na release mais recente?">PRTs da última release</button>
+                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Explique rapidamente o que você encontrou sobre monitor rede.">Resumo operacional</button>
+                </div>
+                <p class="assistant-side-note">O assistente consulta dados internos do ProtoCord. Se faltar contexto, ele deve te dizer isso claramente.</p>
+              </aside>
+
+              <section class="assistant-card">
+                <div id="assistant-messages" class="assistant-messages"></div>
+                <form id="assistant-form" class="assistant-form">
+                  <textarea id="assistant-input" class="assistant-input" rows="3" placeholder="Pergunte algo como: qual release contém o PRT 12345?"></textarea>
+                  <div class="assistant-actions">
+                    <button id="assistant-clear-btn" class="ia-btn-secondary" type="button">
+                      <i data-lucide="eraser" class="w-4 h-4"></i>
+                      <span>Limpar conversa</span>
+                    </button>
+                    <button id="assistant-send-btn" class="ia-btn-primary assistant-send" type="submit">
+                      <i data-lucide="send" class="w-4 h-4"></i>
+                      <span>Perguntar</span>
+                    </button>
+                  </div>
+                </form>
+              </section>
+            </section>
           </div>
         </div>
 
@@ -976,6 +1039,7 @@
   <script src="js/responses.js"></script>
   <script src="js/monitor_sefaz.js"></script>
   <script src="js/ia-transcriber.js"></script>
+  <script src="js/ia-assistant.js"></script>
   <script type="module" src="js/modal.js"></script>
 
 
