@@ -677,9 +677,13 @@
 
     try {
       const destination = playbackContext.createMediaStreamDestination();
+      const monitorGain = playbackContext.createGain();
+      monitorGain.gain.value = 0;
       const source = playbackContext.createBufferSource();
       source.buffer = audioBuffer;
       source.connect(destination);
+      source.connect(monitorGain);
+      monitorGain.connect(playbackContext.destination);
 
       const chunks = [];
       const recorder = new MediaRecorder(destination.stream, {
@@ -687,16 +691,29 @@
         audioBitsPerSecond,
       });
 
+      await playbackContext.resume();
+
       return await new Promise((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+          try {
+            if (recorder.state !== "inactive") recorder.stop();
+          } catch (error) {
+            // noop
+          }
+          reject(new Error("Tempo esgotado ao converter o áudio para Opus."));
+        }, Math.max(15000, Math.ceil(audioBuffer.duration * 2000)));
+
         recorder.addEventListener("dataavailable", (event) => {
           if (event.data?.size) chunks.push(event.data);
         });
 
         recorder.addEventListener("stop", () => {
+          clearTimeout(timeoutId);
           resolve(new Blob(chunks, { type: mimeType }));
         });
 
         recorder.addEventListener("error", () => {
+          clearTimeout(timeoutId);
           reject(new Error("Falha ao codificar o áudio em Opus."));
         });
 
