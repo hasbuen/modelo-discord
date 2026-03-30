@@ -1,6 +1,6 @@
 ﻿/**
- * Sistema de AutenticaÃ§Ã£o MD5 com Supabase
- * Valida a senha do usuÃ¡rio antes de permitir acesso ao app
+ * Sistema de Autentica??o MD5 com Supabase
+ * Valida a senha do usu?rio antes de permitir acesso ao app
  */
 
 /**
@@ -9,7 +9,7 @@
  * @returns {string} hash MD5
  */
 function toMD5(str) {
-  // Assumimos que CryptoJS estÃ¡ carregado via <script> tag no HTML
+  // Assumimos que CryptoJS est? carregado via <script> tag no HTML
   return CryptoJS.MD5(str).toString();
 }
 
@@ -23,7 +23,7 @@ async function validarSenha() {
   const msgErro = document.getElementById('auth-erro');
 
   if (!btnAuth) {
-      return; // Sai da funÃ§Ã£o para evitar o erro de null
+      return; // Sai da fun??o para evitar o erro de null
   }
   
   if (!senha) {
@@ -32,10 +32,10 @@ async function validarSenha() {
     return;
   }
 
-  // Desabilita botÃ£o e mostra loading
+  // Desabilita bot?o e mostra loading
   btnAuth.disabled = true;
   btnAuth.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Autenticando...';
-  // Recria os Ã­cones do lucide apÃ³s a atualizaÃ§Ã£o do innerHTML
+  // Recria os ?cones do lucide ap?s a atualiza??o do innerHTML
   lucide.createIcons(); 
   msgErro.classList.add('hidden');
 
@@ -43,7 +43,7 @@ async function validarSenha() {
     // Converte a senha em texto plano para MD5 antes de enviar
     const senhamd5 = toMD5(senha);
 
-    // Faz requisiÃ§Ã£o GET para a API no Vercel, passando o hash MD5 na query string
+    // Faz requisi??o GET para a API no Vercel, passando o hash MD5 na query string
     const response = await fetch(`https://modelo-discord-server.vercel.app/api/autenticacao?pass=${encodeURIComponent(senhamd5)}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
@@ -57,7 +57,7 @@ async function validarSenha() {
     const resultado = await response.json(); 
 
     if (resultado === true) {
-      // AutenticaÃ§Ã£o bem-sucedida
+      // Autentica??o bem-sucedida
       localStorage.setItem('authToken', 'authenticated-' + Date.now());
       localStorage.setItem('authTime', new Date().toISOString());
       
@@ -68,7 +68,7 @@ async function validarSenha() {
       // Limpa o input
       senhaInput.value = '';
     } else {
-      // AutenticaÃ§Ã£o falhou
+      // Autentica??o falhou
       msgErro.textContent = 'Senha incorreta. Tente novamente.';
       msgErro.classList.remove('hidden');
     }
@@ -76,7 +76,7 @@ async function validarSenha() {
     msgErro.textContent = 'Erro ao conectar com o servidor. Tente novamente.';
     msgErro.classList.remove('hidden');
   } finally {
-    // Re-habilita botÃ£o
+    // Re-habilita bot?o
     btnAuth.disabled = false;
     btnAuth.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i> Entrar';
     lucide.createIcons();
@@ -84,7 +84,7 @@ async function validarSenha() {
 }
 
 /**
- * Inicializa o sistema de autenticaÃ§Ã£o ao carregar a pÃ¡gina
+ * Inicializa o sistema de autentica??o ao carregar a p?gina
  */
 function initAuth() {
   const token = localStorage.getItem('authToken');
@@ -117,16 +117,16 @@ function initAuth() {
   if (authContainer) authContainer.classList.remove('hidden');
   appContainers.forEach((el) => el.classList.remove('hidden'));
 
-  // Adiciona listener de SUBMIT ao formulÃ¡rio
+  // Adiciona listener de SUBMIT ao formul?rio
   const authForm = document.getElementById('auth-form');
   if (authForm) {
       authForm.addEventListener('submit', (e) => {
-          e.preventDefault(); // Previne o comportamento padrÃ£o do form
+          e.preventDefault(); // Previne o comportamento padr?o do form
           validarSenha();
       });
   }
 
-  // Adiciona listener para Enter na input de senha (redundÃ¢ncia segura)
+  // Adiciona listener para Enter na input de senha (redund?ncia segura)
   const senhaInput = document.getElementById('auth-senha');
   if (senhaInput) {
     senhaInput.addEventListener('keypress', (e) => {
@@ -139,7 +139,7 @@ function initAuth() {
 }
 
 /**
- * Faz logout (limpa a sessÃ£o)
+ * Faz logout (limpa a sess?o)
  */
 function fazerLogout() {
   localStorage.removeItem('authToken');
@@ -147,6 +147,6 @@ function fazerLogout() {
   location.reload();
 }
 
-// Executa ao carregar a pÃ¡gina
+// Executa ao carregar a p?gina
 window.addEventListener('DOMContentLoaded', initAuth);
 
