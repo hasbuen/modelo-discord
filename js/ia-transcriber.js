@@ -1,11 +1,10 @@
 ﻿(function () {
   const STORAGE_KEY = "protocord_ia_transcriber_v1";
   const FALLBACK_API_URL = "https://modelo-discord-server.vercel.app/api";
-  const MAX_UPLOAD_BYTES = 2.5 * 1024 * 1024;
-  const SAFE_DIRECT_UPLOAD_BYTES = 1.5 * 1024 * 1024;
-  const SAFE_COMPACT_DIRECT_UPLOAD_BYTES = 2.25 * 1024 * 1024;
+  const OPENAI_MAX_AUDIO_BYTES = 24 * 1024 * 1024;
   const TARGET_SAMPLE_RATE = 16000;
   const apiBaseUrl = (window.PROTOCORD_TRANSCRIBER_API || localStorage.getItem("PROTOCORD_TRANSCRIBER_API") || FALLBACK_API_URL).replace(/\/$/, "");
+  let blobClientPromise = null;
 
   const state = {
     tickets: [],
@@ -448,52 +447,17 @@
     state.uploading = true;
     renderActiveTicket();
 
-    let uploadFile = file;
-
-    const formData = new FormData();
-
     try {
       await pingBackendHealth();
-
-      let data;
-
-      if (canUploadDirectly(file)) {
-        notify("Enviando Ã¡udio original para a API...", "info");
-        try {
-          data = await sendTranscriptionRequest(file);
-          uploadFile = file;
-        } catch (error) {
-          if (!isPayloadTooLargeError(error)) {
-            throw error;
-          }
-
-          notify("Upload direto excedeu o limite. Convertendo para Opus reduzido...", "warning");
-          uploadFile = await withTimeout(
-            compressAudioForUpload(file),
-            180000,
-            "A conversÃ£o local do Ã¡udio demorou demais e foi interrompida."
-          );
-
-          if (uploadFile.size > MAX_UPLOAD_BYTES) {
-            throw new Error("O Ã¡udio continua acima do limite de upload. Tente um arquivo menor.");
-          }
-
-          data = await sendTranscriptionRequest(uploadFile);
-        }
-      } else {
-        notify("Formato de Ã¡udio sem envio direto. Convertendo para Opus reduzido...", "info");
-        uploadFile = await withTimeout(
-          compressAudioForUpload(file),
-          180000,
-          "A conversÃ£o local do Ã¡udio demorou demais e foi interrompida."
-        );
-
-        if (uploadFile.size > MAX_UPLOAD_BYTES) {
-          throw new Error("O Ã¡udio continua acima do limite de upload. Tente um arquivo menor.");
-        }
-
-        data = await sendTranscriptionRequest(uploadFile);
+      if (file.size > OPENAI_MAX_AUDIO_BYTES) {
+        throw new Error("O Ã¡udio estÃ¡ acima do limite suportado para transcriÃ§Ã£o. Envie um arquivo menor que 24 MB.");
       }
+
+      notify("Enviando Ã¡udio para o Blob da Vercel...", "info");
+      const blobUpload = await uploadAudioToBlob(file);
+
+      notify("Solicitando transcriÃ§Ã£o do Ã¡udio armazenado...", "info");
+      const data = await requestBlobTranscription(blobUpload, file);
 
       if (active.nomeArquivoNoServidor && active.nomeArquivoNoServidor !== data.nomeArquivoNoServidor) {
         await deleteStoredAudio(active);
@@ -506,7 +470,7 @@
       active.phone = data.telefone || active.phone;
       active.nomeArquivoNoServidor = data.nomeArquivoNoServidor || "";
       active.blobUrl = data.blobUrl || data.audioUrl || "";
-      active.audioUrl = data.audioUrl || data.blobUrl || URL.createObjectURL(uploadFile);
+      active.audioUrl = data.audioUrl || data.blobUrl || blobUpload.url || URL.createObjectURL(file);
       state.editingReport = false;
       state.reportDraft = "";
       persist();
@@ -545,6 +509,34 @@
       const error = new Error(message);
       error.status = response.status;
       throw error;
+    }
+
+    return data;
+  }
+
+  async function requestBlobTranscription(blobUpload, file) {
+    const response = await fetch(`${apiBaseUrl}/transcrever`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        blobUrl: blobUpload.url,
+        pathname: blobUpload.pathname || "",
+        filename: file.name,
+        contentType: file.type || "application/octet-stream",
+      }),
+    });
+
+    let data = null;
+    try {
+      data = await response.json();
+    } catch (error) {
+      data = null;
+    }
+
+    if (!response.ok || !data?.sucesso) {
+      throw new Error(data?.erro || `Falha ao transcrever o Ã¡udio armazenado. Status ${response.status}`);
     }
 
     return data;
@@ -823,16 +815,33 @@
     );
   }
 
-  function canUploadDirectly(file) {
+  async function uploadAudioToBlob(file) {
     if (!isUploadFriendlyAudio(file)) {
-      return false;
+      throw new Error("Formato de Ã¡udio nÃ£o suportado para upload.");
     }
 
-    if (file.size <= SAFE_DIRECT_UPLOAD_BYTES) {
-      return true;
+    const { upload } = await loadBlobClient();
+    const pathname = `audios/${Date.now()}-${sanitizeBlobFilename(file.name)}`;
+
+    return upload(pathname, file, {
+      access: "public",
+      handleUploadUrl: `${apiBaseUrl}/blob-upload`,
+      multipart: true,
+    });
+  }
+
+  async function loadBlobClient() {
+    if (!blobClientPromise) {
+      blobClientPromise = import("https://esm.sh/@vercel/blob/client?target=es2022");
     }
 
-    return isAlreadyCompactAudio(file) && file.size <= SAFE_COMPACT_DIRECT_UPLOAD_BYTES;
+    return blobClientPromise;
+  }
+
+  function sanitizeBlobFilename(filename) {
+    return String(filename || "audio.bin")
+      .replace(/[^\w.\-]+/g, "_")
+      .replace(/_+/g, "_");
   }
 
   async function pingBackendHealth() {
