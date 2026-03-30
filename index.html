@@ -246,14 +246,14 @@
                   class="w-full px-3 py-2 rounded-md bg-gray-800" /></div>
               <div><label for="ticket" class="block text-sm text-gray-400 mb-1">Ticket</label><input id="ticket"
                   type="text" class="w-full px-3 py-2 rounded-md bg-gray-800" /></div>
-              <div><label for="descricao" class="block text-sm text-gray-400 mb-1">Descri??o</label><textarea
+              <div><label for="descricao" class="block text-sm text-gray-400 mb-1">Descrição</label><textarea
                   id="descricao" rows="3" class="w-full px-3 py-2 rounded-md bg-gray-800 resize-none"></textarea></div>
               <div>
                 <label for="paliativo" class="block text-sm text-gray-400 mb-1">Paliativo</label>
                 <input list="paliativosList" id="paliativo" type="text" placeholder="Selecione ou digite aqui..."
                   class="w-full px-3 py-2 rounded-md bg-gray-800" />
                 <datalist id="paliativosList">
-                  <option value="Paliativo n?o encontrado."></option>
+                  <option value="Paliativo não encontrado."></option>
                   <option value="Nova funcionalidade."></option>
                 </datalist>
               </div>
@@ -263,7 +263,7 @@
                 <input list="prazosList" id="prazo" type="text" placeholder="Selecione ou digite aqui..."
                   class="w-full px-3 py-2 rounded-md bg-gray-800" />
                 <datalist id="prazosList">
-                  <option value="Encaminhado para avalia??o de aloca??o."></option>
+                  <option value="Encaminhado para avaliação de alocação."></option>
                   <option value="Registrado no banco de dados RhedeSAC."></option>
                 </datalist>
               </div>
@@ -271,7 +271,7 @@
                   class="w-full px-3 py-2 rounded-md bg-gray-800" /></div>
               <button onclick="gerarTexto()"
                 class="w-full bg-green-600 hover:bg-green-500 px-4 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition">
-                <i data-lucide="wand-2" class="w-4 h-4"></i> Gerar tr?mite
+                <i data-lucide="wand-2" class="w-4 h-4"></i> Gerar trâmite
               </button>
             </div>
 
@@ -299,16 +299,16 @@
                 </button>
                 <button id="btn-sugestao-template" type="button" onclick="carregarTemplateProtocolo('sugestao')"
                   class="px-4 py-2 rounded-full text-sm font-semibold bg-green-700 text-white hover:bg-green-600">
-                  Sugest?o
+                  Sugestão
                 </button>
               </div>
             </div>
 
             <div class="flex-grow p-4 overflow-y-auto">
-              <label for="descricao-protocolar" class="block text-white mb-2">Descri??o</label>
+              <label for="descricao-protocolar" class="block text-white mb-2">Descrição</label>
               <textarea id="descricao-protocolar" rows="20"
                 class="w-full px-3 py-2 rounded-md bg-gray-800 text-white resize-none h-full focus:ring-blue-500 focus:border-blue-500 border-gray-700"
-                placeholder="Selecione 'Erro' ou 'Sugest?o' para carregar o modelo de protocolo."></textarea>
+                placeholder="Selecione 'Erro' ou 'Sugestão' para carregar o modelo de protocolo."></textarea>
             </div>
 
             <div class="p-3 border-t border-gray-700 flex gap-2 bg-gray-900">
@@ -336,7 +336,7 @@
                     <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(0)">Ticket</th>
                     <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(1)">Protocolo</th>
                     <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(2)">Tipo</th>
-                    <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(3)">Descri??o</th>
+                    <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(3)">Descrição</th>
                     <th class="py-2 px-3"> </th>
                   </tr>
                 </thead>
@@ -375,7 +375,7 @@
               <div class="bg-transparent p-4 border-none">
                 <p class="text-red-200 text-xs font-semibold mb-1 uppercase tracking-wider">Total erros</p>
                 <div class="flex items-center justify-between">
-                  <p id="contador-erros" class="text-2xl font-bold text-red-300">â€”</p>
+                  <p id="contador-erros" class="text-2xl font-bold text-red-300">--</p>
                   <i data-lucide="bug" class="w-5 h-5 text-red-300 opacity-60"></i>
                 </div>
               </div>
@@ -383,7 +383,7 @@
               <div class="bg-transparent p-4 border-none">
                 <p class="text-green-200 text-xs font-semibold mb-1 uppercase tracking-wider">Total sugest?es</p>
                 <div class="flex items-center justify-between">
-                  <p id="contador-sugestoes" class="text-2xl font-bold text-green-300">â€”</p>
+                  <p id="contador-sugestoes" class="text-2xl font-bold text-green-300">--</p>
                   <i data-lucide="layers-plus" class="w-5 h-5 text-green-300 opacity-60"></i>
                 </div>
               </div>
@@ -391,7 +391,7 @@
               <div class="bg-gradient-to-br from-blue-900 to-blue-800 p-4 rounded-xl shadow-lg border border-blue-700">
                 <p class="text-blue-200 text-xs font-semibold mb-1 uppercase tracking-wider">Releases verificadas</p>
                 <div class="flex items-center justify-between">
-                  <p id="card-releases" class="text-2xl font-bold text-white">â€”</p>
+                  <p id="card-releases" class="text-2xl font-bold text-white">--</p>
                   <i data-lucide="calendar" class="w-5 h-5 text-blue-300 opacity-60"></i>
                 </div>
               </div>
@@ -400,22 +400,22 @@
                 class="bg-gradient-to-br from-green-900 to-green-800 p-4 rounded-xl shadow-lg border border-green-700">
                 <p class="text-green-200 text-xs font-semibold mb-1 uppercase tracking-wider">PRTs liberados</p>
                 <div class="flex items-center justify-between">
-                  <p id="card-protocolos" class="text-2xl font-bold text-white">â€”</p>
+                  <p id="card-protocolos" class="text-2xl font-bold text-white">--</p>
                   <i data-lucide="check-circle-2" class="w-5 h-5 text-green-300 opacity-60"></i>
                 </div>
               </div>
 
               <div
                 class="bg-gradient-to-br from-purple-900 to-purple-800 p-4 rounded-xl shadow-lg border border-purple-700">
-                <p class="text-purple-200 text-xs font-semibold mb-1 uppercase tracking-wider">Ãšltimo RLS liberado</p>
+                <p class="text-purple-200 text-xs font-semibold mb-1 uppercase tracking-wider">Último RLS liberado</p>
                 <div class="flex items-center justify-between">
-                  <p id="card-ultima" class="text-lg font-bold text-white truncate">â€”</p>
+                  <p id="card-ultima" class="text-lg font-bold text-white truncate">--</p>
                   <i data-lucide="zap" class="w-5 h-5 text-purple-300 opacity-60"></i>
                 </div>
               </div>
             </div>
 
-            <!-- Gr?fico de Distribui??o (Pie) -->
+            <!-- Gráfico de Distribuição (Pie) -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
                 <h3 class="text-lg font-bold mb-4 text-white">Top 5 Releases</h3>
@@ -425,27 +425,27 @@
               </div>
 
               <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
-                <h3 class="text-lg font-bold mb-4 text-white">Evolu??o ao Longo do Tempo</h3>
+                <h3 class="text-lg font-bold mb-4 text-white">Evolução ao Longo do Tempo</h3>
                 <div class="relative" style="height: 180px;">
                   <canvas id="chartEvolucao"></canvas>
                 </div>
               </div>
             </div>
 
-            <!-- Gr?fico de Libera??es por Data -->
+            <!-- Gráfico de Liberações por Data -->
             <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
               <h3 class="text-lg font-bold mb-4 text-white">Protocolos por Release</h3>
               <div class="relative" style="height: 300px;">
                 <canvas id="chartLiberacoes"></canvas>
               </div>
 
-              <!-- Tend?ncia por M?dulo (linha) -->
+              <!-- Tendência por Módulo (linha) -->
               <div class="mt-4 bg-gray-800 p-4 rounded-xl">
                 <div class="flex items-center justify-between mb-2">
-                  <h4 class="text-sm font-semibold text-white">Tend?ncia por M?dulo</h4>
+                  <h4 class="text-sm font-semibold text-white">Tendência por Módulo</h4>
                   <div class="flex items-center gap-2">
                     <small id="trend-current" class="text-xs text-gray-400">Exibindo: <span
-                        id="trend-modulo-name">â€”</span></small>
+                        id="trend-modulo-name">--</span></small>
                   </div>
                 </div>
                 <div class="relative" style="height: 180px;">
@@ -472,26 +472,26 @@
 
             <!-- Tabela de Detalhes -->
             <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
-              <!-- Filtro de M?dulos + Busca -->
+              <!-- Filtro de Módulos + Busca -->
               <div class="mb-5 space-y-3">
 
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                   <div>
                     <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">
-                      Filtrar por m?dulo
+                      Filtrar por módulo
                     </p>
                     <div id="filtro-modulos" class="flex flex-wrap gap-2 mt-2"></div>
                   </div>
 
                   <div class="w-full md:w-72">
-                    <input id="busca-modulo" type="text" placeholder="Buscar PRT, m?dulo ou descri??o..." class="w-full px-4 py-2 rounded-lg bg-gray-800 text-gray-200
+                    <input id="busca-modulo" type="text" placeholder="Buscar PRT, módulo ou descrição..." class="w-full px-4 py-2 rounded-lg bg-gray-800 text-gray-200
                focus:ring-2 focus:ring-blue-500 outline-none transition" />
                   </div>
                 </div>
 
               </div>
 
-              <h3 class="text-lg font-bold mb-4 text-white">Detalhes das Libera??es</h3>
+              <h3 class="text-lg font-bold mb-4 text-white">Detalhes das Liberações</h3>
               <div class="overflow-x-auto">
 
                 <table class="w-full text-sm">
@@ -509,64 +509,175 @@
           </div>
         </div>
 
-        <!-- P?gina: Relat?rios -->
+        <!-- Página: Relatórios -->
         <div id="pagina-relatorios" class="hidden animate__animated animate__fadeIn">
-          <div class="bg-gray-900 p-6 rounded-xl shadow-lg">
-            <h2 class="text-2xl font-bold text-white mb-4">Relat?rios</h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
-                <h3 class="text-lg font-semibold text-white mb-2">Protocolos por Release</h3>
-                <p class="text-sm text-gray-400 mb-4">Exporta um PDF com o gr?fico "Protocolos por Release".</p>
-                <button onclick="exportarProtocolosPDF()"
-                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Exportar PDF</button>
+          <section class="reports-shell">
+            <header class="reports-hero">
+              <div>
+                <p class="reports-eyebrow">Central de Relatórios</p>
+                <h2 class="reports-title">Exportação operacional, analítica e executiva</h2>
+                <p class="reports-subtitle">Crie recortes por tipo, release, módulo, ticket e palavra-chave. Gere visões rápidas para conferência, relatórios executivos em PDF e bases analíticas para auditoria, acompanhamento e tomada de decisão.</p>
               </div>
-
-              <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
-                <h3 class="text-lg font-semibold text-white mb-2">Ranking de M?dulos</h3>
-                <p class="text-sm text-gray-400 mb-4">Exporta o conte?do atual do ranking como PDF.</p>
-                <button onclick="exportarRankingPDF()"
-                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Exportar PDF</button>
+              <div class="reports-actions">
+                <button id="reports-refresh-btn" class="reports-btn reports-btn-secondary" type="button">
+                  <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                  <span>Atualizar base</span>
+                </button>
+                <button id="reports-export-summary-btn" class="reports-btn reports-btn-primary" type="button">
+                  <i data-lucide="file-output" class="w-4 h-4"></i>
+                  <span>PDF executivo</span>
+                </button>
               </div>
+            </header>
 
-              <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
-                <h3 class="text-lg font-semibold text-white mb-2">Top 5 Releases</h3>
-                <p class="text-sm text-gray-400 mb-4">Exporta o gr?fico "Top 5 Releases" como PDF.</p>
-                <button onclick="exportarTop5PDF()"
-                  class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Exportar PDF</button>
-              </div>
-            </div>
+            <section class="reports-kpis">
+              <article class="reports-kpi-card">
+                <span class="reports-kpi-label">Registros filtrados</span>
+                <strong id="reports-kpi-total" class="reports-kpi-value">0</strong>
+                <small id="reports-kpi-total-note" class="reports-kpi-note">Base consolidada dos protocolos.</small>
+              </article>
+              <article class="reports-kpi-card">
+                <span class="reports-kpi-label">Erros</span>
+                <strong id="reports-kpi-erros" class="reports-kpi-value text-red-300">0</strong>
+                <small class="reports-kpi-note">Ocorrências classificadas como erro.</small>
+              </article>
+              <article class="reports-kpi-card">
+                <span class="reports-kpi-label">Sugestões</span>
+                <strong id="reports-kpi-sugestoes" class="reports-kpi-value text-emerald-300">0</strong>
+                <small class="reports-kpi-note">Itens classificados como sugestão.</small>
+              </article>
+              <article class="reports-kpi-card">
+                <span class="reports-kpi-label">Releases cobertos</span>
+                <strong id="reports-kpi-releases" class="reports-kpi-value">0</strong>
+                <small class="reports-kpi-note">Datas de release no recorte atual.</small>
+              </article>
+            </section>
 
-            <!-- Relat?rio de Detalhes (Ticket / PRT / Descri??o / Tipo / Release) -->
-            <div class="mt-6 bg-gray-900 p-4 rounded-xl shadow-lg">
-              <h3 class="text-lg font-semibold text-white mb-3">Relat?rio de Detalhes</h3>
-              <p class="text-sm text-gray-400 mb-3">Gera um PDF com a lista de protocolos (Ticket, PRT, Descri??o, Tipo, Release). Use os filtros para exportar somente erros/sugest?es ou um release espec?fico.</p>
-
-              <div class="flex flex-col md:flex-row gap-3 items-center">
-                <div class="flex items-center gap-2">
-                  <label for="relatorio-tipo-select" class="text-sm text-gray-300 mr-2">Tipo:</label>
-                  <select id="relatorio-tipo-select" class="bg-gray-800 text-gray-200 px-3 py-2 rounded">
-                    <option value="todos">Todos</option>
-                    <option value="erro">Apenas Erros</option>
-                    <option value="sugestao">Apenas Sugest?es</option>
-                  </select>
+            <section class="reports-grid">
+              <article class="reports-card reports-card-filters">
+                <div class="reports-card-header">
+                  <div>
+                    <h3 class="reports-card-title">Filtros avançados</h3>
+                    <p class="reports-card-subtitle">Crie recortes operacionais e exporte apenas o que faz sentido para a análise.</p>
+                  </div>
+                  <span id="reports-sync-badge" class="reports-sync-badge">Aguardando carga</span>
                 </div>
 
-                <div class="flex items-center gap-2">
-                  <label for="relatorio-release-select" class="text-sm text-gray-300 mr-2">Release:</label>
-                  <select id="relatorio-release-select" class="bg-gray-800 text-gray-200 px-3 py-2 rounded">
-                    <option value="todas">Todas</option>
-                  </select>
+                <div class="reports-filters-grid">
+                  <label class="reports-field">
+                    <span>Tipo</span>
+                    <select id="relatorio-tipo-select" class="reports-select">
+                      <option value="todos">Todos</option>
+                      <option value="erro">Apenas erros</option>
+                      <option value="sugestao">Apenas sugestões</option>
+                    </select>
+                  </label>
+
+                  <label class="reports-field">
+                    <span>Release</span>
+                    <select id="relatorio-release-select" class="reports-select">
+                      <option value="todas">Todas</option>
+                    </select>
+                  </label>
+
+                  <label class="reports-field">
+                    <span>Módulo</span>
+                    <select id="reports-modulo-select" class="reports-select">
+                      <option value="todos">Todos</option>
+                    </select>
+                  </label>
+
+                  <label class="reports-field">
+                    <span>Buscar</span>
+                    <input id="reports-search-input" class="reports-input" type="text" placeholder="Ticket, PRT, descrição ou módulo" />
+                  </label>
+
+                  <label class="reports-field">
+                    <span>Ordenação</span>
+                    <select id="reports-order-select" class="reports-select">
+                      <option value="recentes">Release mais recente</option>
+                      <option value="maior-descricao">Descrição mais longa</option>
+                      <option value="ticket">Ticket</option>
+                      <option value="modulo">Módulo</option>
+                    </select>
+                  </label>
+
+                  <div class="reports-field reports-field-actions">
+                    <span>Atalhos</span>
+                    <div class="reports-inline-actions">
+                      <button id="reports-clear-filters-btn" class="reports-btn reports-btn-secondary" type="button">Limpar</button>
+                      <button id="reports-apply-filters-btn" class="reports-btn reports-btn-primary" type="button">Aplicar</button>
+                    </div>
+                  </div>
                 </div>
 
-                <div class="ml-auto flex gap-2">
-                  <button id="btn-export-det" onclick="exportarDetalhesPDF()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Exportar Detalhes (PDF)</button>
-                  <button onclick="exportarDetalhesCSV()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded">Exportar CSV</button>
+                <div class="reports-export-grid">
+                  <button id="reports-export-details-pdf-btn" class="reports-btn reports-btn-primary" type="button">Detalhes em PDF</button>
+                  <button id="reports-export-details-csv-btn" class="reports-btn reports-btn-secondary" type="button">Detalhes em CSV</button>
+                  <button id="reports-export-matrix-btn" class="reports-btn reports-btn-secondary" type="button">Matriz release x módulo</button>
+                  <button id="reports-export-json-btn" class="reports-btn reports-btn-secondary" type="button">Exportar JSON</button>
+                  <button id="reports-export-ranking-btn" class="reports-btn reports-btn-secondary" type="button">Ranking de módulos</button>
+                  <button id="reports-export-top5-btn" class="reports-btn reports-btn-secondary" type="button">Top 5 releases</button>
                 </div>
-              </div>
-            </div>
+              </article>
 
-          </div>
+              <article class="reports-card">
+                <div class="reports-card-header">
+                  <div>
+                    <h3 class="reports-card-title">Resumo executivo</h3>
+                    <p class="reports-card-subtitle">Leitura rápida para liderança, conferência de recorte e tomada de decisão.</p>
+                  </div>
+                </div>
+                <div id="reports-summary-grid" class="reports-summary-grid"></div>
+              </article>
+            </section>
+
+            <section class="reports-grid">
+              <article class="reports-card">
+                <div class="reports-card-header">
+                  <div>
+                    <h3 class="reports-card-title">Prévia analítica</h3>
+                    <p class="reports-card-subtitle">Amostra do recorte atual para validação antes da exportação.</p>
+                  </div>
+                  <span id="reports-preview-count" class="reports-preview-count">0 linhas</span>
+                </div>
+                <div class="reports-table-wrap">
+                  <table class="reports-table">
+                    <thead>
+                      <tr>
+                        <th>Ticket</th>
+                        <th>PRT</th>
+                        <th>Tipo</th>
+                        <th>Módulo</th>
+                        <th>Release</th>
+                        <th>Descrição</th>
+                      </tr>
+                    </thead>
+                    <tbody id="reports-preview-body"></tbody>
+                  </table>
+                </div>
+              </article>
+
+              <article class="reports-card">
+                <div class="reports-card-header">
+                  <div>
+                    <h3 class="reports-card-title">Ranking e cobertura</h3>
+                    <p class="reports-card-subtitle">Distribuição por módulo e releases mais densos no recorte atual.</p>
+                  </div>
+                </div>
+                <div class="reports-side-grid">
+                  <div>
+                    <h4 class="reports-mini-title">Módulos com mais incidência</h4>
+                    <div id="reports-module-ranking" class="reports-ranking-list"></div>
+                  </div>
+                  <div>
+                    <h4 class="reports-mini-title">Releases com maior volume</h4>
+                    <div id="reports-release-ranking" class="reports-ranking-list"></div>
+                  </div>
+                </div>
+              </article>
+            </section>
+          </section>
         </div>
 
         <div id="pagina-sefaz" class="hidden animate__animated animate__fadeIn">
@@ -579,7 +690,7 @@
                     <i data-lucide="activity" class="w-8 h-8 text-blue-500"></i>
                     <div>
                       <h1 class="text-2xl font-bold text-white">Monitor de Status NF-e/NFC-e</h1>
-                      <p class="text-sm text-gray-400">Acompanhamento em tempo real dos servi?os da SEFAZ</p>
+                      <p class="text-sm text-gray-400">Acompanhamento em tempo real dos serviços da SEFAZ</p>
                     </div>
                   </div>
                   <button id="btn-fetch-status" onclick="fetchStatus()"
@@ -607,7 +718,7 @@
                   <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
                     <div class="flex items-center justify-between">
                       <div>
-                        <p class="text-sm text-gray-400">Ãšltima Atualiza??o</p>
+                        <p class="text-sm text-gray-400">Última atualização</p>
                         <p id="last-update-time" class="text-lg font-semibold text-white">--:--:--</p>
                         <p id="last-update-date" class="text-xs text-gray-400"></p>
                       </div>
@@ -617,7 +728,7 @@
                   <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
                     <div class="flex items-center justify-between">
                       <div>
-                        <p class="text-sm text-gray-400">Atualiza??o Autom?tica</p>
+                        <p class="text-sm text-gray-400">Atualização automática</p>
                         <p class="text-lg font-semibold text-white">A cada 30s</p>
                       </div>
                     </div>
@@ -627,7 +738,7 @@
                 <div class="bg-gray-700 border border-gray-600 rounded-lg p-4 mb-6">
                   <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
                     <i data-lucide="star" class="w-5 h-5 text-yellow-400"></i>
-                    Monitor R?pido (1s) - UF Favorita
+                    Monitor Rápido (1s) - UF Favorita
                   </h3>
 
                   <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
@@ -645,7 +756,7 @@
                       <span id="favorito-uf-nome" class="font-bold text-xl text-blue-400">Selecione...</span>
                       <div class="flex items-center gap-4">
                         <div>
-                          <p class="text-xs text-gray-400">Autoriza??o NF-e</p>
+                          <p class="text-xs text-gray-400">Autorização NF-e</p>
                           <div id="favorito-aut-icon" class="flex justify-center mt-1">
                             <i data-lucide="help-circle" class="w-5 h-5 text-gray-400"></i>
                           </div>
@@ -657,7 +768,7 @@
                           </div>
                         </div>
                         <div>
-                          <p class="text-xs text-gray-400">Tempo M?dio</p>
+                          <p class="text-xs text-gray-400">Tempo médio</p>
                           <span id="favorito-tempo-medio"
                             class="text-sm font-semibold text-gray-300 block text-center mt-1">--ms</span>
                         </div>
@@ -680,8 +791,8 @@
               <div class="bg-gray-800 rounded-lg shadow-xl p-6 mb-6 border border-gray-700">
                 <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
                   <i data-lucide="trending-up" class="w-6 h-6 text-green-500"></i>
-                  Gr?fico de Tempo M?dio
-                  <span id="chart-uf-title" class="text-blue-400"> (Global - M?dia Geral)</span>
+                  Gráfico de Tempo Médio
+                  <span id="chart-uf-title" class="text-blue-400"> (Global - Média Geral)</span>
                 </h3>
                 <div class="relative" style="height: 200px;">
                   <canvas id="tempoMedioChart"></canvas>
@@ -691,7 +802,7 @@
                 class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
                 <div colspan="11" class="px-4 py-8 text-center text-gray-400 col-span-full">
                   <i data-lucide="loader-2" class="w-5 h-5 animate-spin inline-block mr-2 text-blue-500"></i>
-                  Carregando status dos servi?os...
+                  Carregando status dos serviços...
                 </div>
               </div>
 
@@ -703,22 +814,22 @@
                       <tr>
                         <th class="px-4 py-3 text-left text-sm font-semibold sticky left-0 bg-gray-700">UF</th>
                         <th class="px-4 py-3 text-left text-sm font-semibold">Estado/Ambiente</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Autoriza??o NF-e</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Autorização NF-e</th>
                         <th class="px-4 py-3 text-center text-sm font-semibold">Retorno Aut.</th>
                         <th class="px-4 py-3 text-center text-sm font-semibold">Consulta Prot.</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Inutiliza??o</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Inutilização</th>
                         <th class="px-4 py-3 text-center text-sm font-semibold">Consulta Cad.</th>
                         <th class="px-4 py-3 text-center text-sm font-semibold">Recep. Evento</th>
                         <th class="px-4 py-3 text-center text-sm font-semibold">Status Servi?o</th>
                         <th class="px-4 py-3 text-center text-sm font-semibold">NFC-e</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Tempo M?dio</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Tempo Médio</th>
                       </tr>
                     </thead>
                     <tbody id="services-table-body" class="divide-y divide-gray-700">
                       <tr>
                         <td colspan="11" class="px-4 py-8 text-center text-gray-400">
                           <i data-lucide="loader-2" class="w-5 h-5 animate-spin inline-block mr-2 text-blue-500"></i>
-                          Carregando status dos servi?os...
+                          Carregando status dos serviços...
                         </td>
                       </tr>
                     </tbody>
@@ -729,20 +840,20 @@
               <div class="mt-6 bg-gray-800 rounded-lg shadow-xl p-6 border border-gray-700">
                 <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                   <i data-lucide="book-open" class="w-5 h-5 text-gray-400"></i>
-                  Legenda Geral de Status dos Servi?os
+                  Legenda Geral de Status dos Serviços
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div class="flex items-center gap-2">
                     <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
-                    <span class="text-sm text-gray-300">Servi?o **Dispon?vel** (Online)</span>
+                    <span class="text-sm text-gray-300">Serviço disponível (online)</span>
                   </div>
                   <div class="flex items-center gap-2">
                     <i data-lucide="alert-circle" class="w-5 h-5 text-yellow-500"></i>
-                    <span class="text-sm text-gray-300">Servi?o **Inst?vel** (Lento ou com Falhas)</span>
+                    <span class="text-sm text-gray-300">Serviço instável (lento ou com falhas)</span>
                   </div>
                   <div class="flex items-center gap-2">
                     <i data-lucide="x-circle" class="w-5 h-5 text-red-500"></i>
-                    <span class="text-sm text-gray-300">Servi?o **Indispon?vel** (Offline)</span>
+                    <span class="text-sm text-gray-300">Serviço indisponível (offline)</span>
                   </div>
                 </div>
 
@@ -750,21 +861,20 @@
 
                 <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                   <i data-lucide="bar-chart-2" class="w-5 h-5 text-blue-400"></i>
-                  Legenda do Gr?fico de Desempenho
+                  Legenda do Gráfico de Desempenho
                 </h3>
                 <p class="text-sm text-gray-400 mb-2">
-                  O gr?fico exibe o desempenho de lat?ncia (Tempo M?dio) da UF selecionada.
+                  O gráfico exibe o desempenho de latência (tempo médio) da UF selecionada.
                 </p>
                 <ul class="list-disc list-inside text-sm text-gray-300 ml-4 space-y-1">
                   <li>**Eixo Y (Vertical):** Tempo em milissegundos (ms). Indica o tempo de resposta da SEFAZ.</li>
-                  <li>**Eixo X (Horizontal):** Hora da atualiza??o. A leitura do gr?fico ? feita a cada **1 segundo**.
+                  <li>Eixo X (horizontal): hora da atualização. A leitura do gráfico é feita a cada 1 segundo.
                   </li>
-                  <li>**Foco:** O gr?fico acompanha exclusivamente o desempenho do servi?o de **Autoriza??o NF-e** da
-                    **UF Favorita**.</li>
+                  <li>Foco: o gráfico acompanha exclusivamente o desempenho do serviço de autorização NF-e da UF favorita.</li>
                 </ul>
 
                 <p class="text-xs text-gray-500 mt-4">
-                  * Este ? um painel demonstrativo. Os dados e tempos de atualiza??o s?o simulados.
+                  Este é um painel demonstrativo. Os dados e tempos de atualização são simulados.
                 </p>
               </div>
             </div>
@@ -975,7 +1085,7 @@
       <div class="flex items-center gap-4 mb-4 border-b border-gray-700 pb-3">
         <div id="modalIcon">
         </div>
-        <h3 class="text-xl font-bold text-white">Aten??o!</h3>
+        <h3 class="text-xl font-bold text-white">Atenção!</h3>
       </div>
       <p id="modalText" class="text-gray-300 mb-6 text-sm"></p>
       <div class="flex justify-end">
@@ -1008,7 +1118,7 @@
     </div>
   </div>
 
-  <!-- Loader para gera??o de PDF -->
+  <!-- Loader para geração de PDF -->
   <div id="pdfLoader" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
     <div class="bg-gray-800 p-4 rounded-lg flex items-center gap-3 border border-gray-700">
       <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-blue-400"></i>
@@ -1016,7 +1126,7 @@
     </div>
   </div>
 
-  <!-- Container para toasts de notifica??o -->
+  <!-- Container para toasts de notificação -->
   <div id="toastContainer" class="fixed bottom-6 right-6 flex flex-col gap-2 z-60 pointer-events-none"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -1138,7 +1248,7 @@
   </script>
 
 
-  <!-- Emergency fallbacks + EXTENSÃ•ES DASHBOARD (EXPORTAÃ‡ÃƒO + RANKING) -->
+  <!-- Emergency fallbacks + extensões do dashboard -->
   <script>
     // Emergency fallbacks to keep exports and filters usable if the main script fails to parse
     (function(){
@@ -1156,7 +1266,7 @@
         catch(e){ return String(s).toLowerCase().replace(/\s+/g,' ').trim(); }
       };
 
-      // Try to populate Relat?rios release select on DOMContentLoaded as a safe fallback
+      // Try to populate Relatórios release select on DOMContentLoaded as a safe fallback
       document.addEventListener('DOMContentLoaded', async () => {
         const sel = document.getElementById('relatorio-release-select');
         if (!sel) return;
@@ -1183,13 +1293,13 @@
             const opt = document.createElement('option'); opt.value = rel; opt.textContent = rel; sel.appendChild(opt);
           });
         } catch (e) {
-          window.showToast && window.showToast('Falha ao popular filtros de Relat?rios','warning');
+          window.showToast && window.showToast('Falha ao popular filtros de Relatórios','warning');
         }
       });
     })();
   </script>
 
-  <!-- === EXTENSÃ•ES DASHBOARD (EXPORTAÃ‡ÃƒO + RANKING) === -->
+  <!-- === Extensões do dashboard (exportação + ranking) === -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const tabelaCard = document.querySelector('#pagina-historico-liberacoes .bg-gray-900.p-6.rounded-xl.shadow-lg');
@@ -1212,7 +1322,7 @@
       const ranking = document.createElement('div');
       ranking.className = 'bg-gray-900 p-4 rounded-xl mt-4';
       ranking.innerHTML = `
-      <h3 class="text-sm font-bold mb-3 text-gray-300 uppercase">Ranking de M?dulos</h3>
+      <h3 class="text-sm font-bold mb-3 text-gray-300 uppercase">Ranking de Módulos</h3>
       <div id="ranking-modulos" class="space-y-2"></div>
     `;
 
@@ -1282,7 +1392,7 @@
     };
     window.exportarProtocolosPDF = async function() {
       const canvas = document.getElementById('chartLiberacoes');
-      if (!canvas) return showToast('Gr?fico "Protocolos por Release" n?o encontrado', 'warning');
+      if (!canvas) return showToast('Gráfico "Protocolos por Release" não encontrado', 'warning');
       showLoader('Gerando PDF: Protocolos por Release...');
       try {
         let useImage = false;
@@ -1306,13 +1416,13 @@
           const imgProps = pdf.getImageProperties(imgData);
           const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
           pdf.setFontSize(14);
-          pdf.text('Relat?rio: Protocolos por Release', 40, 30);
+          pdf.text('Relatório: Protocolos por Release', 40, 30);
           pdf.addImage(imgData, 'PNG', 40, 50, pdfWidth - 80, pdfHeight);
         } else {
           // Fallback: text table of releases and counts
           const liberacoes = Array.isArray(window.liberacoesOriginais) ? window.liberacoesOriginais : [];
           pdf.setFontSize(12);
-          pdf.text('Relat?rio: Protocolos por Release (Texto)', 40, 30);
+          pdf.text('Relatório: Protocolos por Release (Texto)', 40, 30);
           pdf.setFontSize(10);
           const lineH = 14;
           let y = 60;
@@ -1322,7 +1432,7 @@
               pdf.addPage();
               y = 40;
             }
-            pdf.text(String(l.release || 'â€”'), 40, y);
+            pdf.text(String(l.release || '--'), 40, y);
             pdf.text(String((l.protocolos || []).length), pdfWidth - marginRight - 20, y);
             y += lineH;
           });
@@ -1341,7 +1451,7 @@
 
     window.exportarTop5PDF = async function() {
       const canvas = document.getElementById('chartTop5');
-      if (!canvas) return showToast('Gr?fico "Top 5 Releases" n?o encontrado', 'warning');
+      if (!canvas) return showToast('Gráfico "Top 5 Releases" não encontrado', 'warning');
       showLoader('Gerando PDF: Top 5 Releases...');
       try {
         let useImage = false;
@@ -1364,19 +1474,19 @@
           const imgProps = pdf.getImageProperties(imgData);
           const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
           pdf.setFontSize(14);
-          pdf.text('Relat?rio: Top 5 Releases', 40, 30);
+          pdf.text('Relatório: Top 5 Releases', 40, 30);
           pdf.addImage(imgData, 'PNG', 40, 50, pdfWidth - 80, pdfHeight);
         } else {
           // Fallback: use chart data (labels + values)
           const chart = chartsInstance?.chartTop5;
           if (!chart) {
-            throw new Error('Dados do gr?fico Top 5 n?o dispon?veis para gerar PDF');
+            throw new Error('Dados do gráfico Top 5 não disponíveis para gerar PDF');
           }
           const labels = chart.data.labels || [];
           const data = chart.data.datasets?.[0]?.data || [];
 
           pdf.setFontSize(12);
-          pdf.text('Relat?rio: Top 5 Releases (Texto)', 40, 30);
+          pdf.text('Relatório: Top 5 Releases (Texto)', 40, 30);
           pdf.setFontSize(10);
           const lineH = 16;
           let y = 60;
@@ -1448,7 +1558,7 @@
         const fontSize = 10;
         const lineHeight = fontSize * 1.4;
 
-        // Colunas: Pos | M?dulo | PRTs | Releases
+        // Colunas: Pos | Módulo | PRTs | Releases
         const colPos = 30;
         const colPRTs = 50;
         const colReleases = 60;
@@ -1476,7 +1586,7 @@
 
         function renderHeader(pageNum) {
           doc.setFontSize(12);
-          doc.text('Relat?rio: Ranking de M?dulos', marginLeft, yStart);
+          doc.text('Relatório: Ranking de Módulos', marginLeft, yStart);
           yStart += 18;
 
           doc.setFontSize(10);
@@ -1484,7 +1594,7 @@
           let x = marginLeft;
           doc.text('Pos', x, headerY);
           x += colPos + gap;
-          doc.text('M?dulo', x, headerY);
+          doc.text('Módulo', x, headerY);
           x += colModulo + gap;
           doc.text('PRTs', x, headerY);
           x += colPRTs + gap;
@@ -1545,7 +1655,7 @@
       }
     }
 
-    // Popula selects da p?gina Relat?rios com releases atuais (busca quando necess?rio)
+    // Popula selects da página Relatórios com releases atuais (busca quando necessário)
     window.populateRelatoriosFilters = async function() {
       const selRelease = document.getElementById('relatorio-release-select');
       if (!selRelease) return;
@@ -1625,7 +1735,7 @@
       }
     }
 
-    // Exporta detalhes (Ticket, PRT, Descri??o, Tipo, Release) como CSV
+    // Exporta detalhes (Ticket, PRT, Descrição, Tipo, Release) como CSV
     window.exportarDetalhesCSV = async function() {
       const tipo = document.getElementById('relatorio-tipo-select')?.value || 'todos';
       const releaseSel = document.getElementById('relatorio-release-select')?.value || 'todas';
@@ -1639,7 +1749,7 @@
         rel.protocolos.forEach(prt => {
           // usa a fun??o p?blica para obter protocolo (vai ao cache interno)
           const pObj = (typeof obterProtocolo === 'function') ? (obterProtocolo(prt) || {}) : (window.protocolosCache?.[prt] || {});
-          const tipoLabel = (typeof getTipoLabel === 'function') ? getTipoLabel(pObj.tipo || '') : (pObj.tipo === '0' ? 'Erro' : 'Sugest?o');
+          const tipoLabel = (typeof getTipoLabel === 'function') ? getTipoLabel(pObj.tipo || '') : (pObj.tipo === '0' ? 'Erro' : 'Sugestão');
 
           const normTipo = window.normalizeLabel(tipoLabel);
           if (tipo === 'erro' && normTipo !== 'erro') return;
@@ -1654,7 +1764,7 @@
         return;
       }
 
-      let csv = 'Ticket;PRT;Descri??o;Tipo;Release\n';
+      let csv = 'Ticket;PRT;Descrição;Tipo;Release\n';
       rows.forEach(r => csv += `${r.map(c => '"'+String(c).replace(/"/g, '""')+'"').join(';')}\n`);
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
@@ -1677,7 +1787,7 @@
         if (releaseSel !== 'todas' && rel.release !== releaseSel) return;
         rel.protocolos.forEach(prt => {
           const pObj = (typeof obterProtocolo === 'function') ? (obterProtocolo(prt) || {}) : (window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {});
-          const tipoLabel = (typeof getTipoLabel === 'function') ? getTipoLabel(pObj.tipo || '') : (pObj.tipo === '0' ? 'Erro' : 'Sugest?o');
+          const tipoLabel = (typeof getTipoLabel === 'function') ? getTipoLabel(pObj.tipo || '') : (pObj.tipo === '0' ? 'Erro' : 'Sugestão');
 
           const normTipo = window.normalizeLabel(tipoLabel);
           if (tipo === 'erro' && normTipo !== 'erro') return;
@@ -1712,7 +1822,7 @@
         const fontSize = 10;
         const lineHeight = fontSize * 1.4; // ~14
 
-        // Columns: Ticket | PRT | Descri??o | Tipo | Release
+        // Columns: Ticket | PRT | Descrição | Tipo | Release
         const colTicket = 60;
         const colPRT = 70;
         const colTipo = 60;
@@ -1742,7 +1852,7 @@
 
         function renderHeader(pageNum) {
           doc.setFontSize(12);
-          const title = `Relat?rio de Detalhes - ${tipo === 'todos' ? 'Todos' : (tipo === 'erro' ? 'Erros' : 'Sugest?es')} ${releaseSel !== 'todas' ? ' - ' + releaseSel : ''}`;
+          const title = `Relatório de Detalhes - ${tipo === 'todos' ? 'Todos' : (tipo === 'erro' ? 'Erros' : 'Sugestões')} ${releaseSel !== 'todas' ? ' - ' + releaseSel : ''}`;
           doc.text(title, marginLeft, yStart);
           yStart += 18;
 
@@ -1754,7 +1864,7 @@
           x += colTicket + gap;
           doc.text('PRT', x, headerY);
           x += colPRT + gap;
-          doc.text('Descri??o', x, headerY);
+          doc.text('Descrição', x, headerY);
           x += descWidth + gap;
           doc.text('Tipo', x, headerY);
           x += colTipo + gap;
@@ -1793,7 +1903,7 @@
           x += colTicket + gap;
           doc.text(String(r.prt), x, y + lineHeight * 0.8);
           x += colPRT + gap;
-          // Descri??o (pode ter m?ltiplas linhas)
+          // Descrição (pode ter múltiplas linhas)
           doc.text(r.descLines, x, y + lineHeight * 0.8);
           // Tipo e Release (alinha no topo)
           const tipoX = marginLeft + colTicket + gap + colPRT + gap + descWidth + gap;
@@ -1910,14 +2020,14 @@
       };
 
       window.exportarRankingPDF = async function(){
-        window.showLoader && window.showLoader('Gerando PDF: Ranking de M?dulos...');
+        window.showLoader && window.showLoader('Gerando PDF: Ranking de Módulos...');
         try {
           if (typeof carregarProtocolos === 'function') await carregarProtocolos();
           const liberacoes = await ensureReleases(); const counts={};
           (liberacoes||[]).forEach(rel=>{ (rel.protocolos||[]).forEach(prt=>{ const mod = window.protocolosIndex?.[prt]?.modulo || window.protocolosCache?.[prt]?.modulo || 'Desconhecido'; counts[mod]=(counts[mod]||0)+1; }); });
           const rows = Object.entries(counts).sort((a,b)=>b[1]-a[1]); if (!rows.length){ window.showToast && window.showToast('Nenhum dado para exportar','warning'); return; }
           const { jsPDF } = window.jspdf; const doc = new jsPDF({unit:'pt',format:'a4'});
-          doc.setFontSize(12); doc.text('Ranking de M?dulos',40,40); doc.setFontSize(10);
+          doc.setFontSize(12); doc.text('Ranking de Módulos',40,40); doc.setFontSize(10);
           let y=70; const lineH=16, pageH=doc.internal.pageSize.getHeight(); rows.forEach((r,i)=>{ if (y>pageH-40){ doc.addPage(); y=40; } doc.text(`${i+1}. ${r[0]}`,40,y); doc.text(String(r[1]), doc.internal.pageSize.getWidth()-80, y); y+=lineH; });
           doc.save(`ranking_modulos_${new Date().toISOString().slice(0,10)}.pdf`);
           window.showToast && window.showToast('PDF gerado com sucesso!','success');
@@ -1943,7 +2053,7 @@
               }
 
               const tipoRaw = (p && p.tipo !== undefined) ? p.tipo : (window.protocolosIndex?.[prt]?.tipo ?? '');
-              const tipoLabel = (typeof getTipoLabel==='function')? getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugest?o');
+              const tipoLabel = (typeof getTipoLabel==='function')? getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugestão');
               const normTipo = normalizeLabel(tipoLabel);
               if (tipo==='erro' && normTipo!=='erro') continue;
               if (tipo==='sugestao' && normTipo!=='sugestao') continue;
@@ -1957,7 +2067,7 @@
 
           if (!rows.length){ window.showToast && window.showToast('Nenhum registro encontrado para os filtros selecionados','warning'); return; }
           // Add UTF-8 BOM so Excel opens it correctly
-          let csv = '\uFEFF' + 'Ticket;PRT;Descri??o;Tipo;Release\n';
+          let csv = '\uFEFF' + 'Ticket;PRT;Descrição;Tipo;Release\n';
           rows.forEach(r=> csv += r.map(c=> '"'+String(c).replace(/"/g,'""')+'"').join(';')+'\n');
           const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
           const link=document.createElement('a'); link.href = URL.createObjectURL(blob); link.setAttribute('download', `relatorio_detalhes_${new Date().toISOString().slice(0,10)}.csv`); link.click();
@@ -1984,7 +2094,7 @@
               }
 
               const tipoRaw = (p && p.tipo !== undefined) ? p.tipo : (window.protocolosIndex?.[prt]?.tipo ?? '');
-              const tipoLabel = (typeof getTipoLabel==='function')? getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugest?o');
+              const tipoLabel = (typeof getTipoLabel==='function')? getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugestão');
               const normTipo = normalizeLabel(tipoLabel);
               if (tipo==='erro' && normTipo!=='erro') continue;
               if (tipo==='sugestao' && normTipo!=='sugestao') continue;
@@ -2018,7 +2128,7 @@
             doc.setFont('helvetica','bold');
             doc.text('Ticket', xTicket, y);
             doc.text('PRT', xPRT, y);
-            doc.text('Descri??o', xDesc, y);
+            doc.text('Descrição', xDesc, y);
             doc.text('Tipo', xTipo, y);
             doc.text('Release', xRelease, y);
             y += lineH;
@@ -2027,12 +2137,12 @@
             doc.setFont('helvetica','normal');
           };
 
-          drawHeader('Relat?rio de Detalhes');
+          drawHeader('Relatório de Detalhes');
 
           items.forEach(it=>{
             const descLines = doc.splitTextToSize(String(it.descricao||''), descWidth);
             const blockH = Math.max(lineH, (descLines.length||1) * lineH);
-            if (y + blockH > pageH - 40){ doc.addPage(); y = 60; drawHeader('Relat?rio de Detalhes (cont.)'); }
+            if (y + blockH > pageH - 40){ doc.addPage(); y = 60; drawHeader('Relatório de Detalhes (cont.)'); }
 
             doc.text(String(it.ticket), xTicket, y);
             doc.text(String(it.prt), xPRT, y);
@@ -2052,6 +2162,7 @@
 
     })();
   </script>
+  <script src="js/reports.js"></script>
 </body>
 
 </html>
