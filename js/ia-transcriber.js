@@ -208,6 +208,7 @@
       createdAt: new Date().toLocaleString("pt-BR"),
       isRegistered: false,
       audioUrl: "",
+      blobUrl: "",
       nomeArquivoNoServidor: "",
     };
 
@@ -319,7 +320,8 @@
         const ticket = state.tickets.find((entry) => entry.id === ticketId);
         if (!ticket) return;
 
-        if (ticket.nomeArquivoNoServidor) {
+      if (ticket.nomeArquivoNoServidor) {
+          await deleteStoredAudio(ticket);
           revokeObjectUrlIfNeeded(ticket.audioUrl);
         }
 
@@ -473,6 +475,7 @@
       }
 
       if (active.nomeArquivoNoServidor && active.nomeArquivoNoServidor !== data.nomeArquivoNoServidor) {
+        await deleteStoredAudio(active);
         revokeObjectUrlIfNeeded(active.audioUrl);
       }
 
@@ -481,7 +484,8 @@
       active.resumo = (data.resumo || "").substring(0, 255);
       active.phone = data.telefone || active.phone;
       active.nomeArquivoNoServidor = data.nomeArquivoNoServidor || "";
-      active.audioUrl = URL.createObjectURL(uploadFile);
+      active.blobUrl = data.blobUrl || data.audioUrl || "";
+      active.audioUrl = data.audioUrl || data.blobUrl || URL.createObjectURL(uploadFile);
       state.editingReport = false;
       state.reportDraft = "";
       persist();
@@ -601,6 +605,26 @@
   function revokeObjectUrlIfNeeded(url) {
     if (url && url.startsWith("blob:")) {
       URL.revokeObjectURL(url);
+    }
+  }
+
+  async function deleteStoredAudio(ticket) {
+    const target = ticket?.audioUrl || ticket?.blobUrl || ticket?.nomeArquivoNoServidor;
+    if (!target) return;
+
+    try {
+      await fetch(`${apiBaseUrl}/excluir-audio`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: ticket.audioUrl || ticket.blobUrl || null,
+          pathname: ticket.nomeArquivoNoServidor || null,
+        }),
+      });
+    } catch (error) {
+      // noop
     }
   }
 
