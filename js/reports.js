@@ -6,12 +6,7 @@
     loadedAt: null,
   };
 
-  const formatDate = (value) => {
-    if (!value) return "";
-    const [day, month, year] = String(value).split("/");
-    if (!day || !month || !year) return String(value);
-    return `${year}-${month}-${day}`;
-  };
+  const byId = (id) => document.getElementById(id);
 
   const normalize = (value) => {
     if (!value) return "";
@@ -26,8 +21,6 @@
     }
   };
 
-  const byId = (id) => document.getElementById(id);
-
   const escapeHtml = (value) =>
     String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -35,6 +28,13 @@
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#39;");
+
+  const formatDate = (value) => {
+    if (!value) return "";
+    const [day, month, year] = String(value).split("/");
+    if (!day || !month || !year) return String(value);
+    return `${year}-${month}-${day}`;
+  };
 
   async function fetchJson(path) {
     const response = await fetch(`${API_BASE}${path}`);
@@ -105,8 +105,20 @@
     };
   }
 
+  function aggregate(rows, key) {
+    const map = new Map();
+    rows.forEach((row) => {
+      const label = row[key] || "Sem classificação";
+      map.set(label, (map.get(label) || 0) + 1);
+    });
+    return [...map.entries()]
+      .map(([label, count]) => ({ label, count }))
+      .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "pt-BR"));
+  }
+
   function applyFilters() {
     const filters = getFilters();
+
     let rows = state.rows.filter((row) => {
       if (filters.tipo !== "todos") {
         const wanted = filters.tipo === "erro" ? "erro" : "sugestao";
@@ -197,6 +209,17 @@
     }
   }
 
+  function buildExecutiveNarrative(rows, topModule, topRelease) {
+    const errors = rows.filter((row) => row.tipoRaw === "0").length;
+    const suggestions = rows.length - errors;
+    const emphasis = errors >= suggestions ? "predomínio de erros" : "predomínio de sugestões";
+    return [
+      `${rows.length} registros no recorte atual, com ${emphasis}.`,
+      topModule ? `Módulo com maior pressão: ${topModule.label}.` : "Sem módulo dominante.",
+      topRelease ? `Release mais concentrado: ${topRelease.label}.` : "Sem release dominante.",
+    ].join(" ");
+  }
+
   function renderSummary(rows) {
     const target = byId("reports-summary-grid");
     if (!target) return;
@@ -262,20 +285,9 @@
         <td>${escapeHtml(row.tipo)}</td>
         <td>${escapeHtml(row.modulo)}</td>
         <td>${escapeHtml(row.release)}</td>
-        <td class="reports-desc-cell">${escapeHtml((row.descricao || "Sem descrição.").slice(0, 220))}</td>
+        <td class="reports-desc-cell">${escapeHtml((row.descricao || "Sem descrição.").slice(0, 260))}</td>
       </tr>
     `).join("");
-  }
-
-  function aggregate(rows, key) {
-    const map = new Map();
-    rows.forEach((row) => {
-      const label = row[key] || "Sem classificação";
-      map.set(label, (map.get(label) || 0) + 1);
-    });
-    return [...map.entries()]
-      .map(([label, count]) => ({ label, count }))
-      .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "pt-BR"));
   }
 
   function renderRanking(rows, targetId, key, singular) {
@@ -290,11 +302,11 @@
 
     target.innerHTML = ranking.map((item, index) => `
       <div class="reports-ranking-item">
-        <div>
+        <div class="reports-ranking-copy">
           <strong>${index + 1}. ${escapeHtml(item.label)}</strong>
           <span>${item.count} ${item.count === 1 ? singular : "ocorrências"}</span>
         </div>
-        <span>${item.count}</span>
+        <span class="reports-ranking-count">${item.count}</span>
       </div>
     `).join("");
   }
@@ -306,17 +318,6 @@
     renderPreview(rows);
     renderRanking(rows, "reports-module-ranking", "modulo", "registro");
     renderRanking(rows, "reports-release-ranking", "release", "release");
-  }
-
-  function buildExecutiveNarrative(rows, topModule, topRelease) {
-    const errors = rows.filter((row) => row.tipoRaw === "0").length;
-    const suggestions = rows.length - errors;
-    const emphasis = errors >= suggestions ? "predomínio de erros" : "predomínio de sugestões";
-    return [
-      `${rows.length} registros no recorte atual, com ${emphasis}.`,
-      topModule ? `Módulo com maior pressão: ${topModule.label}.` : "Sem módulo dominante.",
-      topRelease ? `Release mais concentrado: ${topRelease.label}.` : "Sem release dominante.",
-    ].join(" ");
   }
 
   function downloadBlob(blob, filename) {
@@ -374,6 +375,13 @@
     return window.jspdf.jsPDF;
   }
 
+  function drawPageLabel(doc, pageWidth, pageHeight, pageNumber) {
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(115, 133, 167);
+    doc.text(`Página ${pageNumber}`, pageWidth - 82, pageHeight - 18);
+  }
+
   function exportExecutivePdf() {
     const rows = state.filteredRows;
     if (!rows.length) {
@@ -383,55 +391,80 @@
 
     const jsPDF = ensurePdf();
     const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const marginLeft = 40;
+    const marginRight = 40;
+    const maxWidth = pageWidth - marginLeft - marginRight;
+    let y = 44;
+    let pageNumber = 1;
+
+    const ensureSpace = (needed) => {
+      if (y + needed <= pageHeight - 34) return;
+      drawPageLabel(doc, pageWidth, pageHeight, pageNumber);
+      doc.addPage();
+      pageNumber += 1;
+      y = 44;
+    };
+
+    const writeParagraph = (text, spacing = 18) => {
+      const lines = doc.splitTextToSize(text, maxWidth);
+      ensureSpace(lines.length * 13 + 8);
+      doc.text(lines, marginLeft, y);
+      y += lines.length * 13 + spacing;
+    };
+
     const modules = aggregate(rows, "modulo").slice(0, 5);
     const releases = aggregate(rows, "release").slice(0, 5);
-    let y = 44;
+    const errors = rows.filter((row) => row.tipoRaw === "0").length;
+    const suggestions = rows.length - errors;
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(18);
-    doc.text("Relatório executivo", 40, y);
+    doc.setTextColor(17, 24, 39);
+    doc.text("Relatório executivo", marginLeft, y);
     y += 22;
+
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    doc.text(`Gerado em ${new Date().toLocaleString("pt-BR")}`, 40, y);
-    y += 26;
+    doc.setTextColor(100, 116, 139);
+    doc.text(`Gerado em ${new Date().toLocaleString("pt-BR")}`, marginLeft, y);
+    y += 28;
 
     doc.setFont("helvetica", "bold");
-    doc.text("Resumo do recorte", 40, y);
+    doc.setFontSize(12);
+    doc.setTextColor(17, 24, 39);
+    doc.text("Resumo do recorte", marginLeft, y);
     y += 18;
+
     doc.setFont("helvetica", "normal");
-    const errors = rows.filter((row) => row.tipoRaw === "0").length;
-    const suggestions = rows.length - errors;
-    const paragraphs = [
+    doc.setFontSize(10.5);
+    doc.setTextColor(31, 41, 55);
+    [
       `Total de registros: ${rows.length}`,
       `Erros: ${errors} | Sugestões: ${suggestions}`,
       buildExecutiveNarrative(rows, modules[0], releases[0]),
-    ];
-    paragraphs.forEach((line) => {
-      doc.text(doc.splitTextToSize(line, 500), 40, y);
-      y += 18;
-    });
+    ].forEach((line) => writeParagraph(line, 14));
 
-    y += 10;
     doc.setFont("helvetica", "bold");
-    doc.text("Top módulos", 40, y);
+    doc.setTextColor(17, 24, 39);
+    ensureSpace(26);
+    doc.text("Top módulos", marginLeft, y);
     y += 18;
     doc.setFont("helvetica", "normal");
-    modules.forEach((item, index) => {
-      doc.text(`${index + 1}. ${item.label} - ${item.count}`, 40, y);
-      y += 16;
-    });
+    doc.setTextColor(31, 41, 55);
+    modules.forEach((item, index) => writeParagraph(`${index + 1}. ${item.label} - ${item.count}`, 10));
 
-    y += 10;
     doc.setFont("helvetica", "bold");
-    doc.text("Top releases", 40, y);
+    doc.setTextColor(17, 24, 39);
+    ensureSpace(26);
+    doc.text("Top releases", marginLeft, y);
     y += 18;
     doc.setFont("helvetica", "normal");
-    releases.forEach((item, index) => {
-      doc.text(`${index + 1}. ${item.label} - ${item.count}`, 40, y);
-      y += 16;
-    });
+    doc.setTextColor(31, 41, 55);
+    releases.forEach((item, index) => writeParagraph(`${index + 1}. ${item.label} - ${item.count}`, 10));
 
+    drawPageLabel(doc, pageWidth, pageHeight, pageNumber);
     doc.save(`relatorio_executivo_${new Date().toISOString().slice(0, 10)}.pdf`);
   }
 
@@ -443,49 +476,96 @@
     }
 
     const jsPDF = ensurePdf();
-    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const doc = new jsPDF({ unit: "pt", format: "a4", orientation: "landscape" });
+    const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
-    const descWidth = 220;
-    let y = 42;
+    const marginLeft = 28;
+    const marginRight = 28;
+    const bottomMargin = 26;
+    const lineHeight = 11;
+    let pageNumber = 1;
+    let y = 38;
+
+    const columns = {
+      ticket: { x: 28, width: 74, title: "Ticket" },
+      prt: { x: 108, width: 68, title: "PRT" },
+      tipo: { x: 182, width: 76, title: "Tipo" },
+      modulo: { x: 264, width: 170, title: "Módulo" },
+      release: { x: 440, width: 82, title: "Release" },
+      descricao: { x: 528, width: pageWidth - 528 - marginRight, title: "Descrição" },
+    };
 
     const drawHeader = (title) => {
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(14);
-      doc.text(title, 36, 36);
+      doc.setFontSize(15);
+      doc.setTextColor(17, 24, 39);
+      doc.text(title, marginLeft, 32);
+
+      doc.setDrawColor(201, 210, 226);
+      doc.setLineWidth(0.6);
+      doc.line(marginLeft, 40, pageWidth - marginRight, 40);
+
       doc.setFontSize(9);
-      doc.text("Ticket", 36, 58);
-      doc.text("PRT", 95, 58);
-      doc.text("Tipo", 150, 58);
-      doc.text("Módulo", 210, 58);
-      doc.text("Release", 360, 58);
-      doc.text("Descrição", 430, 58);
-      y = 74;
+      doc.setTextColor(71, 85, 105);
+      Object.values(columns).forEach((column) => {
+        doc.text(column.title, column.x, 56);
+      });
+
+      doc.setDrawColor(226, 232, 240);
+      doc.line(marginLeft, 62, pageWidth - marginRight, 62);
+      y = 78;
+    };
+
+    const ensureSpace = (needed) => {
+      if (y + needed <= pageHeight - bottomMargin) return;
+      drawPageLabel(doc, pageWidth, pageHeight, pageNumber);
+      doc.addPage();
+      pageNumber += 1;
+      drawHeader("Relatório detalhado (continuação)");
     };
 
     drawHeader("Relatório detalhado");
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(8.8);
+    doc.setFontSize(8.5);
+    doc.setTextColor(31, 41, 55);
 
     rows.forEach((row) => {
-      const descLines = doc.splitTextToSize(row.descricao || "Sem descrição.", descWidth);
-      const blockHeight = Math.max(18, descLines.length * 10);
+      const ticketLines = doc.splitTextToSize(String(row.ticket || "--"), columns.ticket.width);
+      const prtLines = doc.splitTextToSize(String(row.prt), columns.prt.width);
+      const tipoLines = doc.splitTextToSize(String(row.tipo), columns.tipo.width);
+      const moduloLines = doc.splitTextToSize(String(row.modulo || "Desconhecido"), columns.modulo.width);
+      const releaseLines = doc.splitTextToSize(String(row.release || "--"), columns.release.width);
+      const descricaoLines = doc.splitTextToSize(String(row.descricao || "Sem descrição."), columns.descricao.width);
 
-      if (y + blockHeight > pageHeight - 30) {
-        doc.addPage();
-        drawHeader("Relatório detalhado (continuação)");
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(8.8);
-      }
+      const blockHeight =
+        Math.max(
+          ticketLines.length,
+          prtLines.length,
+          tipoLines.length,
+          moduloLines.length,
+          releaseLines.length,
+          descricaoLines.length
+        ) *
+          lineHeight +
+        10;
 
-      doc.text(String(row.ticket || "--"), 36, y);
-      doc.text(String(row.prt), 95, y);
-      doc.text(String(row.tipo), 150, y);
-      doc.text(String(row.modulo).slice(0, 24), 210, y);
-      doc.text(String(row.release), 360, y);
-      doc.text(descLines, 430, y);
+      ensureSpace(blockHeight);
+
+      doc.text(ticketLines, columns.ticket.x, y);
+      doc.text(prtLines, columns.prt.x, y);
+      doc.text(tipoLines, columns.tipo.x, y);
+      doc.text(moduloLines, columns.modulo.x, y);
+      doc.text(releaseLines, columns.release.x, y);
+      doc.text(descricaoLines, columns.descricao.x, y);
+
+      const separatorY = y + blockHeight - 4;
+      doc.setDrawColor(232, 238, 247);
+      doc.line(marginLeft, separatorY, pageWidth - marginRight, separatorY);
+
       y += blockHeight;
     });
 
+    drawPageLabel(doc, pageWidth, pageHeight, pageNumber);
     doc.save(`relatorio_detalhado_${new Date().toISOString().slice(0, 10)}.pdf`);
   }
 
