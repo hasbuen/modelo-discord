@@ -251,138 +251,226 @@
       <div class="max-w-7xl mx-auto p-6 space-y-6">
 
         <div id="pagina-home" class="animate__animated animate__fadeIn">
-          <div class="grid md:grid-cols-2 gap-6 mt-6 min-h-[70vh]">
-
-            <div class="space-y-4">
-              <div class="flex gap-3 justify-center mb-4">
-                <button id="btn-erro" type="button" onclick="selecionarTipo('erro')"
-                  class="px-4 py-2 rounded-full text-sm font-semibold bg-red-700 text-white hover:bg-red-600">
-                  Erro
-                </button>
-                <button id="btn-sugestao" type="button" onclick="selecionarTipo('sugestao')"
-                  class="px-4 py-2 rounded-full text-sm font-semibold bg-green-700 text-white hover:bg-green-600">
-                  Sugestão
-                </button>
+          <section class="kpi-shell legacy-shell">
+            <section class="kpi-hero">
+              <div class="kpi-hero-copy">
+                <p class="kpi-eyebrow">Registrar</p>
+                <h2 class="kpi-title">Cadastrar protocolo com o padrão visual do ProtoCord</h2>
+                <p class="kpi-subtitle">Preencha os dados operacionais, gere o trâmite para o Discord e registre o protocolo na base sem sair do mesmo workspace.</p>
               </div>
-              <input type="hidden" id="tipo" />
+              <div class="kpi-hero-metrics">
+                <span class="kpi-badge">Cadastro manual</span>
+                <span class="kpi-badge kpi-badge-soft">Cópia imediata</span>
+                <span class="kpi-badge kpi-badge-soft">Base operacional</span>
+              </div>
+            </section>
 
-              <div class="space-y-1">
-                <label for="modulo" class="block text-sm font-medium text-gray-400 ml-1">Módulo</label>
-                <div class="relative group">
-                  <select id="modulo" class="appearance-none w-full px-4 py-3 rounded-lg bg-gray-800 text-white border-2 border-gray-700 
-             outline-none transition-all duration-300 cursor-pointer shadow-inner">
-                    <option value="" disabled selected hidden>Selecione o módulo...</option>
-                  </select>
-
-                  <div id="seta-modulo"
-                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 transition-colors duration-300">
-                    <i data-lucide="chevron-down" class="w-5 h-5"></i>
+            <section class="kpi-main-grid legacy-grid">
+              <article class="kpi-panel legacy-panel">
+                <div class="kpi-panel-header">
+                  <div>
+                    <h3 class="kpi-panel-title">Dados do protocolo</h3>
+                    <p class="kpi-panel-subtitle">Escolha o tipo, informe ticket, PRT e contexto do atendimento para montar o texto padrão.</p>
                   </div>
+                  <span class="kpi-badge kpi-badge-soft">Entrada estruturada</span>
                 </div>
-              </div>
 
-              <div><label for="prt" class="block text-sm text-gray-400 mb-1">PRT</label><input id="prt" type="text"
-                  class="w-full px-3 py-2 rounded-md bg-gray-800" /></div>
-              <div><label for="ticket" class="block text-sm text-gray-400 mb-1">Ticket</label><input id="ticket"
-                  type="text" class="w-full px-3 py-2 rounded-md bg-gray-800" /></div>
-              <div><label for="descricao" class="block text-sm text-gray-400 mb-1">Descrição</label><textarea
-                  id="descricao" rows="3" class="w-full px-3 py-2 rounded-md bg-gray-800 resize-none"></textarea></div>
-              <div>
-                <label for="paliativo" class="block text-sm text-gray-400 mb-1">Paliativo</label>
-                <input list="paliativosList" id="paliativo" type="text" placeholder="Selecione ou digite aqui..."
-                  class="w-full px-3 py-2 rounded-md bg-gray-800" />
-                <datalist id="paliativosList">
-                  <option value="Paliativo não encontrado."></option>
-                  <option value="Nova funcionalidade."></option>
-                </datalist>
-              </div>
+                <div class="legacy-tone-switches">
+                  <button id="btn-erro" type="button" onclick="selecionarTipo('erro')" class="legacy-tone-btn legacy-tone-btn-danger">
+                    <i data-lucide="bug" class="w-4 h-4"></i>
+                    Erro
+                  </button>
+                  <button id="btn-sugestao" type="button" onclick="selecionarTipo('sugestao')" class="legacy-tone-btn legacy-tone-btn-success">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    Sugestão
+                  </button>
+                </div>
+                <input type="hidden" id="tipo" />
 
-              <div>
-                <label for="prazo" class="block text-sm text-gray-400 mb-1">Prazo</label>
-                <input list="prazosList" id="prazo" type="text" placeholder="Selecione ou digite aqui..."
-                  class="w-full px-3 py-2 rounded-md bg-gray-800" />
-                <datalist id="prazosList">
-                  <option value="Encaminhado para avaliação de alocação."></option>
-                  <option value="Registrado no banco de dados RhedeSAC."></option>
-                </datalist>
-              </div>
-              <div><label for="link" class="block text-sm text-gray-400 mb-1">Link</label><input id="link" type="text"
-                  class="w-full px-3 py-2 rounded-md bg-gray-800" /></div>
-              <button onclick="gerarTexto()"
-                class="w-full bg-green-600 hover:bg-green-500 px-4 py-3 rounded-lg font-bold flex items-center justify-center gap-2 transition">
-                <i data-lucide="wand-2" class="w-4 h-4"></i> Gerar trâmite
-              </button>
-            </div>
+                <div class="legacy-form-grid">
+                  <label class="reports-field legacy-field">
+                    <span>Módulo</span>
+                    <div class="legacy-select-wrap">
+                      <select id="modulo" class="reports-select legacy-select">
+                        <option value="" disabled selected hidden>Selecione o módulo...</option>
+                      </select>
+                      <div id="seta-modulo" class="legacy-select-icon">
+                        <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                      </div>
+                    </div>
+                  </label>
 
-            <div class="flex flex-col space-y-3 h-full">
-              <label for="output" class="block text-sm text-gray-400 mb-1">Resultado (Discord)</label>
-              <textarea id="output" readonly
-                class="flex-1 px-3 py-2 rounded-md bg-gray-800 resize-none min-h-0"></textarea>
-              <button onclick="copiarTexto()"
-                class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2 transition">
-                <i data-lucide="copy" class="w-4 h-4"></i> Copiar
-              </button>
-            </div>
-          </div>
+                  <label class="reports-field legacy-field">
+                    <span>PRT</span>
+                    <input id="prt" type="text" class="reports-input" />
+                  </label>
+
+                  <label class="reports-field legacy-field">
+                    <span>Ticket</span>
+                    <input id="ticket" type="text" class="reports-input" />
+                  </label>
+
+                  <label class="reports-field legacy-field legacy-field-wide">
+                    <span>Descrição</span>
+                    <textarea id="descricao" rows="6" class="reports-input legacy-textarea"></textarea>
+                  </label>
+
+                  <label class="reports-field legacy-field">
+                    <span>Paliativo</span>
+                    <input list="paliativosList" id="paliativo" type="text" placeholder="Selecione ou digite aqui..." class="reports-input" />
+                    <datalist id="paliativosList">
+                      <option value="Paliativo não encontrado."></option>
+                      <option value="Nova funcionalidade."></option>
+                    </datalist>
+                  </label>
+
+                  <label class="reports-field legacy-field">
+                    <span>Prazo</span>
+                    <input list="prazosList" id="prazo" type="text" placeholder="Selecione ou digite aqui..." class="reports-input" />
+                    <datalist id="prazosList">
+                      <option value="Encaminhado para avaliação de alocação."></option>
+                      <option value="Registrado no banco de dados RhedeSAC."></option>
+                    </datalist>
+                  </label>
+
+                  <label class="reports-field legacy-field legacy-field-wide">
+                    <span>Link</span>
+                    <input id="link" type="text" class="reports-input" />
+                  </label>
+                </div>
+
+                <button type="button" onclick="gerarTexto()" class="ia-btn-primary legacy-action-btn">
+                  <i data-lucide="wand-2" class="w-4 h-4"></i>
+                  Gerar trâmite
+                </button>
+              </article>
+
+              <article class="kpi-panel legacy-panel legacy-result-panel">
+                <div class="kpi-panel-header">
+                  <div>
+                    <h3 class="kpi-panel-title">Resultado para Discord</h3>
+                    <p class="kpi-panel-subtitle">Revise o texto final antes de copiar. Ao copiar, o registro também é salvo na base.</p>
+                  </div>
+                  <span class="kpi-badge kpi-badge-soft">Saída pronta</span>
+                </div>
+
+                <label for="output" class="reports-field legacy-field">
+                  <span>Mensagem formatada</span>
+                  <textarea id="output" readonly class="legacy-output"></textarea>
+                </label>
+
+                <button type="button" onclick="copiarTexto()" class="reports-btn reports-btn-primary legacy-action-btn">
+                  <i data-lucide="copy" class="w-4 h-4"></i>
+                  Copiar e registrar
+                </button>
+              </article>
+            </section>
+          </section>
         </div>
 
         <div id="pagina-protocolar" class="hidden animate__animated animate__fadeIn">
-          <div
-            class="bg-gray-900 rounded-2xl flex flex-col shadow-2xl border border-gray-700 w-full max-w-4xl mx-auto h-[90vh]">
+          <section class="kpi-shell legacy-shell">
+            <section class="kpi-hero">
+              <div class="kpi-hero-copy">
+                <p class="kpi-eyebrow">Layout PRT</p>
+                <h2 class="kpi-title">Montar template de protocolo no mesmo padrão do workspace</h2>
+                <p class="kpi-subtitle">Use os modelos de erro ou sugestão para preencher rapidamente o layout técnico e copiar o conteúdo consolidado.</p>
+              </div>
+              <div class="kpi-hero-metrics">
+                <span class="kpi-badge">Template guiado</span>
+                <span class="kpi-badge kpi-badge-soft">Erro</span>
+                <span class="kpi-badge kpi-badge-soft">Sugestão</span>
+              </div>
+            </section>
 
-            <div class="px-4 py-3 border-b border-gray-700 flex items-center gap-2 sticky top-0 bg-gray-900 z-10">
-              <div class="flex gap-3 justify-center mb-4">
-                <button id="btn-erro-template" type="button" onclick="carregarTemplateProtocolo('erro')"
-                  class="px-4 py-2 rounded-full text-sm font-semibold bg-red-700 text-white hover:bg-red-600">
+            <article class="kpi-panel legacy-panel legacy-editor-panel">
+              <div class="kpi-panel-header">
+                <div>
+                  <h3 class="kpi-panel-title">Editor de layout</h3>
+                  <p class="kpi-panel-subtitle">Selecione o modelo inicial e ajuste o texto conforme o caso antes de copiar.</p>
+                </div>
+              </div>
+
+              <div class="legacy-tone-switches">
+                <button id="btn-erro-template" type="button" onclick="carregarTemplateProtocolo('erro')" class="legacy-tone-btn legacy-tone-btn-danger">
+                  <i data-lucide="triangle-alert" class="w-4 h-4"></i>
                   Erro
                 </button>
-                <button id="btn-sugestao-template" type="button" onclick="carregarTemplateProtocolo('sugestao')"
-                  class="px-4 py-2 rounded-full text-sm font-semibold bg-green-700 text-white hover:bg-green-600">
+                <button id="btn-sugestao-template" type="button" onclick="carregarTemplateProtocolo('sugestao')" class="legacy-tone-btn legacy-tone-btn-success">
+                  <i data-lucide="lightbulb" class="w-4 h-4"></i>
                   Sugestão
                 </button>
               </div>
-            </div>
 
-            <div class="flex-grow p-4 overflow-y-auto">
-              <label for="descricao-protocolar" class="block text-white mb-2">Descrição</label>
-              <textarea id="descricao-protocolar" rows="20"
-                class="w-full px-3 py-2 rounded-md bg-gray-800 text-white resize-none h-full focus:ring-blue-500 focus:border-blue-500 border-gray-700"
-                placeholder="Selecione 'Erro' ou 'Sugestão' para carregar o modelo de protocolo."></textarea>
-            </div>
+              <label for="descricao-protocolar" class="reports-field legacy-field">
+                <span>Descrição</span>
+                <textarea id="descricao-protocolar" rows="20" class="reports-input legacy-editor" placeholder="Selecione 'Erro' ou 'Sugestão' para carregar o modelo de protocolo."></textarea>
+              </label>
 
-            <div class="p-3 border-t border-gray-700 flex gap-2 bg-gray-900">
-              <button onclick="copiarTramite()"
-                class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2 text-white">
-                <i data-lucide="copy" class="w-4 h-4"></i> Copiar
-              </button>
-              <button onclick="limparTramite()"
-                class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded-lg font-bold flex items-center justify-center gap-2 text-white">
-                <i data-lucide="eraser" class="w-4 h-4"></i>
-              </button>
-            </div>
-          </div>
+              <div class="legacy-inline-actions">
+                <button type="button" onclick="copiarTramite()" class="reports-btn reports-btn-primary">
+                  <i data-lucide="copy" class="w-4 h-4"></i>
+                  Copiar
+                </button>
+                <button type="button" onclick="limparTramite()" class="ia-btn-secondary">
+                  <i data-lucide="eraser" class="w-4 h-4"></i>
+                  Limpar
+                </button>
+              </div>
+            </article>
+          </section>
         </div>
 
         <div id="pagina-historico" class="hidden animate__animated animate__fadeIn">
-          <div id="tabela-container" class="bg-gray-900 p-4 rounded-xl">
-            <input type="text" id="busca" placeholder="Buscar..." onkeyup="filtrarTabela()"
-              class="w-full mb-3 px-3 py-2 rounded-md bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500" />
+          <section class="kpi-shell legacy-shell">
+            <section class="kpi-hero">
+              <div class="kpi-hero-copy">
+                <p class="kpi-eyebrow">Histórico</p>
+                <h2 class="kpi-title">Protocolos registrados com leitura contínua da base</h2>
+                <p class="kpi-subtitle">Consulte, filtre, copie ou exclua registros já cadastrados em uma tabela padronizada com o mesmo visual do KPI e da Transcrever.</p>
+              </div>
+              <div class="kpi-hero-metrics">
+                <span class="kpi-badge">Busca dinâmica</span>
+                <span class="kpi-badge kpi-badge-soft">Atualização sob demanda</span>
+                <span class="kpi-badge kpi-badge-soft">Base em tempo real</span>
+              </div>
+            </section>
 
-            <div class="overflow-y-auto max-h-100">
-              <table id="tabelaRegistros" class="w-full text-sm">
-                <thead class="bg-gray-800 sticky top-0">
-                  <tr>
-                    <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(0)">Ticket</th>
-                    <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(1)">Protocolo</th>
-                    <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(2)">Tipo</th>
-                    <th class="py-2 px-3 cursor-pointer" onclick="ordenarTabela(3)">Descrição</th>
-                    <th class="py-2 px-3"> </th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-700"></tbody>
-              </table>
-            </div>
-          </div>
+            <article id="tabela-container" class="kpi-panel legacy-panel">
+              <div class="kpi-panel-header">
+                <div>
+                  <h3 class="kpi-panel-title">Registros consolidados</h3>
+                  <p class="kpi-panel-subtitle">O carregamento desta tabela é refeito sempre que a página é aberta para evitar tela vazia por falhas anteriores.</p>
+                </div>
+                <button type="button" onclick="renderizarTabela()" class="ia-btn-secondary">
+                  <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                  Atualizar
+                </button>
+              </div>
+
+              <div class="legacy-history-toolbar">
+                <label class="legacy-search">
+                  <i data-lucide="search" class="w-4 h-4"></i>
+                  <input type="text" id="busca" placeholder="Buscar por ticket, protocolo, tipo ou descrição..." onkeyup="filtrarTabela()" />
+                </label>
+              </div>
+
+              <div class="kpi-table-wrap legacy-history-table">
+                <table id="tabelaRegistros" class="reports-table legacy-table">
+                  <thead>
+                    <tr>
+                      <th class="cursor-pointer" onclick="ordenarTabela(0)">Ticket</th>
+                      <th class="cursor-pointer" onclick="ordenarTabela(1)">Protocolo</th>
+                      <th class="cursor-pointer" onclick="ordenarTabela(2)">Tipo</th>
+                      <th class="cursor-pointer" onclick="ordenarTabela(3)">Descrição</th>
+                      <th> </th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </article>
+          </section>
         </div>
 
         <div id="pagina-liberacoes" class="hidden animate__animated animate__fadeIn">
@@ -797,8 +885,20 @@
         </div>
 
         <div id="pagina-sefaz" class="hidden animate__animated animate__fadeIn">
-          <div class="min-h-screen bg-gray-900 text-gray-200 p-6">
-            <div class="max-w-7xl mx-auto">
+          <div class="kpi-shell legacy-shell monitor-shell">
+            <section class="kpi-hero">
+              <div class="kpi-hero-copy">
+                <p class="kpi-eyebrow">SEFAZ</p>
+                <h2 class="kpi-title">Monitor operacional com a mesma linguagem visual do ProtoCord</h2>
+                <p class="kpi-subtitle">Acompanhe disponibilidade dos serviços, latência média e o status da UF favorita em um painel integrado ao padrão tipográfico e cromático das páginas mais recentes.</p>
+              </div>
+              <div class="kpi-hero-metrics">
+                <span class="kpi-badge">Tempo real</span>
+                <span class="kpi-badge kpi-badge-soft">NF-e / NFC-e</span>
+                <span class="kpi-badge kpi-badge-soft">UF favorita</span>
+              </div>
+            </section>
+            <div class="max-w-7xl mx-auto monitor-shell-body">
 
               <div class="bg-gray-800 rounded-lg shadow-xl p-6 mb-6 border border-gray-700">
                 <div class="flex items-center justify-between mb-4">
@@ -1332,6 +1432,10 @@
         carregarHistoricoLiberacoes();
         setTimeout(() => gerarDashboardLiberacoes(), 200);
         setTimeout(() => window.renderKpiWorkspace && window.renderKpiWorkspace(), 420);
+      }
+
+      if (paginaId === 'historico') {
+        if (typeof window.renderizarTabela === 'function') window.renderizarTabela();
       }
 
       if (paginaId === 'relatorios') {
