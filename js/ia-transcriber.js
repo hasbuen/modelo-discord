@@ -173,6 +173,10 @@
       state.reportDraft = event.target.value || "";
     });
 
+    els.ticketList?.addEventListener("click", handleTicketListClick);
+    els.ticketList?.addEventListener("keydown", handleTicketListKeydown);
+    els.ticketList?.addEventListener("focusout", handleTicketListFocusOut);
+
     window.addEventListener("paste", handlePasteImages);
   }
 
@@ -288,72 +292,6 @@
         </article>
       `;
     }).join("");
-
-    els.ticketList.querySelectorAll(".ia-ticket-item").forEach((item) => {
-      item.addEventListener("click", (event) => {
-        if (event.target.closest("[data-action]")) return;
-        state.activeId = item.dataset.ticketId;
-        state.imageIndex = 0;
-        state.editingReport = false;
-        state.reportDraft = "";
-        persist();
-        render();
-      });
-    });
-
-    els.ticketList.querySelectorAll("[data-action='rename']").forEach((button) => {
-      button.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const ticketId = button.dataset.ticketId;
-
-        if (state.editingTicketId === ticketId) {
-          commitTicketName(ticketId);
-          return;
-        }
-
-        state.editingTicketId = ticketId;
-        renderTicketList();
-        lucide.createIcons();
-        const input = els.ticketList.querySelector(`[data-ticket-edit-input="${ticketId}"]`);
-        input?.focus();
-        input?.addEventListener("keydown", (keyEvent) => {
-          if (keyEvent.key === "Enter") {
-            keyEvent.preventDefault();
-            commitTicketName(ticketId);
-          }
-        }, { once: true });
-      });
-    });
-
-    els.ticketList.querySelectorAll("[data-action='delete']").forEach((button) => {
-      button.addEventListener("click", async (event) => {
-        event.stopPropagation();
-        const ticketId = button.dataset.ticketId;
-        const ticket = state.tickets.find((entry) => entry.id === ticketId);
-        if (!ticket) return;
-
-        await deleteLocalAudio(ticket.localAudioKey || ticket.id);
-        revokeObjectUrlIfNeeded(ticket.audioUrl);
-
-        state.tickets = state.tickets.filter((entry) => entry.id !== ticketId);
-
-        if (state.activeId === ticketId) {
-          state.activeId = state.tickets[0]?.id || null;
-          state.imageIndex = 0;
-        }
-
-        state.editingTicketId = null;
-        persist();
-        render();
-      });
-    });
-
-    els.ticketList.querySelectorAll("[data-ticket-edit-input]").forEach((input) => {
-      input.addEventListener("click", (event) => event.stopPropagation());
-      input.addEventListener("blur", () => {
-        commitTicketName(input.dataset.ticketEditInput);
-      });
-    });
   }
 
   function commitTicketName(ticketId) {
@@ -366,6 +304,114 @@
     state.editingTicketId = null;
     persist();
     render();
+  }
+
+  function focusTicketInput(ticketId) {
+    const input = els.ticketList?.querySelector(`[data-ticket-edit-input="${ticketId}"]`);
+    if (!input) return;
+    input.focus();
+    input.select();
+  }
+
+  function beginTicketRename(ticketId) {
+    if (!ticketId) return;
+
+    if (state.editingTicketId === ticketId) {
+      commitTicketName(ticketId);
+      return;
+    }
+
+    state.editingTicketId = ticketId;
+    renderTicketList();
+    lucide.createIcons();
+    focusTicketInput(ticketId);
+  }
+
+  async function deleteTicket(ticketId) {
+    const ticket = state.tickets.find((entry) => entry.id === ticketId);
+    if (!ticket) return;
+
+    try {
+      await deleteLocalAudio(ticket.localAudioKey || ticket.id);
+    } catch (error) {
+      console.warn("Falha ao remover áudio local do ticket:", error);
+    }
+    revokeObjectUrlIfNeeded(ticket.audioUrl);
+
+    state.tickets = state.tickets.filter((entry) => entry.id !== ticketId);
+
+    if (state.activeId === ticketId) {
+      state.activeId = state.tickets[0]?.id || null;
+      state.imageIndex = 0;
+    }
+
+    state.editingTicketId = null;
+    persist();
+    render();
+  }
+
+  function handleTicketListClick(event) {
+    const actionButton = event.target.closest("[data-action]");
+    if (actionButton) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const ticketId = actionButton.dataset.ticketId;
+      if (actionButton.dataset.action === "rename") {
+        beginTicketRename(ticketId);
+      }
+
+      if (actionButton.dataset.action === "delete") {
+        deleteTicket(ticketId);
+      }
+      return;
+    }
+
+    const input = event.target.closest("[data-ticket-edit-input]");
+    if (input) {
+      event.stopPropagation();
+      return;
+    }
+
+    const item = event.target.closest(".ia-ticket-item");
+    if (!item || !els.ticketList?.contains(item)) return;
+
+    state.activeId = item.dataset.ticketId;
+    state.imageIndex = 0;
+    state.editingReport = false;
+    state.reportDraft = "";
+    persist();
+    render();
+  }
+
+  function handleTicketListKeydown(event) {
+    const input = event.target.closest("[data-ticket-edit-input]");
+    if (!input) return;
+
+    if (event.key === "Enter") {
+      event.preventDefault();
+      commitTicketName(input.dataset.ticketEditInput);
+      return;
+    }
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      state.editingTicketId = null;
+      render();
+    }
+  }
+
+  function handleTicketListFocusOut(event) {
+    const input = event.target.closest("[data-ticket-edit-input]");
+    if (!input) return;
+
+    const ticketId = input.dataset.ticketEditInput;
+    window.requestAnimationFrame(() => {
+      const activeElement = document.activeElement;
+      if (activeElement === input) return;
+      if (activeElement?.closest?.(`[data-ticket-id="${ticketId}"][data-action="rename"]`)) return;
+      commitTicketName(ticketId);
+    });
   }
 
   function renderActiveTicket() {

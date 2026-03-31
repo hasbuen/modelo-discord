@@ -18,6 +18,32 @@ const CORES_GRAFICO = [
 
 let registrosCache = [];
 
+async function inicializarWorkspaceRegistro() {
+  const registrosPromise = renderizarTabela();
+  const modulosPromise = carregarModulos();
+
+  const registros = await registrosPromise;
+  const modulos = await modulosPromise.catch((error) => {
+    console.warn("Falha ao carregar modulos do workspace:", error);
+    return [];
+  });
+
+  await popularModulosSelect(modulos);
+
+  if (modulos.length) {
+    try {
+      montarGraficoModulos(registros, modulos);
+    } catch (error) {
+      console.warn("Falha ao montar o grafico de modulos:", error);
+    }
+  }
+
+  carregarTemaPreferido();
+  return registros;
+}
+
+window.inicializarWorkspaceRegistro = inicializarWorkspaceRegistro;
+
 // Seleção de tipo com badges
 function selecionarTipo(tipo) {
 
@@ -143,11 +169,17 @@ async function carregarRegistrosProtocolos() {
   if (registrosCache.length > 0) return registrosCache;
   try {
     const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
+    if (!res.ok) {
+      throw new Error(`Falha ao carregar protocolos: ${res.status}`);
+    }
     const data = await res.json();
     data.sort((a, b) => b.id - a.id);
     registrosCache = data;
     return registrosCache;
-  } catch { return []; }
+  } catch (error) {
+    console.error("Falha ao buscar registros:", error);
+    return [];
+  }
 }
 
 // Form
@@ -264,11 +296,11 @@ function limparCampos() {
   document.getElementById("tipo").value = '';
 }
 
-async function popularModulosSelect() {
+async function popularModulosSelect(modulosCarregados) {
   const select = document.getElementById('modulo');
   if (!select) return;
 
-  const modulos = await carregarModulos();
+  const modulos = Array.isArray(modulosCarregados) ? modulosCarregados : await carregarModulos();
 
   if (modulos.length === 0) {
     select.innerHTML = '<option value="">Erro ao carregar módulos</option>';
@@ -284,6 +316,8 @@ async function popularModulosSelect() {
     select.appendChild(option);
   });
 }
+
+window.popularModulosSelect = popularModulosSelect;
 
 // Tabela
 function filtrarTabela() {
@@ -301,7 +335,7 @@ function ordenarTabela(idx) {
   linhas.sort((a, b) => {
     let va = a.children[idx].textContent.trim().toLowerCase();
     let vb = b.children[idx].textContent.trim().toLowerCase();
-    return ordemAsc ? va.localeCompare(vb) : vb.localeCompare(a);
+    return ordemAsc ? va.localeCompare(vb) : vb.localeCompare(va);
   });
   linhas.forEach(l => tbody.appendChild(l));
 }
@@ -666,6 +700,7 @@ function criarLegendaModulos(chart) {
 
 async function renderizarTabela() {
   const tbody = document.querySelector("#tabelaRegistros tbody");
+  if (!tbody) return [];
   registrosCache = [];
 
   tbody.innerHTML = `
@@ -683,7 +718,7 @@ async function renderizarTabela() {
 
   try {
     // Cria uma Promise para o timer (2 segundos)
-    const timerPromise = new Promise(resolve => setTimeout(resolve, 6000)); // 2000ms = 2 segundos
+    const timerPromise = new Promise(resolve => setTimeout(resolve, 350));
 
     // Executa as requisições e o timer em paralelo
     const [registros,] = await Promise.all([
@@ -705,7 +740,7 @@ async function renderizarTabela() {
       </td>
         </tr>
       `;
-      return;
+      return [];
     }
 
     // helpers para escapar conteúdo em HTML
@@ -775,6 +810,7 @@ async function renderizarTabela() {
     if (window.lucide && typeof lucide.createIcons === 'function') {
       lucide.createIcons();
     }
+    return registros;
   } catch (error) {
     console.error("Erro ao carregar registros:", error);
     tbody.innerHTML = `
@@ -784,8 +820,11 @@ async function renderizarTabela() {
       </td>
       </tr>
       `;
+    return [];
   }
 }
+
+window.renderizarTabela = renderizarTabela;
 
 async function enviarPergunta() {
   const input = document.getElementById("chat-input");
@@ -942,14 +981,7 @@ function limparTramite() {
 // Chamar a API assim que a página carregar
 window.addEventListener('DOMContentLoaded', async () => {
   try {
-    await popularModulosSelect();
-    const registros = await carregarRegistrosProtocolos();
-    const modulos = await carregarModulos();
-    montarGraficoModulos(registros, modulos);
-
-    await atualizarContadoresDosCards(registros);
-    await renderizarTabela();
-    carregarTemaPreferido();
+    await inicializarWorkspaceRegistro();
   } catch (err) {
     console.error("Erro ao inicializar a página:", err);
   }
