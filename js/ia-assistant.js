@@ -65,6 +65,17 @@
     }));
   }
 
+  function getHistoryForRequest() {
+    return state.messages
+      .slice(0, -1)
+      .slice(-8)
+      .filter((item) => item && (item.role === "user" || item.role === "assistant") && item.content)
+      .map((item) => ({
+        role: item.role,
+        content: String(item.content),
+      }));
+  }
+
   function render() {
     if (!els.messages) return;
 
@@ -107,10 +118,7 @@
         },
         body: JSON.stringify({
           message,
-          history: state.messages.slice(-8).map((item) => ({
-            role: item.role === "assistant" ? "assistant" : "user",
-            content: item.content,
-          })),
+          history: getHistoryForRequest(),
         }),
       });
 
