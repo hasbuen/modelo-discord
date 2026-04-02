@@ -2,6 +2,7 @@
   const STORAGE_KEY = "protocord_ia_transcriber_v1";
   const FALLBACK_API_URL = "https://modelo-discord-server.vercel.app/api";
   const OPENAI_MAX_AUDIO_BYTES = 24 * 1024 * 1024;
+  const MAX_UPLOAD_BYTES = OPENAI_MAX_AUDIO_BYTES;
   const AUDIO_DB_NAME = "protocord_ia_audio_v1";
   const AUDIO_STORE_NAME = "ticket_audio";
   const TARGET_SAMPLE_RATE = 16000;
@@ -518,31 +519,29 @@
 
     try {
       await pingBackendHealth();
-      if (file.size > OPENAI_MAX_AUDIO_BYTES) {
-        throw new Error("O áudio está acima do limite suportado para transcrição. Envie um arquivo menor que 24 MB.");
-      }
+      const fileForTranscription = await prepareAudioForTranscription(file);
 
       notify("Enviando áudio temporário para processamento...", "info");
-      const blobUpload = await uploadAudioToBlob(file);
+      const blobUpload = await uploadAudioToBlob(fileForTranscription);
 
       notify("Solicitando transcrição do áudio armazenado...", "info");
-      const data = await requestBlobTranscription(blobUpload, file);
+      const data = await requestBlobTranscription(blobUpload, fileForTranscription);
 
       if (active.localAudioKey) {
         await deleteLocalAudio(active.localAudioKey);
         revokeObjectUrlIfNeeded(active.audioUrl);
       }
 
-      const localAudioKey = await saveLocalAudio(active.id, file);
+      const localAudioKey = await saveLocalAudio(active.id, fileForTranscription);
 
       active.analysis = data.analise || "";
       active.solucao = data.solucao || "";
       active.resumo = (data.resumo || "").substring(0, 255);
       active.phone = data.telefone || active.phone;
-      active.nomeArquivoNoServidor = "";
-      active.blobUrl = "";
+      active.nomeArquivoNoServidor = data.nomeArquivoNoServidor || "";
+      active.blobUrl = data.blobUrl || "";
       active.localAudioKey = localAudioKey;
-      active.audioUrl = URL.createObjectURL(file);
+      active.audioUrl = URL.createObjectURL(fileForTranscription);
       state.editingReport = false;
       state.reportDraft = "";
       persist();
@@ -555,6 +554,25 @@
       state.uploading = false;
       renderActiveTicket();
     }
+  }
+
+  async function prepareAudioForTranscription(file) {
+    if (file.size <= OPENAI_MAX_AUDIO_BYTES) {
+      return file;
+    }
+
+    notify("Áudio acima de 24 MB. Tentando compactar antes da transcrição...", "info");
+    const compressedFile = await withTimeout(
+      compressAudioForUpload(file),
+      45000,
+      "Tempo esgotado ao compactar o áudio para transcrição.",
+    );
+
+    if (compressedFile.size > MAX_UPLOAD_BYTES) {
+      throw new Error("O áudio continua acima do limite suportado após a compactação. Envie um arquivo menor que 24 MB.");
+    }
+
+    return compressedFile;
   }
 
   async function sendTranscriptionRequest(file) {
