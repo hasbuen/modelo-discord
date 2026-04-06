@@ -13,7 +13,7 @@ export async function enviarPergunta() {
   chat.scrollTop = chat.scrollHeight;
 
   try {
-    const res = await fetch("https://modelo-discord-server.vercel.app/api/IA", {
+    const res = await fetch(window.getProtocordApiUrl("/IA"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ pergunta })

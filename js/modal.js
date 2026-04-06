@@ -28,7 +28,7 @@ export async function abrirModalExclusao(id, ticket) {
   confirmBtn.onclick = async () => {
     fecharConfirmModal();
     try {
-      await fetch("https://modelo-discord-server.vercel.app/api/protocolos", {
+      await fetch(window.getProtocordApiUrl("/protocolos"), {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: id })

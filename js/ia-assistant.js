@@ -1,7 +1,6 @@
 (function () {
   const STORAGE_KEY = "protocord_ia_assistant_v1";
-  const FALLBACK_API_URL = "https://modelo-discord-server.vercel.app/api";
-  const apiBaseUrl = (window.PROTOCORD_TRANSCRIBER_API || localStorage.getItem("PROTOCORD_TRANSCRIBER_API") || FALLBACK_API_URL).replace(/\/$/, "");
+  const apiBaseUrl = window.getProtocordApiBaseUrl();
 
   const state = {
     messages: [],
@@ -82,7 +81,7 @@
     if (!state.messages.length) {
       els.messages.innerHTML = `
         <article class="assistant-message system">
-          Pergunte sobre PRTs, releases, módulos, histórico operacional ou artigos da FAQ pública do Znuny. O assistente combina o contexto interno do ProtoCord com a base pública disponível.
+          Consulte PRTs, releases, modulos e FAQ publica.
         </article>
       `;
       lucide.createIcons();
@@ -129,7 +128,7 @@
 
       state.messages.push({
         role: "assistant",
-        content: data.resposta || "Não encontrei uma resposta útil com o contexto disponível.",
+        content: data.resposta || "Nao encontrei uma resposta util com o contexto disponivel.",
       });
       persist();
       render();
