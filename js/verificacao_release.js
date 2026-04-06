@@ -55,12 +55,12 @@ async function processarRTF(event) {
 
       if (releaseAtual) {
         try {
-          const res = await fetch("https://modelo-discord-server.vercel.app/api/liberados");
+          const res = await fetch(window.getProtocordApiUrl("/liberados"));
           const liberados = await res.json();
 
           const jaExiste = liberados.some(r => r.release === releaseAtual);
           if (!jaExiste) {
-            await fetch("https://modelo-discord-server.vercel.app/api/liberados", {
+            await fetch(window.getProtocordApiUrl("/liberados"), {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -174,7 +174,7 @@ function renderizarLiberacoes(registros, releaseAtual) {
 
 async function obterListaPRTs() {
   try {
-    const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
+    const res = await fetch(window.getProtocordApiUrl("/protocolos"));
     const registros = await res.json();
     return registros.filter(reg => reg.prt).map(reg => ({
       protocolo: reg.prt.replace('#PRT', ''),
@@ -210,8 +210,8 @@ async function carregarHistoricoLiberacoes() {
     const timerPromise = new Promise(resolve => setTimeout(resolve, 2000));
 
     const [liberadosRes, protocolosRes] = await Promise.all([
-      fetch("https://modelo-discord-server.vercel.app/api/liberados"),
-      fetch("https://modelo-discord-server.vercel.app/api/protocolos"),
+      fetch(window.getProtocordApiUrl("/liberados")),
+      fetch(window.getProtocordApiUrl("/protocolos")),
       timerPromise
     ]);
 
