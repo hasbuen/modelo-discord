@@ -168,7 +168,7 @@ function fecharConfirmModal() {
 async function carregarRegistrosProtocolos() {
   if (registrosCache.length > 0) return registrosCache;
   try {
-    const res = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
+    const res = await fetch(window.getProtocordApiUrl("/protocolos"));
     if (!res.ok) {
       throw new Error(`Falha ao carregar protocolos: ${res.status}`);
     }
@@ -260,7 +260,7 @@ async function salvarRegistro() {
   const registro = { tipo: tipo === "erro" ? 0 : 1, prt, ticket, descricao, paliativo, link, modulo };
 
   try {
-    await fetch('https://modelo-discord-server.vercel.app/api/protocolos', {
+    await fetch(window.getProtocordApiUrl('/protocolos'), {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(registro)
     });
     exibirModal(MENSAGEM_5, "", "sucesso");
@@ -523,7 +523,7 @@ async function abrirModalExclusao(id, ticket) {
     fecharConfirmModal();
 
     try {
-      await fetch("https://modelo-discord-server.vercel.app/api/protocolos", {
+      await fetch(window.getProtocordApiUrl("/protocolos"), {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: id })
@@ -557,7 +557,7 @@ async function atualizarContadoresDosCards(registros) {
 
 async function carregarModulos() {
   try {
-    const res = await fetch("https://modelo-discord-server.vercel.app/api/modulos");
+    const res = await fetch(window.getProtocordApiUrl("/modulos"));
     return await res.json();
   } catch {
     return [];
@@ -772,7 +772,7 @@ async function renderizarTabela() {
         </a>
         </td>
         <td class="py-2 px-3 align-top">${escHTML(reg.prt || '')}</td>
-        <td class="py-2 px-3 align-top">${badgeHTML}</td>
+        <td class="py-2 px-3 align-top legacy-type-cell">${badgeHTML}</td>
         <td class="py-2 px-3 align-top">
           <div class="tooltip-container relative">
             <span class="desc-clamp">${escHTML((reg.descricao || '').slice(0, 300))}${(reg.descricao && reg.descricao.length > 300 ? ' ...' : '')}</span>
@@ -792,6 +792,13 @@ async function renderizarTabela() {
           </button>
         </td>
       `;
+
+      const badgeTipo = tr.querySelector('.legacy-type-cell span');
+      if (badgeTipo) {
+        badgeTipo.className = reg.tipo === '1'
+          ? 'legacy-type-badge legacy-type-badge-success'
+          : 'legacy-type-badge legacy-type-badge-error';
+      }
 
       const btnExcluir = tr.querySelector('.bg-red-600');
       if (btnExcluir) {
@@ -843,7 +850,7 @@ async function enviarPergunta() {
   chat.scrollTop = chat.scrollHeight;
 
   try {
-    const res = await fetch("https://modelo-discord-server.vercel.app/api/IA", {
+    const res = await fetch(window.getProtocordApiUrl("/IA"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ pergunta: pergunta })

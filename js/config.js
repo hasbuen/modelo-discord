@@ -1,5 +1,5 @@
 // js/config.js
-const API_SERVER = "https://modelo-discord-server.vercel.app";
+const API_SERVER = window.PROTOCORD_API_SERVER_ORIGIN || "https://modelo-discord-server.vercel.app";
 
 const intents = {
   greeting: ["olá", "oi", "bom dia", "boa tarde", "e aí"],

@@ -44,7 +44,7 @@ async function validarSenha() {
     const senhamd5 = toMD5(senha);
 
     // Faz requisição GET para a API no Vercel, passando o hash MD5 na query string
-    const response = await fetch(`https://modelo-discord-server.vercel.app/api/autenticacao?pass=${encodeURIComponent(senhamd5)}`, {
+    const response = await fetch(window.getProtocordApiUrl(`/autenticacao?pass=${encodeURIComponent(senhamd5)}`), {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     });

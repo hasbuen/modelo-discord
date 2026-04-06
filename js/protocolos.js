@@ -7,7 +7,7 @@ let protocolosCache = {};
 
 async function carregarProtocolos() {
   try {
-    const response = await fetch("https://modelo-discord-server.vercel.app/api/protocolos");
+    const response = await fetch(window.getProtocordApiUrl("/protocolos"));
     if (!response.ok) {
       throw new Error(`API retornou status ${response.status}`);
     }
@@ -34,7 +34,7 @@ async function criarIndiceProtocolos(protocolos) {
 
   let modulos = [];
   try {
-    const response = await fetch("https://modelo-discord-server.vercel.app/api/modulos");
+    const response = await fetch(window.getProtocordApiUrl("/modulos"));
     if (response.ok) {
       modulos = await response.json();
     }

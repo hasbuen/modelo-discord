@@ -1,12 +1,11 @@
 ﻿(function () {
   const STORAGE_KEY = "protocord_ia_transcriber_v1";
-  const FALLBACK_API_URL = "https://modelo-discord-server.vercel.app/api";
   const OPENAI_MAX_AUDIO_BYTES = 24 * 1024 * 1024;
   const MAX_UPLOAD_BYTES = OPENAI_MAX_AUDIO_BYTES;
   const AUDIO_DB_NAME = "protocord_ia_audio_v1";
   const AUDIO_STORE_NAME = "ticket_audio";
   const TARGET_SAMPLE_RATE = 16000;
-  const apiBaseUrl = (window.PROTOCORD_TRANSCRIBER_API || localStorage.getItem("PROTOCORD_TRANSCRIBER_API") || FALLBACK_API_URL).replace(/\/$/, "");
+  const apiBaseUrl = window.getProtocordApiBaseUrl();
   let blobClientPromise = null;
   let audioDbPromise = null;
 
@@ -575,6 +574,20 @@
     return compressedFile;
   }
 
+  function createHttpError(message, status) {
+    const error = new Error(message);
+    error.status = status;
+    return error;
+  }
+
+  async function parseJsonSafe(response) {
+    try {
+      return await response.json();
+    } catch (error) {
+      return null;
+    }
+  }
+
   async function sendTranscriptionRequest(file) {
     const formData = new FormData();
     formData.append("audio", file);
@@ -587,18 +600,9 @@
       body: formData,
     });
 
-    let data = null;
-    try {
-      data = await response.json();
-    } catch (error) {
-      data = null;
-    }
-
+    const data = await parseJsonSafe(response);
     if (!response.ok || !data?.sucesso) {
-      const message = data?.erro || `Falha ao transcrever o áudio. Status ${response.status}`;
-      const error = new Error(message);
-      error.status = response.status;
-      throw error;
+      throw createHttpError(data?.erro || `Falha ao transcrever o áudio. Status ${response.status}`, response.status);
     }
 
     return data;
@@ -618,15 +622,10 @@
       }),
     });
 
-    let data = null;
-    try {
-      data = await response.json();
-    } catch (error) {
-      data = null;
-    }
+    const data = await parseJsonSafe(response);
 
     if (!response.ok || !data?.sucesso) {
-      throw new Error(data?.erro || `Falha ao transcrever o áudio armazenado. Status ${response.status}`);
+      throw createHttpError(data?.erro || `Falha ao transcrever o áudio armazenado. Status ${response.status}`, response.status);
     }
 
     return data;
