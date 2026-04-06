@@ -1,11 +1,11 @@
 ﻿(function () {
   const STORAGE_KEY = "protocord_ia_transcriber_v1";
-  const FALLBACK_API_URL = "https://modelo-discord-server.vercel.app/api";
   const OPENAI_MAX_AUDIO_BYTES = 24 * 1024 * 1024;
+  const MAX_UPLOAD_BYTES = OPENAI_MAX_AUDIO_BYTES;
   const AUDIO_DB_NAME = "protocord_ia_audio_v1";
   const AUDIO_STORE_NAME = "ticket_audio";
   const TARGET_SAMPLE_RATE = 16000;
-  const apiBaseUrl = (window.PROTOCORD_TRANSCRIBER_API || localStorage.getItem("PROTOCORD_TRANSCRIBER_API") || FALLBACK_API_URL).replace(/\/$/, "");
+  const apiBaseUrl = window.getProtocordApiBaseUrl();
   let blobClientPromise = null;
   let audioDbPromise = null;
 
@@ -518,31 +518,29 @@
 
     try {
       await pingBackendHealth();
-      if (file.size > OPENAI_MAX_AUDIO_BYTES) {
-        throw new Error("O áudio está acima do limite suportado para transcrição. Envie um arquivo menor que 24 MB.");
-      }
+      const fileForTranscription = await prepareAudioForTranscription(file);
 
       notify("Enviando áudio temporário para processamento...", "info");
-      const blobUpload = await uploadAudioToBlob(file);
+      const blobUpload = await uploadAudioToBlob(fileForTranscription);
 
       notify("Solicitando transcrição do áudio armazenado...", "info");
-      const data = await requestBlobTranscription(blobUpload, file);
+      const data = await requestBlobTranscription(blobUpload, fileForTranscription);
 
       if (active.localAudioKey) {
         await deleteLocalAudio(active.localAudioKey);
         revokeObjectUrlIfNeeded(active.audioUrl);
       }
 
-      const localAudioKey = await saveLocalAudio(active.id, file);
+      const localAudioKey = await saveLocalAudio(active.id, fileForTranscription);
 
       active.analysis = data.analise || "";
       active.solucao = data.solucao || "";
       active.resumo = (data.resumo || "").substring(0, 255);
       active.phone = data.telefone || active.phone;
-      active.nomeArquivoNoServidor = "";
-      active.blobUrl = "";
+      active.nomeArquivoNoServidor = data.nomeArquivoNoServidor || "";
+      active.blobUrl = data.blobUrl || "";
       active.localAudioKey = localAudioKey;
-      active.audioUrl = URL.createObjectURL(file);
+      active.audioUrl = URL.createObjectURL(fileForTranscription);
       state.editingReport = false;
       state.reportDraft = "";
       persist();
@@ -554,6 +552,39 @@
     } finally {
       state.uploading = false;
       renderActiveTicket();
+    }
+  }
+
+  async function prepareAudioForTranscription(file) {
+    if (file.size <= OPENAI_MAX_AUDIO_BYTES) {
+      return file;
+    }
+
+    notify("Áudio acima de 24 MB. Tentando compactar antes da transcrição...", "info");
+    const compressedFile = await withTimeout(
+      compressAudioForUpload(file),
+      45000,
+      "Tempo esgotado ao compactar o áudio para transcrição.",
+    );
+
+    if (compressedFile.size > MAX_UPLOAD_BYTES) {
+      throw new Error("O áudio continua acima do limite suportado após a compactação. Envie um arquivo menor que 24 MB.");
+    }
+
+    return compressedFile;
+  }
+
+  function createHttpError(message, status) {
+    const error = new Error(message);
+    error.status = status;
+    return error;
+  }
+
+  async function parseJsonSafe(response) {
+    try {
+      return await response.json();
+    } catch (error) {
+      return null;
     }
   }
 
@@ -569,18 +600,9 @@
       body: formData,
     });
 
-    let data = null;
-    try {
-      data = await response.json();
-    } catch (error) {
-      data = null;
-    }
-
+    const data = await parseJsonSafe(response);
     if (!response.ok || !data?.sucesso) {
-      const message = data?.erro || `Falha ao transcrever o áudio. Status ${response.status}`;
-      const error = new Error(message);
-      error.status = response.status;
-      throw error;
+      throw createHttpError(data?.erro || `Falha ao transcrever o áudio. Status ${response.status}`, response.status);
     }
 
     return data;
@@ -600,15 +622,10 @@
       }),
     });
 
-    let data = null;
-    try {
-      data = await response.json();
-    } catch (error) {
-      data = null;
-    }
+    const data = await parseJsonSafe(response);
 
     if (!response.ok || !data?.sucesso) {
-      throw new Error(data?.erro || `Falha ao transcrever o áudio armazenado. Status ${response.status}`);
+      throw createHttpError(data?.erro || `Falha ao transcrever o áudio armazenado. Status ${response.status}`, response.status);
     }
 
     return data;

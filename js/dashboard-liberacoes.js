@@ -9,12 +9,20 @@ let chartsInstance = {
   chartTrendModulo: null
 };
 
+function notificarExportacaoSemDados() {
+  if (typeof window.showToast === 'function') {
+    window.showToast('Não há dados para exportar.', 'warning');
+    return;
+  }
+  alert('Não há dados para exportar.');
+}
+
 // Quantos módulos aparecem como "escalados" (destacados). Usuário pode alterar via UI (1,3,5).
 let topEscalados = 3;
 
 async function carregarDadosLiberacoes() {
   try {
-    const response = await fetch('https://modelo-discord-server.vercel.app/api/liberados');
+    const response = await fetch(window.getProtocordApiUrl('/liberados'));
 
     if (!response.ok) {
       throw new Error(`API retornou status ${response.status}`);
@@ -363,6 +371,11 @@ async function carregarHistoricoLiberacoes() {
   if (typeof inicializarBuscaModulo === 'function') {
     inicializarBuscaModulo();
   }
+
+  // Popula selects em Relatórios (se disponível)
+  if (typeof window.populateRelatoriosFilters === 'function') {
+    window.populateRelatoriosFilters();
+  }
 }
 
 
@@ -410,7 +423,7 @@ function obterDadosVisiveisTabela() {
 // Funções de Exportação
 window.exportarCSV = function() {
   const dados = obterLiberacoesFiltradasAtuais();
-  if (dados.length === 0) return alert("Não há dados para exportar.");
+  if (dados.length === 0) return notificarExportacaoSemDados();
 
   let csv = 'Data;Protocolos\n';
   dados.forEach(row => {
@@ -426,7 +439,7 @@ window.exportarCSV = function() {
 
 window.exportarExcel = function() {
   const dados = obterLiberacoesFiltradasAtuais();
-  if (dados.length === 0) return alert("Não há dados para exportar.");
+  if (dados.length === 0) return notificarExportacaoSemDados();
 
   // Formato XML simplificado para Excel ler como planilha
   let excelContext = `
@@ -470,7 +483,7 @@ window.atualizarRankingModulos = function(liberacoes) {
   `).join('') || '<p class="text-xs text-gray-500">Sem dados</p>';
 };
 
-function exportarExcel() {
+function exportarExcelTabelaVisivel() {
   const dados = obterDadosVisiveisTabela();
   if (!dados.length) return;
   const tabela = `

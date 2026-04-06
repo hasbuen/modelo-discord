@@ -1,5 +1,5 @@
 (function () {
-  const API_BASE = "https://modelo-discord-server.vercel.app/api";
+  const API_BASE = window.getProtocordApiBaseUrl();
   const state = {
     rows: [],
     filteredRows: [],
