@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
   const STORAGE_KEY = "protocord_ia_transcriber_v1";
   const OPENAI_MAX_AUDIO_BYTES = 24 * 1024 * 1024;
   const MAX_UPLOAD_BYTES = OPENAI_MAX_AUDIO_BYTES;
@@ -990,7 +990,8 @@
       type.includes("webm") ||
       type.includes("wav") ||
       type.includes("mp4") ||
-      type.includes("m4a")
+      type.includes("m4a") ||
+      type.includes("flac")
     );
   }
 
@@ -1086,7 +1087,7 @@
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
+      .replace(/\"/g, "&quot;")
       .replace(/'/g, "&#39;");
   }
 
@@ -1105,5 +1106,3 @@
 
   document.addEventListener("DOMContentLoaded", init);
 })();
-
-
