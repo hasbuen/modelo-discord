@@ -1,6 +1,6 @@
 (function () {
   const STORAGE_KEY = "protocord_ia_transcriber_v1";
-  const OPENAI_MAX_AUDIO_BYTES = 24 * 1024 * 1024;
+  const OPENAI_MAX_AUDIO_BYTES = 20 * 1024 * 1024;
   const MAX_UPLOAD_BYTES = OPENAI_MAX_AUDIO_BYTES;
   const AUDIO_DB_NAME = "protocord_ia_audio_v1";
   const AUDIO_STORE_NAME = "ticket_audio";
@@ -555,24 +555,32 @@
     }
   }
 
-  async function prepareAudioForTranscription(file) {
-    if (file.size <= OPENAI_MAX_AUDIO_BYTES) {
-      return file;
-    }
+async function prepareAudioForTranscription(file) {
+  const SAFE_TRANSCRIPTION_BYTES = 20 * 1024 * 1024;
+  const shouldCompress =
+    file.size > SAFE_TRANSCRIPTION_BYTES ||
+    !isAlreadyCompactAudio(file);
 
-    notify("Áudio acima de 24 MB. Tentando compactar antes da transcrição...", "info");
-    const compressedFile = await withTimeout(
-      compressAudioForUpload(file),
-      45000,
-      "Tempo esgotado ao compactar o áudio para transcrição.",
-    );
-
-    if (compressedFile.size > MAX_UPLOAD_BYTES) {
-      throw new Error("O áudio continua acima do limite suportado após a compactação. Envie um arquivo menor que 24 MB.");
-    }
-
-    return compressedFile;
+  if (!shouldCompress) {
+    return file;
   }
+
+  notify("Compactando áudio antes da transcrição...", "info");
+
+  const compressedFile = await withTimeout(
+    compressAudioForUpload(file),
+    45000,
+    "Tempo esgotado ao compactar o áudio para transcrição.",
+  );
+
+  if (compressedFile.size > SAFE_TRANSCRIPTION_BYTES) {
+    throw new Error(
+      "O áudio ainda ficou acima do limite seguro para transcrição. Envie um arquivo menor ou mais curto."
+    );
+  }
+
+  return compressedFile;
+}
 
   function createHttpError(message, status) {
     const error = new Error(message);
