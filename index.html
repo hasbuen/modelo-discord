@@ -1,2519 +1,695 @@
-﻿<!DOCTYPE html>
-<html lang="pt-BR">
+<style id="protocord-enhancement-layer">
+  :root {
+    --pc-accent: #2563eb;
+    --pc-accent-2: #38bdf8;
+    --pc-cyan: #22d3ee;
+    --pc-violet: #8b5cf6;
+    --pc-success: #10b981;
+    --pc-warn: #f59e0b;
+    --pc-danger: #ef4444;
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ProtoCord</title>
+    --pc-radius-lg: 18px;
+    --pc-radius-xl: 24px;
+    --pc-radius-2xl: 28px;
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    --pc-shadow-soft: 0 10px 30px rgba(0, 0, 0, .12);
+    --pc-shadow-md: 0 18px 40px rgba(0, 0, 0, .18);
+    --pc-shadow-glow: 0 0 0 1px rgba(56, 189, 248, .10), 0 18px 40px rgba(37, 99, 235, .18);
+    --pc-transition: 220ms cubic-bezier(.2,.8,.2,1);
+  }
 
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  html,
+  body {
+    scroll-behavior: smooth;
+  }
 
-  <link rel="stylesheet" href="style.css">
-</head>
+  body {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-<body class="bg-gray-900 text-gray-200">
+  body,
+  #main-content,
+  #desktop-header,
+  #sidebar,
+  #mobile-sidebar,
+  .kpi-panel,
+  .reports-card,
+  .assistant-card,
+  .assistant-sidecard,
+  .ia-card,
+  .sidebar-item,
+  .toggle-theme-btn,
+  .reports-btn,
+  .ia-btn-primary,
+  .ia-btn-secondary,
+  .ia-icon-btn,
+  .mobile-theme-chip {
+    transition:
+      background-color var(--pc-transition),
+      border-color var(--pc-transition),
+      color var(--pc-transition),
+      box-shadow var(--pc-transition),
+      transform var(--pc-transition),
+      opacity var(--pc-transition);
+  }
 
-<div id="auth-container" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+  body[data-theme="dark"],
+  html[data-theme="dark"] body {
+    background:
+      radial-gradient(circle at top left, rgba(37,99,235,.10), transparent 22%),
+      radial-gradient(circle at top right, rgba(34,211,238,.08), transparent 18%),
+      #0b1220;
+  }
 
-  <div class="w-full max-w-sm">
+  body[data-theme="light"],
+  html[data-theme="light"] body {
+    background:
+      radial-gradient(circle at top left, rgba(37,99,235,.05), transparent 22%),
+      radial-gradient(circle at top right, rgba(34,211,238,.04), transparent 18%),
+      #eef4fb;
+  }
 
-    <!-- CARD -->
-    <div class="bg-gray-900 rounded-2xl p-8 shadow-2xl border border-gray-700/60">
+  #desktop-header {
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(148, 163, 184, .08);
+  }
 
-      <!-- ICON -->
-      <div class="flex justify-center mb-6">
-        <div class="w-14 h-14 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg">
-          <i data-lucide="lock" class="w-6 h-6 text-white"></i>
-        </div>
+  html[data-theme="dark"] #desktop-header {
+    background: rgba(11, 18, 32, .72);
+    box-shadow: 0 8px 30px rgba(2, 6, 23, .28);
+  }
+
+  html[data-theme="light"] #desktop-header {
+    background: rgba(255, 255, 255, .75);
+    box-shadow: 0 8px 30px rgba(148, 163, 184, .12);
+  }
+
+  #sidebar,
+  #mobile-sidebar {
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  html[data-theme="dark"] #sidebar,
+  html[data-theme="dark"] #mobile-sidebar {
+    background:
+      linear-gradient(180deg, rgba(15, 23, 42, .96), rgba(7, 12, 24, .98));
+    box-shadow: inset -1px 0 0 rgba(255,255,255,.03);
+  }
+
+  html[data-theme="light"] #sidebar,
+  html[data-theme="light"] #mobile-sidebar {
+    background:
+      linear-gradient(180deg, rgba(248, 251, 255, .96), rgba(240, 246, 252, .98));
+    box-shadow: inset -1px 0 0 rgba(148,163,184,.10);
+  }
+
+  .sidebar-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+  }
+
+  .sidebar-item::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity var(--pc-transition);
+    pointer-events: none;
+  }
+
+  html[data-theme="dark"] .sidebar-item::before {
+    background: linear-gradient(90deg, rgba(37,99,235,.14), rgba(34,211,238,.06));
+  }
+
+  html[data-theme="light"] .sidebar-item::before {
+    background: linear-gradient(90deg, rgba(37,99,235,.10), rgba(34,211,238,.05));
+  }
+
+  .sidebar-item:hover::before,
+  .sidebar-item.active::before {
+    opacity: 1;
+  }
+
+  .sidebar-item:hover {
+    transform: translateX(2px);
+  }
+
+  .toggle-theme-btn,
+  .mobile-theme-chip,
+  .reports-btn,
+  .ia-btn-primary,
+  .ia-btn-secondary,
+  .ia-icon-btn,
+  #btn-auth-submit {
+    will-change: transform, box-shadow;
+  }
+
+  .toggle-theme-btn:hover,
+  .mobile-theme-chip:hover,
+  .reports-btn:hover,
+  .ia-btn-primary:hover,
+  .ia-btn-secondary:hover,
+  .ia-icon-btn:hover,
+  #btn-auth-submit:hover {
+    transform: translateY(-1px);
+  }
+
+  .toggle-theme-btn.active {
+    box-shadow: var(--pc-shadow-glow);
+  }
+
+  html[data-theme="dark"] .kpi-panel,
+  html[data-theme="dark"] .reports-card,
+  html[data-theme="dark"] .assistant-card,
+  html[data-theme="dark"] .assistant-sidecard,
+  html[data-theme="dark"] .ia-card,
+  html[data-theme="dark"] #auth-container .bg-gray-900 {
+    background:
+      linear-gradient(180deg, rgba(15,23,42,.84), rgba(10,15,28,.92));
+    border-color: rgba(59, 130, 246, .10) !important;
+    box-shadow: var(--pc-shadow-md);
+  }
+
+  html[data-theme="light"] .kpi-panel,
+  html[data-theme="light"] .reports-card,
+  html[data-theme="light"] .assistant-card,
+  html[data-theme="light"] .assistant-sidecard,
+  html[data-theme="light"] .ia-card,
+  html[data-theme="light"] #auth-container .bg-gray-900 {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.96), rgba(247,250,253,.96));
+    border-color: rgba(148, 163, 184, .16) !important;
+    box-shadow: 0 12px 32px rgba(148, 163, 184, .14);
+  }
+
+  .kpi-panel:hover,
+  .reports-card:hover,
+  .assistant-card:hover,
+  .assistant-sidecard:hover,
+  .ia-card:hover {
+    box-shadow: var(--pc-shadow-glow);
+  }
+
+  .kpi-title,
+  .reports-title,
+  .assistant-title,
+  .ia-main-title {
+    letter-spacing: -.03em;
+  }
+
+  .kpi-badge,
+  .reports-sync-badge,
+  .sidebar-pill,
+  .ia-pill {
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+    backdrop-filter: blur(10px);
+  }
+
+  .kpi-stat-card,
+  .reports-kpi-card,
+  .ia-metric-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kpi-stat-card::after,
+  .reports-kpi-card::after,
+  .ia-metric-card::after {
+    content: "";
+    position: absolute;
+    inset: -40% auto auto -30%;
+    width: 120px;
+    height: 120px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(56,189,248,.12), transparent 70%);
+    pointer-events: none;
+  }
+
+  html[data-theme="light"] .kpi-stat-card::after,
+  html[data-theme="light"] .reports-kpi-card::after,
+  html[data-theme="light"] .ia-metric-card::after {
+    background: radial-gradient(circle, rgba(37,99,235,.08), transparent 70%);
+  }
+
+  .ia-ticket-list,
+  .assistant-messages,
+  .sidebar-nav,
+  .kpi-table-wrap,
+  .reports-table-wrap {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(100,116,139,.45) transparent;
+  }
+
+  .ia-ticket-list::-webkit-scrollbar,
+  .assistant-messages::-webkit-scrollbar,
+  .sidebar-nav::-webkit-scrollbar,
+  .kpi-table-wrap::-webkit-scrollbar,
+  .reports-table-wrap::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .ia-ticket-list::-webkit-scrollbar-thumb,
+  .assistant-messages::-webkit-scrollbar-thumb,
+  .sidebar-nav::-webkit-scrollbar-thumb,
+  .kpi-table-wrap::-webkit-scrollbar-thumb,
+  .reports-table-wrap::-webkit-scrollbar-thumb {
+    background: rgba(100,116,139,.38);
+    border-radius: 999px;
+  }
+
+  .ia-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ia-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at top right, rgba(34,211,238,.08), transparent 26%);
+    opacity: .9;
+  }
+
+  .ia-section-header,
+  .ia-main-header,
+  .reports-card-header,
+  .kpi-panel-header {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Player refinado sem trocar sua lógica */
+  #ia-audio-card {
+    position: relative;
+  }
+
+  #ia-audio-card .ia-audio-shell {
+    position: relative;
+    padding: 14px;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  html[data-theme="dark"] #ia-audio-card .ia-audio-shell {
+    background:
+      linear-gradient(180deg, rgba(15,23,42,.80), rgba(8,14,28,.92));
+    border: 1px solid rgba(56,189,248,.14);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.03),
+      0 14px 34px rgba(2,6,23,.28);
+  }
+
+  html[data-theme="light"] #ia-audio-card .ia-audio-shell {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.96), rgba(246,249,253,.96));
+    border: 1px solid rgba(56,189,248,.12);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.75),
+      0 14px 34px rgba(148,163,184,.16);
+  }
+
+  #ia-audio-card .ia-audio-shell::before {
+    content: "";
+    position: absolute;
+    top: -42px;
+    right: -42px;
+    width: 140px;
+    height: 140px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(34,211,238,.16), transparent 70%);
+    pointer-events: none;
+  }
+
+  #ia-audio-card .ia-audio-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  #ia-audio-card .ia-audio-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .01em;
+  }
+
+  html[data-theme="dark"] #ia-audio-card .ia-audio-badge {
+    background: rgba(34,211,238,.10);
+    color: #9be8f5;
+    border: 1px solid rgba(34,211,238,.16);
+  }
+
+  html[data-theme="light"] #ia-audio-card .ia-audio-badge {
+    background: rgba(37,99,235,.08);
+    color: #1e40af;
+    border: 1px solid rgba(37,99,235,.10);
+  }
+
+  #ia-audio-card .ia-audio-wave {
+    display: flex;
+    align-items: end;
+    gap: 4px;
+    height: 22px;
+  }
+
+  #ia-audio-card .ia-audio-wave span {
+    width: 4px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #67e8f9, #2563eb);
+    animation: pcWave 1.2s ease-in-out infinite;
+    transform-origin: bottom center;
+    opacity: .9;
+  }
+
+  #ia-audio-card .ia-audio-wave span:nth-child(1) { height: 8px; animation-delay: .00s; }
+  #ia-audio-card .ia-audio-wave span:nth-child(2) { height: 16px; animation-delay: .10s; }
+  #ia-audio-card .ia-audio-wave span:nth-child(3) { height: 12px; animation-delay: .20s; }
+  #ia-audio-card .ia-audio-wave span:nth-child(4) { height: 20px; animation-delay: .30s; }
+  #ia-audio-card .ia-audio-wave span:nth-child(5) { height: 10px; animation-delay: .40s; }
+
+  @keyframes pcWave {
+    0%, 100% { transform: scaleY(.6); opacity: .55; }
+    50% { transform: scaleY(1.15); opacity: 1; }
+  }
+
+  #ia-audio-player {
+    width: 100%;
+    min-height: 52px;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+
+  #ia-audio-player::-webkit-media-controls-panel {
+    background: transparent;
+  }
+
+  .pc-reveal {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .pc-ready {
+    opacity: 1;
+    transform: none;
+  }
+
+  .pc-glow-hover:hover {
+    box-shadow: var(--pc-shadow-glow);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition-duration: .01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+
+<script type="module" id="protocord-enhancement-script">
+  const motionModule = await import('https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm').catch(() => null);
+  const animate = motionModule?.animate || null;
+  const stagger = motionModule?.stagger || null;
+  const inView = motionModule?.inView || null;
+
+  const $ = (sel, ctx = document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+
+  const raf = (fn) => requestAnimationFrame(() => requestAnimationFrame(fn));
+
+  function wrapAudioPlayer() {
+    const card = $('#ia-audio-card');
+    const player = $('#ia-audio-player');
+    if (!card || !player) return;
+    if (card.querySelector('.ia-audio-shell')) return;
+
+    const sectionHeader = card.querySelector('.ia-section-header');
+    const shell = document.createElement('div');
+    shell.className = 'ia-audio-shell pc-reveal';
+
+    const meta = document.createElement('div');
+    meta.className = 'ia-audio-meta';
+    meta.innerHTML = `
+      <div class="ia-audio-badge">
+        <i data-lucide="radio" class="w-4 h-4"></i>
+        Reprodução local
       </div>
-
-      <!-- TITLE -->
-      <h1 class="text-2xl font-semibold text-center text-white">
-        ProtoCord
-      </h1>
-
-      <p class="text-gray-400 text-center text-sm mt-1 mb-6">
-        Acesso ao ambiente protegido
-      </p>
-
-      <!-- BADGE -->
-      <div class="flex justify-center mb-6">
-        <div class="flex items-center gap-2 px-3 py-1 rounded-full text-xs 
-        bg-yellow-500/10 text-yellow-300 border border-yellow-500/30">
-          <i data-lucide="shield" class="w-3 h-3"></i>
-          Sistema i9
-        </div>
+      <div class="ia-audio-wave" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
       </div>
-
-      <!-- FORM -->
-      <form id="auth-form" onsubmit="event.preventDefault(); validarSenha()" class="space-y-5">
-
-        <!-- INPUT -->
-        <div>
-          <label class="text-xs text-gray-400 mb-2 block">Senha</label>
-
-          <input id="auth-senha"
-            type="password"
-            placeholder="Digite sua senha"
-            autocomplete="off"
-            autofocus
-            class="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-700
-            text-white placeholder-gray-500
-
-            focus:outline-none 
-            focus:border-blue-500 
-            focus:ring-2 focus:ring-blue-500/40
-
-            transition-all duration-200" />
-        </div>
-
-        <!-- ERROR -->
-        <div id="auth-erro"
-          class="hidden text-red-400 text-sm px-3 py-2 rounded-lg 
-          bg-red-900/30 border border-red-800">
-        </div>
-
-        <!-- BUTTON -->
-        <button type="submit" id="btn-auth-submit"
-          class="w-full py-3 rounded-xl font-medium text-white
-
-          bg-blue-600 hover:bg-blue-500
-
-          active:scale-[0.97]
-          transition-all duration-200
-
-          shadow-lg shadow-blue-900/40
-          flex items-center justify-center gap-2">
-
-          <i data-lucide="log-in" class="w-4 h-4"></i>
-          Entrar
-        </button>
-
-      </form>
-
-    </div>
-
-  </div>
-</div>
-
-  
-  <div class="min-h-screen flex">
-
-    <header id="desktop-header"
-      class="hidden md:flex items-center justify-between fixed top-0 right-0 z-20 px-6 py-3 h-16 w-auto left-56">
-      <div class="flex items-center gap-3">
-        <div class="bg-blue-600 p-1.5 rounded-lg">
-          <i data-lucide="bandage" class="w-5 h-5 text-white"></i>
-        </div>
-        <h1 class="text-xl font-bold tracking-tight">ProtoCord</h1>
-      </div>
-      <div class="flex items-center gap-4">
-        <span class="text-sm text-gray-400">v2.0</span>
-      </div>
-    </header>
-
-    <aside id="sidebar" class="hidden md:flex flex-col w-56 min-h-screen fixed left-0 top-0 p-3 gap-2">
-
-      <div class="sidebar-brand-panel sidebar-brand-panel-minimal">
-        <button id="btn-collapse" class="sidebar-collapse-btn" aria-label="Recolher menu lateral">
-          <i data-lucide="chevrons-left" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <nav class="sidebar-nav flex-1 flex flex-col gap-1 overflow-y-auto overflow-x-hidden">
-
-        <button onclick="mostrarPagina('historico-liberacoes')" data-tooltip="Histórico Liberações "
-          class="sidebar-item active" id="btn-historico-liberacoes">
-          <i data-lucide="layout-dashboard" class="sidebar-icon"></i>
-          <span class="sidebar-label"> KPI</span>
-        </button>
-
-        <button onclick="mostrarPagina('home')" data-tooltip="Início" class="sidebar-item" id="btn-home">
-          <i data-lucide="message-square-quote" class="sidebar-icon"></i>
-          <span class="sidebar-label">Registrar</span>
-        </button>
-
-        <button onclick="mostrarPagina('protocolar')" data-tooltip="Protocolar" class="sidebar-item"
-          id="btn-protocolar">
-          <i data-lucide="pen-line" class="sidebar-icon"></i>
-          <span class="sidebar-label">Layout PRT</span>
-        </button>
-
-        <button onclick="mostrarPagina('historico')" data-tooltip="Histórico" class="sidebar-item" id="btn-historico">
-          <i data-lucide="history" class="sidebar-icon"></i>
-          <span class="sidebar-label">Histórico</span>
-        </button>
-
-        <button onclick="document.getElementById('arquivoRTF').click()" data-tooltip="Verificar Release"
-          class="sidebar-item" id="btn-liberacoes">
-          <i data-lucide="package-open" class="sidebar-icon"></i>
-          <span class="sidebar-label">Analisar RLS</span>
-        </button>
-        <input type="file" id="arquivoRTF" accept=".rtf" class="hidden" onchange="processarRTF(event)" />
-
-        <button onclick="mostrarPagina('relatorios')" data-tooltip="Relatórios" class="sidebar-item"
-          id="btn-relatorios">
-          <i data-lucide="file-text" class="sidebar-icon"></i>
-          <span class="sidebar-label flex items-center">
-            Relatórios
-              <span class="sidebar-pill ml-2">Plus</span>
-          </span>
-        </button>
-
-        <button onclick="mostrarPagina('sefaz')" data-tooltip="IA Inteligente" class="sidebar-item" id="btn-sefaz">
-          <i data-lucide="activity" class="sidebar-icon"></i>
-          <span class="sidebar-label flex items-center">
-            SEFAZ
-              <span class="sidebar-pill ml-2">Plus</span>
-          </span>
-        </button>
-
-        <button onclick="mostrarPagina('ia')" data-tooltip="Transcrever" class="sidebar-item" id="btn-ia">
-          <i data-lucide="bot" class="sidebar-icon"></i>
-          <span class="sidebar-label flex items-center">
-            Transcrever
-              <span class="sidebar-pill ml-2">Plus</span>
-          </span>
-        </button>
-
-        <button onclick="mostrarPagina('assistente')" data-tooltip="CordIA" class="sidebar-item" id="btn-assistente">
-          <i data-lucide="messages-square" class="sidebar-icon"></i>
-          <span class="sidebar-label flex items-center">
-            CordIA
-              <span class="sidebar-pill ml-2">Plus</span>
-          </span>
-        </button>
-
-      </nav>
-
-      <div class="mt-auto sidebar-footer-panel">
-        <div class="sidebar-footer-copy">
-          <span class="sidebar-footer-label">Tema</span>
-          <small class="sidebar-footer-note">Escolha a leitura ideal para seu ambiente.</small>
-        </div>
-        <div class="theme-toggles-container" role="group" aria-label="Selecionar tema">
-          <button id="tema-escuro" type="button" class="toggle-theme-btn" onclick="alternarTema('dark')">
-            <i data-lucide="moon" class="w-4 h-4"></i>
-            <span>Dark</span>
-          </button>
-          <button id="tema-claro" type="button" class="toggle-theme-btn" onclick="alternarTema('light')">
-            <i data-lucide="sun-medium" class="w-4 h-4"></i>
-            <span>Light</span>
-          </button>
-          <button id="tema-sistema" type="button" class="toggle-theme-btn" onclick="alternarTema('system')">
-            <i data-lucide="monitor-smartphone" class="w-4 h-4"></i>
-            <span>Sistema</span>
-          </button>
-        </div>
-      </div>
-    </aside>
-
-    <header
-      class="w-full md:hidden fixed top-0 left-0 right-0 z-40 bg-gray-900 border-b border-gray-700 h-16 flex items-center justify-between px-4">
-      <div class="flex items-center gap-3">
-        <button id="btn-mobile-menu" class="p-2 -ml-2 rounded-md hover:bg-gray-800">
-          <i data-lucide="menu" class="w-6 h-6"></i>
-        </button>
-        <span class="font-bold text-lg">ProtoCord</span>
-      </div>
-      <button id="btn-mobile-theme" class="mobile-theme-chip" onclick="alternarTema(window.__nextThemeOption ? window.__nextThemeOption() : 'dark')">
-        <i data-lucide="sun-moon" class="w-4 h-4"></i>
-        <span id="mobile-theme-label">Sistema</span>
-      </button>
-    </header>
-
-    <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
-    <aside id="mobile-sidebar"
-      class="fixed inset-y-0 left-0 w-64 bg-gray-900 border-r border-gray-700 z-50 transform -translate-x-full transition-transform duration-300 md:hidden p-4">
-      <div class="flex items-center justify-between mb-6">
-        <span class="font-bold text-xl">Menu</span>
-        <button id="btn-mobile-close" class="p-2 hover:bg-gray-800 rounded">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-      <nav class="flex flex-col gap-2">
-        <button onclick="mostrarPagina('historico-liberacoes')" class="sidebar-item active"
-          id="btn-historico-liberacoes-mobile">
-          <i data-lucide="layout-dashboard" class="sidebar-icon"></i> KPI
-        </button>
-        <button onclick="mostrarPagina('home')" class="sidebar-item active" id="btn-home-mobile">
-          <i data-lucide="message-square-quote" class="sidebar-icon"></i> Registrar
-        </button>
-        <button onclick="mostrarPagina('protocolar')" class="sidebar-item" id="btn-protocolar-mobile">
-          <i data-lucide="pen-line" class="sidebar-icon"></i> Layout PRT
-        </button>
-        <button onclick="mostrarPagina('historico')" class="sidebar-item" id="btn-historico-mobile">
-          <i data-lucide="history" class="sidebar-icon"></i> Histórico
-        </button>
-        <button onclick="document.getElementById('arquivoRTF').click()" class="sidebar-item">
-          <i data-lucide="package-open" class="sidebar-icon"></i> Analisar RLS
-        </button>
-        <button onclick="mostrarPagina('sefaz')" data-tooltip="Monitorar SEFAZ" class="sidebar-item"
-          id="btn-sefaz-mobile">
-          <i data-lucide="activity" class="sidebar-icon"></i>
-          <span class="sidebar-label flex items-center">
-            SEFAZ
-              <span class="sidebar-pill ml-2">Plus</span>
-          </span>
-        </button>
-        <button onclick="mostrarPagina('ia')" class="sidebar-item" id="btn-ia-mobile">
-            <i data-lucide="bot" class="sidebar-icon"></i> Transcrever
-            <span class="sidebar-pill ml-2">Plus</span>
-          </button>
-          <button onclick="mostrarPagina('assistente')" class="sidebar-item" id="btn-assistente-mobile">
-            <i data-lucide="messages-square" class="sidebar-icon"></i> CordIA
-            <span class="sidebar-pill ml-2">Plus</span>
-          </button>
-          <button onclick="mostrarPagina('relatorios')" class="sidebar-item" id="btn-relatorios-mobile">
-            <i data-lucide="file-text" class="sidebar-icon"></i> Relatórios
-            <span class="sidebar-pill ml-2">Plus</span>
-          </button>
-      </nav>
-
-      <div class="mobile-theme-panel">
-        <span class="sidebar-footer-label">Tema</span>
-        <div class="theme-toggles-container theme-toggles-mobile" role="group" aria-label="Selecionar tema mobile">
-          <button id="tema-escuro-mobile" type="button" class="toggle-theme-btn" onclick="alternarTema('dark')">
-            <i data-lucide="moon" class="w-4 h-4"></i>
-            <span>Dark</span>
-          </button>
-          <button id="tema-claro-mobile" type="button" class="toggle-theme-btn" onclick="alternarTema('light')">
-            <i data-lucide="sun-medium" class="w-4 h-4"></i>
-            <span>Light</span>
-          </button>
-          <button id="tema-sistema-mobile" type="button" class="toggle-theme-btn" onclick="alternarTema('system')">
-            <i data-lucide="monitor-smartphone" class="w-4 h-4"></i>
-            <span>Sistema</span>
-          </button>
-        </div>
-      </div>
-    </aside>
-
-    <main id="main-content" class="flex-1 min-h-screen pt-20 md:pt-20 md:pl-56 transition-all duration-300">
-
-      <div class="max-w-7xl mx-auto p-6 space-y-6">
-
-        <div id="pagina-home" class="animate__animated animate__fadeIn">
-          <section class="kpi-shell legacy-shell">
-            <section class="kpi-hero">
-              <div class="kpi-hero-copy">
-                <p class="kpi-eyebrow">Registrar</p>
-                <h2 class="kpi-title">Cadastro operacional no padrão ProtoCord</h2>
-                <p class="kpi-subtitle">Preencha, gere e registre no mesmo fluxo.</p>
-              </div>
-              <div class="kpi-hero-metrics">
-                <span class="kpi-badge">Cadastro manual</span>
-                <span class="kpi-badge kpi-badge-soft">Cópia imediata</span>
-                <span class="kpi-badge kpi-badge-soft">Base operacional</span>
-              </div>
-            </section>
-
-            <section class="kpi-main-grid legacy-grid">
-              <article class="kpi-panel legacy-panel">
-                <div class="kpi-panel-header">
-                  <div>
-                    <h3 class="kpi-panel-title">Dados do protocolo</h3>
-                    <p class="kpi-panel-subtitle">Escolha o tipo, informe ticket, PRT e contexto do atendimento para montar o texto padrão.</p>
-                  </div>
-                  <span class="kpi-badge kpi-badge-soft">Entrada estruturada</span>
-                </div>
-
-                <div class="legacy-tone-switches">
-                  <button id="btn-erro" type="button" onclick="selecionarTipo('erro')" class="legacy-tone-btn legacy-tone-btn-danger">
-                    <i data-lucide="bug" class="w-4 h-4"></i>
-                    Erro
-                  </button>
-                  <button id="btn-sugestao" type="button" onclick="selecionarTipo('sugestao')" class="legacy-tone-btn legacy-tone-btn-success">
-                    <i data-lucide="sparkles" class="w-4 h-4"></i>
-                    Sugestão
-                  </button>
-                </div>
-                <input type="hidden" id="tipo" />
-
-                <div class="legacy-form-grid">
-                  <label class="reports-field legacy-field">
-                    <span>Módulo</span>
-                    <div class="legacy-select-wrap">
-                      <select id="modulo" class="reports-select legacy-select">
-                        <option value="" disabled selected hidden>Selecione o módulo...</option>
-                      </select>
-                      <div id="seta-modulo" class="legacy-select-icon">
-                        <i data-lucide="chevron-down" class="w-5 h-5"></i>
-                      </div>
-                    </div>
-                  </label>
-
-                  <label class="reports-field legacy-field">
-                    <span>PRT</span>
-                    <input id="prt" type="text" class="reports-input" />
-                  </label>
-
-                  <label class="reports-field legacy-field">
-                    <span>Ticket</span>
-                    <input id="ticket" type="text" class="reports-input" />
-                  </label>
-
-                  <label class="reports-field legacy-field legacy-field-wide">
-                    <span>Descrição</span>
-                    <textarea id="descricao" rows="6" class="reports-input legacy-textarea"></textarea>
-                  </label>
-
-                  <label class="reports-field legacy-field">
-                    <span>Paliativo</span>
-                    <input list="paliativosList" id="paliativo" type="text" placeholder="Selecione ou digite aqui..." class="reports-input" />
-                    <datalist id="paliativosList">
-                      <option value="Paliativo não encontrado."></option>
-                      <option value="Nova funcionalidade."></option>
-                    </datalist>
-                  </label>
-
-                  <label class="reports-field legacy-field">
-                    <span>Prazo</span>
-                    <input list="prazosList" id="prazo" type="text" placeholder="Selecione ou digite aqui..." class="reports-input" />
-                    <datalist id="prazosList">
-                      <option value="Encaminhado para avaliação de alocação."></option>
-                      <option value="Registrado no banco de dados RhedeSAC."></option>
-                    </datalist>
-                  </label>
-
-                  <label class="reports-field legacy-field legacy-field-wide">
-                    <span>Link</span>
-                    <input id="link" type="text" class="reports-input" />
-                  </label>
-                </div>
-
-                <button type="button" onclick="gerarTexto()" class="ia-btn-primary legacy-action-btn">
-                  <i data-lucide="wand-2" class="w-4 h-4"></i>
-                  Gerar trâmite
-                </button>
-              </article>
-
-              <article class="kpi-panel legacy-panel legacy-result-panel">
-                <div class="kpi-panel-header">
-                  <div>
-                    <h3 class="kpi-panel-title">Resultado para Discord</h3>
-                    <p class="kpi-panel-subtitle">Revise o texto final antes de copiar. Ao copiar, o registro também é salvo na base.</p>
-                  </div>
-                  <span class="kpi-badge kpi-badge-soft">Saída pronta</span>
-                </div>
-
-                <label for="output" class="reports-field legacy-field">
-                  <span>Mensagem formatada</span>
-                  <textarea id="output" readonly class="legacy-output"></textarea>
-                </label>
-
-                <button type="button" onclick="copiarTexto()" class="reports-btn reports-btn-primary legacy-action-btn">
-                  <i data-lucide="copy" class="w-4 h-4"></i>
-                  Copiar e registrar
-                </button>
-              </article>
-            </section>
-          </section>
-        </div>
-
-        <div id="pagina-protocolar" class="hidden animate__animated animate__fadeIn">
-          <section class="kpi-shell legacy-shell">
-            <section class="kpi-hero">
-              <div class="kpi-hero-copy">
-                <p class="kpi-eyebrow">Layout PRT</p>
-                <h2 class="kpi-title">Template técnico com o padrão do workspace</h2>
-                <p class="kpi-subtitle">Escolha um modelo e ajuste o conteúdo final.</p>
-              </div>
-              <div class="kpi-hero-metrics">
-                <span class="kpi-badge">Template guiado</span>
-                <span class="kpi-badge kpi-badge-soft">Erro</span>
-                <span class="kpi-badge kpi-badge-soft">Sugestão</span>
-              </div>
-            </section>
-
-            <article class="kpi-panel legacy-panel legacy-editor-panel">
-              <div class="kpi-panel-header">
-                <div>
-                  <h3 class="kpi-panel-title">Editor de layout</h3>
-                  <p class="kpi-panel-subtitle">Selecione o modelo inicial e ajuste o texto conforme o caso antes de copiar.</p>
-                </div>
-              </div>
-
-              <div class="legacy-tone-switches">
-                <button id="btn-erro-template" type="button" onclick="carregarTemplateProtocolo('erro')" class="legacy-tone-btn legacy-tone-btn-danger">
-                  <i data-lucide="triangle-alert" class="w-4 h-4"></i>
-                  Erro
-                </button>
-                <button id="btn-sugestao-template" type="button" onclick="carregarTemplateProtocolo('sugestao')" class="legacy-tone-btn legacy-tone-btn-success">
-                  <i data-lucide="lightbulb" class="w-4 h-4"></i>
-                  Sugestão
-                </button>
-              </div>
-
-              <label for="descricao-protocolar" class="reports-field legacy-field">
-                <span>Descrição</span>
-                <textarea id="descricao-protocolar" rows="20" class="reports-input legacy-editor" placeholder="Selecione 'Erro' ou 'Sugestão' para carregar o modelo de protocolo."></textarea>
-              </label>
-
-              <div class="legacy-inline-actions">
-                <button type="button" onclick="copiarTramite()" class="reports-btn reports-btn-primary">
-                  <i data-lucide="copy" class="w-4 h-4"></i>
-                  Copiar
-                </button>
-                <button type="button" onclick="limparTramite()" class="ia-btn-secondary">
-                  <i data-lucide="eraser" class="w-4 h-4"></i>
-                  Limpar
-                </button>
-              </div>
-            </article>
-          </section>
-        </div>
-
-        <div id="pagina-historico" class="hidden animate__animated animate__fadeIn">
-          <section class="kpi-shell legacy-shell">
-            <section class="kpi-hero">
-              <div class="kpi-hero-copy">
-                <p class="kpi-eyebrow">Histórico</p>
-                <h2 class="kpi-title">Base registrada com consulta contínua</h2>
-                <p class="kpi-subtitle">Consulte, filtre e recupere registros em uma única visão.</p>
-              </div>
-              <div class="kpi-hero-metrics">
-                <span class="kpi-badge">Busca dinâmica</span>
-                <span class="kpi-badge kpi-badge-soft">Atualização sob demanda</span>
-                <span class="kpi-badge kpi-badge-soft">Base em tempo real</span>
-              </div>
-            </section>
-
-            <article id="tabela-container" class="kpi-panel legacy-panel">
-              <div class="kpi-panel-header">
-                <div>
-                  <h3 class="kpi-panel-title">Registros consolidados</h3>
-                  <p class="kpi-panel-subtitle">O carregamento desta tabela é refeito sempre que a página é aberta para evitar tela vazia por falhas anteriores.</p>
-                </div>
-                <button type="button" onclick="renderizarTabela()" class="ia-btn-secondary">
-                  <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                  Atualizar
-                </button>
-              </div>
-
-              <div class="legacy-history-toolbar">
-                <label class="legacy-search">
-                  <i data-lucide="search" class="w-4 h-4"></i>
-                  <input type="text" id="busca" placeholder="Buscar por ticket, protocolo, tipo ou descrição..." onkeyup="filtrarTabela()" />
-                </label>
-              </div>
-
-              <div class="kpi-table-wrap legacy-history-table">
-                <table id="tabelaRegistros" class="reports-table legacy-table">
-                  <thead>
-                    <tr>
-                      <th class="cursor-pointer" onclick="ordenarTabela(0)">Ticket</th>
-                      <th class="cursor-pointer" onclick="ordenarTabela(1)">Protocolo</th>
-                      <th class="cursor-pointer" onclick="ordenarTabela(2)">Tipo</th>
-                      <th class="cursor-pointer" onclick="ordenarTabela(3)">Descrição</th>
-                      <th> </th>
-                    </tr>
-                  </thead>
-                  <tbody></tbody>
-                </table>
-              </div>
-            </article>
-          </section>
-        </div>
-
-        <div id="pagina-liberacoes" class="hidden animate__animated animate__fadeIn">
-          <div id="liberacoes-container" class="bg-gray-900 p-4 rounded-xl"></div>
-        </div>
-
-        <div id="pagina-liberacoes" class="hidden animate__animated animate__fadeIn">
-          <div id="liberacoes-container" class="bg-gray-800 p-6 rounded-xl border border-gray-700 text-center">
-            <i data-lucide="upload-cloud" class="w-16 h-16 mx-auto text-gray-500 mb-4"></i>
-            <p class="text-lg text-gray-300">Nenhum arquivo RTF carregado.</p>
-            <p class="text-sm text-gray-500">Utilize o menu lateral para selecionar um arquivo.</p>
-          </div>
-        </div>
-
-        <div id="pagina-historico-liberacoes" class="hidden animate__animated animate__fadeIn">
-          <div id="historico-liberacoes-container" class="kpi-shell">
-            <section class="kpi-hero">
-              <div class="kpi-hero-copy">
-                <p class="kpi-eyebrow">Painel Operacional</p>
-                <h2 class="kpi-title">KPI de releases, protocolos e base</h2>
-                <p class="kpi-subtitle">Leitura consolidada de volume, módulos e evolução.</p>
-              </div>
-              <div class="kpi-hero-metrics">
-                <span id="kpi-sync-badge" class="kpi-badge">Sincronizando base</span>
-                <span id="kpi-highlight-module" class="kpi-badge kpi-badge-soft">Módulo foco: --</span>
-                <span id="kpi-highlight-release" class="kpi-badge kpi-badge-soft">Release líder: --</span>
-              </div>
-            </section>
-
-            <section class="kpi-stat-grid">
-              <article class="kpi-stat-card">
-                <div class="kpi-stat-head">
-                  <p class="kpi-stat-label">Total de registros</p>
-                  <span class="kpi-stat-icon"><i data-lucide="database" class="w-5 h-5"></i></span>
-                </div>
-                <div class="kpi-stat-value-row">
-                  <p id="card-total-registrado" class="kpi-stat-value">0</p>
-                  <span id="kpi-delta-total" class="kpi-stat-delta">Base completa</span>
-                </div>
-                <small id="kpi-note-total" class="kpi-stat-note">Protocolos consolidados no ambiente.</small>
-              </article>
-
-              <article class="kpi-stat-card kpi-stat-card-danger">
-                <div class="kpi-stat-head">
-                  <p class="kpi-stat-label">Total de erros</p>
-                  <span class="kpi-stat-icon"><i data-lucide="bug" class="w-5 h-5"></i></span>
-                </div>
-                <div class="kpi-stat-value-row">
-                  <p id="contador-erros" class="kpi-stat-value">--</p>
-                  <span id="kpi-delta-erros" class="kpi-stat-delta">0%</span>
-                </div>
-                <small id="kpi-note-erros" class="kpi-stat-note">Participação sobre o total de protocolos.</small>
-              </article>
-
-              <article class="kpi-stat-card kpi-stat-card-success">
-                <div class="kpi-stat-head">
-                  <p class="kpi-stat-label">Total de sugestões</p>
-                  <span class="kpi-stat-icon"><i data-lucide="layers-plus" class="w-5 h-5"></i></span>
-                </div>
-                <div class="kpi-stat-value-row">
-                  <p id="contador-sugestoes" class="kpi-stat-value">--</p>
-                  <span id="kpi-delta-sugestoes" class="kpi-stat-delta">0%</span>
-                </div>
-                <small id="kpi-note-sugestoes" class="kpi-stat-note">Participação sobre o total de protocolos.</small>
-              </article>
-
-              <article class="kpi-stat-card kpi-stat-card-primary">
-                <div class="kpi-stat-head">
-                  <p class="kpi-stat-label">Releases verificadas</p>
-                  <span class="kpi-stat-icon"><i data-lucide="calendar" class="w-5 h-5"></i></span>
-                </div>
-                <div class="kpi-stat-value-row">
-                  <p id="card-releases" class="kpi-stat-value">--</p>
-                  <span id="kpi-delta-releases" class="kpi-stat-delta">0 densidade</span>
-                </div>
-                <small id="kpi-note-releases" class="kpi-stat-note">Quantidade de datas cobertas na base de liberações.</small>
-              </article>
-
-              <article class="kpi-stat-card kpi-stat-card-emerald">
-                <div class="kpi-stat-head">
-                  <p class="kpi-stat-label">PRTs liberados</p>
-                  <span class="kpi-stat-icon"><i data-lucide="check-circle-2" class="w-5 h-5"></i></span>
-                </div>
-                <div class="kpi-stat-value-row">
-                  <p id="card-protocolos" class="kpi-stat-value">--</p>
-                  <span id="kpi-delta-protocolos" class="kpi-stat-delta">0 cobertura</span>
-                </div>
-                <small id="kpi-note-protocolos" class="kpi-stat-note">PRTs únicos presentes nas releases publicadas.</small>
-              </article>
-
-              <article class="kpi-stat-card kpi-stat-card-violet">
-                <div class="kpi-stat-head">
-                  <p class="kpi-stat-label">Último RLS liberado</p>
-                  <span class="kpi-stat-icon"><i data-lucide="zap" class="w-5 h-5"></i></span>
-                </div>
-                <div class="kpi-stat-value-row">
-                  <p id="card-ultima" class="kpi-stat-value kpi-stat-value-date">--</p>
-                  <span id="kpi-delta-ultima" class="kpi-stat-delta">Mais recente</span>
-                </div>
-                <small id="kpi-note-ultima" class="kpi-stat-note">Release de maior recência identificada na base.</small>
-              </article>
-            </section>
-
-            <section class="kpi-chart-grid">
-              <article class="kpi-panel">
-                <div class="kpi-panel-header">
-                  <div>
-                    <h3 class="kpi-panel-title">Top 5 releases</h3>
-                    <p class="kpi-panel-subtitle">Concentração de protocolos por release com leitura rápida do peso relativo.</p>
-                  </div>
-                </div>
-                <div class="kpi-canvas kpi-canvas-sm">
-                  <canvas id="chartTop5"></canvas>
-                </div>
-              </article>
-
-              <article class="kpi-panel">
-                <div class="kpi-panel-header">
-                  <div>
-                    <h3 class="kpi-panel-title">Evolução ao longo do tempo</h3>
-                    <p class="kpi-panel-subtitle">Acúmulo de protocolos publicados conforme a sequência histórica de releases.</p>
-                  </div>
-                </div>
-                <div class="kpi-canvas kpi-canvas-sm">
-                  <canvas id="chartEvolucao"></canvas>
-                </div>
-              </article>
-            </section>
-
-            <section class="kpi-main-grid">
-              <article class="kpi-panel kpi-panel-wide">
-                <div class="kpi-panel-header">
-                  <div>
-                    <h3 class="kpi-panel-title">Protocolos por release</h3>
-                    <p class="kpi-panel-subtitle">Distribuição cronológica do volume por release, com foco em leitura de pico e estabilidade.</p>
-                  </div>
-                </div>
-                <div class="kpi-canvas kpi-canvas-lg">
-                  <canvas id="chartLiberacoes"></canvas>
-                </div>
-
-                <div class="kpi-subpanel">
-                  <div class="kpi-panel-header">
-                    <div>
-                      <h4 class="kpi-subpanel-title">Tendência por módulo</h4>
-                      <p class="kpi-panel-subtitle">Exibe automaticamente o módulo com maior concentração ou o filtro atual.</p>
-                    </div>
-                    <small id="trend-current" class="kpi-inline-note">Exibindo: <span id="trend-modulo-name">--</span></small>
-                  </div>
-                  <div class="kpi-canvas kpi-canvas-md">
-                    <canvas id="chartTrendModulo"></canvas>
-                  </div>
-                </div>
-              </article>
-
-              <aside class="kpi-side-stack">
-                <article class="kpi-panel">
-                  <div class="kpi-panel-header">
-                    <div>
-                      <h3 class="kpi-panel-title">Leitura executiva</h3>
-                      <p class="kpi-panel-subtitle">Resumo automático baseado no volume atual de releases, módulos e classificação.</p>
-                    </div>
-                  </div>
-                  <div id="kpi-executive-summary" class="kpi-summary-list">
-                    <p class="kpi-summary-line">Aguardando sincronização da base.</p>
-                  </div>
-                </article>
-
-                <article class="kpi-panel">
-                  <div class="kpi-panel-header">
-                    <div>
-                      <h3 class="kpi-panel-title">Ranking de módulos</h3>
-                      <p class="kpi-panel-subtitle">Módulos com maior incidência no recorte atual.</p>
-                    </div>
-                  </div>
-                  <div id="ranking-modulos" class="kpi-ranking-list"></div>
-                </article>
-              </aside>
-            </section>
-
-            <section class="kpi-detail-grid">
-              <article class="kpi-panel">
-                <div class="kpi-panel-header">
-                  <div>
-                    <h3 class="kpi-panel-title">Protocolos por módulo</h3>
-                    <p class="kpi-panel-subtitle">Participação dos principais módulos na base consolidada.</p>
-                  </div>
-                </div>
-                <div class="kpi-canvas kpi-canvas-md">
-                  <canvas id="grafico-modulos"></canvas>
-                </div>
-                <div id="legenda-modulos" class="kpi-legend"></div>
-              </article>
-            </section>
-
-            <section class="kpi-panel">
-              <div class="mb-5 space-y-3">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                  <div>
-                    <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Filtrar por módulo</p>
-                    <div id="filtro-modulos" class="flex flex-wrap gap-2 mt-2"></div>
-                  </div>
-
-                  <div class="w-full md:w-80">
-                    <input id="busca-modulo" type="text" placeholder="Buscar PRT, módulo ou descrição..." class="w-full px-4 py-3 rounded-xl bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition" />
-                  </div>
-                </div>
-              </div>
-
-              <div class="kpi-panel-header">
-                <div>
-                  <h3 class="kpi-panel-title">Detalhes das liberações</h3>
-                  <p class="kpi-panel-subtitle">Tabela consolidada para auditoria e rastreio dos PRTs por release.</p>
-                </div>
-              </div>
-
-              <div class="kpi-table-wrap">
-                <table class="w-full text-sm">
-                  <thead class="bg-gray-800">
-                    <tr>
-                      <th class="py-3 px-4 text-left font-semibold text-gray-300">Release</th>
-                      <th class="py-3 px-4 text-center font-semibold text-gray-300">Protocolos</th>
-                      <th class="py-3 px-4 text-left font-semibold text-gray-300">Protocolos liberados</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tabelaLiberados" class="divide-y divide-gray-700"></tbody>
-                </table>
-              </div>
-            </section>
-          </div>
-        </div>
-
-        <!-- Página: Relatórios -->
-        <div id="pagina-relatorios" class="hidden animate__animated animate__fadeIn">
-          <section class="reports-shell">
-            <header class="reports-hero">
-              <div>
-                <p class="reports-eyebrow">Central de Relatórios</p>
-                <h2 class="reports-title">Exportação operacional e executiva</h2>
-                <p class="reports-subtitle">Filtre o recorte e gere saídas para conferência, gestão e auditoria.</p>
-              </div>
-              <div class="reports-actions">
-                <button id="reports-refresh-btn" class="reports-btn reports-btn-secondary" type="button">
-                  <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                  <span>Atualizar base</span>
-                </button>
-                <button id="reports-export-summary-btn" class="reports-btn reports-btn-primary" type="button">
-                  <i data-lucide="file-output" class="w-4 h-4"></i>
-                  <span>PDF executivo</span>
-                </button>
-              </div>
-            </header>
-
-            <section class="reports-kpis">
-              <article class="reports-kpi-card">
-                <span class="reports-kpi-label">Registros filtrados</span>
-                <strong id="reports-kpi-total" class="reports-kpi-value">0</strong>
-                <small id="reports-kpi-total-note" class="reports-kpi-note">Base consolidada dos protocolos.</small>
-              </article>
-              <article class="reports-kpi-card">
-                <span class="reports-kpi-label">Erros</span>
-                <strong id="reports-kpi-erros" class="reports-kpi-value text-red-300">0</strong>
-                <small class="reports-kpi-note">Ocorrências classificadas como erro.</small>
-              </article>
-              <article class="reports-kpi-card">
-                <span class="reports-kpi-label">Sugestões</span>
-                <strong id="reports-kpi-sugestoes" class="reports-kpi-value text-emerald-300">0</strong>
-                <small class="reports-kpi-note">Itens classificados como sugestão.</small>
-              </article>
-              <article class="reports-kpi-card">
-                <span class="reports-kpi-label">Releases cobertos</span>
-                <strong id="reports-kpi-releases" class="reports-kpi-value">0</strong>
-                <small class="reports-kpi-note">Datas de release no recorte atual.</small>
-              </article>
-            </section>
-
-            <section class="reports-grid reports-grid-primary">
-              <article class="reports-card reports-card-filters">
-                <div class="reports-card-header">
-                  <div>
-                    <h3 class="reports-card-title">Filtros avançados</h3>
-                    <p class="reports-card-subtitle">Crie recortes operacionais e exporte apenas o que faz sentido para a análise.</p>
-                  </div>
-                  <span id="reports-sync-badge" class="reports-sync-badge">Aguardando carga</span>
-                </div>
-
-                <div class="reports-filters-grid">
-                  <label class="reports-field">
-                    <span>Tipo</span>
-                    <select id="relatorio-tipo-select" class="reports-select">
-                      <option value="todos">Todos</option>
-                      <option value="erro">Apenas erros</option>
-                      <option value="sugestao">Apenas sugestões</option>
-                    </select>
-                  </label>
-
-                  <label class="reports-field">
-                    <span>Release</span>
-                    <select id="relatorio-release-select" class="reports-select">
-                      <option value="todas">Todas</option>
-                    </select>
-                  </label>
-
-                  <label class="reports-field">
-                    <span>Módulo</span>
-                    <select id="reports-modulo-select" class="reports-select">
-                      <option value="todos">Todos</option>
-                    </select>
-                  </label>
-
-                  <label class="reports-field">
-                    <span>Buscar</span>
-                    <input id="reports-search-input" class="reports-input" type="text" placeholder="Ticket, PRT, descrição ou módulo" />
-                  </label>
-
-                  <label class="reports-field">
-                    <span>Ordenação</span>
-                    <select id="reports-order-select" class="reports-select">
-                      <option value="recentes">Release mais recente</option>
-                      <option value="maior-descricao">Descrição mais longa</option>
-                      <option value="ticket">Ticket</option>
-                      <option value="modulo">Módulo</option>
-                    </select>
-                  </label>
-
-                  <div class="reports-field reports-field-actions">
-                    <span>Atalhos</span>
-                    <div class="reports-inline-actions">
-                      <button id="reports-clear-filters-btn" class="reports-btn reports-btn-secondary" type="button">Limpar</button>
-                      <button id="reports-apply-filters-btn" class="reports-btn reports-btn-primary" type="button">Aplicar</button>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="reports-export-grid">
-                  <button id="reports-export-details-pdf-btn" class="reports-btn reports-btn-primary" type="button">Detalhes em PDF</button>
-                  <button id="reports-export-details-csv-btn" class="reports-btn reports-btn-secondary" type="button">Detalhes em CSV</button>
-                  <button id="reports-export-matrix-btn" class="reports-btn reports-btn-secondary" type="button">Matriz release x módulo</button>
-                  <button id="reports-export-json-btn" class="reports-btn reports-btn-secondary" type="button">Exportar JSON</button>
-                  <button id="reports-export-ranking-btn" class="reports-btn reports-btn-secondary" type="button">Ranking de módulos</button>
-                  <button id="reports-export-top5-btn" class="reports-btn reports-btn-secondary" type="button">Top 5 releases</button>
-                </div>
-              </article>
-
-              <article class="reports-card">
-                <div class="reports-card-header">
-                  <div>
-                    <h3 class="reports-card-title">Resumo executivo</h3>
-                    <p class="reports-card-subtitle">Leitura rápida para liderança, conferência de recorte e tomada de decisão.</p>
-                  </div>
-                </div>
-                <div id="reports-summary-grid" class="reports-summary-grid"></div>
-              </article>
-            </section>
-
-            <section class="reports-grid-full">
-              <article class="reports-card">
-                <div class="reports-card-header">
-                  <div>
-                    <h3 class="reports-card-title">Prévia analítica</h3>
-                    <p class="reports-card-subtitle">Amostra do recorte atual para validação antes da exportação.</p>
-                  </div>
-                  <span id="reports-preview-count" class="reports-preview-count">0 linhas</span>
-                </div>
-                <div class="reports-table-wrap">
-                  <table class="reports-table">
-                    <colgroup>
-                      <col class="reports-col-ticket" />
-                      <col class="reports-col-prt" />
-                      <col class="reports-col-tipo" />
-                      <col class="reports-col-modulo" />
-                      <col class="reports-col-release" />
-                      <col class="reports-col-descricao" />
-                    </colgroup>
-                    <thead>
-                      <tr>
-                        <th>Ticket</th>
-                        <th>PRT</th>
-                        <th>Tipo</th>
-                        <th>Módulo</th>
-                        <th>Release</th>
-                        <th>Descrição</th>
-                      </tr>
-                    </thead>
-                    <tbody id="reports-preview-body"></tbody>
-                  </table>
-                  </div>
-                </article>
-              </section>
-
-            <section class="reports-grid-full">
-              <article class="reports-card">
-                <div class="reports-card-header">
-                  <div>
-                    <h3 class="reports-card-title">Ranking e cobertura</h3>
-                    <p class="reports-card-subtitle">Distribuição por módulo e releases mais densos no recorte atual.</p>
-                  </div>
-                </div>
-                <div class="reports-side-grid reports-side-grid-wide">
-                  <div>
-                    <h4 class="reports-mini-title">Módulos com mais incidência</h4>
-                    <div id="reports-module-ranking" class="reports-ranking-list"></div>
-                  </div>
-                  <div>
-                    <h4 class="reports-mini-title">Releases com maior volume</h4>
-                    <div id="reports-release-ranking" class="reports-ranking-list"></div>
-                  </div>
-                </div>
-              </article>
-            </section>
-          </section>
-        </div>
-
-        <div id="pagina-sefaz" class="hidden animate__animated animate__fadeIn">
-          <div class="kpi-shell legacy-shell monitor-shell">
-            <section class="kpi-hero">
-              <div class="kpi-hero-copy">
-                <p class="kpi-eyebrow">SEFAZ</p>
-                <h2 class="kpi-title">Monitor operacional SEFAZ</h2>
-                <p class="kpi-subtitle">Disponibilidade, latência e leitura rápida por UF.</p>
-              </div>
-              <div class="kpi-hero-metrics">
-                <span class="kpi-badge">Tempo real</span>
-                <span class="kpi-badge kpi-badge-soft">NF-e / NFC-e</span>
-                <span class="kpi-badge kpi-badge-soft">UF favorita</span>
-              </div>
-            </section>
-            <div class="max-w-7xl mx-auto monitor-shell-body">
-
-              <div class="bg-gray-800 rounded-lg shadow-xl p-6 mb-6 border border-gray-700">
-                <div class="flex items-center justify-between mb-4">
-                  <div class="flex items-center gap-3">
-                    <i data-lucide="activity" class="w-8 h-8 text-blue-500"></i>
-                    <div>
-                      <h1 class="text-2xl font-bold text-white">Monitor de Status NF-e/NFC-e</h1>
-                      <p class="text-sm text-gray-400">Acompanhamento em tempo real dos serviços da SEFAZ</p>
-                    </div>
-                  </div>
-                  <button id="btn-fetch-status" onclick="fetchStatus()"
-                    class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50">
-                    <i data-lucide="refresh-cw" id="icon-refresh" class="w-4 h-4"></i>
-                    Atualizar
-                  </button>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-
-                  <div class="bg-gradient-to-br from-blue-700 to-indigo-800 rounded-lg p-4 text-white">
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <p class="text-sm opacity-90">Status Geral</p>
-                        <p id="overall-status-count" class="text-2xl font-bold">--/--</p>
-                        <p class="text-xs opacity-80">Servi?os Dispon?veis</p>
-                      </div>
-                      <div id="overall-status-icon">
-                        <i data-lucide="help-circle" class="w-6 h-6 text-gray-300"></i>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <p class="text-sm text-gray-400">Última atualização</p>
-                        <p id="last-update-time" class="text-lg font-semibold text-white">--:--:--</p>
-                        <p id="last-update-date" class="text-xs text-gray-400"></p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
-                    <div class="flex items-center justify-between">
-                      <div>
-                        <p class="text-sm text-gray-400">Atualização automática</p>
-                        <p class="text-lg font-semibold text-white">A cada 30s</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="bg-gray-700 border border-gray-600 rounded-lg p-4 mb-6">
-                  <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2">
-                    <i data-lucide="star" class="w-5 h-5 text-yellow-400"></i>
-                    Monitor Rápido (1s) - UF Favorita
-                  </h3>
-
-                  <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
-                    <div class="flex-grow w-full sm:w-auto">
-                      <label for="uf-favorita-select" class="block text-sm text-gray-400 mb-1">Selecione a UF
-                        Favorita</label>
-                      <select id="uf-favorita-select" onchange="salvarUfFavorita(this.value)"
-                        class="w-full sm:w-auto px-3 py-2 rounded-lg bg-gray-800 text-white border border-gray-600 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">(Nenhuma)</option>
-                      </select>
-                    </div>
-
-                    <div id="favorito-status-display"
-                      class="w-full sm:w-auto mt-2 sm:mt-0 p-3 rounded-lg flex items-center justify-between text-white border border-gray-600">
-                      <span id="favorito-uf-nome" class="font-bold text-xl text-blue-400">Selecione...</span>
-                      <div class="flex items-center gap-4">
-                        <div>
-                          <p class="text-xs text-gray-400">Autorização NF-e</p>
-                          <div id="favorito-aut-icon" class="flex justify-center mt-1">
-                            <i data-lucide="help-circle" class="w-5 h-5 text-gray-400"></i>
-                          </div>
-                        </div>
-                        <div>
-                          <p class="text-xs text-gray-400">Retorno Aut.</p>
-                          <div id="favorito-ret-icon" class="flex justify-center mt-1">
-                            <i data-lucide="help-circle" class="w-5 h-5 text-gray-400"></i>
-                          </div>
-                        </div>
-                        <div>
-                          <p class="text-xs text-gray-400">Tempo médio</p>
-                          <span id="favorito-tempo-medio"
-                            class="text-sm font-semibold text-gray-300 block text-center mt-1">--ms</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="flex justify-center md:justify-end gap-2 p-2">
-                  <button id="btn-view-cards" onclick="toggleView('cards')"
-                    class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    <i data-lucide="layout-grid" class="w-4 h-4"></i> Cards
-                  </button>
-                  <button id="btn-view-table" onclick="toggleView('table')"
-                    class="flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors">
-                    <i data-lucide="list-checks" class="w-4 h-4"></i> Tabela
-                  </button>
-                </div>
-              </div>
-
-              <div class="bg-gray-800 rounded-lg shadow-xl p-6 mb-6 border border-gray-700">
-                <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                  <i data-lucide="trending-up" class="w-6 h-6 text-green-500"></i>
-                  Gráfico de Tempo Médio
-                  <span id="chart-uf-title" class="text-blue-400"> (Global - Média Geral)</span>
-                </h3>
-                <div class="relative" style="height: 200px;">
-                  <canvas id="tempoMedioChart"></canvas>
-                </div>
-              </div>
-              <div id="sefaz-view-cards"
-                class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
-                <div colspan="11" class="px-4 py-8 text-center text-gray-400 col-span-full">
-                  <i data-lucide="loader-2" class="w-5 h-5 animate-spin inline-block mr-2 text-blue-500"></i>
-                  Carregando status dos serviços...
-                </div>
-              </div>
-
-              <div id="sefaz-view-table"
-                class="bg-gray-800 rounded-lg shadow-xl overflow-hidden border border-gray-700 hidden">
-                <div class="overflow-x-auto">
-                  <table class="w-full">
-                    <thead class="bg-gray-700 text-gray-200">
-                      <tr>
-                        <th class="px-4 py-3 text-left text-sm font-semibold sticky left-0 bg-gray-700">UF</th>
-                        <th class="px-4 py-3 text-left text-sm font-semibold">Estado/Ambiente</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Autorização NF-e</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Retorno Aut.</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Consulta Prot.</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Inutilização</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Consulta Cad.</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Recep. Evento</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Status Servi?o</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">NFC-e</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Tempo Médio</th>
-                      </tr>
-                    </thead>
-                    <tbody id="services-table-body" class="divide-y divide-gray-700">
-                      <tr>
-                        <td colspan="11" class="px-4 py-8 text-center text-gray-400">
-                          <i data-lucide="loader-2" class="w-5 h-5 animate-spin inline-block mr-2 text-blue-500"></i>
-                          Carregando status dos serviços...
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div class="mt-6 bg-gray-800 rounded-lg shadow-xl p-6 border border-gray-700">
-                <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <i data-lucide="book-open" class="w-5 h-5 text-gray-400"></i>
-                  Legenda Geral de Status dos Serviços
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div class="flex items-center gap-2">
-                    <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
-                    <span class="text-sm text-gray-300">Serviço disponível (online)</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <i data-lucide="alert-circle" class="w-5 h-5 text-yellow-500"></i>
-                    <span class="text-sm text-gray-300">Serviço instável (lento ou com falhas)</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <i data-lucide="x-circle" class="w-5 h-5 text-red-500"></i>
-                    <span class="text-sm text-gray-300">Serviço indisponível (offline)</span>
-                  </div>
-                </div>
-
-                <hr class="my-4 border-gray-700">
-
-                <h3 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <i data-lucide="bar-chart-2" class="w-5 h-5 text-blue-400"></i>
-                  Legenda do Gráfico de Desempenho
-                </h3>
-                <p class="text-sm text-gray-400 mb-2">
-                  O gráfico exibe o desempenho de latência (tempo médio) da UF selecionada.
-                </p>
-                <ul class="list-disc list-inside text-sm text-gray-300 ml-4 space-y-1">
-                  <li>**Eixo Y (Vertical):** Tempo em milissegundos (ms). Indica o tempo de resposta da SEFAZ.</li>
-                  <li>Eixo X (horizontal): hora da atualização. A leitura do gráfico é feita a cada 1 segundo.
-                  </li>
-                  <li>Foco: o gráfico acompanha exclusivamente o desempenho do serviço de autorização NF-e da UF favorita.</li>
-                </ul>
-
-                <p class="text-xs text-gray-500 mt-4">
-                  Este é um painel demonstrativo. Os dados e tempos de atualização são simulados.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div id="pagina-ia" class="hidden animate__animated animate__fadeIn">
-          <div class="ia-workspace">
-            <div class="ia-shell">
-              <aside class="ia-sidebar">
-                <div class="ia-sidebar-top">
-                  <button id="ia-new-ticket-btn" class="ia-btn-primary" type="button">
-                    <i data-lucide="plus" class="w-4 h-4"></i>
-                    Novo Ticket
-                  </button>
-
-                  <label class="ia-search">
-                    <i data-lucide="search" class="w-4 h-4 ia-search-icon"></i>
-                    <input id="ia-search-input" type="text" placeholder="Buscar nome ou telefone..." />
-                  </label>
-                </div>
-
-                <div id="ia-ticket-list" class="ia-ticket-list"></div>
-              </aside>
-
-              <section class="ia-main">
-                <header class="ia-main-header">
-                  <div>
-                    <p class="ia-eyebrow">Transcrição</p>
-                    <h2 id="ia-active-title" class="ia-main-title">Selecione ou crie um ticket</h2>
-                    <p id="ia-active-date" class="ia-main-date">Operação pronta para atendimento.</p>
-                    <div class="ia-hero-pills">
-                      <span class="ia-pill">Workspace</span>
-                      <span class="ia-pill">Áudio local</span>
-                      <span class="ia-pill">Fluxo guiado</span>
-                    </div>
-                    <div class="ia-hero-metrics">
-                      <article class="ia-metric-card">
-                        <span class="ia-metric-label">Entrada</span>
-                        <strong>Novo ticket</strong>
-                      </article>
-                      <article class="ia-metric-card">
-                        <span class="ia-metric-label">Mídia</span>
-                        <strong>Imagem + áudio</strong>
-                      </article>
-                      <article class="ia-metric-card">
-                        <span class="ia-metric-label">Saída</span>
-                        <strong>Relatório pronto</strong>
-                      </article>
-                    </div>
-                  </div>
-
-                  <div class="ia-header-actions">
-                    <button id="ia-toggle-registered-btn" class="ia-btn-secondary" type="button" disabled>
-                      <i data-lucide="check-circle-2" class="w-4 h-4"></i>
-                      <span>Marcar Registro</span>
-                    </button>
-                    <button id="ia-upload-audio-btn" class="ia-btn-secondary" type="button" disabled>
-                      <i data-lucide="headphones" class="w-4 h-4"></i>
-                      <span>Transcrição</span>
-                    </button>
-                    <button id="ia-copy-znuny-btn" class="ia-btn-secondary ia-btn-warm" type="button" disabled>
-                      <i data-lucide="clipboard-plus" class="w-4 h-4"></i>
-                      <span>Transportar</span>
-                    </button>
-                    <button id="ia-copy-html-btn" class="ia-btn-secondary" type="button" disabled>
-                      <i data-lucide="clipboard" class="w-4 h-4"></i>
-                      <span>Copiar HTML</span>
-                    </button>
-                    <input id="ia-audio-input" type="file" accept="audio/*" class="hidden" />
-                  </div>
-                </header>
-
-                <div class="ia-privacy-note">
-                  <i data-lucide="shield-check" class="w-4 h-4"></i>
-                  <span>Áudio e revisão ficam neste navegador.</span>
-                </div>
-
-                <div id="ia-empty-state" class="ia-empty-state">
-                  <i data-lucide="bot" class="w-10 h-10"></i>
-                  <div>
-                    <h3>Workspace pronto</h3>
-                    <p>Novo ticket, evidências e áudio.</p>
-                  </div>
-                </div>
-
-                <div id="ia-content" class="ia-content hidden">
-                  <section class="ia-card">
-                    <div class="ia-section-header">
-                      <div>
-                        <h3 class="ia-section-title">
-                          <i data-lucide="image" class="w-4 h-4"></i>
-                          Evidências
-                        </h3>
-                        <p class="ia-section-subtitle">Cole imagens com `Ctrl+V`.</p>
-                      </div>
-
-                      <div class="ia-carousel-controls">
-                        <button id="ia-prev-image-btn" class="ia-icon-btn" type="button" disabled>
-                          <i data-lucide="chevron-left" class="w-4 h-4"></i>
-                        </button>
-                        <span id="ia-image-counter" class="ia-image-counter">0 / 0</span>
-                        <button id="ia-next-image-btn" class="ia-icon-btn" type="button" disabled>
-                          <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div id="ia-image-empty" class="ia-image-empty">Nenhuma evidência colada ainda.</div>
-                    <div id="ia-image-stage" class="ia-image-stage hidden">
-                      <img id="ia-active-image" class="ia-active-image" alt="Evidência do ticket" />
-                      <div class="ia-image-actions">
-                        <button id="ia-copy-image-btn" class="ia-icon-btn" type="button" title="Copiar imagem">
-                          <i data-lucide="copy" class="w-4 h-4"></i>
-                        </button>
-                        <button id="ia-delete-image-btn" class="ia-icon-btn ia-icon-danger" type="button" title="Excluir imagem">
-                          <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </section>
-
-                  <section class="ia-card">
-                    <div class="ia-section-header">
-                      <div>
-                        <h3 class="ia-section-title">
-                          <i data-lucide="file-text" class="w-4 h-4"></i>
-                          Relatório Gerado
-                        </h3>
-                        <p class="ia-section-subtitle">Ajuste antes de transportar, se precisar.</p>
-                      </div>
-
-                      <div class="ia-report-actions">
-                        <button id="ia-edit-report-btn" class="ia-btn-secondary" type="button">
-                          <i data-lucide="square-pen" class="w-4 h-4"></i>
-                          <span>Editar</span>
-                        </button>
-                        <button id="ia-cancel-report-btn" class="ia-btn-secondary hidden" type="button">
-                          <i data-lucide="x" class="w-4 h-4"></i>
-                          <span>Cancelar</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    <pre id="ia-report-view" class="ia-report-view"></pre>
-                    <textarea id="ia-report-editor" class="ia-report-editor hidden"></textarea>
-                  </section>
-
-                  <section id="ia-audio-card" class="ia-card hidden">
-                    <div class="ia-section-header">
-                      <div>
-                        <h3 class="ia-section-title">
-                          <i data-lucide="volume-2" class="w-4 h-4"></i>
-                          Áudio Original
-                        </h3>
-                        <p class="ia-section-subtitle">Mantido localmente neste navegador.</p>
-                      </div>
-                    </div>
-
-                    <audio id="ia-audio-player" class="ia-audio-player" controls></audio>
-                  </section>
-                </div>
-              </section>
-            </div>
-          </div>
-        </div>
-
-        <div id="pagina-assistente" class="hidden animate__animated animate__fadeIn">
-          <div class="assistant-shell">
-            <section class="assistant-hero">
-              <div>
-                <p class="assistant-eyebrow">CordIA</p>
-                <h2 class="assistant-title">Consulta operacional com contexto híbrido</h2>
-                <p class="assistant-subtitle">Pergunte por PRTs, releases, módulos e FAQ pública.</p>
-                <div class="assistant-hero-metrics">
-                  <article class="assistant-metric-card">
-                    <span class="assistant-metric-label">Base</span>
-                    <strong>Dados internos</strong>
-                  </article>
-                  <article class="assistant-metric-card">
-                    <span class="assistant-metric-label">Referência</span>
-                    <strong>FAQ pública</strong>
-                  </article>
-                  <article class="assistant-metric-card">
-                    <span class="assistant-metric-label">Resposta</span>
-                    <strong>Sinaliza lacunas</strong>
-                  </article>
-                </div>
-              </div>
-              <div class="assistant-hero-pills">
-                <span class="assistant-pill">Interno</span>
-                <span class="assistant-pill">FAQ Znuny</span>
-                <span class="assistant-pill">Pesquisa assistida</span>
-              </div>
-            </section>
-
-            <section class="assistant-layout">
-              <aside class="assistant-sidecard">
-                <h3 class="assistant-side-title">Atalhos</h3>
-                <div class="assistant-suggestions">
-                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais releases recentes liberaram mais PRTs?">Releases com mais PRTs</button>
-                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Existe protocolo relacionado ao módulo fiscal com certificado digital?">Protocolos por módulo</button>
-                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais PRTs aparecem na release mais recente?">PRTs da última release</button>
-                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Explique rapidamente o que você encontrou sobre monitor rede.">Resumo operacional</button>
-                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Procure na FAQ pública do Znuny algo sobre certificado digital vencido.">Buscar na FAQ pública</button>
-                </div>
-                <p class="assistant-side-note">Se faltar contexto, o agente sinaliza.</p>
-              </aside>
-
-              <section class="assistant-card">
-                <div id="assistant-messages" class="assistant-messages"></div>
-                <form id="assistant-form" class="assistant-form">
-                  <textarea id="assistant-input" class="assistant-input" rows="3" placeholder="Ex.: qual release contém o PRT 12345?"></textarea>
-                  <div class="assistant-actions">
-                    <button id="assistant-clear-btn" class="ia-btn-secondary" type="button">
-                      <i data-lucide="eraser" class="w-4 h-4"></i>
-                      <span>Limpar conversa</span>
-                    </button>
-                    <button id="assistant-send-btn" class="ia-btn-primary assistant-send" type="submit">
-                      <i data-lucide="send" class="w-4 h-4"></i>
-                      <span>Perguntar</span>
-                    </button>
-                  </div>
-                </form>
-              </section>
-            </section>
-          </div>
-        </div>
-
-      </div>
-    </main>
-  </div>
-
-  <div id="errorModal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4">
-    <div
-      class="bg-gray-800 p-6 rounded-lg shadow-xl max-w-sm w-full border border-gray-700 animate__animated animate__fadeInDown">
-      <div class="flex items-center gap-4 mb-4 border-b border-gray-700 pb-3">
-        <div id="modalIcon">
-        </div>
-        <h3 class="text-xl font-bold text-white">Atenção!</h3>
-      </div>
-      <p id="modalText" class="text-gray-300 mb-6 text-sm"></p>
-      <div class="flex justify-end">
-        <button onclick="fecharModal()"
-          class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition">Entendido</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="confirmModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-gray-900 p-6 rounded-xl shadow-lg max-w-lg animate__animated animate__zoomIn">
-      <p id="confirmMessage" class="space-x-2 flex items-center">
-        <span id="confirmIcon"></span><span id="confirmText"></span>
-      </p>
-      <div class="mt-4 flex justify-end gap-2">
-        <button class="bg-gray-700 px-4 py-2 rounded" onclick="fecharConfirmModal()">Cancelar</button>
-        <button id="confirmBtn" class="bg-red-600 px-4 py-2 rounded" onclick="confirmarExclusao()">Ok</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="descricaoModal"
-    class="hidden fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4">
-    <div class="bg-gray-800 p-6 rounded-lg shadow-xl max-w-lg w-full border border-gray-700 flex flex-col max-h-[90vh]">
-      <div class="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
-        <h3 id="descricaoModalTitulo" class="text-lg font-bold">Detalhes</h3>
-        <button onclick="fecharDescricaoModal()" class="text-gray-400 hover:text-white"><i data-lucide="x"></i></button>
-      </div>
-      <div id="descricaoModalCorpo" class="whitespace-pre-wrap text-sm text-gray-300 overflow-y-auto flex-1"></div>
-    </div>
-  </div>
-
-  <!-- Loader para geração de PDF -->
-  <div id="pdfLoader" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
-    <div class="bg-gray-800 p-4 rounded-lg flex items-center gap-3 border border-gray-700">
-      <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-blue-400"></i>
-      <span id="pdfLoaderMessage" class="text-sm text-gray-200">Gerando PDF...</span>
-    </div>
-  </div>
-
-  <!-- Container para toasts de notificação -->
-  <div id="toastContainer" class="fixed bottom-6 right-6 flex flex-col gap-2 z-60 pointer-events-none"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0/dist/tf.min.js"></script>
-  <script
-    src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder@1.3.3/dist/universal-sentence-encoder.js"></script>
-
-  <script src="js/runtime-config.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/config.js"></script>
-  <script src="js/mecanica.js"></script>
-  <script src="js/verificacao_release.js"></script>
-  <script src="js/dom.js"></script>
-  <script src="js/history.js"></script>
-  <script src="js/protocolos.js"></script>
-  <script src="js/dashboard-liberacoes.js"></script>
-  <script src="js/similarity.js"></script>
-  <script src="js/responses.js"></script>
-  <script src="js/monitor_sefaz.js"></script>
-  <script src="js/ia-transcriber.js"></script>
-  <script src="js/ia-assistant.js"></script>
-  <script type="module" src="js/modal.js"></script>
-
-
-  <script>
-    lucide.createIcons();
-
-    const sidebar = document.getElementById('sidebar');
-    const mobileSidebar = document.getElementById('mobile-sidebar');
-    const mainContent = document.getElementById('main-content');
-    const desktopHeader = document.getElementById('desktop-header');
-
-    // Controle Collapse Sidebar
-    document.getElementById('btn-collapse')?.addEventListener('click', () => {
-      sidebar.classList.toggle('sidebar-collapsed');
-
-      const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
-
-      if (isCollapsed) {
-        mainContent.classList.remove('md:pl-56');
-        mainContent.classList.add('md:pl-[72px]');
-        desktopHeader.style.left = '72px';
-      } else {
-        mainContent.classList.remove('md:pl-[72px]');
-        mainContent.classList.add('md:pl-56');
-        desktopHeader.style.left = '15.5rem';
-      }
-
-      localStorage.setItem('sidebar_collapsed', String(isCollapsed));
-    });
-
-    // Controle Mobile
-    document.getElementById('btn-mobile-menu')?.addEventListener('click', () => {
-      mobileSidebar.classList.remove('-translate-x-full');
-      document.getElementById('mobile-overlay').classList.remove('hidden');
-    });
-
-    const closeMobile = () => {
-      mobileSidebar.classList.add('-translate-x-full');
-      document.getElementById('mobile-overlay').classList.add('hidden');
-    };
-
-    document.getElementById('btn-mobile-close')?.addEventListener('click', closeMobile);
-    document.getElementById('mobile-overlay')?.addEventListener('click', closeMobile);
-
-    // Controle de Navega??o e Estado Ativo
-    window.mostrarPagina = function (paginaId) {
-      // Esconde todas
-      document.querySelectorAll('[id^="pagina-"]').forEach(el => el.classList.add('hidden'));
-      // Mostra atual
-      const target = document.getElementById(`pagina-${paginaId}`);
-      if (target) target.classList.remove('hidden');
-
-      // Atualiza bot?es (Desktop e Mobile)
-      document.querySelectorAll('.sidebar-item').forEach(btn => btn.classList.remove('active'));
-
-      const btnDesktop = document.getElementById(`btn-${paginaId}`);
-      const btnMobile = document.getElementById(`btn-${paginaId}-mobile`);
-
-      if (btnDesktop) btnDesktop.classList.add('active');
-      if (btnMobile) btnMobile.classList.add('active');
-
-      if (paginaId === 'historico-liberacoes') {
-        carregarHistoricoLiberacoes();
-        setTimeout(() => gerarDashboardLiberacoes(), 200);
-        setTimeout(() => window.renderKpiWorkspace && window.renderKpiWorkspace(), 420);
-      }
-
-      if (paginaId === 'historico') {
-        if (typeof window.renderizarTabela === 'function') window.renderizarTabela();
-      }
-
-      if (paginaId === 'relatorios') {
-        if (typeof window.populateRelatoriosFilters === 'function') window.populateRelatoriosFilters();
-      }
-
-      // Fecha mobile se aberto
-      closeMobile();
-    };
-
-    const mediaTheme = window.matchMedia('(prefers-color-scheme: dark)');
-
-    function applyTheme(theme) {
-      const html = document.documentElement;
-      const resolvedTheme = theme === 'system'
-        ? (mediaTheme.matches ? 'dark' : 'light')
-        : theme;
-
-      html.setAttribute('data-theme', resolvedTheme);
-
-      document.querySelectorAll('.toggle-theme-btn').forEach(btn => btn.classList.remove('active'));
-
-      const targetIds = theme === 'system'
-        ? ['tema-sistema', 'tema-sistema-mobile']
-        : [`tema-${theme}`, `tema-${theme}-mobile`];
-
-      targetIds.forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) btn.classList.add('active');
-      });
-
-      const mobileLabel = document.getElementById('mobile-theme-label');
-      if (mobileLabel) {
-        mobileLabel.textContent = theme === 'system'
-          ? `Sistema (${resolvedTheme === 'dark' ? 'Dark' : 'Light'})`
-          : (theme === 'dark' ? 'Dark' : 'Light');
-      }
+    `;
+
+    const oldParent = player.parentElement;
+    oldParent.insertBefore(shell, player);
+    shell.appendChild(meta);
+    shell.appendChild(player);
+
+    if (sectionHeader) {
+      sectionHeader.classList.add('pc-glow-hover');
     }
 
-    window.alternarTema = function (tema) {
-      const next = tema || 'system';
-      if (next === 'system') {
-        localStorage.removeItem('theme');
-      } else {
-        localStorage.setItem('theme', next);
-      }
-      applyTheme(next);
+    if (window.lucide?.createIcons) window.lucide.createIcons();
+  }
+
+  function markRevealTargets() {
+    [
+      '.kpi-panel',
+      '.reports-card',
+      '.assistant-card',
+      '.assistant-sidecard',
+      '.ia-card',
+      '.kpi-stat-card',
+      '.reports-kpi-card',
+      '.ia-metric-card',
+      '.sidebar-item',
+      '.theme-toggles-container .toggle-theme-btn'
+    ].forEach((selector) => {
+      $$(selector).forEach((el) => el.classList.add('pc-reveal'));
+    });
+  }
+
+  function runRevealAnimations() {
+    if (!animate || !inView) {
+      $$('.pc-reveal').forEach((el) => el.classList.add('pc-ready'));
+      return;
+    }
+
+    inView('.pc-reveal', (element) => {
+      animate(
+        element,
+        {
+          opacity: [0, 1],
+          y: [12, 0],
+          filter: ['blur(8px)', 'blur(0px)']
+        },
+        {
+          duration: 0.42,
+          easing: [0.22, 1, 0.36, 1]
+        }
+      );
+      element.classList.add('pc-ready');
+    });
+  }
+
+  function animateActivePage() {
+    if (!animate) return;
+    const visiblePage = $$('[id^="pagina-"]:not(.hidden)').filter((el) => getComputedStyle(el).display !== 'none')[0];
+    if (!visiblePage) return;
+
+    const hero = visiblePage.querySelector('.kpi-hero, .reports-hero, .assistant-hero, .ia-main-header');
+    const cards = $$(
+      '.kpi-panel, .reports-card, .assistant-card, .assistant-sidecard, .ia-card, .kpi-stat-card, .reports-kpi-card',
+      visiblePage
+    ).slice(0, 12);
+
+    if (hero) {
+      animate(hero, { opacity: [0,1], y: [8,0] }, { duration: .32, easing: 'ease-out' });
+    }
+
+    if (cards.length) {
+      animate(
+        cards,
+        { opacity: [0,1], y: [14,0], scale: [0.985,1] },
+        { duration: .36, delay: stagger ? stagger(0.035) : 0, easing: 'ease-out' }
+      );
+    }
+  }
+
+  function enhanceButtons() {
+    const selectors = [
+      '.reports-btn',
+      '.ia-btn-primary',
+      '.ia-btn-secondary',
+      '.ia-icon-btn',
+      '.toggle-theme-btn',
+      '.mobile-theme-chip',
+      '#btn-auth-submit',
+      '.sidebar-item'
+    ];
+
+    selectors.forEach((selector) => {
+      $$(selector).forEach((el) => {
+        if (el.dataset.pcEnhanced === '1') return;
+        el.dataset.pcEnhanced = '1';
+
+        el.addEventListener('pointerenter', () => {
+          if (!animate) return;
+          animate(el, { scale: 1.01, y: -1 }, { duration: .16, easing: 'ease-out' });
+        });
+
+        el.addEventListener('pointerleave', () => {
+          if (!animate) return;
+          animate(el, { scale: 1, y: 0 }, { duration: .16, easing: 'ease-out' });
+        });
+
+        el.addEventListener('pointerdown', () => {
+          if (!animate) return;
+          animate(el, { scale: .985 }, { duration: .08, easing: 'ease-out' });
+        });
+
+        el.addEventListener('pointerup', () => {
+          if (!animate) return;
+          animate(el, { scale: 1 }, { duration: .14, easing: 'ease-out' });
+        });
+      });
+    });
+  }
+
+  function optimizeIconsRefresh() {
+    let queued = false;
+    const run = () => {
+      queued = false;
       if (window.lucide?.createIcons) window.lucide.createIcons();
     };
 
-    window.__nextThemeOption = function () {
-      const current = localStorage.getItem('theme') || 'system';
-      if (current === 'system') return 'dark';
-      if (current === 'dark') return 'light';
-      return 'system';
+    const schedule = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(run);
     };
 
-    mediaTheme.addEventListener?.('change', () => {
-      const saved = localStorage.getItem('theme');
-      if (!saved || saved === 'system') {
-        applyTheme('system');
-      }
+    const observer = new MutationObserver(schedule);
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  function patchNavigationAnimation() {
+    if (typeof window.mostrarPagina !== 'function') return;
+    if (window.__pcMostrarPaginaPatched) return;
+
+    const original = window.mostrarPagina;
+    window.mostrarPagina = function (...args) {
+      const result = original.apply(this, args);
+      raf(() => {
+        wrapAudioPlayer();
+        markRevealTargets();
+        runRevealAnimations();
+        enhanceButtons();
+        animateActivePage();
+      });
+      return result;
+    };
+    window.__pcMostrarPaginaPatched = true;
+  }
+
+  function patchThemeAnimation() {
+    if (typeof window.alternarTema !== 'function') return;
+    if (window.__pcAlternarTemaPatched) return;
+
+    const original = window.alternarTema;
+    window.alternarTema = function (...args) {
+      const result = original.apply(this, args);
+      raf(() => {
+        wrapAudioPlayer();
+        enhanceButtons();
+        animateActivePage();
+      });
+      return result;
+    };
+    window.__pcAlternarTemaPatched = true;
+  }
+
+  function patchAudioBehavior() {
+    const player = $('#ia-audio-player');
+    const card = $('#ia-audio-card');
+    if (!player || !card) return;
+    if (player.dataset.pcAudioBound === '1') return;
+    player.dataset.pcAudioBound = '1';
+
+    const playAnim = () => {
+      if (!animate) return;
+      animate(card, { boxShadow: ['0 0 0 rgba(0,0,0,0)', '0 0 0 1px rgba(56,189,248,.10), 0 20px 44px rgba(37,99,235,.18)'] }, { duration: .35 });
+    };
+
+    const stopAnim = () => {
+      if (!animate) return;
+      animate(card, { boxShadow: ['0 0 0 1px rgba(56,189,248,.10), 0 20px 44px rgba(37,99,235,.18)', '0 12px 32px rgba(0,0,0,.12)'] }, { duration: .3 });
+    };
+
+    player.addEventListener('play', playAnim);
+    player.addEventListener('pause', stopAnim);
+    player.addEventListener('ended', stopAnim);
+  }
+
+  function softOptimizeInputs() {
+    $$('input, textarea, select').forEach((el) => {
+      if (el.dataset.pcInputBound === '1') return;
+      el.dataset.pcInputBound = '1';
+
+      el.addEventListener('focus', () => {
+        if (!animate) return;
+        animate(el, { scale: [1, 1.005, 1] }, { duration: .18, easing: 'ease-out' });
+      });
     });
+  }
 
-    // Load inicial
-    document.addEventListener('DOMContentLoaded', () => {
-      // Recupera sidebar
-      if (localStorage.getItem('sidebar_collapsed') === 'true') {
-        document.getElementById('btn-collapse').click();
-      }
-      const temaSalvo = localStorage.getItem('theme') || 'system';
-      alternarTema(temaSalvo);
-
-      // P?gina inicial
-      mostrarPagina('historico-liberacoes');
-      lucide.createIcons();
+  function duplicateIdWarning() {
+    const ids = {};
+    $$('[id]').forEach((el) => {
+      ids[el.id] = (ids[el.id] || 0) + 1;
     });
-  </script>
-
-
-  <!-- Emergency fallbacks + extensões do dashboard -->
-  <script>
-    // Emergency fallbacks to keep exports and filters usable if the main script fails to parse
-    (function(){
-      window.showToast = window.showToast || function(message, type = 'info', duration = 3500) {
-        // Minimal non-visual fallback - logs to console
-        /* showToast fallback - no console output */
-      };
-
-      window.showLoader = window.showLoader || function(msg = '') { /* loader fallback - no console output */ };
-      window.hideLoader = window.hideLoader || function() { /* loader hide fallback - no console output */ };
-
-      window.normalizeLabel = window.normalizeLabel || function(s) {
-        if (!s) return '';
-        try { return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g,' ').trim(); }
-        catch(e){ return String(s).toLowerCase().replace(/\s+/g,' ').trim(); }
-      };
-
-      // Try to populate Relatórios release select on DOMContentLoaded as a safe fallback
-      document.addEventListener('DOMContentLoaded', async () => {
-        const sel = document.getElementById('relatorio-release-select');
-        if (!sel) return;
-        try {
-          if (!Array.isArray(window.liberacoesOriginais) || window.liberacoesOriginais.length === 0) {
-            try {
-              const resp = await fetch(window.getProtocordApiUrl('/liberados'));
-              if (resp.ok) {
-                const dadosAPI = await resp.json();
-                window.liberacoesOriginais = dadosAPI.map(item => ({ release: item.release, protocolos: String(item.prts || '').split(' ').filter(p => p.trim().length>0) }));
-              } else {
-                window.liberacoesOriginais = [];
-              }
-            } catch (err) {
-              window.showToast && window.showToast('Falha ao buscar releases','warning');
-              window.liberacoesOriginais = [];
-            }
-          }
-
-          if (!Array.isArray(window.liberacoesOriginais) || window.liberacoesOriginais.length === 0) return;
-          const uniq = [...new Set(window.liberacoesOriginais.map(r => r.release))].sort((a,b) => new Date(a.split('/').reverse().join('-')) - new Date(b.split('/').reverse().join('-'))).reverse();
-          sel.innerHTML = '<option value="todas">Todas</option>';
-          uniq.forEach(rel => {
-            const opt = document.createElement('option'); opt.value = rel; opt.textContent = rel; sel.appendChild(opt);
-          });
-        } catch (e) {
-          window.showToast && window.showToast('Falha ao popular filtros de Relatórios','warning');
-        }
-      });
-    })();
-  </script>
-
-  <!-- === Extensões do dashboard (exportação + ranking) === -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const tabelaCard = document.querySelector('#pagina-historico-liberacoes .bg-gray-900.p-6.rounded-xl.shadow-lg');
-      if (!tabelaCard) return;
-
-      // Bot?es de exporta??o
-      const exportDiv = document.createElement('div');
-      exportDiv.className = 'flex justify-end gap-2 mb-3';
-      exportDiv.innerHTML = `
-      <button onclick="exportarCSV()" class="px-3 py-2 text-xs rounded bg-gray-700 hover:bg-gray-600">
-        Exportar CSV
-      </button>
-      <button onclick="exportarExcel()" class="px-3 py-2 text-xs rounded bg-green-700 hover:bg-green-600">
-        Exportar Excel
-      </button>
-    `;
-      tabelaCard.insertBefore(exportDiv, tabelaCard.children[1]);
-
-      // Ranking de módulos
-      if (!document.getElementById('ranking-modulos')) {
-        const ranking = document.createElement('div');
-        ranking.className = 'bg-gray-900 p-4 rounded-xl mt-4';
-        ranking.innerHTML = `
-        <h3 class="text-sm font-bold mb-3 text-gray-300 uppercase">Ranking de Módulos</h3>
-        <div id="ranking-modulos" class="space-y-2"></div>
-      `;
-
-        // Tenta inserir abaixo do card "Protocolos por Release" (canvas #chartLiberacoes)
-        const protocolosCanvas = document.getElementById('chartLiberacoes');
-        const protocolosCard = protocolosCanvas?.closest('.bg-gray-900.p-6.rounded-xl.shadow-lg');
-        if (protocolosCard && protocolosCard.parentElement) {
-          protocolosCard.parentElement.insertBefore(ranking, protocolosCard.nextElementSibling);
-        } else {
-          tabelaCard.parentElement.appendChild(ranking);
-        }
-      }
-    });
-  </script>
-
-  <script>
-    // Fun??es de exporta??o de PDF (append)
-    // Loader utilities
-    window.showLoader = function(message = 'Gerando PDF...') {
-      const el = document.getElementById('pdfLoader');
-      if (!el) return;
-      const msg = document.getElementById('pdfLoaderMessage');
-      if (msg) msg.textContent = message;
-      el.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    };
-
-    window.hideLoader = function() {
-      const el = document.getElementById('pdfLoader');
-      if (!el) return;
-      el.classList.add('hidden');
-      document.body.style.overflow = '';
-    };
-
-    // Simple toast notifications
-    window.showToast = function(message, type = 'info', duration = 3500) {
-      const container = document.getElementById('toastContainer');
-      if (!container) { return; }
-      const toast = document.createElement('div');
-      toast.className = 'min-w-[200px] max-w-md px-4 py-2 rounded shadow-lg text-sm pointer-events-auto flex items-center gap-3 transition-transform transform';
-      let bg = 'bg-gray-800 text-white';
-      if (type === 'success') bg = 'bg-green-600 text-white';
-      if (type === 'error') bg = 'bg-red-600 text-white';
-      if (type === 'warning') bg = 'bg-yellow-500 text-black';
-      toast.className += ' ' + bg;
-      toast.style.opacity = '1';
-      toast.innerHTML = `<div class="flex-1">${message}</div><button class="ml-2 text-xs opacity-80">Fechar</button>`;
-      container.appendChild(toast);
-      const remove = () => {
-        toast.style.transition = 'opacity 220ms ease, transform 220ms ease';
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(8px)';
-        setTimeout(() => toast.remove(), 260);
-      };
-      toast.querySelector('button').addEventListener('click', remove);
-      setTimeout(remove, duration);
-    };
-
-    // Normaliza labels para comparacoes (remove acentos, trim e lowercase)
-    window.normalizeLabel = function (s) {
-      if (!s) return '';
-      try {
-        return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
-      } catch (e) {
-        return String(s).toLowerCase().replace(/\s+/g, ' ').trim();
-      }
-    };
-    window.exportarProtocolosPDF = async function() {
-      const canvas = document.getElementById('chartLiberacoes');
-      if (!canvas) return showToast('Gráfico "Protocolos por Release" não encontrado', 'warning');
-      showLoader('Gerando PDF: Protocolos por Release...');
-      try {
-        let useImage = false;
-        let imgData = null;
-        try {
-          imgData = canvas.toDataURL('image/png', 1.0);
-          // quick validation
-          const { jsPDF } = window.jspdf;
-          const _pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
-          _pdf.getImageProperties(imgData);
-          useImage = true;
-        } catch (innerErr) {
-          console.warn('Canvas/image export failed, falling back to text PDF:', innerErr);
-        }
-
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-
-        if (useImage) {
-          const imgProps = pdf.getImageProperties(imgData);
-          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-          pdf.setFontSize(14);
-          pdf.text('Relatório: Protocolos por Release', 40, 30);
-          pdf.addImage(imgData, 'PNG', 40, 50, pdfWidth - 80, pdfHeight);
-        } else {
-          // Fallback: text table of releases and counts
-          const liberacoes = Array.isArray(window.liberacoesOriginais) ? window.liberacoesOriginais : [];
-          pdf.setFontSize(12);
-          pdf.text('Relatório: Protocolos por Release (Texto)', 40, 30);
-          pdf.setFontSize(10);
-          const lineH = 14;
-          let y = 60;
-          const marginRight = 40;
-          liberacoes.forEach(l => {
-            if (y > pdf.internal.pageSize.getHeight() - 40) {
-              pdf.addPage();
-              y = 40;
-            }
-            pdf.text(String(l.release || '--'), 40, y);
-            pdf.text(String((l.protocolos || []).length), pdfWidth - marginRight - 20, y);
-            y += lineH;
-          });
-        }
-
-        const filename = `protocolos_por_release_${new Date().toISOString().slice(0,10)}.pdf`;
-        pdf.save(filename);
-        showToast('PDF gerado com sucesso!', 'success');
-      } catch (err) {
-        console.error('Erro ao gerar PDF Protocolos:', err);
-        showToast('Erro ao gerar o PDF. Veja o console para detalhes.', 'error');
-      } finally {
-        hideLoader();
-      }
+    const duplicates = Object.entries(ids).filter(([, count]) => count > 1).map(([id]) => id);
+    if (duplicates.length) {
+      console.warn('ProtoCord enhancement: IDs duplicados encontrados:', duplicates);
     }
-
-    window.exportarTop5PDF = async function() {
-      const canvas = document.getElementById('chartTop5');
-      if (!canvas) return showToast('Gráfico "Top 5 Releases" não encontrado', 'warning');
-      showLoader('Gerando PDF: Top 5 Releases...');
-      try {
-        let useImage = false;
-        let imgData = null;
-        try {
-          imgData = canvas.toDataURL('image/png', 1.0);
-          const { jsPDF } = window.jspdf;
-          const _pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
-          _pdf.getImageProperties(imgData);
-          useImage = true;
-        } catch (innerErr) {
-          console.warn('Canvas/image export failed, falling back to text PDF:', innerErr);
-        }
-
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-
-        if (useImage) {
-          const imgProps = pdf.getImageProperties(imgData);
-          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-          pdf.setFontSize(14);
-          pdf.text('Relatório: Top 5 Releases', 40, 30);
-          pdf.addImage(imgData, 'PNG', 40, 50, pdfWidth - 80, pdfHeight);
-        } else {
-          // Fallback: use chart data (labels + values)
-          const chart = chartsInstance?.chartTop5;
-          if (!chart) {
-            throw new Error('Dados do gráfico Top 5 não disponíveis para gerar PDF');
-          }
-          const labels = chart.data.labels || [];
-          const data = chart.data.datasets?.[0]?.data || [];
-
-          pdf.setFontSize(12);
-          pdf.text('Relatório: Top 5 Releases (Texto)', 40, 30);
-          pdf.setFontSize(10);
-          const lineH = 16;
-          let y = 60;
-          for (let i = 0; i < labels.length; i++) {
-            if (y > pdf.internal.pageSize.getHeight() - 40) {
-              pdf.addPage();
-              y = 40;
-            }
-            pdf.text(`${i+1}. ${labels[i]}`, 40, y);
-            pdf.text(String(data[i] ?? ''), pdfWidth - 80, y);
-            y += lineH;
-          }
-        }
-
-        const filename = `top5_releases_${new Date().toISOString().slice(0,10)}.pdf`;
-        pdf.save(filename);
-        showToast('PDF gerado com sucesso!', 'success');
-      } catch (err) {
-        console.error('Erro ao gerar PDF Top 5:', err);
-        showToast('Erro ao gerar o PDF. Veja o console para detalhes.', 'error');
-      } finally {
-        hideLoader();
-      }
-    }
-
-    window.exportarRankingPDF = async function() {
-      const el = document.getElementById('ranking-modulos');
-      if (!el) return showToast('Ranking n?o encontrado', 'warning');
-      showLoader('Calculando p?ginas...');
-
-      const btn = document.querySelector('button[onclick="exportarRankingPDF()"]');
-      if (btn) btn.disabled = true;
-
-      try {
-        // Recria dados do ranking a partir dos dados filtrados (mesma l?gica de renderizarRankingModulos)
-        const liberacoes = (typeof obterLiberacoesFiltradasAtuais === 'function') ? obterLiberacoesFiltradasAtuais() : (window.liberacoesOriginais || []);
-        const details = {};
-        (liberacoes || []).forEach(rel => {
-          (rel.protocolos || []).forEach(prt => {
-            const modulo = window.protocolosIndex?.[prt]?.modulo;
-            if (!modulo) return;
-            if (!details[modulo]) details[modulo] = { count: 0, prts: new Set(), releases: new Set() };
-            details[modulo].count += 1;
-            details[modulo].prts.add(prt);
-            details[modulo].releases.add(rel.release);
-          });
-        });
-
-        const ordenado = Object.entries(details).sort((a, b) => b[1].count - a[1].count);
-        if (!ordenado.length) {
-          showToast('Nenhum dado encontrado para exportar', 'warning');
-          return;
-        }
-
-        // Prepara linhas para o PDF
-        const rows = ordenado.map(([mod, info], idx) => ({ pos: idx + 1, modulo: mod, prts: info.prts.size, releases: info.releases.size }));
-
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
-        const pageW = doc.internal.pageSize.getWidth();
-        const pageH = doc.internal.pageSize.getHeight();
-        const marginLeft = 40;
-        const marginRight = 40;
-        const marginTop = 60;
-        const marginBottom = 50;
-
-        doc.setFont('helvetica');
-        doc.setFontSize(10);
-        const fontSize = 10;
-        const lineHeight = fontSize * 1.4;
-
-        // Colunas: Pos | Módulo | PRTs | Releases
-        const colPos = 30;
-        const colPRTs = 50;
-        const colReleases = 60;
-        const gap = 8;
-        const colModulo = pageW - marginLeft - marginRight - (colPos + colPRTs + colReleases) - (gap * 4);
-
-        const processed = rows.map(r => {
-          const moduloLines = doc.splitTextToSize(String(r.modulo || ''), colModulo);
-          const h = Math.max(1, moduloLines.length) * lineHeight + 6;
-          return { ...r, moduloLines, height: h };
-        });
-
-        // Calcula p?ginas (simula??o)
-        const headerHeight = 30 + 18; // t?tulo + header
-        const avail = pageH - marginTop - marginBottom - headerHeight;
-        let pages = 1;
-        let acc = 0;
-        processed.forEach(r => {
-          if (acc + r.height > avail) { pages++; acc = r.height; } else { acc += r.height; }
-        });
-
-        // Renderiza por p?ginas
-        let currentPage = 1;
-        let yStart = marginTop;
-
-        function renderHeader(pageNum) {
-          doc.setFontSize(12);
-          doc.text('Relatório: Ranking de Módulos', marginLeft, yStart);
-          yStart += 18;
-
-          doc.setFontSize(10);
-          const headerY = yStart;
-          let x = marginLeft;
-          doc.text('Pos', x, headerY);
-          x += colPos + gap;
-          doc.text('Módulo', x, headerY);
-          x += colModulo + gap;
-          doc.text('PRTs', x, headerY);
-          x += colPRTs + gap;
-          doc.text('Releases', x, headerY);
-
-          yStart += 18;
-          doc.setDrawColor(110);
-          doc.setLineWidth(0.5);
-          doc.line(marginLeft, yStart - 8, pageW - marginRight, yStart - 8);
-
-          showLoader(`Gerando PDF: P?gina ${pageNum} / ${pages}`);
-        }
-
-        // Start first page
-        renderHeader(currentPage);
-        let y = yStart;
-
-        for (let i = 0; i < processed.length; i++) {
-          const r = processed[i];
-          if (y + r.height > pageH - marginBottom) {
-            doc.setFontSize(9);
-            doc.text(`P?gina ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
-            doc.addPage();
-            currentPage++;
-            y = marginTop;
-            yStart = marginTop;
-            renderHeader(currentPage);
-            y = yStart;
-          }
-
-          // escreve a linha
-          let x = marginLeft;
-          doc.setFontSize(fontSize);
-          doc.text(String(r.pos), x, y + lineHeight * 0.8);
-          x += colPos + gap;
-          doc.text(r.moduloLines, x, y + lineHeight * 0.8);
-          const prtsX = marginLeft + colPos + gap + colModulo + gap;
-          doc.text(String(r.prts), prtsX, y + lineHeight * 0.8);
-          const relX = prtsX + colPRTs + gap;
-          doc.text(String(r.releases), relX, y + lineHeight * 0.8);
-
-          y += r.height;
-        }
-
-        // Footer
-        doc.setFontSize(9);
-        doc.text(`P?gina ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
-
-        const filename = `ranking_modulos_${new Date().toISOString().slice(0,10)}.pdf`;
-        doc.save(filename);
-        showToast(`PDF gerado com sucesso! (${pages} p?gina${pages>1?'s':''})`, 'success');
-      } catch (err) {
-        console.error('Erro ao gerar PDF do ranking:', err);
-        showToast('Erro ao gerar o PDF. Veja o console para detalhes.', 'error');
-      } finally {
-        if (btn) btn.disabled = false;
-        hideLoader();
-      }
-    }
-
-    // Popula selects da página Relatórios com releases atuais (busca quando necessário)
-    window.populateRelatoriosFilters = async function() {
-      const selRelease = document.getElementById('relatorio-release-select');
-      if (!selRelease) return;
-      selRelease.innerHTML = '<option value="todas">Todas</option>';
-
-      // Se n?o temos dados locais, tenta buscar pela API (sem re-render completo)
-      if (!Array.isArray(window.liberacoesOriginais) || window.liberacoesOriginais.length === 0) {
-        try {
-          showLoader('Carregando releases...');
-          if (typeof carregarDadosLiberacoes === 'function') {
-            window.liberacoesOriginais = await carregarDadosLiberacoes();
-          } else {
-            const resp = await fetch(window.getProtocordApiUrl('/liberados'));
-            if (resp.ok) {
-              const dadosAPI = await resp.json();
-              window.liberacoesOriginais = dadosAPI.map(item => ({ release: item.release, protocolos: item.prts.split(' ').filter(p => p.trim().length > 0) }));
-            } else {
-              window.liberacoesOriginais = [];
-            }
-          }
-        } catch (err) {
-          console.error('Erro ao buscar releases para filtros:', err);
-        } finally {
-          hideLoader();
-        }
-      }
-
-      if (!Array.isArray(window.liberacoesOriginais) || window.liberacoesOriginais.length === 0) return;
-
-      const releases = window.liberacoesOriginais.map(r => r.release);
-      const uniq = [...new Set(releases)].sort((a,b) => new Date(a.split('/').reverse().join('-')) - new Date(b.split('/').reverse().join('-'))).reverse();
-      uniq.forEach(rel => {
-        const opt = document.createElement('option');
-        opt.value = rel;
-        opt.textContent = rel;
-        selRelease.appendChild(opt);
-      });
-    };
-
-    // Auto-popula releases ao iniciar (n?o bloqueante)
-    (async () => {
-      try {
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-          await window.populateRelatoriosFilters();
-        } else {
-          document.addEventListener('DOMContentLoaded', () => { if (typeof window.populateRelatoriosFilters === 'function') window.populateRelatoriosFilters(); });
-        }
-      } catch (e) {
-        console.warn('Auto populate releases falhou', e);
-      }
-    })();
-
-    function _sliceCanvasToPdf(canvas, pdf, marginLeft = 40, marginTop = 50) {
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = pdfWidth - marginLeft * 2;
-      const scale = imgWidth / canvas.width;
-      const imgHeight = canvas.height * scale;
-      const pageHeight = pdfHeight - marginTop * 2;
-      const totalPages = Math.ceil(imgHeight / pageHeight);
-
-      for (let i = 0; i < totalPages; i++) {
-        const sourceY = Math.floor((i * pageHeight) / scale);
-        const sourceH = Math.floor(pageHeight / scale);
-        const tmpCanvas = document.createElement('canvas');
-        tmpCanvas.width = canvas.width;
-        tmpCanvas.height = sourceH;
-        const ctx = tmpCanvas.getContext('2d');
-        ctx.fillStyle = '#0b1220';
-        ctx.fillRect(0,0,tmpCanvas.width,tmpCanvas.height);
-        ctx.drawImage(canvas, 0, sourceY, canvas.width, sourceH, 0, 0, canvas.width, sourceH);
-        const imgData = tmpCanvas.toDataURL('image/png', 1.0);
-        const imgProps = pdf.getImageProperties(imgData);
-        const renderedHeight = (imgProps.height * imgWidth) / imgProps.width;
-        if (i > 0) pdf.addPage();
-        pdf.addImage(imgData, 'PNG', marginLeft, marginTop, imgWidth, renderedHeight);
-      }
-    }
-
-    // Exporta detalhes (Ticket, PRT, Descrição, Tipo, Release) como CSV
-    window.exportarDetalhesCSV = async function() {
-      const tipo = document.getElementById('relatorio-tipo-select')?.value || 'todos';
-      const releaseSel = document.getElementById('relatorio-release-select')?.value || 'todas';
-
-      // Garante que temos protocolos carregados (para ticket/descri??o)
-      if (typeof carregarProtocolos === 'function') await carregarProtocolos();
-
-      const rows = [];
-      (window.liberacoesOriginais || []).forEach(rel => {
-        if (releaseSel !== 'todas' && rel.release !== releaseSel) return;
-        rel.protocolos.forEach(prt => {
-          // usa a fun??o p?blica para obter protocolo (vai ao cache interno)
-          const pObj = (typeof obterProtocolo === 'function') ? (obterProtocolo(prt) || {}) : (window.protocolosCache?.[prt] || {});
-          const tipoLabel = (typeof getTipoLabel === 'function') ? getTipoLabel(pObj.tipo || '') : (pObj.tipo === '0' ? 'Erro' : 'Sugestão');
-
-          const normTipo = window.normalizeLabel(tipoLabel);
-          if (tipo === 'erro' && normTipo !== 'erro') return;
-          if (tipo === 'sugestao' && normTipo !== 'sugestao') return;
-
-          rows.push([pObj.ticket || '', prt, (pObj.descricao || '').replace(/\n/g, ' '), tipoLabel, rel.release]);
-        });
-      });
-
-      if (!rows.length) {
-        showToast('Nenhum registro encontrado para os filtros selecionados', 'warning');
-        return;
-      }
-
-      let csv = 'Ticket;PRT;Descrição;Tipo;Release\n';
-      rows.forEach(r => csv += `${r.map(c => '"'+String(c).replace(/"/g, '""')+'"').join(';')}\n`);
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.setAttribute('download', `relatorio_detalles_${new Date().toISOString().slice(0,10)}.csv`);
-      link.click();
-    }
-
-    // Exporta detalhes como PDF (jsPDF tabela nativa)
-    window.exportarDetalhesPDF = async function() {
-      const tipo = document.getElementById('relatorio-tipo-select')?.value || 'todos';
-      const releaseSel = document.getElementById('relatorio-release-select')?.value || 'todas';
-
-      // Garante que temos protocolos carregados
-      if (typeof carregarProtocolos === 'function') await carregarProtocolos();
-
-      const rows = [];
-
-      (window.liberacoesOriginais || []).forEach(rel => {
-        if (releaseSel !== 'todas' && rel.release !== releaseSel) return;
-        rel.protocolos.forEach(prt => {
-          const pObj = (typeof obterProtocolo === 'function') ? (obterProtocolo(prt) || {}) : (window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {});
-          const tipoLabel = (typeof getTipoLabel === 'function') ? getTipoLabel(pObj.tipo || '') : (pObj.tipo === '0' ? 'Erro' : 'Sugestão');
-
-          const normTipo = window.normalizeLabel(tipoLabel);
-          if (tipo === 'erro' && normTipo !== 'erro') return;
-          if (tipo === 'sugestao' && normTipo !== 'sugestao') return;
-
-          rows.push({ ticket: pObj.ticket || '', prt, descricao: (pObj.descricao || '').replace(/\n/g, ' '), tipo: tipoLabel, release: rel.release });
-        });
-      });
-
-      if (!rows.length) {
-        showToast('Nenhum registro encontrado para os filtros selecionados', 'warning');
-        return;
-      }
-
-      // Prepara PDF
-      showLoader('Calculando p?ginas...');
-      const btn = document.getElementById('btn-export-det');
-      if (btn) btn.disabled = true;
-
-      try {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
-        const pageW = doc.internal.pageSize.getWidth();
-        const pageH = doc.internal.pageSize.getHeight();
-        const marginLeft = 40;
-        const marginRight = 40;
-        const marginTop = 60;
-        const marginBottom = 50;
-
-        doc.setFont('helvetica');
-        doc.setFontSize(10);
-        const fontSize = 10;
-        const lineHeight = fontSize * 1.4; // ~14
-
-        // Columns: Ticket | PRT | Descrição | Tipo | Release
-        const colTicket = 60;
-        const colPRT = 70;
-        const colTipo = 60;
-        const colRelease = 80;
-        const gap = 8;
-        const descWidth = pageW - marginLeft - marginRight - (colTicket + colPRT + colTipo + colRelease) - (gap * 4);
-
-        // Preprocessa para calcular quantas linhas cada registro ocupar?
-        const processed = rows.map(r => {
-          const descLines = doc.splitTextToSize(String(r.descricao || ''), descWidth);
-          const h = Math.max(1, descLines.length) * lineHeight + 6; // padding
-          return { ...r, descLines, height: h };
-        });
-
-        // Calcula total de p?ginas (simula??o)
-        const headerHeight = 30 + 18; // t?tulo + header
-        const avail = pageH - marginTop - marginBottom - headerHeight;
-        let pages = 1;
-        let acc = 0;
-        processed.forEach(r => {
-          if (acc + r.height > avail) { pages++; acc = r.height; } else { acc += r.height; }
-        });
-
-        // Renderiza por p?ginas, atualiza loader com p?gina atual
-        let currentPage = 1;
-        let yStart = marginTop;
-
-        function renderHeader(pageNum) {
-          doc.setFontSize(12);
-          const title = `Relatório de Detalhes - ${tipo === 'todos' ? 'Todos' : (tipo === 'erro' ? 'Erros' : 'Sugestões')} ${releaseSel !== 'todas' ? ' - ' + releaseSel : ''}`;
-          doc.text(title, marginLeft, yStart);
-          yStart += 18;
-
-          // Column headers
-          doc.setFontSize(10);
-          const headerY = yStart;
-          let x = marginLeft;
-          doc.text('Ticket', x, headerY);
-          x += colTicket + gap;
-          doc.text('PRT', x, headerY);
-          x += colPRT + gap;
-          doc.text('Descrição', x, headerY);
-          x += descWidth + gap;
-          doc.text('Tipo', x, headerY);
-          x += colTipo + gap;
-          doc.text('Release', x, headerY);
-
-          yStart += 18;
-          doc.setDrawColor(110);
-          doc.setLineWidth(0.5);
-          doc.line(marginLeft, yStart - 8, pageW - marginRight, yStart - 8);
-
-          showLoader(`Gerando PDF: P?gina ${pageNum} / ${pages}`);
-        }
-
-        // Start first page
-        renderHeader(currentPage);
-        let y = yStart;
-
-        for (let i = 0; i < processed.length; i++) {
-          const r = processed[i];
-          if (y + r.height > pageH - marginBottom) {
-            // footer page number
-            doc.setFontSize(9);
-            doc.text(`P?gina ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
-            doc.addPage();
-            currentPage++;
-            y = marginTop;
-            yStart = marginTop;
-            renderHeader(currentPage);
-            y = yStart;
-          }
-
-          // escreve a linha
-          let x = marginLeft;
-          doc.setFontSize(fontSize);
-          doc.text(String(r.ticket), x, y + lineHeight * 0.8);
-          x += colTicket + gap;
-          doc.text(String(r.prt), x, y + lineHeight * 0.8);
-          x += colPRT + gap;
-          // Descrição (pode ter múltiplas linhas)
-          doc.text(r.descLines, x, y + lineHeight * 0.8);
-          // Tipo e Release (alinha no topo)
-          const tipoX = marginLeft + colTicket + gap + colPRT + gap + descWidth + gap;
-          doc.text(String(r.tipo), tipoX, y + lineHeight * 0.8);
-          const relX = tipoX + colTipo + gap;
-          doc.text(String(r.release), relX, y + lineHeight * 0.8);
-
-          y += r.height;
-        }
-
-        // final footer
-        doc.setFontSize(9);
-        doc.text(`P?gina ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
-
-        const filename = `relatorio_detalhes_${new Date().toISOString().slice(0,10)}.pdf`;
-        doc.save(filename);
-        showToast(`PDF gerado com sucesso! (${pages} p?gina${pages>1?'s':''})`, 'success');
-      } catch (err) {
-        console.error('Erro ao gerar PDF de detalhes:', err);
-        showToast('Erro ao gerar o PDF. Veja o console para detalhes.', 'error');
-      } finally {
-        if (btn) btn.disabled = false;
-        hideLoader();
-      }
-    }
-  </script>
-
-  <!-- Fallback fixes: corrige normalizeLabel e garante wrappers de export (em caso de SyntaxError anterior) -->
-  <script>
-    (function(){
-      // Safe normalizeLabel (removes diacritics)
-      window.normalizeLabel = function(s) {
-        if (!s) return '';
-        try {
-          return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
-        } catch (e) {
-          return String(s).toLowerCase().replace(/\s+/g, ' ').trim();
-        }
-      };
-
-      // Ensure export functions exist: add lightweight wrappers that attempt to reload data and retry
-      function makeWrapper(name) {
-        if (typeof window[name] === 'function') return;
-        const wrapperFn = function(...args) {
-          window.showToast && window.showToast(name + ' ainda n?o dispon?vel','warning');
-          // Try to (re)load supporting data, then retry
-          try {
-            if (typeof carregarProtocolos === 'function') carregarProtocolos().catch(()=>{});
-            if (typeof carregarDadosLiberacoes === 'function') carregarDadosLiberacoes().catch(()=>{});
-          } catch(e) { /* ignore */ }
-          setTimeout(() => {
-            const current = window[name];
-            if (typeof current === 'function' && current !== wrapperFn) {
-              // If original appeared, call it
-              current(...args);
-            } else {
-              // Fallback UX
-              if (typeof showToast === 'function') showToast('Exporta??o n?o dispon?vel no momento. Recarregue a p?gina e tente novamente.', 'warning');
-              else console.warn('Exporta??o indispon?vel e showToast n?o definido.');
-            }
-          }, 800);
-        };
-        wrapperFn._isWrapper = true;
-        window[name] = wrapperFn;
-      }
-
-      ['exportarProtocolosPDF','exportarTop5PDF','exportarRankingPDF','exportarDetalhesPDF','exportarDetalhesCSV'].forEach(makeWrapper);
-    })();
-  </script>
-
-  <script>
-    // Final robust exports: override any wrappers and provide reliable, text-based PDF/CSV exports
-    (function(){
-      function safe(msg){ try{}catch(e){} }
-      const ensureReleases = async () => {
-        if (Array.isArray(window.liberacoesOriginais) && window.liberacoesOriginais.length) return window.liberacoesOriginais;
-        if (typeof carregarDadosLiberacoes === 'function') {
-          try { window.liberacoesOriginais = await carregarDadosLiberacoes(); return window.liberacoesOriginais; } catch(e) { window.liberacoesOriginais = []; }
-        }
-        try { const r = await fetch(window.getProtocordApiUrl('/liberados')); if (r.ok) { const d = await r.json(); window.liberacoesOriginais = d.map(item=>({release:item.release, protocolos: String(item.prts||'').split(/\s+/).filter(Boolean)})); return window.liberacoesOriginais; } } catch(e){ window.liberacoesOriginais = []; }
-        return window.liberacoesOriginais || [];
-      };
-
-      const normalizeLabel = window.normalizeLabel || function(s){ if (!s) return ''; try { return String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim(); } catch(e) { return String(s).toLowerCase().replace(/\s+/g,' ').trim(); } };
-
-      window.exportarProtocolosPDF = async function(){
-        window.showLoader && window.showLoader('Gerando PDF: Protocolos por Release...');
-        try {
-          const liberacoes = await ensureReleases(); if (!liberacoes.length) { window.showToast && window.showToast('Nenhum dado para exportar','warning'); return; }
-          const { jsPDF } = window.jspdf;
-          const doc = new jsPDF({unit:'pt',format:'a4'});
-          doc.setFontSize(12); doc.text('Protocolos por Release',40,40); doc.setFontSize(10);
-          let y=70; const lineH=14, pageH=doc.internal.pageSize.getHeight();
-          liberacoes.forEach(l=>{ if (y>pageH-40){ doc.addPage(); y=40; } doc.text(String(l.release||''),40,y); doc.text(String((l.protocolos||[]).length), doc.internal.pageSize.getWidth()-80, y); y+=lineH; });
-          doc.save(`protocolos_por_release_${new Date().toISOString().slice(0,10)}.pdf`);
-          window.showToast && window.showToast('PDF gerado com sucesso!','success');
-        } catch(e){ window.showToast && window.showToast('Erro ao gerar PDF','error'); }
-        finally{ window.hideLoader && window.hideLoader(); }
-      };
-
-      window.exportarTop5PDF = async function(){
-        window.showLoader && window.showLoader('Gerando PDF: Top 5...');
-        try {
-          const liberacoes = await ensureReleases(); const sorted = (liberacoes||[]).slice().sort((a,b)=>b.protocolos.length-a.protocolos.length).slice(0,5);
-          if (!sorted.length){ window.showToast && window.showToast('Nenhum dado para exportar','warning'); return; }
-          const { jsPDF } = window.jspdf; const doc = new jsPDF({unit:'pt',format:'a4'});
-          doc.setFontSize(12); doc.text('Top 5 Releases',40,40); doc.setFontSize(10);
-          let y=70; const lineH=16, pageH=doc.internal.pageSize.getHeight();
-          sorted.forEach((r,i)=>{ if (y>pageH-40){ doc.addPage(); y=40; } doc.text(`${i+1}. ${r.release}`,40,y); doc.text(String(r.protocolos.length), doc.internal.pageSize.getWidth()-80, y); y+=lineH; });
-          doc.save(`top5_releases_${new Date().toISOString().slice(0,10)}.pdf`);
-          window.showToast && window.showToast('PDF gerado com sucesso!','success');
-        } catch(e){ window.showToast && window.showToast('Erro ao gerar PDF','error'); }
-        finally{ window.hideLoader && window.hideLoader(); }
-      };
-
-      window.exportarRankingPDF = async function(){
-        window.showLoader && window.showLoader('Gerando PDF: Ranking de Módulos...');
-        try {
-          if (typeof carregarProtocolos === 'function') await carregarProtocolos();
-          const liberacoes = await ensureReleases(); const counts={};
-          (liberacoes||[]).forEach(rel=>{ (rel.protocolos||[]).forEach(prt=>{ const mod = window.protocolosIndex?.[prt]?.modulo || window.protocolosCache?.[prt]?.modulo || 'Desconhecido'; counts[mod]=(counts[mod]||0)+1; }); });
-          const rows = Object.entries(counts).sort((a,b)=>b[1]-a[1]); if (!rows.length){ window.showToast && window.showToast('Nenhum dado para exportar','warning'); return; }
-          const { jsPDF } = window.jspdf; const doc = new jsPDF({unit:'pt',format:'a4'});
-          doc.setFontSize(12); doc.text('Ranking de Módulos',40,40); doc.setFontSize(10);
-          let y=70; const lineH=16, pageH=doc.internal.pageSize.getHeight(); rows.forEach((r,i)=>{ if (y>pageH-40){ doc.addPage(); y=40; } doc.text(`${i+1}. ${r[0]}`,40,y); doc.text(String(r[1]), doc.internal.pageSize.getWidth()-80, y); y+=lineH; });
-          doc.save(`ranking_modulos_${new Date().toISOString().slice(0,10)}.pdf`);
-          window.showToast && window.showToast('PDF gerado com sucesso!','success');
-        } catch(e){ window.showToast && window.showToast('Erro ao gerar PDF','error'); }
-        finally{ window.hideLoader && window.hideLoader(); }
-      };
-
-      window.exportarDetalhesCSV = window.exportarDetalhesCSV || async function(){
-        try{
-          if (typeof carregarProtocolos==='function') await carregarProtocolos();
-          const tipo = document.getElementById('relatorio-tipo-select')?.value||'todos';
-          const releaseSel = document.getElementById('relatorio-release-select')?.value||'todas';
-          const rows = [];
-          const liberacoes = await ensureReleases();
-          for (const rel of (liberacoes||[])){
-            if (releaseSel!=='todas' && rel.release!==releaseSel) continue;
-            for (const prt of (rel.protocolos||[])){
-              // robust lookup: prefer protocolosCache, fall back to protocolosIndex
-              let p = window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {};
-              if ((!p || Object.keys(p).length===0) && typeof carregarProtocolos === 'function'){
-                try{ await carregarProtocolos(); } catch(e){}
-                p = window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {};
-              }
-
-              const tipoRaw = (p && p.tipo !== undefined) ? p.tipo : (window.protocolosIndex?.[prt]?.tipo ?? '');
-              const tipoLabel = (typeof getTipoLabel==='function')? getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugestão');
-              const normTipo = normalizeLabel(tipoLabel);
-              if (tipo==='erro' && normTipo!=='erro') continue;
-              if (tipo==='sugestao' && normTipo!=='sugestao') continue;
-
-              const ticket = p.ticket || '';
-              const descricao = (p.descricao || window.protocolosIndex?.[prt]?.descricao || '').replace(/\r?\n/g,' ');
-
-              rows.push([ticket, prt, descricao, tipoLabel, rel.release]);
-            }
-          }
-
-          if (!rows.length){ window.showToast && window.showToast('Nenhum registro encontrado para os filtros selecionados','warning'); return; }
-          // Add UTF-8 BOM so Excel opens it correctly
-          let csv = '\uFEFF' + 'Ticket;PRT;Descrição;Tipo;Release\n';
-          rows.forEach(r=> csv += r.map(c=> '"'+String(c).replace(/"/g,'""')+'"').join(';')+'\n');
-          const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
-          const link=document.createElement('a'); link.href = URL.createObjectURL(blob); link.setAttribute('download', `relatorio_detalhes_${new Date().toISOString().slice(0,10)}.csv`); link.click();
-          window.showToast && window.showToast('CSV gerado com sucesso!','success');
-        } catch(e){ window.showToast && window.showToast('Erro ao gerar CSV','error'); }
-      };
-
-      window.exportarDetalhesPDF = async function(){
-        window.showLoader && window.showLoader('Gerando PDF de Detalhes...'); const btn = document.getElementById('btn-export-det'); if (btn) btn.disabled = true;
-        try{
-          if (typeof carregarProtocolos==='function') await carregarProtocolos();
-          const tipo = document.getElementById('relatorio-tipo-select')?.value||'todos';
-          const releaseSel = document.getElementById('relatorio-release-select')?.value||'todas';
-
-          const items = [];
-          const liberacoes = await ensureReleases();
-          for (const rel of (liberacoes||[])){
-            if (releaseSel!=='todas' && rel.release!==releaseSel) continue;
-            for (const prt of (rel.protocolos||[])){
-              let p = window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {};
-              if ((!p || Object.keys(p).length===0) && typeof carregarProtocolos === 'function'){
-                try{ await carregarProtocolos(); } catch(e){}
-                p = window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {};
-              }
-
-              const tipoRaw = (p && p.tipo !== undefined) ? p.tipo : (window.protocolosIndex?.[prt]?.tipo ?? '');
-              const tipoLabel = (typeof getTipoLabel==='function')? getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugestão');
-              const normTipo = normalizeLabel(tipoLabel);
-              if (tipo==='erro' && normTipo!=='erro') continue;
-              if (tipo==='sugestao' && normTipo!=='sugestao') continue;
-
-              items.push({ ticket: p.ticket||'', prt, descricao: (p.descricao||window.protocolosIndex?.[prt]?.descricao||'').replace(/\r?\n/g,' '), tipo: tipoLabel, release: rel.release });
-            }
-          }
-
-          if (!items.length){ window.showToast && window.showToast('Nenhum registro encontrado para os filtros selecionados','warning'); return; }
-
-          const { jsPDF } = window.jspdf;
-          const doc = new jsPDF({unit:'pt',format:'a4'});
-          const pdfWidth = doc.internal.pageSize.getWidth();
-          const pageH = doc.internal.pageSize.getHeight();
-
-          // Column positions
-          const xTicket = 40;
-          const xPRT = 110;
-          const xDesc = 160;
-          const xTipo = pdfWidth - 180;
-          const xRelease = pdfWidth - 60;
-          const descWidth = xTipo - xDesc - 10;
-
-          const lineH = 14;
-          let y = 60;
-
-          const drawHeader = (title) => {
-            doc.setFont('helvetica','bold'); doc.setFontSize(12);
-            doc.text(title, xTicket, 36);
-            doc.setFontSize(10);
-            doc.setFont('helvetica','bold');
-            doc.text('Ticket', xTicket, y);
-            doc.text('PRT', xPRT, y);
-            doc.text('Descrição', xDesc, y);
-            doc.text('Tipo', xTipo, y);
-            doc.text('Release', xRelease, y);
-            y += lineH;
-            doc.setDrawColor(200);
-            doc.line(36, y-8, pdfWidth-36, y-8);
-            doc.setFont('helvetica','normal');
-          };
-
-          drawHeader('Relatório de Detalhes');
-
-          items.forEach(it=>{
-            const descLines = doc.splitTextToSize(String(it.descricao||''), descWidth);
-            const blockH = Math.max(lineH, (descLines.length||1) * lineH);
-            if (y + blockH > pageH - 40){ doc.addPage(); y = 60; drawHeader('Relatório de Detalhes (cont.)'); }
-
-            doc.text(String(it.ticket), xTicket, y);
-            doc.text(String(it.prt), xPRT, y);
-            doc.text(descLines, xDesc, y);
-            doc.text(String(it.tipo), xTipo, y);
-            doc.text(String(it.release), xRelease, y);
-
-            y += blockH;
-          });
-
-          doc.save(`relatorio_detalhes_${new Date().toISOString().slice(0,10)}.pdf`);
-          window.showToast && window.showToast('PDF gerado com sucesso!','success');
-        }
-        catch(e){ window.showToast && window.showToast('Erro ao gerar PDF','error'); }
-        finally{ if (btn) btn.disabled = false; window.hideLoader && window.hideLoader(); }
-      };
-
-    })();
-  </script>
-  <script src="js/reports.js"></script>
-  <script src="js/kpi-modern.js"></script>
-</body>
-
-</html>
-
-
-
+  }
+
+  function initEnhancements() {
+    wrapAudioPlayer();
+    markRevealTargets();
+    runRevealAnimations();
+    enhanceButtons();
+    optimizeIconsRefresh();
+    patchNavigationAnimation();
+    patchThemeAnimation();
+    patchAudioBehavior();
+    softOptimizeInputs();
+    animateActivePage();
+    duplicateIdWarning();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => raf(initEnhancements));
+  } else {
+    raf(initEnhancements);
+  }
+</script>
