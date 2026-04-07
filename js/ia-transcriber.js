@@ -1,7 +1,8 @@
 (function () {
   const STORAGE_KEY = "protocord_ia_transcriber_v1";
-  const OPENAI_MAX_AUDIO_BYTES = 20 * 1024 * 1024;
-  const MAX_UPLOAD_BYTES = OPENAI_MAX_AUDIO_BYTES;
+  const SAFE_TRANSCRIPTION_BYTES = 18 * 1024 * 1024;
+  const OPENAI_MAX_AUDIO_BYTES = SAFE_TRANSCRIPTION_BYTES;
+  const MAX_UPLOAD_BYTES = 128 * 1024 * 1024;
   const AUDIO_DB_NAME = "protocord_ia_audio_v1";
   const AUDIO_STORE_NAME = "ticket_audio";
   const TARGET_SAMPLE_RATE = 16000;
@@ -183,11 +184,13 @@
   function restoreState() {
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-      state.tickets = Array.isArray(parsed.tickets) ? parsed.tickets.map((ticket) => ({
-        ...ticket,
-        audioUrl: "",
-        blobUrl: "",
-      })) : [];
+      state.tickets = Array.isArray(parsed.tickets)
+        ? parsed.tickets.map((ticket) => ({
+            ...ticket,
+            audioUrl: "",
+            blobUrl: "",
+          }))
+        : [];
       state.activeId = parsed.activeId || null;
     } catch (error) {
       state.tickets = [];
@@ -196,14 +199,17 @@
   }
 
   function persist() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      tickets: state.tickets.map((ticket) => ({
-        ...ticket,
-        audioUrl: "",
-        blobUrl: "",
-      })),
-      activeId: state.activeId,
-    }));
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        tickets: state.tickets.map((ticket) => ({
+          ...ticket,
+          audioUrl: "",
+          blobUrl: "",
+        })),
+        activeId: state.activeId,
+      })
+    );
   }
 
   function getActiveTicket() {
@@ -257,14 +263,15 @@
       return;
     }
 
-    els.ticketList.innerHTML = filtered.map((ticket) => {
-      const title = escapeHtml(ticket.customName || ticket.phone || "Sem nome");
-      const activeClass = ticket.id === state.activeId ? "active" : "";
-      const statusIcon = ticket.isRegistered
-        ? '<i data-lucide="check-circle-2" class="w-4 h-4 text-green-400"></i>'
-        : '<i data-lucide="ticket" class="w-4 h-4 text-sky-400"></i>';
+    els.ticketList.innerHTML = filtered
+      .map((ticket) => {
+        const title = escapeHtml(ticket.customName || ticket.phone || "Sem nome");
+        const activeClass = ticket.id === state.activeId ? "active" : "";
+        const statusIcon = ticket.isRegistered
+          ? '<i data-lucide="check-circle-2" class="w-4 h-4 text-green-400"></i>'
+          : '<i data-lucide="ticket" class="w-4 h-4 text-sky-400"></i>';
 
-      return `
+        return `
         <article class="ia-ticket-item ${activeClass}" data-ticket-id="${ticket.id}">
           <div class="ia-ticket-line">
             <div class="ia-ticket-main">
@@ -284,14 +291,21 @@
               </button>
             </div>
           </div>
-          ${state.editingTicketId === ticket.id ? `
+          ${
+            state.editingTicketId === ticket.id
+              ? `
             <div style="margin-top:10px">
-              <input class="ia-ticket-input" data-ticket-edit-input="${ticket.id}" value="${escapeAttribute(ticket.customName || ticket.phone || "")}" />
+              <input class="ia-ticket-input" data-ticket-edit-input="${ticket.id}" value="${escapeAttribute(
+                  ticket.customName || ticket.phone || ""
+                )}" />
             </div>
-          ` : ""}
+          `
+              : ""
+          }
         </article>
       `;
-    }).join("");
+      })
+      .join("");
   }
 
   function commitTicketName(ticketId) {
@@ -518,6 +532,8 @@
 
     try {
       await pingBackendHealth();
+
+      notify("Preparando áudio para transcrição...", "info");
       const fileForTranscription = await prepareAudioForTranscription(file);
 
       notify("Enviando áudio temporário para processamento...", "info");
@@ -556,67 +572,70 @@
   }
 
   async function getAudioDurationSeconds(file) {
-  return new Promise((resolve) => {
-    try {
-      const url = URL.createObjectURL(file);
-      const audio = document.createElement("audio");
+    return new Promise((resolve) => {
+      try {
+        const url = URL.createObjectURL(file);
+        const audio = document.createElement("audio");
 
-      const cleanup = () => {
-        URL.revokeObjectURL(url);
-        audio.removeAttribute("src");
-      };
+        const cleanup = () => {
+          URL.revokeObjectURL(url);
+          audio.removeAttribute("src");
+        };
 
-      audio.preload = "metadata";
-      audio.onloadedmetadata = () => {
-        const duration = Number(audio.duration);
-        cleanup();
-        resolve(Number.isFinite(duration) && duration > 0 ? duration : 0);
-      };
+        audio.preload = "metadata";
 
-      audio.onerror = () => {
-        cleanup();
+        audio.onloadedmetadata = () => {
+          const duration = Number(audio.duration);
+          cleanup();
+          resolve(Number.isFinite(duration) && duration > 0 ? duration : 0);
+        };
+
+        audio.onerror = () => {
+          cleanup();
+          resolve(0);
+        };
+
+        audio.src = url;
+      } catch (error) {
         resolve(0);
-      };
+      }
+    });
+  }
 
-      audio.src = url;
-    } catch (error) {
-      resolve(0);
+  async function prepareAudioForTranscription(file) {
+    const isCompact = isAlreadyCompactAudio(file);
+    const shouldCompress = file.size > SAFE_TRANSCRIPTION_BYTES || !isCompact;
+
+    if (!shouldCompress) {
+      return file;
     }
-  });
-}
 
-async function prepareAudioForTranscription(file) {
-  const SAFE_TRANSCRIPTION_BYTES = 20 * 1024 * 1024;
+    const durationSeconds = await getAudioDurationSeconds(file);
 
-  if (file.size <= SAFE_TRANSCRIPTION_BYTES) {
+    const compressionTimeoutMs = Math.min(
+      10 * 60 * 1000,
+      Math.max(90000, 90000 + Math.ceil(durationSeconds * 2500))
+    );
+
+    notify("Compactando áudio localmente antes do envio...", "info");
+
+    try {
+      const compressedFile = await withTimeout(
+        compressAudioForUpload(file),
+        compressionTimeoutMs,
+        "Tempo esgotado ao compactar o áudio para transcrição."
+      );
+
+      if (compressedFile?.size && compressedFile.size > 0) {
+        return compressedFile;
+      }
+    } catch (error) {
+      console.warn("Falha na compactação local, seguindo com arquivo original para compactação no backend:", error);
+      notify("Compactação local não concluiu. O backend vai otimizar o áudio automaticamente.", "info");
+    }
+
     return file;
   }
-
-  notify("Áudio acima do limite seguro. Tentando compactar antes da transcrição...", "info");
-
-  const durationSeconds = await getAudioDurationSeconds(file);
-
-  // timeout dinâmico:
-  // base de 60s + 2s por segundo de áudio, limitado a 8 minutos
-  const compressionTimeoutMs = Math.min(
-    8 * 60 * 1000,
-    Math.max(60000, 60000 + Math.ceil(durationSeconds * 2000))
-  );
-
-  const compressedFile = await withTimeout(
-    compressAudioForUpload(file),
-    compressionTimeoutMs,
-    "Tempo esgotado ao compactar o áudio para transcrição.",
-  );
-
-  if (compressedFile.size > SAFE_TRANSCRIPTION_BYTES) {
-    throw new Error(
-      "O áudio continua acima do limite seguro após a compactação. Envie um arquivo menor ou mais curto."
-    );
-  }
-
-  return compressedFile;
-}
 
   function createHttpError(message, status) {
     const error = new Error(message);
@@ -630,26 +649,6 @@ async function prepareAudioForTranscription(file) {
     } catch (error) {
       return null;
     }
-  }
-
-  async function sendTranscriptionRequest(file) {
-    const formData = new FormData();
-    formData.append("audio", file);
-    formData.append("modo", "openai");
-
-    notify("Enviando áudio para a API...", "info");
-
-    const response = await fetch(`${apiBaseUrl}/transcrever`, {
-      method: "POST",
-      body: formData,
-    });
-
-    const data = await parseJsonSafe(response);
-    if (!response.ok || !data?.sucesso) {
-      throw createHttpError(data?.erro || `Falha ao transcrever o áudio. Status ${response.status}`, response.status);
-    }
-
-    return data;
   }
 
   async function requestBlobTranscription(blobUpload, file) {
@@ -682,12 +681,16 @@ async function prepareAudioForTranscription(file) {
       "",
       "ENCAMINHAMENTO / SOLUCAO:",
       ticket?.solucao || "",
-    ].join("\n").trim();
+    ]
+      .join("\n")
+      .trim();
   }
 
   function parseSingleReportText(text) {
     const normalized = String(text || "").replace(/\r\n/g, "\n");
-    const problemMatch = normalized.match(/PROBLEMA\s*\/\s*DUVIDA\s*:\s*([\s\S]*?)(?:\n{2,}ENCAMINHAMENTO\s*\/\s*SOLUCAO\s*:|$)/i);
+    const problemMatch = normalized.match(
+      /PROBLEMA\s*\/\s*DUVIDA\s*:\s*([\s\S]*?)(?:\n{2,}ENCAMINHAMENTO\s*\/\s*SOLUCAO\s*:|$)/i
+    );
     const solutionMatch = normalized.match(/ENCAMINHAMENTO\s*\/\s*SOLUCAO\s*:\s*([\s\S]*)/i);
 
     return {
@@ -734,7 +737,11 @@ async function prepareAudioForTranscription(file) {
     if (!active) return;
 
     const items = Array.from(event.clipboardData?.items || []);
-    const imageFiles = items.filter((item) => item.type.startsWith("image/")).map((item) => item.getAsFile()).filter(Boolean);
+    const imageFiles = items
+      .filter((item) => item.type.startsWith("image/"))
+      .map((item) => item.getAsFile())
+      .filter(Boolean);
+
     if (!imageFiles.length) return;
 
     const images = await Promise.all(imageFiles.map(readFileAsDataUrl));
@@ -781,26 +788,6 @@ async function prepareAudioForTranscription(file) {
   function revokeObjectUrlIfNeeded(url) {
     if (url && url.startsWith("blob:")) {
       URL.revokeObjectURL(url);
-    }
-  }
-
-  async function deleteStoredAudio(ticket) {
-    const target = ticket?.audioUrl || ticket?.blobUrl || ticket?.nomeArquivoNoServidor;
-    if (!target) return;
-
-    try {
-      await fetch(`${apiBaseUrl}/excluir-audio`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          url: ticket.audioUrl || ticket.blobUrl || null,
-          pathname: ticket.nomeArquivoNoServidor || null,
-        }),
-      });
-    } catch (error) {
-      // noop
     }
   }
 
@@ -894,54 +881,53 @@ async function prepareAudioForTranscription(file) {
     }
   }
 
-async function compressAudioForUpload(file) {
-  if (typeof MediaRecorder === "undefined") {
-    throw new Error("Seu navegador não suporta conversão local deste áudio.");
-  }
-
-  const mimeType = pickRecorderMimeType();
-  if (!mimeType) {
-    throw new Error("Nenhum codec compatível encontrado para converter o áudio.");
-  }
-
-  const arrayBuffer = await file.arrayBuffer();
-  const decoderContext = new (window.AudioContext || window.webkitAudioContext)();
-
-  try {
-    const decodedBuffer = await decoderContext.decodeAudioData(arrayBuffer.slice(0));
-    const normalizedBuffer = await resampleToMono(decodedBuffer, TARGET_SAMPLE_RATE);
-
-    // menos tentativas = menos tempo de processamento no navegador
-    const bitrates = [12000, 8000, 6000, 4000];
-    let bestBlob = null;
-
-    for (const bitrate of bitrates) {
-      const encodedBlob = await encodeAudioBufferToOpus(normalizedBuffer, mimeType, bitrate);
-
-      if (!bestBlob || encodedBlob.size < bestBlob.size) {
-        bestBlob = encodedBlob;
-      }
-
-      if (encodedBlob.size <= 20 * 1024 * 1024) {
-        break;
-      }
+  async function compressAudioForUpload(file) {
+    if (typeof MediaRecorder === "undefined") {
+      throw new Error("Seu navegador não suporta conversão local deste áudio.");
     }
 
-    if (!bestBlob) {
-      throw new Error("Não foi possível converter o áudio para um formato menor.");
+    const mimeType = pickRecorderMimeType();
+    if (!mimeType) {
+      throw new Error("Nenhum codec compatível encontrado para converter o áudio.");
     }
 
-    const extension = mimeType.includes("ogg") ? "ogg" : "webm";
-    return new File([bestBlob], replaceExtension(file.name, extension), { type: mimeType });
-  } finally {
+    const arrayBuffer = await file.arrayBuffer();
+    const decoderContext = new (window.AudioContext || window.webkitAudioContext)();
+
     try {
-      await decoderContext.close();
-    } catch (error) {
-      // noop
+      const decodedBuffer = await decoderContext.decodeAudioData(arrayBuffer.slice(0));
+      const normalizedBuffer = await resampleToMono(decodedBuffer, TARGET_SAMPLE_RATE);
+
+      const bitrates = [12000, 8000, 6000, 4000];
+      let bestBlob = null;
+
+      for (const bitrate of bitrates) {
+        const encodedBlob = await encodeAudioBufferToOpus(normalizedBuffer, mimeType, bitrate);
+
+        if (!bestBlob || encodedBlob.size < bestBlob.size) {
+          bestBlob = encodedBlob;
+        }
+
+        if (encodedBlob.size <= SAFE_TRANSCRIPTION_BYTES) {
+          break;
+        }
+      }
+
+      if (!bestBlob) {
+        throw new Error("Não foi possível converter o áudio para um formato menor.");
+      }
+
+      const extension = mimeType.includes("ogg") ? "ogg" : "webm";
+      return new File([bestBlob], replaceExtension(file.name, extension), { type: mimeType });
+    } finally {
+      try {
+        await decoderContext.close();
+      } catch (error) {
+        // noop
+      }
     }
   }
-}
-  
+
   async function resampleToMono(sourceBuffer, targetSampleRate) {
     const frameCount = Math.ceil(sourceBuffer.duration * targetSampleRate);
     const offlineContext = new OfflineAudioContext(1, frameCount, targetSampleRate);
@@ -964,74 +950,71 @@ async function compressAudioForUpload(file) {
     return offlineContext.startRendering();
   }
 
-async function encodeAudioBufferToOpus(audioBuffer, mimeType, audioBitsPerSecond) {
-  const playbackContext = new (window.AudioContext || window.webkitAudioContext)({
-    sampleRate: audioBuffer.sampleRate,
-  });
-
-  try {
-    const destination = playbackContext.createMediaStreamDestination();
-    const monitorGain = playbackContext.createGain();
-    monitorGain.gain.value = 0;
-
-    const source = playbackContext.createBufferSource();
-    source.buffer = audioBuffer;
-    source.connect(destination);
-    source.connect(monitorGain);
-    monitorGain.connect(playbackContext.destination);
-
-    const chunks = [];
-    const recorder = new MediaRecorder(destination.stream, {
-      mimeType,
-      audioBitsPerSecond,
+  async function encodeAudioBufferToOpus(audioBuffer, mimeType, audioBitsPerSecond) {
+    const playbackContext = new (window.AudioContext || window.webkitAudioContext)({
+      sampleRate: audioBuffer.sampleRate,
     });
 
-    await playbackContext.resume();
-
-    return await new Promise((resolve, reject) => {
-      const timeoutMs = Math.min(
-        8 * 60 * 1000,
-        Math.max(30000, Math.ceil(audioBuffer.duration * 4000))
-      );
-
-      const timeoutId = setTimeout(() => {
-        try {
-          if (recorder.state !== "inactive") recorder.stop();
-        } catch (error) {
-          // noop
-        }
-        reject(new Error("Tempo esgotado ao converter o áudio para Opus."));
-      }, timeoutMs);
-
-      recorder.addEventListener("dataavailable", (event) => {
-        if (event.data?.size) chunks.push(event.data);
-      });
-
-      recorder.addEventListener("stop", () => {
-        clearTimeout(timeoutId);
-        resolve(new Blob(chunks, { type: mimeType }));
-      });
-
-      recorder.addEventListener("error", () => {
-        clearTimeout(timeoutId);
-        reject(new Error("Falha ao codificar o áudio em Opus."));
-      });
-
-      source.addEventListener("ended", () => {
-        if (recorder.state !== "inactive") recorder.stop();
-      });
-
-      recorder.start(1000);
-      source.start(0);
-    });
-  } finally {
     try {
-      await playbackContext.close();
-    } catch (error) {
-      // noop
+      const destination = playbackContext.createMediaStreamDestination();
+      const monitorGain = playbackContext.createGain();
+      monitorGain.gain.value = 0;
+
+      const source = playbackContext.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(destination);
+      source.connect(monitorGain);
+      monitorGain.connect(playbackContext.destination);
+
+      const chunks = [];
+      const recorder = new MediaRecorder(destination.stream, {
+        mimeType,
+        audioBitsPerSecond,
+      });
+
+      await playbackContext.resume();
+
+      return await new Promise((resolve, reject) => {
+        const timeoutMs = Math.min(10 * 60 * 1000, Math.max(45000, Math.ceil(audioBuffer.duration * 4500)));
+
+        const timeoutId = setTimeout(() => {
+          try {
+            if (recorder.state !== "inactive") recorder.stop();
+          } catch (error) {
+            // noop
+          }
+          reject(new Error("Tempo esgotado ao converter o áudio para Opus."));
+        }, timeoutMs);
+
+        recorder.addEventListener("dataavailable", (event) => {
+          if (event.data?.size) chunks.push(event.data);
+        });
+
+        recorder.addEventListener("stop", () => {
+          clearTimeout(timeoutId);
+          resolve(new Blob(chunks, { type: mimeType }));
+        });
+
+        recorder.addEventListener("error", () => {
+          clearTimeout(timeoutId);
+          reject(new Error("Falha ao codificar o áudio em Opus."));
+        });
+
+        source.addEventListener("ended", () => {
+          if (recorder.state !== "inactive") recorder.stop();
+        });
+
+        recorder.start(1000);
+        source.start(0);
+      });
+    } finally {
+      try {
+        await playbackContext.close();
+      } catch (error) {
+        // noop
+      }
     }
   }
-}
 
   function isAlreadyCompactAudio(file) {
     const type = String(file?.type || "").toLowerCase();
@@ -1102,10 +1085,6 @@ async function encodeAudioBufferToOpus(audioBuffer, mimeType, audioBitsPerSecond
     ]);
   }
 
-  function isPayloadTooLargeError(error) {
-    return error?.status === 413 || /413|payload too large|function_payload_too_large/i.test(String(error?.message || ""));
-  }
-
   function pickRecorderMimeType() {
     const mimeTypes = [
       "audio/webm;codecs=opus",
@@ -1145,7 +1124,7 @@ async function encodeAudioBufferToOpus(audioBuffer, mimeType, audioBitsPerSecond
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
-      .replace(/\"/g, "&quot;")
+      .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
   }
 
