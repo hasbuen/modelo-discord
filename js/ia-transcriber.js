@@ -1242,6 +1242,58 @@
 }
 
       }
+      /* ===== AUDIO PLAYER REFINO (NÃO QUEBRA NADA EXISTENTE) ===== */
+
+#pagina-ia #ia-audio-player {
+  border-radius: 999px;
+  overflow: hidden;
+  min-height: 48px;
+  filter: contrast(1.05) saturate(1.05);
+}
+
+/* fundo do player */
+#pagina-ia #ia-audio-player::-webkit-media-controls-panel {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.94),
+    rgba(240,247,255,.90)
+  );
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+
+/* botão play/pause */
+#pagina-ia #ia-audio-player::-webkit-media-controls-play-button,
+#pagina-ia #ia-audio-player::-webkit-media-controls-pause-button {
+  background-color: #12bddf;
+  border-radius: 999px;
+  transform: scale(1.05);
+}
+
+/* timeline */
+#pagina-ia #ia-audio-player::-webkit-media-controls-timeline {
+  margin: 0 10px;
+  border-radius: 999px;
+  height: 4px;
+}
+
+/* volume */
+#pagina-ia #ia-audio-player::-webkit-media-controls-volume-slider {
+  border-radius: 999px;
+}
+
+/* tempo */
+#pagina-ia #ia-audio-player::-webkit-media-controls-current-time-display,
+#pagina-ia #ia-audio-player::-webkit-media-controls-time-remaining-display {
+  color: #0f2f44;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* menu */
+#pagina-ia #ia-audio-player::-webkit-media-controls-overflow-button {
+  border-radius: 999px;
+}
     `;
     document.head.appendChild(style);
   }
