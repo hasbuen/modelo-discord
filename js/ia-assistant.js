@@ -5,6 +5,7 @@
   const state = {
     messages: [],
     sending: false,
+    motion: null,
   };
 
   const els = {};
@@ -12,9 +13,14 @@
   function init() {
     bindElements();
     if (!els.page) return;
+
+    injectStyles();
+    enhanceLayout();
+    bindElements();
     restoreState();
     bindEvents();
     render();
+    bootMotion();
   }
 
   function bindElements() {
@@ -28,25 +34,66 @@
   }
 
   function bindEvents() {
-    els.form?.addEventListener("submit", async (event) => {
+    if (!els.form || els.form.dataset.bound === "true") return;
+    els.form.dataset.bound = "true";
+
+    els.form.addEventListener("submit", async function (event) {
       event.preventDefault();
       await submitMessage();
     });
 
-    els.clearBtn?.addEventListener("click", () => {
+    els.clearBtn?.addEventListener("click", function () {
       state.messages = [];
       persist();
       render();
       notify("Conversa limpa.", "success");
     });
 
-    els.suggestions.forEach((button) => {
-      button.addEventListener("click", async () => {
+    els.suggestions.forEach(function (button) {
+      if (button.dataset.bound === "true") return;
+      button.dataset.bound = "true";
+
+      button.addEventListener("click", async function () {
         if (!els.input) return;
         els.input.value = button.dataset.assistantPrompt || "";
+        syncInputState();
         await submitMessage();
       });
     });
+
+    els.input?.addEventListener("focus", function () {
+      els.form?.classList.add("assistant-form-focus");
+      animateFocus(true);
+    });
+
+    els.input?.addEventListener("blur", function () {
+      els.form?.classList.remove("assistant-form-focus");
+      animateFocus(false);
+    });
+
+    els.input?.addEventListener("input", function () {
+      syncInputState();
+      autoResizeTextarea();
+    });
+
+    els.sendBtn?.addEventListener("mouseenter", function () {
+      animateHover(els.sendBtn, 1.02, -2);
+    });
+
+    els.sendBtn?.addEventListener("mouseleave", function () {
+      animateHover(els.sendBtn, 1, 0);
+    });
+
+    els.clearBtn?.addEventListener("mouseenter", function () {
+      animateHover(els.clearBtn, 1.01, -1);
+    });
+
+    els.clearBtn?.addEventListener("mouseleave", function () {
+      animateHover(els.clearBtn, 1, 0);
+    });
+
+    autoResizeTextarea();
+    syncInputState();
   }
 
   function restoreState() {
@@ -59,20 +106,27 @@
   }
 
   function persist() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      messages: state.messages.slice(-20),
-    }));
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        messages: state.messages.slice(-20),
+      })
+    );
   }
 
   function getHistoryForRequest() {
     return state.messages
       .slice(0, -1)
       .slice(-8)
-      .filter((item) => item && (item.role === "user" || item.role === "assistant") && item.content)
-      .map((item) => ({
-        role: item.role,
-        content: String(item.content),
-      }));
+      .filter(function (item) {
+        return item && (item.role === "user" || item.role === "assistant") && item.content;
+      })
+      .map(function (item) {
+        return {
+          role: item.role,
+          content: String(item.content),
+        };
+      });
   }
 
   function render() {
@@ -80,22 +134,39 @@
 
     if (!state.messages.length) {
       els.messages.innerHTML = `
-        <article class="assistant-message system">
-          Consulte PRTs, releases, modulos e FAQ publica.
+        <article class="assistant-message system assistant-empty-state">
+          <div class="assistant-empty-icon">
+            <i data-lucide="sparkles"></i>
+          </div>
+          <div class="assistant-empty-badge">CORDIA</div>
+          <h3>Consulta operacional com contexto híbrido</h3>
+          <p>Consulte PRTs, releases, modulos e FAQ publica.</p>
         </article>
       `;
-      lucide.createIcons();
+      els.messages.scrollTop = 0;
+      if (window.lucide) lucide.createIcons();
+      animateMessageEntry();
       return;
     }
 
-    els.messages.innerHTML = state.messages.map((message) => `
-      <article class="assistant-message ${message.role}">
-        ${escapeHtml(message.content)}
-      </article>
-    `).join("");
+    els.messages.innerHTML = state.messages
+      .map(function (message, index) {
+        const label = message.role === "user" ? "Pergunta" : "Resposta";
+
+        return `
+          <article class="assistant-message ${message.role}" data-message-index="${index}">
+            <div class="assistant-message-shell">
+              <div class="assistant-message-role">${label}</div>
+              <div class="assistant-message-content">${formatMessage(message.content)}</div>
+            </div>
+          </article>
+        `;
+      })
+      .join("");
 
     els.messages.scrollTop = els.messages.scrollHeight;
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
+    animateMessageEntry();
   }
 
   async function submitMessage() {
@@ -104,8 +175,11 @@
 
     state.sending = true;
     toggleSending(true);
+
     state.messages.push({ role: "user", content: message });
     els.input.value = "";
+    autoResizeTextarea();
+    syncInputState();
     render();
     persist();
 
@@ -121,7 +195,10 @@
         }),
       });
 
-      const data = await response.json().catch(() => null);
+      const data = await response.json().catch(function () {
+        return null;
+      });
+
       if (!response.ok || !data?.sucesso) {
         throw new Error(data?.erro || `Falha ao consultar assistente. Status ${response.status}`);
       }
@@ -130,6 +207,7 @@
         role: "assistant",
         content: data.resposta || "Nao encontrei uma resposta util com o contexto disponivel.",
       });
+
       persist();
       render();
     } catch (error) {
@@ -137,24 +215,34 @@
         role: "assistant",
         content: error.message || "Falha ao consultar o assistente.",
       });
+
       persist();
       render();
       notify(error.message || "Falha ao consultar o assistente.", "error");
     } finally {
       state.sending = false;
       toggleSending(false);
+      els.input?.focus();
     }
   }
 
   function toggleSending(sending) {
     if (els.sendBtn) {
       els.sendBtn.disabled = sending;
+      els.sendBtn.classList.toggle("is-loading", sending);
+
       const label = els.sendBtn.querySelector("span");
-      if (label) label.textContent = sending ? "Consultando..." : "Perguntar";
+      if (label) {
+        label.textContent = sending ? "Consultando..." : "Perguntar";
+      }
     }
 
     if (els.input) {
       els.input.disabled = sending;
+    }
+
+    if (els.form) {
+      els.form.classList.toggle("is-sending", sending);
     }
   }
 
@@ -167,10 +255,684 @@
       .replace(/'/g, "&#39;");
   }
 
+  function formatMessage(value) {
+    return escapeHtml(value).replace(/\n/g, "<br>");
+  }
+
   function notify(message, type) {
     if (typeof window.showToast === "function") {
       window.showToast(message, type);
     }
+  }
+
+  function syncInputState() {
+    if (!els.form || !els.input) return;
+    const hasValue = String(els.input.value || "").trim().length > 0;
+    els.form.classList.toggle("assistant-form-has-value", hasValue);
+  }
+
+  function autoResizeTextarea() {
+    if (!els.input) return;
+    els.input.style.height = "0px";
+    els.input.style.height = Math.min(Math.max(120, els.input.scrollHeight), 260) + "px";
+  }
+
+  function injectStyles() {
+    if (document.getElementById("assistant-ui-upgrade-styles")) return;
+
+    const style = document.createElement("style");
+    style.id = "assistant-ui-upgrade-styles";
+    style.type = "text/css";
+    style.textContent = `
+      #pagina-assistente.assistant-ui-upgraded {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        isolation: isolate;
+      }
+
+      #pagina-assistente.assistant-ui-upgraded::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at 18% 8%, rgba(59,130,246,.10), transparent 28%),
+          radial-gradient(circle at 82% 12%, rgba(34,211,238,.08), transparent 24%),
+          radial-gradient(circle at 50% 100%, rgba(37,99,235,.10), transparent 32%);
+        z-index: 0;
+      }
+
+      #pagina-assistente.assistant-ui-upgraded > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      #pagina-assistente .assistant-hero {
+        position: relative;
+        overflow: hidden;
+        border-radius: 24px;
+        border: 1px solid rgba(59,130,246,.14);
+        background:
+          linear-gradient(180deg, rgba(8,19,42,.92), rgba(5,14,32,.96));
+        box-shadow:
+          0 18px 42px rgba(2,6,23,.35),
+          inset 0 1px 0 rgba(255,255,255,.03),
+          0 0 0 1px rgba(59,130,246,.05);
+        padding: 28px 28px 22px;
+      }
+
+      #pagina-assistente .assistant-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(circle at top left, rgba(34,211,238,.10), transparent 30%),
+          radial-gradient(circle at right center, rgba(59,130,246,.10), transparent 28%);
+      }
+
+      #pagina-assistente .assistant-hero-inner {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+      }
+
+      #pagina-assistente .assistant-hero-copy {
+        flex: 1 1 520px;
+        min-width: 280px;
+      }
+
+      #pagina-assistente .assistant-eyebrow {
+        margin-bottom: 10px;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        color: #62ddff;
+      }
+
+      #pagina-assistente .assistant-hero-title {
+        margin: 0 0 10px;
+        font-size: clamp(28px, 2vw, 38px);
+        line-height: 1.08;
+        font-weight: 800;
+        color: rgba(245,250,255,.96);
+        text-wrap: balance;
+      }
+
+      #pagina-assistente .assistant-hero-subtitle {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.7;
+        color: rgba(184,204,234,.82);
+        max-width: 760px;
+      }
+
+      #pagina-assistente .assistant-hero-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      #pagina-assistente .assistant-hero-tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(59,130,246,.18);
+        background: rgba(17,34,68,.48);
+        color: rgba(226,236,255,.92);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        backdrop-filter: blur(8px);
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          box-shadow 180ms ease;
+      }
+
+      #pagina-assistente .assistant-hero-tag:hover {
+        transform: translateY(-1px);
+        border-color: rgba(96,165,250,.26);
+        box-shadow: 0 0 18px rgba(59,130,246,.10);
+      }
+
+      #pagina-assistente .assistant-panel {
+        position: relative;
+        overflow: hidden;
+        border-radius: 24px;
+        border: 1px solid rgba(59,130,246,.12);
+        background:
+          linear-gradient(180deg, rgba(6,16,36,.94), rgba(4,12,28,.98));
+        box-shadow:
+          0 18px 40px rgba(2,6,23,.28),
+          inset 0 1px 0 rgba(255,255,255,.02);
+      }
+
+      #pagina-assistente .assistant-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          linear-gradient(180deg, rgba(59,130,246,.05), transparent 24%),
+          radial-gradient(circle at top center, rgba(34,211,238,.05), transparent 24%);
+      }
+
+      #pagina-assistente .assistant-messages {
+        min-height: 380px;
+        max-height: min(58vh, 760px);
+        overflow: auto;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        scroll-behavior: smooth;
+      }
+
+      #pagina-assistente .assistant-messages::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      #pagina-assistente .assistant-messages::-webkit-scrollbar-thumb {
+        background: rgba(96,165,250,.18);
+        border-radius: 999px;
+      }
+
+      #pagina-assistente .assistant-empty-state {
+        min-height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border-radius: 22px;
+        border: 1px dashed rgba(96,165,250,.16);
+        background:
+          radial-gradient(circle at center, rgba(59,130,246,.10), transparent 56%),
+          rgba(8,19,42,.35);
+        padding: 36px 24px;
+      }
+
+      #pagina-assistente .assistant-empty-icon {
+        width: 54px;
+        height: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 18px;
+        margin-bottom: 12px;
+        color: #7ee7ff;
+        background: rgba(20,42,82,.48);
+        border: 1px solid rgba(96,165,250,.18);
+        box-shadow: 0 0 24px rgba(34,211,238,.08);
+      }
+
+      #pagina-assistente .assistant-empty-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 96px;
+        height: 32px;
+        margin-bottom: 10px;
+        padding: 0 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(96,165,250,.18);
+        background: rgba(20,42,82,.44);
+        color: #64deff;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+      }
+
+      #pagina-assistente .assistant-empty-state h3 {
+        margin: 0 0 8px;
+        color: rgba(245,250,255,.96);
+        font-size: 24px;
+        line-height: 1.2;
+      }
+
+      #pagina-assistente .assistant-empty-state p {
+        margin: 0;
+        color: rgba(182,203,234,.78);
+        font-size: 14px;
+        line-height: 1.7;
+        max-width: 540px;
+      }
+
+      #pagina-assistente .assistant-message {
+        display: flex;
+      }
+
+      #pagina-assistente .assistant-message.user {
+        justify-content: flex-end;
+      }
+
+      #pagina-assistente .assistant-message.assistant,
+      #pagina-assistente .assistant-message.system {
+        justify-content: flex-start;
+      }
+
+      #pagina-assistente .assistant-message-shell {
+        max-width: min(82%, 860px);
+        border-radius: 20px;
+        padding: 16px 18px 15px;
+        backdrop-filter: blur(10px);
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          box-shadow 220ms ease,
+          background 220ms ease;
+      }
+
+      #pagina-assistente .assistant-message:hover .assistant-message-shell {
+        transform: translateY(-1px);
+      }
+
+      #pagina-assistente .assistant-message.user .assistant-message-shell {
+        border: 1px solid rgba(34,211,238,.16);
+        background:
+          linear-gradient(135deg, rgba(30,64,175,.34), rgba(37,99,235,.22));
+        box-shadow:
+          0 12px 28px rgba(2,6,23,.18),
+          0 0 22px rgba(59,130,246,.10);
+      }
+
+      #pagina-assistente .assistant-message.assistant .assistant-message-shell,
+      #pagina-assistente .assistant-message.system .assistant-message-shell {
+        border: 1px solid rgba(59,130,246,.14);
+        background:
+          linear-gradient(180deg, rgba(13,27,54,.88), rgba(8,18,38,.94));
+        box-shadow:
+          0 12px 28px rgba(2,6,23,.16),
+          0 0 0 1px rgba(59,130,246,.03);
+      }
+
+      #pagina-assistente .assistant-message-role {
+        margin-bottom: 8px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        color: rgba(121,189,255,.88);
+      }
+
+      #pagina-assistente .assistant-message.user .assistant-message-role {
+        color: #73e3ff;
+      }
+
+      #pagina-assistente .assistant-message-content {
+        color: rgba(235,242,255,.95);
+        line-height: 1.72;
+        font-size: 14px;
+        word-break: break-word;
+      }
+
+      #pagina-assistente .assistant-composer {
+        padding: 18px 20px 20px;
+        border-top: 1px solid rgba(59,130,246,.10);
+        background:
+          linear-gradient(180deg, rgba(8,18,37,.45), rgba(5,14,29,.72));
+      }
+
+      #pagina-assistente .assistant-form-shell {
+        position: relative;
+        border-radius: 22px;
+        border: 1px solid rgba(59,130,246,.12);
+        background:
+          linear-gradient(180deg, rgba(6,16,33,.98), rgba(6,15,30,.96));
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,.02),
+          0 12px 28px rgba(2,6,23,.16);
+        transition:
+          border-color 180ms ease,
+          box-shadow 220ms ease,
+          transform 180ms ease;
+      }
+
+      #pagina-assistente .assistant-form-shell::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 180ms ease;
+        background:
+          linear-gradient(135deg, rgba(34,211,238,.14), rgba(59,130,246,.10), transparent 54%);
+      }
+
+      #pagina-assistente .assistant-form-shell.assistant-form-focus,
+      #pagina-assistente .assistant-form-shell.assistant-form-has-value {
+        border-color: rgba(96,165,250,.22);
+        box-shadow:
+          0 0 0 1px rgba(96,165,250,.06),
+          0 0 28px rgba(59,130,246,.10),
+          inset 0 1px 0 rgba(255,255,255,.03);
+      }
+
+      #pagina-assistente .assistant-form-shell.assistant-form-focus::before,
+      #pagina-assistente .assistant-form-shell.assistant-form-has-value::before {
+        opacity: 1;
+      }
+
+      #pagina-assistente .assistant-form-shell.is-sending {
+        opacity: .92;
+      }
+
+      #pagina-assistente .assistant-input {
+        width: 100%;
+        min-height: 120px;
+        max-height: 260px;
+        resize: none;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: rgba(240,247,255,.96);
+        padding: 18px 18px 12px;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      #pagina-assistente .assistant-input::placeholder {
+        color: rgba(162,186,224,.48);
+      }
+
+      #pagina-assistente .assistant-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 14px 14px;
+        flex-wrap: wrap;
+      }
+
+      #pagina-assistente .assistant-toolbar-meta {
+        font-size: 12px;
+        color: rgba(156,183,224,.62);
+        padding-left: 4px;
+      }
+
+      #pagina-assistente .assistant-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-left: auto;
+      }
+
+      #pagina-assistente .assistant-btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        padding: 0 16px;
+        border-radius: 14px;
+        border: 1px solid rgba(59,130,246,.14);
+        background: rgba(12,26,51,.72);
+        color: rgba(231,239,255,.94);
+        font-weight: 700;
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          box-shadow 180ms ease,
+          background 180ms ease,
+          opacity 180ms ease;
+      }
+
+      #pagina-assistente .assistant-btn:hover:not(:disabled) {
+        transform: translateY(-1px);
+        border-color: rgba(96,165,250,.24);
+        box-shadow: 0 0 18px rgba(59,130,246,.10);
+      }
+
+      #pagina-assistente .assistant-btn:disabled {
+        opacity: .7;
+        cursor: not-allowed;
+      }
+
+      #pagina-assistente .assistant-btn-primary {
+        border-color: rgba(34,211,238,.14);
+        background:
+          linear-gradient(135deg, rgba(56,189,248,.94), rgba(59,130,246,.88));
+        color: #061423;
+        box-shadow:
+          0 10px 24px rgba(37,99,235,.22),
+          0 0 24px rgba(34,211,238,.12);
+      }
+
+      #pagina-assistente .assistant-btn-primary:hover:not(:disabled) {
+        box-shadow:
+          0 12px 26px rgba(37,99,235,.24),
+          0 0 30px rgba(34,211,238,.16);
+      }
+
+      #pagina-assistente .assistant-btn-primary.is-loading {
+        filter: saturate(.92);
+      }
+
+      #pagina-assistente .assistant-hidden-suggestions {
+        display: none !important;
+      }
+
+      @media (max-width: 960px) {
+        #pagina-assistente .assistant-hero {
+          padding: 22px 18px 18px;
+        }
+
+        #pagina-assistente .assistant-messages {
+          min-height: 320px;
+          padding: 18px;
+        }
+
+        #pagina-assistente .assistant-message-shell {
+          max-width: 100%;
+        }
+
+        #pagina-assistente .assistant-composer {
+          padding: 16px;
+        }
+
+        #pagina-assistente .assistant-toolbar {
+          padding: 0 10px 10px;
+        }
+
+        #pagina-assistente .assistant-actions {
+          width: 100%;
+          justify-content: flex-end;
+        }
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
+  function enhanceLayout() {
+    if (!els.page || els.page.dataset.enhanced === "true") return;
+    els.page.dataset.enhanced = "true";
+    els.page.classList.add("assistant-ui-upgraded");
+
+    hideSuggestionsSection();
+
+    const originalMessages = els.messages;
+    const originalForm = els.form;
+    const originalInput = els.input;
+    const originalSendBtn = els.sendBtn;
+    const originalClearBtn = els.clearBtn;
+
+    const hero = document.createElement("section");
+    hero.className = "assistant-hero";
+    hero.setAttribute("data-assistant-animate", "hero");
+    hero.innerHTML = `
+      <div class="assistant-hero-inner">
+        <div class="assistant-hero-copy">
+          <div class="assistant-eyebrow">CordIA</div>
+          <h1 class="assistant-hero-title">Consulta operacional com contexto híbrido</h1>
+          <p class="assistant-hero-subtitle">Pergunte por PRTs, releases, modulos e FAQ publica.</p>
+        </div>
+        <div class="assistant-hero-tags">
+          <span class="assistant-hero-tag">Interno</span>
+          <span class="assistant-hero-tag">FAQ ZNUNY</span>
+          <span class="assistant-hero-tag">Pesquisa assistida</span>
+        </div>
+      </div>
+    `;
+
+    const panel = document.createElement("section");
+    panel.className = "assistant-panel";
+    panel.setAttribute("data-assistant-animate", "panel");
+
+    const messagesWrapper = document.createElement("div");
+    messagesWrapper.id = "assistant-messages";
+    messagesWrapper.className = "assistant-messages";
+
+    const composer = document.createElement("div");
+    composer.className = "assistant-composer";
+
+    const form = document.createElement("form");
+    form.id = "assistant-form";
+    form.className = "assistant-form-shell";
+    form.setAttribute("autocomplete", "off");
+
+    form.innerHTML = `
+      <textarea
+        id="assistant-input"
+        class="assistant-input"
+        rows="4"
+        placeholder="Ex.: qual release contem o PRT 12345?"
+      ></textarea>
+      <div class="assistant-toolbar">
+        <div class="assistant-toolbar-meta">Consulte PRTs, releases, modulos e FAQ publica.</div>
+        <div class="assistant-actions">
+          <button id="assistant-clear-btn" class="assistant-btn" type="button">
+            <i data-lucide="eraser"></i>
+            <span>Limpar conversa</span>
+          </button>
+          <button id="assistant-send-btn" class="assistant-btn assistant-btn-primary" type="submit">
+            <i data-lucide="send"></i>
+            <span>Perguntar</span>
+          </button>
+        </div>
+      </div>
+    `;
+
+    composer.appendChild(form);
+    panel.appendChild(messagesWrapper);
+    panel.appendChild(composer);
+
+    if (originalMessages) originalMessages.remove();
+    if (originalForm) originalForm.remove();
+    if (originalInput && originalInput !== originalForm) originalInput.remove();
+    if (originalSendBtn && originalSendBtn !== originalForm) originalSendBtn.remove();
+    if (originalClearBtn && originalClearBtn !== originalForm) originalClearBtn.remove();
+
+    els.page.innerHTML = "";
+    els.page.appendChild(hero);
+    els.page.appendChild(panel);
+
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function hideSuggestionsSection() {
+    els.suggestions.forEach(function (button) {
+      button.classList.add("assistant-hidden-suggestions");
+
+      const parent = button.closest("[class]") || button.parentElement;
+      if (!parent) return;
+
+      const promptButtons = parent.querySelectorAll("[data-assistant-prompt]");
+      if (promptButtons.length > 0) {
+        parent.classList.add("assistant-hidden-suggestions");
+      }
+    });
+  }
+
+  async function bootMotion() {
+    try {
+      const motionModule = await import("https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm");
+      state.motion = motionModule;
+      animateSections();
+    } catch (error) {
+      state.motion = null;
+    }
+  }
+
+  function animateSections() {
+    if (!state.motion || !els.page) return;
+
+    const { animate, stagger } = state.motion;
+
+    const hero = els.page.querySelector('[data-assistant-animate="hero"]');
+    const panel = els.page.querySelector('[data-assistant-animate="panel"]');
+
+    if (hero) {
+      animate(
+        hero,
+        { opacity: [0, 1], y: [18, 0], filter: ["blur(8px)", "blur(0px)"] },
+        { duration: 0.5, easing: [0.22, 1, 0.36, 1] }
+      );
+
+      const tags = hero.querySelectorAll(".assistant-hero-tag");
+      if (tags.length) {
+        animate(
+          tags,
+          { opacity: [0, 1], y: [10, 0] },
+          { duration: 0.35, delay: stagger(0.05, { startDelay: 0.08 }), easing: [0.22, 1, 0.36, 1] }
+        );
+      }
+    }
+
+    if (panel) {
+      animate(
+        panel,
+        { opacity: [0, 1], y: [22, 0], filter: ["blur(10px)", "blur(0px)"] },
+        { duration: 0.56, delay: 0.08, easing: [0.22, 1, 0.36, 1] }
+      );
+    }
+  }
+
+  function animateMessageEntry() {
+    if (!state.motion || !els.messages) return;
+
+    const { animate } = state.motion;
+    const items = Array.from(els.messages.querySelectorAll(".assistant-message"));
+    if (!items.length) return;
+
+    const target = items[items.length - 1];
+    animate(
+      target,
+      { opacity: [0, 1], y: [12, 0], scale: [0.985, 1] },
+      { duration: 0.34, easing: [0.22, 1, 0.36, 1] }
+    );
+  }
+
+  function animateHover(element, scale, y) {
+    if (!state.motion || !element) return;
+    const { animate } = state.motion;
+    animate(
+      element,
+      { scale: scale, y: y },
+      { duration: 0.16, easing: "ease-out" }
+    );
+  }
+
+  function animateFocus(active) {
+    if (!state.motion || !els.form) return;
+    const { animate } = state.motion;
+
+    animate(
+      els.form,
+      { scale: active ? 1.003 : 1, y: active ? -1 : 0 },
+      { duration: 0.18, easing: "ease-out" }
+    );
   }
 
   document.addEventListener("DOMContentLoaded", init);
