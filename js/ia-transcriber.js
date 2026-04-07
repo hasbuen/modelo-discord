@@ -1,11 +1,8 @@
 (function () {
   const STORAGE_KEY = "protocord_ia_transcriber_v1";
-  const SAFE_TRANSCRIPTION_BYTES = 18 * 1024 * 1024;
-  const OPENAI_MAX_AUDIO_BYTES = SAFE_TRANSCRIPTION_BYTES;
   const MAX_UPLOAD_BYTES = 128 * 1024 * 1024;
   const AUDIO_DB_NAME = "protocord_ia_audio_v1";
   const AUDIO_STORE_NAME = "ticket_audio";
-  const TARGET_SAMPLE_RATE = 16000;
   const apiBaseUrl = window.getProtocordApiBaseUrl();
   let blobClientPromise = null;
   let audioDbPromise = null;
@@ -350,6 +347,7 @@
     } catch (error) {
       console.warn("Falha ao remover áudio local do ticket:", error);
     }
+
     revokeObjectUrlIfNeeded(ticket.audioUrl);
 
     state.tickets = state.tickets.filter((entry) => entry.id !== ticketId);
@@ -432,6 +430,7 @@
     const active = getActiveTicket();
     const hasActive = Boolean(active);
     const workspace = els.page?.querySelector(".ia-workspace");
+
     workspace?.classList.toggle("is-uploading", state.uploading);
     els.page?.setAttribute("aria-busy", state.uploading ? "true" : "false");
 
@@ -533,21 +532,20 @@
     try {
       await pingBackendHealth();
 
-      notify("Preparando áudio para transcrição...", "info");
-      const fileForTranscription = await prepareAudioForTranscription(file);
+      const fileForUpload = await prepareAudioForTranscription(file);
 
       notify("Enviando áudio temporário para processamento...", "info");
-      const blobUpload = await uploadAudioToBlob(fileForTranscription);
+      const blobUpload = await uploadAudioToBlob(fileForUpload);
 
-      notify("Solicitando transcrição do áudio armazenado...", "info");
-      const data = await requestBlobTranscription(blobUpload, fileForTranscription);
+      notify("Processando áudio no backend...", "info");
+      const data = await requestBlobTranscription(blobUpload, fileForUpload);
 
       if (active.localAudioKey) {
         await deleteLocalAudio(active.localAudioKey);
         revokeObjectUrlIfNeeded(active.audioUrl);
       }
 
-      const localAudioKey = await saveLocalAudio(active.id, fileForTranscription);
+      const localAudioKey = await saveLocalAudio(active.id, fileForUpload);
 
       active.analysis = data.analise || "";
       active.solucao = data.solucao || "";
@@ -556,7 +554,7 @@
       active.nomeArquivoNoServidor = data.nomeArquivoNoServidor || "";
       active.blobUrl = data.blobUrl || "";
       active.localAudioKey = localAudioKey;
-      active.audioUrl = URL.createObjectURL(fileForTranscription);
+      active.audioUrl = URL.createObjectURL(fileForUpload);
       state.editingReport = false;
       state.reportDraft = "";
       persist();
@@ -571,67 +569,18 @@
     }
   }
 
-  async function getAudioDurationSeconds(file) {
-    return new Promise((resolve) => {
-      try {
-        const url = URL.createObjectURL(file);
-        const audio = document.createElement("audio");
-
-        const cleanup = () => {
-          URL.revokeObjectURL(url);
-          audio.removeAttribute("src");
-        };
-
-        audio.preload = "metadata";
-
-        audio.onloadedmetadata = () => {
-          const duration = Number(audio.duration);
-          cleanup();
-          resolve(Number.isFinite(duration) && duration > 0 ? duration : 0);
-        };
-
-        audio.onerror = () => {
-          cleanup();
-          resolve(0);
-        };
-
-        audio.src = url;
-      } catch (error) {
-        resolve(0);
-      }
-    });
-  }
-
   async function prepareAudioForTranscription(file) {
-    const isCompact = isAlreadyCompactAudio(file);
-    const shouldCompress = file.size > SAFE_TRANSCRIPTION_BYTES || !isCompact;
-
-    if (!shouldCompress) {
-      return file;
+    if (!file) {
+      throw new Error("Nenhum arquivo de áudio informado.");
     }
 
-    const durationSeconds = await getAudioDurationSeconds(file);
+    if (!isUploadFriendlyAudio(file)) {
+      throw new Error("Formato de áudio não suportado para upload.");
+    }
 
-    const compressionTimeoutMs = Math.min(
-      10 * 60 * 1000,
-      Math.max(90000, 90000 + Math.ceil(durationSeconds * 2500))
-    );
-
-    notify("Compactando áudio localmente antes do envio...", "info");
-
-    try {
-      const compressedFile = await withTimeout(
-        compressAudioForUpload(file),
-        compressionTimeoutMs,
-        "Tempo esgotado ao compactar o áudio para transcrição."
-      );
-
-      if (compressedFile?.size && compressedFile.size > 0) {
-        return compressedFile;
-      }
-    } catch (error) {
-      console.warn("Falha na compactação local, seguindo com arquivo original para compactação no backend:", error);
-      notify("Compactação local não concluiu. O backend vai otimizar o áudio automaticamente.", "info");
+    if (file.size > MAX_UPLOAD_BYTES) {
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+      throw new Error(`Áudio muito grande para envio (${sizeMb} MB). Envie um arquivo menor que 128 MB.`);
     }
 
     return file;
@@ -681,9 +630,7 @@
       "",
       "ENCAMINHAMENTO / SOLUCAO:",
       ticket?.solucao || "",
-    ]
-      .join("\n")
-      .trim();
+    ].join("\n").trim();
   }
 
   function parseSingleReportText(text) {
@@ -881,146 +828,6 @@
     }
   }
 
-  async function compressAudioForUpload(file) {
-    if (typeof MediaRecorder === "undefined") {
-      throw new Error("Seu navegador não suporta conversão local deste áudio.");
-    }
-
-    const mimeType = pickRecorderMimeType();
-    if (!mimeType) {
-      throw new Error("Nenhum codec compatível encontrado para converter o áudio.");
-    }
-
-    const arrayBuffer = await file.arrayBuffer();
-    const decoderContext = new (window.AudioContext || window.webkitAudioContext)();
-
-    try {
-      const decodedBuffer = await decoderContext.decodeAudioData(arrayBuffer.slice(0));
-      const normalizedBuffer = await resampleToMono(decodedBuffer, TARGET_SAMPLE_RATE);
-
-      const bitrates = [12000, 8000, 6000, 4000];
-      let bestBlob = null;
-
-      for (const bitrate of bitrates) {
-        const encodedBlob = await encodeAudioBufferToOpus(normalizedBuffer, mimeType, bitrate);
-
-        if (!bestBlob || encodedBlob.size < bestBlob.size) {
-          bestBlob = encodedBlob;
-        }
-
-        if (encodedBlob.size <= SAFE_TRANSCRIPTION_BYTES) {
-          break;
-        }
-      }
-
-      if (!bestBlob) {
-        throw new Error("Não foi possível converter o áudio para um formato menor.");
-      }
-
-      const extension = mimeType.includes("ogg") ? "ogg" : "webm";
-      return new File([bestBlob], replaceExtension(file.name, extension), { type: mimeType });
-    } finally {
-      try {
-        await decoderContext.close();
-      } catch (error) {
-        // noop
-      }
-    }
-  }
-
-  async function resampleToMono(sourceBuffer, targetSampleRate) {
-    const frameCount = Math.ceil(sourceBuffer.duration * targetSampleRate);
-    const offlineContext = new OfflineAudioContext(1, frameCount, targetSampleRate);
-    const monoBuffer = offlineContext.createBuffer(1, sourceBuffer.length, sourceBuffer.sampleRate);
-    const monoChannel = monoBuffer.getChannelData(0);
-    const channels = sourceBuffer.numberOfChannels;
-
-    for (let channelIndex = 0; channelIndex < channels; channelIndex += 1) {
-      const channelData = sourceBuffer.getChannelData(channelIndex);
-      for (let sampleIndex = 0; sampleIndex < channelData.length; sampleIndex += 1) {
-        monoChannel[sampleIndex] += channelData[sampleIndex] / channels;
-      }
-    }
-
-    const source = offlineContext.createBufferSource();
-    source.buffer = monoBuffer;
-    source.connect(offlineContext.destination);
-    source.start(0);
-
-    return offlineContext.startRendering();
-  }
-
-  async function encodeAudioBufferToOpus(audioBuffer, mimeType, audioBitsPerSecond) {
-    const playbackContext = new (window.AudioContext || window.webkitAudioContext)({
-      sampleRate: audioBuffer.sampleRate,
-    });
-
-    try {
-      const destination = playbackContext.createMediaStreamDestination();
-      const monitorGain = playbackContext.createGain();
-      monitorGain.gain.value = 0;
-
-      const source = playbackContext.createBufferSource();
-      source.buffer = audioBuffer;
-      source.connect(destination);
-      source.connect(monitorGain);
-      monitorGain.connect(playbackContext.destination);
-
-      const chunks = [];
-      const recorder = new MediaRecorder(destination.stream, {
-        mimeType,
-        audioBitsPerSecond,
-      });
-
-      await playbackContext.resume();
-
-      return await new Promise((resolve, reject) => {
-        const timeoutMs = Math.min(10 * 60 * 1000, Math.max(45000, Math.ceil(audioBuffer.duration * 4500)));
-
-        const timeoutId = setTimeout(() => {
-          try {
-            if (recorder.state !== "inactive") recorder.stop();
-          } catch (error) {
-            // noop
-          }
-          reject(new Error("Tempo esgotado ao converter o áudio para Opus."));
-        }, timeoutMs);
-
-        recorder.addEventListener("dataavailable", (event) => {
-          if (event.data?.size) chunks.push(event.data);
-        });
-
-        recorder.addEventListener("stop", () => {
-          clearTimeout(timeoutId);
-          resolve(new Blob(chunks, { type: mimeType }));
-        });
-
-        recorder.addEventListener("error", () => {
-          clearTimeout(timeoutId);
-          reject(new Error("Falha ao codificar o áudio em Opus."));
-        });
-
-        source.addEventListener("ended", () => {
-          if (recorder.state !== "inactive") recorder.stop();
-        });
-
-        recorder.start(1000);
-        source.start(0);
-      });
-    } finally {
-      try {
-        await playbackContext.close();
-      } catch (error) {
-        // noop
-      }
-    }
-  }
-
-  function isAlreadyCompactAudio(file) {
-    const type = String(file?.type || "").toLowerCase();
-    return type.includes("ogg") || type.includes("opus") || type.includes("webm");
-  }
-
   function isUploadFriendlyAudio(file) {
     const type = String(file?.type || "").toLowerCase();
     return (
@@ -1074,31 +881,6 @@
     } catch (error) {
       // noop
     }
-  }
-
-  function withTimeout(promise, timeoutMs, message) {
-    return Promise.race([
-      promise,
-      new Promise((_, reject) => {
-        setTimeout(() => reject(new Error(message)), timeoutMs);
-      }),
-    ]);
-  }
-
-  function pickRecorderMimeType() {
-    const mimeTypes = [
-      "audio/webm;codecs=opus",
-      "audio/ogg;codecs=opus",
-      "audio/webm",
-      "audio/ogg",
-    ];
-
-    return mimeTypes.find((type) => MediaRecorder.isTypeSupported(type)) || "";
-  }
-
-  function replaceExtension(filename, extension) {
-    const base = String(filename || "audio").replace(/\.[^.]+$/, "");
-    return `${base}.${extension}`;
   }
 
   function buildHtml(ticket) {
