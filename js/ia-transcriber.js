@@ -1210,6 +1210,37 @@
         #pagina-ia .ia-audio-visualizer {
           display: none;
         }
+
+        .audio-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #4a90e2, #9013fe);
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+#audio-player,
+#audio-player::-webkit-media-controls-panel {
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+#audio-player::-webkit-media-controls-play-button,
+#audio-player::-webkit-media-controls-pause-button {
+  background-color: #4a90e2;
+  border-radius: 50%;
+}
+
+#audio-player::-webkit-media-controls-current-time-display,
+#audio-player::-webkit-media-controls-time-remaining-display {
+  color: #4a90e2;
+  font-weight: bold;
+}
+
       }
     `;
     document.head.appendChild(style);
@@ -1357,7 +1388,9 @@
                               </div>
 
                               <div class="ia-audio-player-wrap">
-                                <audio id="ia-audio-player" controls preload="metadata"></audio>
+                                <div class="audio-container">
+                                  <audio id="ia-audio-player" controls preload="metadata"></audio>
+                                </div>
                               </div>
                             </div>
                           </div>
