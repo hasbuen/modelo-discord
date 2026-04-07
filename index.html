@@ -1,20 +1,11 @@
-<style id="protocord-enhancement-layer">
+<style id="pc-ui-polish">
   :root {
-    --pc-accent: #2563eb;
-    --pc-accent-2: #38bdf8;
-    --pc-cyan: #22d3ee;
-    --pc-violet: #8b5cf6;
-    --pc-success: #10b981;
-    --pc-warn: #f59e0b;
-    --pc-danger: #ef4444;
-
-    --pc-radius-lg: 18px;
-    --pc-radius-xl: 24px;
-    --pc-radius-2xl: 28px;
-
-    --pc-shadow-soft: 0 10px 30px rgba(0, 0, 0, .12);
-    --pc-shadow-md: 0 18px 40px rgba(0, 0, 0, .18);
-    --pc-shadow-glow: 0 0 0 1px rgba(56, 189, 248, .10), 0 18px 40px rgba(37, 99, 235, .18);
+    --pc-accent: #3b82f6;
+    --pc-accent-2: #22d3ee;
+    --pc-glow-dark: 0 0 0 1px rgba(59,130,246,.14), 0 14px 34px rgba(37,99,235,.18);
+    --pc-glow-light: 0 0 0 1px rgba(59,130,246,.10), 0 12px 28px rgba(59,130,246,.10);
+    --pc-shadow-dark: 0 14px 30px rgba(2,6,23,.22);
+    --pc-shadow-light: 0 10px 24px rgba(148,163,184,.16);
     --pc-transition: 220ms cubic-bezier(.2,.8,.2,1);
   }
 
@@ -30,22 +21,27 @@
   }
 
   body,
-  #main-content,
   #desktop-header,
   #sidebar,
   #mobile-sidebar,
+  .sidebar-item,
+  .toggle-theme-btn,
+  .mobile-theme-chip,
   .kpi-panel,
+  .kpi-stat-card,
   .reports-card,
+  .reports-kpi-card,
   .assistant-card,
   .assistant-sidecard,
   .ia-card,
-  .sidebar-item,
-  .toggle-theme-btn,
-  .reports-btn,
   .ia-btn-primary,
   .ia-btn-secondary,
   .ia-icon-btn,
-  .mobile-theme-chip {
+  .reports-btn,
+  #btn-auth-submit,
+  input,
+  textarea,
+  select {
     transition:
       background-color var(--pc-transition),
       border-color var(--pc-transition),
@@ -55,56 +51,51 @@
       opacity var(--pc-transition);
   }
 
-  body[data-theme="dark"],
   html[data-theme="dark"] body {
     background:
-      radial-gradient(circle at top left, rgba(37,99,235,.10), transparent 22%),
+      radial-gradient(circle at top left, rgba(59,130,246,.10), transparent 24%),
       radial-gradient(circle at top right, rgba(34,211,238,.08), transparent 18%),
       #0b1220;
   }
 
-  body[data-theme="light"],
   html[data-theme="light"] body {
     background:
-      radial-gradient(circle at top left, rgba(37,99,235,.05), transparent 22%),
-      radial-gradient(circle at top right, rgba(34,211,238,.04), transparent 18%),
+      radial-gradient(circle at top left, rgba(59,130,246,.05), transparent 24%),
+      radial-gradient(circle at top right, rgba(34,211,238,.05), transparent 18%),
       #eef4fb;
   }
 
   #desktop-header {
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(148, 163, 184, .08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   html[data-theme="dark"] #desktop-header {
-    background: rgba(11, 18, 32, .72);
-    box-shadow: 0 8px 30px rgba(2, 6, 23, .28);
+    background: rgba(11,18,32,.70);
+    border-bottom: 1px solid rgba(148,163,184,.08);
+    box-shadow: 0 8px 30px rgba(2,6,23,.22);
   }
 
   html[data-theme="light"] #desktop-header {
-    background: rgba(255, 255, 255, .75);
-    box-shadow: 0 8px 30px rgba(148, 163, 184, .12);
+    background: rgba(255,255,255,.74);
+    border-bottom: 1px solid rgba(148,163,184,.14);
+    box-shadow: 0 8px 24px rgba(148,163,184,.12);
   }
 
   #sidebar,
   #mobile-sidebar {
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
 
   html[data-theme="dark"] #sidebar,
   html[data-theme="dark"] #mobile-sidebar {
-    background:
-      linear-gradient(180deg, rgba(15, 23, 42, .96), rgba(7, 12, 24, .98));
-    box-shadow: inset -1px 0 0 rgba(255,255,255,.03);
+    background: linear-gradient(180deg, rgba(15,23,42,.96), rgba(7,12,24,.98));
   }
 
   html[data-theme="light"] #sidebar,
   html[data-theme="light"] #mobile-sidebar {
-    background:
-      linear-gradient(180deg, rgba(248, 251, 255, .96), rgba(240, 246, 252, .98));
-    box-shadow: inset -1px 0 0 rgba(148,163,184,.10);
+    background: linear-gradient(180deg, rgba(248,251,255,.96), rgba(240,246,252,.98));
   }
 
   .sidebar-item {
@@ -118,16 +109,16 @@
     position: absolute;
     inset: 0;
     opacity: 0;
-    transition: opacity var(--pc-transition);
     pointer-events: none;
+    transition: opacity var(--pc-transition);
   }
 
   html[data-theme="dark"] .sidebar-item::before {
-    background: linear-gradient(90deg, rgba(37,99,235,.14), rgba(34,211,238,.06));
+    background: linear-gradient(90deg, rgba(59,130,246,.14), rgba(34,211,238,.06));
   }
 
   html[data-theme="light"] .sidebar-item::before {
-    background: linear-gradient(90deg, rgba(37,99,235,.10), rgba(34,211,238,.05));
+    background: linear-gradient(90deg, rgba(59,130,246,.10), rgba(34,211,238,.05));
   }
 
   .sidebar-item:hover::before,
@@ -135,18 +126,71 @@
     opacity: 1;
   }
 
-  .sidebar-item:hover {
-    transform: translateX(2px);
+  html[data-theme="dark"] .kpi-panel,
+  html[data-theme="dark"] .kpi-stat-card,
+  html[data-theme="dark"] .reports-card,
+  html[data-theme="dark"] .reports-kpi-card,
+  html[data-theme="dark"] .assistant-card,
+  html[data-theme="dark"] .assistant-sidecard,
+  html[data-theme="dark"] .ia-card,
+  html[data-theme="dark"] #auth-container .bg-gray-900 {
+    box-shadow: var(--pc-shadow-dark);
   }
 
-  .toggle-theme-btn,
-  .mobile-theme-chip,
-  .reports-btn,
-  .ia-btn-primary,
-  .ia-btn-secondary,
-  .ia-icon-btn,
-  #btn-auth-submit {
-    will-change: transform, box-shadow;
+  html[data-theme="light"] .kpi-panel,
+  html[data-theme="light"] .kpi-stat-card,
+  html[data-theme="light"] .reports-card,
+  html[data-theme="light"] .reports-kpi-card,
+  html[data-theme="light"] .assistant-card,
+  html[data-theme="light"] .assistant-sidecard,
+  html[data-theme="light"] .ia-card,
+  html[data-theme="light"] #auth-container .bg-gray-900 {
+    box-shadow: var(--pc-shadow-light);
+  }
+
+  .kpi-panel:hover,
+  .kpi-stat-card:hover,
+  .reports-card:hover,
+  .reports-kpi-card:hover,
+  .assistant-card:hover,
+  .assistant-sidecard:hover,
+  .ia-card:hover {
+    transform: translateY(-1px);
+  }
+
+  html[data-theme="dark"] .kpi-panel:hover,
+  html[data-theme="dark"] .kpi-stat-card:hover,
+  html[data-theme="dark"] .reports-card:hover,
+  html[data-theme="dark"] .reports-kpi-card:hover,
+  html[data-theme="dark"] .assistant-card:hover,
+  html[data-theme="dark"] .assistant-sidecard:hover,
+  html[data-theme="dark"] .ia-card:hover {
+    box-shadow: var(--pc-glow-dark);
+  }
+
+  html[data-theme="light"] .kpi-panel:hover,
+  html[data-theme="light"] .kpi-stat-card:hover,
+  html[data-theme="light"] .reports-card:hover,
+  html[data-theme="light"] .reports-kpi-card:hover,
+  html[data-theme="light"] .assistant-card:hover,
+  html[data-theme="light"] .assistant-sidecard:hover,
+  html[data-theme="light"] .ia-card:hover {
+    box-shadow: var(--pc-glow-light);
+  }
+
+  .kpi-title,
+  .reports-title,
+  .assistant-title,
+  .ia-main-title {
+    letter-spacing: -.03em;
+  }
+
+  .kpi-badge,
+  .sidebar-pill,
+  .ia-pill,
+  .reports-sync-badge {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
   .toggle-theme-btn:hover,
@@ -159,260 +203,124 @@
     transform: translateY(-1px);
   }
 
-  .toggle-theme-btn.active {
-    box-shadow: var(--pc-shadow-glow);
+  html[data-theme="dark"] .toggle-theme-btn.active {
+    box-shadow: var(--pc-glow-dark);
   }
 
-  html[data-theme="dark"] .kpi-panel,
-  html[data-theme="dark"] .reports-card,
-  html[data-theme="dark"] .assistant-card,
-  html[data-theme="dark"] .assistant-sidecard,
-  html[data-theme="dark"] .ia-card,
-  html[data-theme="dark"] #auth-container .bg-gray-900 {
-    background:
-      linear-gradient(180deg, rgba(15,23,42,.84), rgba(10,15,28,.92));
-    border-color: rgba(59, 130, 246, .10) !important;
-    box-shadow: var(--pc-shadow-md);
+  html[data-theme="light"] .toggle-theme-btn.active {
+    box-shadow: var(--pc-glow-light);
   }
 
-  html[data-theme="light"] .kpi-panel,
-  html[data-theme="light"] .reports-card,
-  html[data-theme="light"] .assistant-card,
-  html[data-theme="light"] .assistant-sidecard,
-  html[data-theme="light"] .ia-card,
-  html[data-theme="light"] #auth-container .bg-gray-900 {
-    background:
-      linear-gradient(180deg, rgba(255,255,255,.96), rgba(247,250,253,.96));
-    border-color: rgba(148, 163, 184, .16) !important;
-    box-shadow: 0 12px 32px rgba(148, 163, 184, .14);
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
   }
 
-  .kpi-panel:hover,
-  .reports-card:hover,
-  .assistant-card:hover,
-  .assistant-sidecard:hover,
-  .ia-card:hover {
-    box-shadow: var(--pc-shadow-glow);
+  html[data-theme="dark"] input:focus,
+  html[data-theme="dark"] textarea:focus,
+  html[data-theme="dark"] select:focus {
+    box-shadow: 0 0 0 4px rgba(59,130,246,.14);
   }
 
-  .kpi-title,
-  .reports-title,
-  .assistant-title,
-  .ia-main-title {
-    letter-spacing: -.03em;
+  html[data-theme="light"] input:focus,
+  html[data-theme="light"] textarea:focus,
+  html[data-theme="light"] select:focus {
+    box-shadow: 0 0 0 4px rgba(59,130,246,.10);
   }
 
-  .kpi-badge,
-  .reports-sync-badge,
-  .sidebar-pill,
-  .ia-pill {
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
-    backdrop-filter: blur(10px);
+  .pc-motion-target {
+    will-change: transform, opacity, filter;
   }
 
-  .kpi-stat-card,
-  .reports-kpi-card,
-  .ia-metric-card {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .kpi-stat-card::after,
-  .reports-kpi-card::after,
-  .ia-metric-card::after {
-    content: "";
-    position: absolute;
-    inset: -40% auto auto -30%;
-    width: 120px;
-    height: 120px;
-    border-radius: 999px;
-    background: radial-gradient(circle, rgba(56,189,248,.12), transparent 70%);
-    pointer-events: none;
-  }
-
-  html[data-theme="light"] .kpi-stat-card::after,
-  html[data-theme="light"] .reports-kpi-card::after,
-  html[data-theme="light"] .ia-metric-card::after {
-    background: radial-gradient(circle, rgba(37,99,235,.08), transparent 70%);
-  }
-
-  .ia-ticket-list,
-  .assistant-messages,
-  .sidebar-nav,
-  .kpi-table-wrap,
-  .reports-table-wrap {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(100,116,139,.45) transparent;
-  }
-
-  .ia-ticket-list::-webkit-scrollbar,
-  .assistant-messages::-webkit-scrollbar,
-  .sidebar-nav::-webkit-scrollbar,
-  .kpi-table-wrap::-webkit-scrollbar,
-  .reports-table-wrap::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  .ia-ticket-list::-webkit-scrollbar-thumb,
-  .assistant-messages::-webkit-scrollbar-thumb,
-  .sidebar-nav::-webkit-scrollbar-thumb,
-  .kpi-table-wrap::-webkit-scrollbar-thumb,
-  .reports-table-wrap::-webkit-scrollbar-thumb {
-    background: rgba(100,116,139,.38);
-    border-radius: 999px;
-  }
-
-  .ia-card {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .ia-card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(circle at top right, rgba(34,211,238,.08), transparent 26%);
-    opacity: .9;
-  }
-
-  .ia-section-header,
-  .ia-main-header,
-  .reports-card-header,
-  .kpi-panel-header {
-    position: relative;
-    z-index: 1;
-  }
-
-  /* Player refinado sem trocar sua lógica */
+  /* Refino só visual do player, sem trocar estrutura */
   #ia-audio-card {
     position: relative;
-  }
-
-  #ia-audio-card .ia-audio-shell {
-    position: relative;
-    padding: 14px;
-    border-radius: 20px;
     overflow: hidden;
   }
 
-  html[data-theme="dark"] #ia-audio-card .ia-audio-shell {
-    background:
-      linear-gradient(180deg, rgba(15,23,42,.80), rgba(8,14,28,.92));
-    border: 1px solid rgba(56,189,248,.14);
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.03),
-      0 14px 34px rgba(2,6,23,.28);
-  }
-
-  html[data-theme="light"] #ia-audio-card .ia-audio-shell {
-    background:
-      linear-gradient(180deg, rgba(255,255,255,.96), rgba(246,249,253,.96));
-    border: 1px solid rgba(56,189,248,.12);
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.75),
-      0 14px 34px rgba(148,163,184,.16);
-  }
-
-  #ia-audio-card .ia-audio-shell::before {
+  #ia-audio-card::before {
     content: "";
     position: absolute;
-    top: -42px;
-    right: -42px;
+    top: -48px;
+    right: -48px;
     width: 140px;
     height: 140px;
     border-radius: 999px;
-    background: radial-gradient(circle, rgba(34,211,238,.16), transparent 70%);
     pointer-events: none;
+    background: radial-gradient(circle, rgba(34,211,238,.14), transparent 70%);
   }
 
-  #ia-audio-card .ia-audio-meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 12px;
-    position: relative;
-    z-index: 1;
-  }
-
-  #ia-audio-card .ia-audio-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: .01em;
-  }
-
-  html[data-theme="dark"] #ia-audio-card .ia-audio-badge {
-    background: rgba(34,211,238,.10);
-    color: #9be8f5;
-    border: 1px solid rgba(34,211,238,.16);
-  }
-
-  html[data-theme="light"] #ia-audio-card .ia-audio-badge {
-    background: rgba(37,99,235,.08);
-    color: #1e40af;
-    border: 1px solid rgba(37,99,235,.10);
-  }
-
-  #ia-audio-card .ia-audio-wave {
-    display: flex;
-    align-items: end;
-    gap: 4px;
-    height: 22px;
-  }
-
-  #ia-audio-card .ia-audio-wave span {
-    width: 4px;
-    border-radius: 999px;
-    background: linear-gradient(180deg, #67e8f9, #2563eb);
-    animation: pcWave 1.2s ease-in-out infinite;
-    transform-origin: bottom center;
-    opacity: .9;
-  }
-
-  #ia-audio-card .ia-audio-wave span:nth-child(1) { height: 8px; animation-delay: .00s; }
-  #ia-audio-card .ia-audio-wave span:nth-child(2) { height: 16px; animation-delay: .10s; }
-  #ia-audio-card .ia-audio-wave span:nth-child(3) { height: 12px; animation-delay: .20s; }
-  #ia-audio-card .ia-audio-wave span:nth-child(4) { height: 20px; animation-delay: .30s; }
-  #ia-audio-card .ia-audio-wave span:nth-child(5) { height: 10px; animation-delay: .40s; }
-
-  @keyframes pcWave {
-    0%, 100% { transform: scaleY(.6); opacity: .55; }
-    50% { transform: scaleY(1.15); opacity: 1; }
-  }
-
-  #ia-audio-player {
-    width: 100%;
-    min-height: 52px;
+  html[data-theme="dark"] #ia-audio-player {
+    background: rgba(255,255,255,.02);
     border-radius: 16px;
-    overflow: hidden;
-    position: relative;
-    z-index: 1;
+    box-shadow: inset 0 0 0 1px rgba(148,163,184,.08);
+  }
+
+  html[data-theme="light"] #ia-audio-player {
+    background: rgba(255,255,255,.72);
+    border-radius: 16px;
+    box-shadow: inset 0 0 0 1px rgba(148,163,184,.14);
   }
 
   #ia-audio-player::-webkit-media-controls-panel {
     background: transparent;
   }
 
-  .pc-reveal {
-    opacity: 0;
-    transform: translateY(10px);
+  .pc-audio-topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
   }
 
-  .pc-ready {
-    opacity: 1;
-    transform: none;
+  .pc-audio-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 12px;
+    border-radius: 999px;
   }
 
-  .pc-glow-hover:hover {
-    box-shadow: var(--pc-shadow-glow);
+  html[data-theme="dark"] .pc-audio-chip {
+    background: rgba(34,211,238,.10);
+    border: 1px solid rgba(34,211,238,.14);
+    color: #9be8f5;
+  }
+
+  html[data-theme="light"] .pc-audio-chip {
+    background: rgba(59,130,246,.08);
+    border: 1px solid rgba(59,130,246,.10);
+    color: #1d4ed8;
+  }
+
+  .pc-audio-bars {
+    display: flex;
+    align-items: end;
+    gap: 4px;
+    height: 22px;
+  }
+
+  .pc-audio-bars span {
+    width: 4px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #67e8f9, #2563eb);
+    transform-origin: bottom;
+    animation: pc-bars 1.1s ease-in-out infinite;
+  }
+
+  .pc-audio-bars span:nth-child(1) { height: 8px; animation-delay: 0s; }
+  .pc-audio-bars span:nth-child(2) { height: 16px; animation-delay: .1s; }
+  .pc-audio-bars span:nth-child(3) { height: 10px; animation-delay: .2s; }
+  .pc-audio-bars span:nth-child(4) { height: 18px; animation-delay: .3s; }
+  .pc-audio-bars span:nth-child(5) { height: 12px; animation-delay: .4s; }
+
+  @keyframes pc-bars {
+    0%, 100% { transform: scaleY(.6); opacity: .55; }
+    50% { transform: scaleY(1.15); opacity: 1; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -421,239 +329,109 @@
     *::after {
       animation: none !important;
       transition-duration: .01ms !important;
-      scroll-behavior: auto !important;
     }
   }
 </style>
 
-<script type="module" id="protocord-enhancement-script">
-  const motionModule = await import('https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm').catch(() => null);
-  const animate = motionModule?.animate || null;
-  const stagger = motionModule?.stagger || null;
-  const inView = motionModule?.inView || null;
+<script type="module">
+  const motion = await import('https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm').catch(() => null);
+  const animate = motion?.animate;
+  const stagger = motion?.stagger;
+  const inView = motion?.inView;
 
-  const $ = (sel, ctx = document) => ctx.querySelector(sel);
-  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
+  const $ = (s, c = document) => c.querySelector(s);
+  const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
 
-  const raf = (fn) => requestAnimationFrame(() => requestAnimationFrame(fn));
-
-  function wrapAudioPlayer() {
-    const card = $('#ia-audio-card');
-    const player = $('#ia-audio-player');
-    if (!card || !player) return;
-    if (card.querySelector('.ia-audio-shell')) return;
-
-    const sectionHeader = card.querySelector('.ia-section-header');
-    const shell = document.createElement('div');
-    shell.className = 'ia-audio-shell pc-reveal';
-
-    const meta = document.createElement('div');
-    meta.className = 'ia-audio-meta';
-    meta.innerHTML = `
-      <div class="ia-audio-badge">
-        <i data-lucide="radio" class="w-4 h-4"></i>
-        Reprodução local
-      </div>
-      <div class="ia-audio-wave" aria-hidden="true">
-        <span></span><span></span><span></span><span></span><span></span>
-      </div>
-    `;
-
-    const oldParent = player.parentElement;
-    oldParent.insertBefore(shell, player);
-    shell.appendChild(meta);
-    shell.appendChild(player);
-
-    if (sectionHeader) {
-      sectionHeader.classList.add('pc-glow-hover');
-    }
-
-    if (window.lucide?.createIcons) window.lucide.createIcons();
-  }
-
-  function markRevealTargets() {
-    [
+  function markTargets(context = document) {
+    const selectors = [
       '.kpi-panel',
+      '.kpi-stat-card',
       '.reports-card',
+      '.reports-kpi-card',
       '.assistant-card',
       '.assistant-sidecard',
       '.ia-card',
-      '.kpi-stat-card',
-      '.reports-kpi-card',
-      '.ia-metric-card',
       '.sidebar-item',
-      '.theme-toggles-container .toggle-theme-btn'
-    ].forEach((selector) => {
-      $$(selector).forEach((el) => el.classList.add('pc-reveal'));
-    });
-  }
-
-  function runRevealAnimations() {
-    if (!animate || !inView) {
-      $$('.pc-reveal').forEach((el) => el.classList.add('pc-ready'));
-      return;
-    }
-
-    inView('.pc-reveal', (element) => {
-      animate(
-        element,
-        {
-          opacity: [0, 1],
-          y: [12, 0],
-          filter: ['blur(8px)', 'blur(0px)']
-        },
-        {
-          duration: 0.42,
-          easing: [0.22, 1, 0.36, 1]
-        }
-      );
-      element.classList.add('pc-ready');
-    });
-  }
-
-  function animateActivePage() {
-    if (!animate) return;
-    const visiblePage = $$('[id^="pagina-"]:not(.hidden)').filter((el) => getComputedStyle(el).display !== 'none')[0];
-    if (!visiblePage) return;
-
-    const hero = visiblePage.querySelector('.kpi-hero, .reports-hero, .assistant-hero, .ia-main-header');
-    const cards = $$(
-      '.kpi-panel, .reports-card, .assistant-card, .assistant-sidecard, .ia-card, .kpi-stat-card, .reports-kpi-card',
-      visiblePage
-    ).slice(0, 12);
-
-    if (hero) {
-      animate(hero, { opacity: [0,1], y: [8,0] }, { duration: .32, easing: 'ease-out' });
-    }
-
-    if (cards.length) {
-      animate(
-        cards,
-        { opacity: [0,1], y: [14,0], scale: [0.985,1] },
-        { duration: .36, delay: stagger ? stagger(0.035) : 0, easing: 'ease-out' }
-      );
-    }
-  }
-
-  function enhanceButtons() {
-    const selectors = [
+      '.toggle-theme-btn',
       '.reports-btn',
       '.ia-btn-primary',
       '.ia-btn-secondary',
       '.ia-icon-btn',
-      '.toggle-theme-btn',
       '.mobile-theme-chip',
-      '#btn-auth-submit',
-      '.sidebar-item'
+      '#btn-auth-submit'
     ];
 
     selectors.forEach((selector) => {
-      $$(selector).forEach((el) => {
-        if (el.dataset.pcEnhanced === '1') return;
-        el.dataset.pcEnhanced = '1';
-
-        el.addEventListener('pointerenter', () => {
-          if (!animate) return;
-          animate(el, { scale: 1.01, y: -1 }, { duration: .16, easing: 'ease-out' });
-        });
-
-        el.addEventListener('pointerleave', () => {
-          if (!animate) return;
-          animate(el, { scale: 1, y: 0 }, { duration: .16, easing: 'ease-out' });
-        });
-
-        el.addEventListener('pointerdown', () => {
-          if (!animate) return;
-          animate(el, { scale: .985 }, { duration: .08, easing: 'ease-out' });
-        });
-
-        el.addEventListener('pointerup', () => {
-          if (!animate) return;
-          animate(el, { scale: 1 }, { duration: .14, easing: 'ease-out' });
-        });
-      });
+      $$(selector, context).forEach((el) => el.classList.add('pc-motion-target'));
     });
   }
 
-  function optimizeIconsRefresh() {
-    let queued = false;
-    const run = () => {
-      queued = false;
-      if (window.lucide?.createIcons) window.lucide.createIcons();
-    };
-
-    const schedule = () => {
-      if (queued) return;
-      queued = true;
-      requestAnimationFrame(run);
-    };
-
-    const observer = new MutationObserver(schedule);
-    observer.observe(document.body, { childList: true, subtree: true });
-  }
-
-  function patchNavigationAnimation() {
-    if (typeof window.mostrarPagina !== 'function') return;
-    if (window.__pcMostrarPaginaPatched) return;
-
-    const original = window.mostrarPagina;
-    window.mostrarPagina = function (...args) {
-      const result = original.apply(this, args);
-      raf(() => {
-        wrapAudioPlayer();
-        markRevealTargets();
-        runRevealAnimations();
-        enhanceButtons();
-        animateActivePage();
-      });
-      return result;
-    };
-    window.__pcMostrarPaginaPatched = true;
-  }
-
-  function patchThemeAnimation() {
-    if (typeof window.alternarTema !== 'function') return;
-    if (window.__pcAlternarTemaPatched) return;
-
-    const original = window.alternarTema;
-    window.alternarTema = function (...args) {
-      const result = original.apply(this, args);
-      raf(() => {
-        wrapAudioPlayer();
-        enhanceButtons();
-        animateActivePage();
-      });
-      return result;
-    };
-    window.__pcAlternarTemaPatched = true;
-  }
-
-  function patchAudioBehavior() {
-    const player = $('#ia-audio-player');
+  function enhanceAudioCard() {
     const card = $('#ia-audio-card');
-    if (!player || !card) return;
-    if (player.dataset.pcAudioBound === '1') return;
-    player.dataset.pcAudioBound = '1';
+    const player = $('#ia-audio-player');
+    if (!card || !player) return;
+    if (card.dataset.pcAudioEnhanced === '1') return;
 
-    const playAnim = () => {
-      if (!animate) return;
-      animate(card, { boxShadow: ['0 0 0 rgba(0,0,0,0)', '0 0 0 1px rgba(56,189,248,.10), 0 20px 44px rgba(37,99,235,.18)'] }, { duration: .35 });
-    };
+    const header = card.querySelector('.ia-section-header');
+    if (!header) return;
 
-    const stopAnim = () => {
-      if (!animate) return;
-      animate(card, { boxShadow: ['0 0 0 1px rgba(56,189,248,.10), 0 20px 44px rgba(37,99,235,.18)', '0 12px 32px rgba(0,0,0,.12)'] }, { duration: .3 });
-    };
+    const top = document.createElement('div');
+    top.className = 'pc-audio-topline';
+    top.innerHTML = `
+      <div class="pc-audio-chip">
+        <i data-lucide="radio" class="w-4 h-4"></i>
+        Reprodução local
+      </div>
+      <div class="pc-audio-bars" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+    `;
 
-    player.addEventListener('play', playAnim);
-    player.addEventListener('pause', stopAnim);
-    player.addEventListener('ended', stopAnim);
+    header.insertAdjacentElement('afterend', top);
+    card.dataset.pcAudioEnhanced = '1';
+
+    if (window.lucide?.createIcons) window.lucide.createIcons();
   }
 
-  function softOptimizeInputs() {
-    $$('input, textarea, select').forEach((el) => {
-      if (el.dataset.pcInputBound === '1') return;
-      el.dataset.pcInputBound = '1';
+  function animateHover(el) {
+    if (!animate || !el) return;
+    if (el.dataset.pcHoverBound === '1') return;
+    el.dataset.pcHoverBound = '1';
+
+    el.addEventListener('pointerenter', () => {
+      animate(el, { y: -1, scale: 1.01 }, { duration: .16, easing: 'ease-out' });
+    });
+
+    el.addEventListener('pointerleave', () => {
+      animate(el, { y: 0, scale: 1 }, { duration: .16, easing: 'ease-out' });
+    });
+
+    el.addEventListener('pointerdown', () => {
+      animate(el, { scale: .985 }, { duration: .08, easing: 'ease-out' });
+    });
+
+    el.addEventListener('pointerup', () => {
+      animate(el, { scale: 1 }, { duration: .14, easing: 'ease-out' });
+    });
+  }
+
+  function bindInteractiveAnimations(context = document) {
+    [
+      '.sidebar-item',
+      '.toggle-theme-btn',
+      '.reports-btn',
+      '.ia-btn-primary',
+      '.ia-btn-secondary',
+      '.ia-icon-btn',
+      '.mobile-theme-chip',
+      '#btn-auth-submit'
+    ].forEach((selector) => {
+      $$(selector, context).forEach(animateHover);
+    });
+
+    $$('input, textarea, select', context).forEach((el) => {
+      if (el.dataset.pcFocusBound === '1') return;
+      el.dataset.pcFocusBound = '1';
 
       el.addEventListener('focus', () => {
         if (!animate) return;
@@ -662,34 +440,109 @@
     });
   }
 
-  function duplicateIdWarning() {
-    const ids = {};
-    $$('[id]').forEach((el) => {
-      ids[el.id] = (ids[el.id] || 0) + 1;
+  function revealOnView() {
+    if (!animate || !inView) return;
+
+    inView('.pc-motion-target', (element) => {
+      animate(
+        element,
+        {
+          opacity: [0, 1],
+          y: [10, 0],
+          filter: ['blur(8px)', 'blur(0px)']
+        },
+        {
+          duration: .38,
+          easing: [0.22, 1, 0.36, 1]
+        }
+      );
     });
-    const duplicates = Object.entries(ids).filter(([, count]) => count > 1).map(([id]) => id);
-    if (duplicates.length) {
-      console.warn('ProtoCord enhancement: IDs duplicados encontrados:', duplicates);
-    }
   }
 
-  function initEnhancements() {
-    wrapAudioPlayer();
-    markRevealTargets();
-    runRevealAnimations();
-    enhanceButtons();
-    optimizeIconsRefresh();
-    patchNavigationAnimation();
-    patchThemeAnimation();
-    patchAudioBehavior();
-    softOptimizeInputs();
-    animateActivePage();
-    duplicateIdWarning();
+  function animateVisiblePage() {
+    if (!animate) return;
+
+    const page = $$('[id^="pagina-"]').find((el) => !el.classList.contains('hidden'));
+    if (!page) return;
+
+    const blocks = [
+      ...$$('.kpi-hero, .reports-hero, .assistant-hero, .ia-main-header', page),
+      ...$$('.kpi-panel, .kpi-stat-card, .reports-card, .reports-kpi-card, .assistant-card, .assistant-sidecard, .ia-card', page).slice(0, 14)
+    ];
+
+    if (!blocks.length) return;
+
+    animate(
+      blocks,
+      { opacity: [0, 1], y: [12, 0], scale: [0.992, 1] },
+      { duration: .34, delay: stagger ? stagger(0.03) : 0, easing: 'ease-out' }
+    );
+  }
+
+  function patchMostrarPagina() {
+    if (typeof window.mostrarPagina !== 'function') return;
+    if (window.__pcMostrarPaginaWrapped) return;
+
+    const original = window.mostrarPagina;
+    window.mostrarPagina = function (...args) {
+      const result = original.apply(this, args);
+      requestAnimationFrame(() => {
+        markTargets();
+        bindInteractiveAnimations();
+        enhanceAudioCard();
+        animateVisiblePage();
+      });
+      return result;
+    };
+
+    window.__pcMostrarPaginaWrapped = true;
+  }
+
+  function patchAlternarTema() {
+    if (typeof window.alternarTema !== 'function') return;
+    if (window.__pcAlternarTemaWrapped) return;
+
+    const original = window.alternarTema;
+    window.alternarTema = function (...args) {
+      const result = original.apply(this, args);
+      requestAnimationFrame(() => {
+        markTargets();
+        bindInteractiveAnimations();
+        enhanceAudioCard();
+      });
+      return result;
+    };
+
+    window.__pcAlternarTemaWrapped = true;
+  }
+
+  function observeDom() {
+    const observer = new MutationObserver(() => {
+      markTargets();
+      bindInteractiveAnimations();
+      enhanceAudioCard();
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  function initPolish() {
+    markTargets();
+    bindInteractiveAnimations();
+    enhanceAudioCard();
+    revealOnView();
+    animateVisiblePage();
+    patchMostrarPagina();
+    patchAlternarTema();
+    observeDom();
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => raf(initEnhancements));
+    document.addEventListener('DOMContentLoaded', initPolish);
   } else {
-    raf(initEnhancements);
+    initPolish();
   }
 </script>
