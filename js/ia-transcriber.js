@@ -555,27 +555,63 @@
     }
   }
 
+  async function getAudioDurationSeconds(file) {
+  return new Promise((resolve) => {
+    try {
+      const url = URL.createObjectURL(file);
+      const audio = document.createElement("audio");
+
+      const cleanup = () => {
+        URL.revokeObjectURL(url);
+        audio.removeAttribute("src");
+      };
+
+      audio.preload = "metadata";
+      audio.onloadedmetadata = () => {
+        const duration = Number(audio.duration);
+        cleanup();
+        resolve(Number.isFinite(duration) && duration > 0 ? duration : 0);
+      };
+
+      audio.onerror = () => {
+        cleanup();
+        resolve(0);
+      };
+
+      audio.src = url;
+    } catch (error) {
+      resolve(0);
+    }
+  });
+}
+
 async function prepareAudioForTranscription(file) {
   const SAFE_TRANSCRIPTION_BYTES = 20 * 1024 * 1024;
-  const shouldCompress =
-    file.size > SAFE_TRANSCRIPTION_BYTES ||
-    !isAlreadyCompactAudio(file);
 
-  if (!shouldCompress) {
+  if (file.size <= SAFE_TRANSCRIPTION_BYTES) {
     return file;
   }
 
-  notify("Compactando áudio antes da transcrição...", "info");
+  notify("Áudio acima do limite seguro. Tentando compactar antes da transcrição...", "info");
+
+  const durationSeconds = await getAudioDurationSeconds(file);
+
+  // timeout dinâmico:
+  // base de 60s + 2s por segundo de áudio, limitado a 8 minutos
+  const compressionTimeoutMs = Math.min(
+    8 * 60 * 1000,
+    Math.max(60000, 60000 + Math.ceil(durationSeconds * 2000))
+  );
 
   const compressedFile = await withTimeout(
     compressAudioForUpload(file),
-    45000,
+    compressionTimeoutMs,
     "Tempo esgotado ao compactar o áudio para transcrição.",
   );
 
   if (compressedFile.size > SAFE_TRANSCRIPTION_BYTES) {
     throw new Error(
-      "O áudio ainda ficou acima do limite seguro para transcrição. Envie um arquivo menor ou mais curto."
+      "O áudio continua acima do limite seguro após a compactação. Envie um arquivo menor ou mais curto."
     );
   }
 
@@ -858,50 +894,54 @@ async function prepareAudioForTranscription(file) {
     }
   }
 
-  async function compressAudioForUpload(file) {
-    if (typeof MediaRecorder === "undefined") {
-      throw new Error("Seu navegador não suporta conversão local deste áudio.");
-    }
-
-    const mimeType = pickRecorderMimeType();
-    if (!mimeType) {
-      throw new Error("Nenhum codec compatível encontrado para converter o áudio.");
-    }
-
-    const arrayBuffer = await file.arrayBuffer();
-    const decoderContext = new (window.AudioContext || window.webkitAudioContext)();
-
-    try {
-      const decodedBuffer = await decoderContext.decodeAudioData(arrayBuffer.slice(0));
-      const normalizedBuffer = await resampleToMono(decodedBuffer, TARGET_SAMPLE_RATE);
-      const bitrates = [16000, 12000, 8000, 6000];
-
-      let bestBlob = null;
-
-      for (const bitrate of bitrates) {
-        const encodedBlob = await encodeAudioBufferToOpus(normalizedBuffer, mimeType, bitrate);
-
-        if (!bestBlob || encodedBlob.size < bestBlob.size) {
-          bestBlob = encodedBlob;
-        }
-
-        if (encodedBlob.size <= MAX_UPLOAD_BYTES) {
-          bestBlob = encodedBlob;
-          break;
-        }
-      }
-
-      if (!bestBlob) {
-        throw new Error("Não foi possível converter o áudio para um formato menor.");
-      }
-
-      const extension = mimeType.includes("ogg") ? "ogg" : "webm";
-      return new File([bestBlob], replaceExtension(file.name, extension), { type: mimeType });
-    } finally {
-      try { await decoderContext.close(); } catch (error) { /* noop */ }
-    }
+async function compressAudioForUpload(file) {
+  if (typeof MediaRecorder === "undefined") {
+    throw new Error("Seu navegador não suporta conversão local deste áudio.");
   }
 
+  const mimeType = pickRecorderMimeType();
+  if (!mimeType) {
+    throw new Error("Nenhum codec compatível encontrado para converter o áudio.");
+  }
+
+  const arrayBuffer = await file.arrayBuffer();
+  const decoderContext = new (window.AudioContext || window.webkitAudioContext)();
+
+  try {
+    const decodedBuffer = await decoderContext.decodeAudioData(arrayBuffer.slice(0));
+    const normalizedBuffer = await resampleToMono(decodedBuffer, TARGET_SAMPLE_RATE);
+
+    // menos tentativas = menos tempo de processamento no navegador
+    const bitrates = [12000, 8000, 6000, 4000];
+    let bestBlob = null;
+
+    for (const bitrate of bitrates) {
+      const encodedBlob = await encodeAudioBufferToOpus(normalizedBuffer, mimeType, bitrate);
+
+      if (!bestBlob || encodedBlob.size < bestBlob.size) {
+        bestBlob = encodedBlob;
+      }
+
+      if (encodedBlob.size <= 20 * 1024 * 1024) {
+        break;
+      }
+    }
+
+    if (!bestBlob) {
+      throw new Error("Não foi possível converter o áudio para um formato menor.");
+    }
+
+    const extension = mimeType.includes("ogg") ? "ogg" : "webm";
+    return new File([bestBlob], replaceExtension(file.name, extension), { type: mimeType });
+  } finally {
+    try {
+      await decoderContext.close();
+    } catch (error) {
+      // noop
+    }
+  }
+}
+  
   async function resampleToMono(sourceBuffer, targetSampleRate) {
     const frameCount = Math.ceil(sourceBuffer.duration * targetSampleRate);
     const offlineContext = new OfflineAudioContext(1, frameCount, targetSampleRate);
@@ -924,64 +964,74 @@ async function prepareAudioForTranscription(file) {
     return offlineContext.startRendering();
   }
 
-  async function encodeAudioBufferToOpus(audioBuffer, mimeType, audioBitsPerSecond) {
-    const playbackContext = new (window.AudioContext || window.webkitAudioContext)({
-      sampleRate: audioBuffer.sampleRate,
+async function encodeAudioBufferToOpus(audioBuffer, mimeType, audioBitsPerSecond) {
+  const playbackContext = new (window.AudioContext || window.webkitAudioContext)({
+    sampleRate: audioBuffer.sampleRate,
+  });
+
+  try {
+    const destination = playbackContext.createMediaStreamDestination();
+    const monitorGain = playbackContext.createGain();
+    monitorGain.gain.value = 0;
+
+    const source = playbackContext.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(destination);
+    source.connect(monitorGain);
+    monitorGain.connect(playbackContext.destination);
+
+    const chunks = [];
+    const recorder = new MediaRecorder(destination.stream, {
+      mimeType,
+      audioBitsPerSecond,
     });
 
-    try {
-      const destination = playbackContext.createMediaStreamDestination();
-      const monitorGain = playbackContext.createGain();
-      monitorGain.gain.value = 0;
-      const source = playbackContext.createBufferSource();
-      source.buffer = audioBuffer;
-      source.connect(destination);
-      source.connect(monitorGain);
-      monitorGain.connect(playbackContext.destination);
+    await playbackContext.resume();
 
-      const chunks = [];
-      const recorder = new MediaRecorder(destination.stream, {
-        mimeType,
-        audioBitsPerSecond,
-      });
+    return await new Promise((resolve, reject) => {
+      const timeoutMs = Math.min(
+        8 * 60 * 1000,
+        Math.max(30000, Math.ceil(audioBuffer.duration * 4000))
+      );
 
-      await playbackContext.resume();
-
-      return await new Promise((resolve, reject) => {
-        const timeoutId = setTimeout(() => {
-          try {
-            if (recorder.state !== "inactive") recorder.stop();
-          } catch (error) {
-            // noop
-          }
-          reject(new Error("Tempo esgotado ao converter o áudio para Opus."));
-        }, Math.max(15000, Math.ceil(audioBuffer.duration * 2000)));
-
-        recorder.addEventListener("dataavailable", (event) => {
-          if (event.data?.size) chunks.push(event.data);
-        });
-
-        recorder.addEventListener("stop", () => {
-          clearTimeout(timeoutId);
-          resolve(new Blob(chunks, { type: mimeType }));
-        });
-
-        recorder.addEventListener("error", () => {
-          clearTimeout(timeoutId);
-          reject(new Error("Falha ao codificar o áudio em Opus."));
-        });
-
-        source.addEventListener("ended", () => {
+      const timeoutId = setTimeout(() => {
+        try {
           if (recorder.state !== "inactive") recorder.stop();
-        });
+        } catch (error) {
+          // noop
+        }
+        reject(new Error("Tempo esgotado ao converter o áudio para Opus."));
+      }, timeoutMs);
 
-        recorder.start(250);
-        source.start(0);
+      recorder.addEventListener("dataavailable", (event) => {
+        if (event.data?.size) chunks.push(event.data);
       });
-    } finally {
-      try { await playbackContext.close(); } catch (error) { /* noop */ }
+
+      recorder.addEventListener("stop", () => {
+        clearTimeout(timeoutId);
+        resolve(new Blob(chunks, { type: mimeType }));
+      });
+
+      recorder.addEventListener("error", () => {
+        clearTimeout(timeoutId);
+        reject(new Error("Falha ao codificar o áudio em Opus."));
+      });
+
+      source.addEventListener("ended", () => {
+        if (recorder.state !== "inactive") recorder.stop();
+      });
+
+      recorder.start(1000);
+      source.start(0);
+    });
+  } finally {
+    try {
+      await playbackContext.close();
+    } catch (error) {
+      // noop
     }
   }
+}
 
   function isAlreadyCompactAudio(file) {
     const type = String(file?.type || "").toLowerCase();
