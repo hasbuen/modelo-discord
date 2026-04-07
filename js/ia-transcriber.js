@@ -217,7 +217,7 @@
     const id = String(Date.now());
     const ticket = {
       id,
-      phone: "Novo Chamado",
+      phone: "Novo Ticket",
       customName: "",
       images: [],
       analysis: "",
