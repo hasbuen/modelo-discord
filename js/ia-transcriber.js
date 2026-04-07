@@ -2632,10 +2632,6 @@ function renderAudio(active) {
       els.audioCard.classList.remove("hidden");
 els.audioPlayer.src = active.audioUrl;
 els.audioPlayer.load();
-
-      // PRESTAR ATENÇÃO
-      
-      await ensurePlyrPlayer();
       
     } catch (error) {
       console.error("Falha ao hidratar áudio local:", error);
