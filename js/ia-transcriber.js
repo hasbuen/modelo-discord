@@ -1311,6 +1311,182 @@
           display: none;
         }
       }
+            #pagina-ia .ia-audio-player-custom {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 999px;
+        background:
+          linear-gradient(180deg, rgba(248,252,255,.98), rgba(236,244,250,.95));
+        box-shadow:
+          0 10px 24px rgba(0,0,0,.14),
+          inset 0 1px 0 rgba(255,255,255,.95);
+      }
+
+      #pagina-ia .ia-audio-player-custom audio {
+        display: none;
+      }
+
+      #pagina-ia .ia-audio-play-btn {
+        width: 42px;
+        height: 42px;
+        border: none;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #22cbe9, #11b8d8);
+        color: #04293a;
+        font-size: 16px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 8px 18px rgba(18,189,223,.28);
+        transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+        flex-shrink: 0;
+      }
+
+      #pagina-ia .ia-audio-play-btn:hover {
+        transform: translateY(-1px) scale(1.03);
+        box-shadow: 0 10px 22px rgba(18,189,223,.34);
+        filter: brightness(1.03);
+      }
+
+      #pagina-ia .ia-audio-play-icon {
+        line-height: 1;
+      }
+
+      #pagina-ia .ia-audio-time-wrap {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        min-width: 74px;
+        flex-shrink: 0;
+      }
+
+      #pagina-ia .ia-audio-time,
+      #pagina-ia .ia-audio-time-separator {
+        color: #16354a;
+        font-size: 12px;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+      }
+
+      #pagina-ia .ia-audio-progress-container {
+        position: relative;
+        flex: 1;
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(15, 47, 68, .22);
+        cursor: pointer;
+        overflow: hidden;
+      }
+
+      #pagina-ia .ia-audio-progress-fill {
+        width: 0%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #16b7d8, #53dff3);
+        box-shadow: 0 0 12px rgba(18,189,223,.18);
+        transition: width .08s linear;
+      }
+
+      #pagina-ia .ia-audio-mini-btn {
+        width: 34px;
+        height: 34px;
+        border: none;
+        background: transparent;
+        color: #16354a;
+        font-size: 16px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        transition: background-color .18s ease, transform .18s ease;
+        flex-shrink: 0;
+      }
+
+      #pagina-ia .ia-audio-mini-btn:hover {
+        background: rgba(18,189,223,.10);
+        transform: translateY(-1px);
+      }
+
+      #pagina-ia .ia-audio-volume-wrap {
+        width: 88px;
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+      }
+
+      #pagina-ia .ia-audio-volume {
+        width: 100%;
+        appearance: none;
+        height: 6px;
+        border-radius: 999px;
+        outline: none;
+        background: rgba(15, 47, 68, .22);
+        cursor: pointer;
+      }
+
+      #pagina-ia .ia-audio-volume::-webkit-slider-runnable-track {
+        height: 6px;
+        border-radius: 999px;
+        background: rgba(15, 47, 68, .22);
+      }
+
+      #pagina-ia .ia-audio-volume::-webkit-slider-thumb {
+        appearance: none;
+        width: 14px;
+        height: 14px;
+        margin-top: -4px;
+        border-radius: 999px;
+        border: none;
+        background: #16b7d8;
+        box-shadow: 0 0 0 3px rgba(18,189,223,.14);
+      }
+
+      #pagina-ia .ia-audio-volume::-moz-range-track {
+        height: 6px;
+        border-radius: 999px;
+        background: rgba(15, 47, 68, .22);
+      }
+
+      #pagina-ia .ia-audio-volume::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border: none;
+        border-radius: 999px;
+        background: #16b7d8;
+        box-shadow: 0 0 0 3px rgba(18,189,223,.14);
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-audio-player-custom,
+      body[data-theme="light"] #pagina-ia .ia-audio-player-custom,
+      html.light #pagina-ia .ia-audio-player-custom,
+      body.light #pagina-ia .ia-audio-player-custom,
+      .theme-light #pagina-ia .ia-audio-player-custom,
+      [data-bs-theme="light"] #pagina-ia .ia-audio-player-custom {
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.98), rgba(244,248,252,.96));
+      }
+
+      @media (max-width: 640px) {
+        #pagina-ia .ia-audio-player-custom {
+          gap: 10px;
+          padding: 10px 12px;
+        }
+
+        #pagina-ia .ia-audio-time-wrap {
+          min-width: 66px;
+        }
+
+        #pagina-ia .ia-audio-volume-wrap {
+          width: 64px;
+        }
+      }
     `;
     document.head.appendChild(style);
   }
@@ -1458,7 +1634,32 @@
 
                               <div class="ia-audio-player-wrap">
                                 <div class="audio-container">
-                                  <audio id="ia-audio-player" controls preload="metadata"></audio>
+                                 <div class="ia-audio-player-custom">
+    <audio id="ia-audio-player" preload="metadata"></audio>
+
+    <button id="ia-audio-play-btn" class="ia-audio-play-btn" type="button" aria-label="Play/Pause">
+      <span class="ia-audio-play-icon ia-audio-play-icon-play">▶</span>
+      <span class="ia-audio-play-icon ia-audio-play-icon-pause hidden">❚❚</span>
+    </button>
+
+    <div class="ia-audio-time-wrap">
+      <span id="ia-audio-current-time" class="ia-audio-time">0:00</span>
+      <span class="ia-audio-time-separator">/</span>
+      <span id="ia-audio-duration" class="ia-audio-time">0:00</span>
+    </div>
+
+    <div id="ia-audio-progress-container" class="ia-audio-progress-container" role="slider" aria-label="Progresso do áudio">
+      <div id="ia-audio-progress-fill" class="ia-audio-progress-fill"></div>
+    </div>
+
+    <button id="ia-audio-mute-btn" class="ia-audio-mini-btn" type="button" aria-label="Mutar áudio">
+      🔊
+    </button>
+
+    <div class="ia-audio-volume-wrap">
+      <input id="ia-audio-volume" class="ia-audio-volume" type="range" min="0" max="1" step="0.01" value="1" />
+    </div>
+  </div>
                                 </div>
                               </div>
                             </div>
@@ -1580,6 +1781,15 @@
     els.reportEditor = document.getElementById("ia-report-editor");
     els.audioCard = document.getElementById("ia-audio-card");
     els.audioPlayer = document.getElementById("ia-audio-player");
+    els.audioPlayBtn = document.getElementById("ia-audio-play-btn");
+    els.audioPlayIconPlay = document.querySelector(".ia-audio-play-icon-play");
+    els.audioPlayIconPause = document.querySelector(".ia-audio-play-icon-pause");
+    els.audioCurrentTime = document.getElementById("ia-audio-current-time");
+    els.audioDuration = document.getElementById("ia-audio-duration");
+    els.audioProgressContainer = document.getElementById("ia-audio-progress-container");
+    els.audioProgressFill = document.getElementById("ia-audio-progress-fill");
+    els.audioMuteBtn = document.getElementById("ia-audio-mute-btn");
+    els.audioVolume = document.getElementById("ia-audio-volume");
   }
 
   function bindEvents() {
@@ -1712,6 +1922,51 @@
       els.audioCard?.classList.remove("is-playing");
       animateAudioCard(false);
     });
+
+    els.audioPlayBtn?.addEventListener("click", toggleAudioPlayback);
+
+els.audioMuteBtn?.addEventListener("click", () => {
+  if (!els.audioPlayer) return;
+  els.audioPlayer.muted = !els.audioPlayer.muted;
+  syncAudioUi();
+});
+
+els.audioVolume?.addEventListener("input", (event) => {
+  if (!els.audioPlayer) return;
+  const value = Number(event.target.value || 0);
+  els.audioPlayer.volume = value;
+  els.audioPlayer.muted = value === 0;
+  syncAudioUi();
+});
+
+els.audioProgressContainer?.addEventListener("click", (event) => {
+  if (!els.audioPlayer || !els.audioPlayer.duration) return;
+  const rect = els.audioProgressContainer.getBoundingClientRect();
+  const ratio = Math.min(Math.max((event.clientX - rect.left) / rect.width, 0), 1);
+  els.audioPlayer.currentTime = els.audioPlayer.duration * ratio;
+});
+
+els.audioPlayer?.addEventListener("loadedmetadata", syncAudioUi);
+els.audioPlayer?.addEventListener("timeupdate", syncAudioUi);
+els.audioPlayer?.addEventListener("volumechange", syncAudioUi);
+
+els.audioPlayer?.addEventListener("play", () => {
+  els.audioCard?.classList.add("is-playing");
+  syncAudioUi();
+  animateAudioCard(true);
+});
+
+els.audioPlayer?.addEventListener("pause", () => {
+  els.audioCard?.classList.remove("is-playing");
+  syncAudioUi();
+  animateAudioCard(false);
+});
+
+els.audioPlayer?.addEventListener("ended", () => {
+  els.audioCard?.classList.remove("is-playing");
+  syncAudioUi();
+  animateAudioCard(false);
+});
   }
 
   function restoreState() {
@@ -2043,30 +2298,33 @@
     }
   }
 
-  function renderAudio(active) {
-    if (!active) {
-      els.audioCard.classList.add("hidden");
-      if (els.audioPlayer) {
-        els.audioPlayer.removeAttribute("src");
-      }
-      return;
-    }
-
-    if (active.audioUrl) {
-      els.audioCard.classList.remove("hidden");
-      if (els.audioPlayer.src !== active.audioUrl) {
-        els.audioPlayer.src = active.audioUrl;
-      }
-      ensurePlyrPlayer();
-      animateAudioCard(!els.audioPlayer.paused);
-      return;
-    }
-
-    els.audioCard.classList.remove("hidden");
-    els.audioPlayer.removeAttribute("src");
-    hydrateLocalAudio(active);
+function renderAudio(active) {
+  if (!active) {
+    els.audioCard.classList.add("hidden");
+    els.audioPlayer?.removeAttribute("src");
+    syncAudioUi();
+    return;
   }
 
+  if (active.audioUrl) {
+    els.audioCard.classList.remove("hidden");
+
+    if (els.audioPlayer.src !== active.audioUrl) {
+      els.audioPlayer.src = active.audioUrl;
+      els.audioPlayer.load();
+    }
+
+    syncAudioUi();
+    animateAudioCard(!els.audioPlayer.paused);
+    return;
+  }
+
+  els.audioCard.classList.remove("hidden");
+  els.audioPlayer.removeAttribute("src");
+  syncAudioUi();
+  hydrateLocalAudio(active);
+}
+  
   async function uploadAudio(file) {
     const active = getActiveTicket();
     if (!active) {
@@ -2370,10 +2628,15 @@
 
       revokeObjectUrlIfNeeded(active.audioUrl);
       active.audioUrl = URL.createObjectURL(localAudio.blob);
+      
       els.audioCard.classList.remove("hidden");
-      els.audioPlayer.src = active.audioUrl;
+els.audioPlayer.src = active.audioUrl;
+els.audioPlayer.load();
+
+      // PRESTAR ATENÇÃO
+      
       await ensurePlyrPlayer();
-      animateAudioCard(!els.audioPlayer.paused);
+      
     } catch (error) {
       console.error("Falha ao hidratar áudio local:", error);
       els.audioCard.classList.add("hidden");
@@ -2656,6 +2919,65 @@
       );
     }
   }
+
+  function toggleAudioPlayback() {
+  if (!els.audioPlayer) return;
+
+  if (els.audioPlayer.paused) {
+    els.audioPlayer.play().catch(() => {
+      notify("Falha ao reproduzir áudio.", "error");
+    });
+    return;
+  }
+
+  els.audioPlayer.pause();
+}
+
+function syncAudioUi() {
+  if (!els.audioPlayer) return;
+
+  const currentTime = Number(els.audioPlayer.currentTime || 0);
+  const duration = Number(els.audioPlayer.duration || 0);
+  const progress = duration ? (currentTime / duration) * 100 : 0;
+  const muted = els.audioPlayer.muted || els.audioPlayer.volume === 0;
+
+  if (els.audioCurrentTime) {
+    els.audioCurrentTime.textContent = formatAudioTime(currentTime);
+  }
+
+  if (els.audioDuration) {
+    els.audioDuration.textContent = formatAudioTime(duration);
+  }
+
+  if (els.audioProgressFill) {
+    els.audioProgressFill.style.width = `${progress}%`;
+  }
+
+  if (els.audioVolume) {
+    els.audioVolume.value = String(els.audioPlayer.volume ?? 1);
+  }
+
+  if (els.audioMuteBtn) {
+    els.audioMuteBtn.textContent = muted ? "🔇" : "🔊";
+  }
+
+  if (els.audioPlayIconPlay && els.audioPlayIconPause) {
+    if (els.audioPlayer.paused) {
+      els.audioPlayIconPlay.classList.remove("hidden");
+      els.audioPlayIconPause.classList.add("hidden");
+    } else {
+      els.audioPlayIconPlay.classList.add("hidden");
+      els.audioPlayIconPause.classList.remove("hidden");
+    }
+  }
+}
+
+function formatAudioTime(seconds) {
+  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+}
 
   document.addEventListener("DOMContentLoaded", init);
 })();
