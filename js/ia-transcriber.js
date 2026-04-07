@@ -6,6 +6,7 @@
   const apiBaseUrl = window.getProtocordApiBaseUrl();
   let blobClientPromise = null;
   let audioDbPromise = null;
+  let motionClientPromise = null;
 
   const state = {
     tickets: [],
@@ -36,6 +37,7 @@
     }
 
     render();
+    primeMotionRuntime();
   }
 
   function injectBaseStyles() {
@@ -52,19 +54,74 @@
       }
 
       #pagina-ia {
+        --ia-bg: #07111f;
+        --ia-bg-soft: rgba(8, 17, 34, .78);
+        --ia-bg-elev: rgba(7, 17, 33, .92);
+        --ia-panel: rgba(7, 17, 33, .74);
+        --ia-panel-strong: rgba(5, 12, 26, .88);
+        --ia-sidebar: linear-gradient(180deg, rgba(6, 14, 28, .96), rgba(7, 17, 33, .98));
+        --ia-border: rgba(44, 78, 128, .34);
+        --ia-border-strong: rgba(63, 104, 166, .42);
+        --ia-text: #e8eefc;
+        --ia-text-soft: #9fb1d1;
+        --ia-text-faint: #6f84aa;
+        --ia-title: #ffffff;
+        --ia-accent: #28c6e5;
+        --ia-accent-strong: #16b7d8;
+        --ia-accent-soft: rgba(40, 198, 229, .14);
+        --ia-violet: #8e7bff;
+        --ia-danger: #f87171;
+        --ia-success: #4ade80;
+        --ia-shadow: 0 20px 60px rgba(0, 0, 0, .24);
+        --ia-shadow-soft: 0 12px 30px rgba(0, 0, 0, .18);
+        --ia-glow: radial-gradient(circle at top center, rgba(40,198,229,.10), transparent 42%);
         font-family: 'Inter', sans-serif;
-        background:
-          radial-gradient(circle at top left, rgba(6,182,212,.07), transparent 28%),
-          radial-gradient(circle at top right, rgba(139,92,246,.05), transparent 24%),
-          #0a0f18;
-        color: #e2e8f0;
         min-height: 100vh;
         width: 100%;
+        color: var(--ia-text);
+        background:
+          radial-gradient(circle at 15% 0%, rgba(40,198,229,.09), transparent 26%),
+          radial-gradient(circle at 85% 0%, rgba(142,123,255,.08), transparent 24%),
+          linear-gradient(180deg, rgba(3,8,18,1), rgba(7,17,31,1));
+      }
+
+      html[data-theme="light"] #pagina-ia,
+      body[data-theme="light"] #pagina-ia,
+      html.light #pagina-ia,
+      body.light #pagina-ia,
+      .theme-light #pagina-ia,
+      [data-bs-theme="light"] #pagina-ia {
+        --ia-bg: #eef4fb;
+        --ia-bg-soft: rgba(255,255,255,.86);
+        --ia-bg-elev: rgba(255,255,255,.92);
+        --ia-panel: rgba(255,255,255,.82);
+        --ia-panel-strong: rgba(255,255,255,.94);
+        --ia-sidebar: linear-gradient(180deg, rgba(250,252,255,.96), rgba(241,246,252,.98));
+        --ia-border: rgba(144, 170, 206, .34);
+        --ia-border-strong: rgba(120, 155, 204, .44);
+        --ia-text: #20314f;
+        --ia-text-soft: #5d7398;
+        --ia-text-faint: #7f94b4;
+        --ia-title: #12213c;
+        --ia-accent: #12bddf;
+        --ia-accent-strong: #06b6d4;
+        --ia-accent-soft: rgba(6,182,212,.10);
+        --ia-violet: #6f63ff;
+        --ia-danger: #dc5b5b;
+        --ia-success: #16a34a;
+        --ia-shadow: 0 18px 50px rgba(104, 136, 180, .14);
+        --ia-shadow-soft: 0 10px 26px rgba(107, 132, 169, .12);
+        --ia-glow: radial-gradient(circle at top center, rgba(40,198,229,.06), transparent 38%);
+        background:
+          radial-gradient(circle at 18% 0%, rgba(40,198,229,.08), transparent 24%),
+          radial-gradient(circle at 80% 0%, rgba(111,99,255,.05), transparent 20%),
+          linear-gradient(180deg, #f4f8fc 0%, #edf3fa 100%);
       }
 
       #pagina-ia button,
       #pagina-ia input,
-      #pagina-ia textarea {
+      #pagina-ia textarea,
+      #pagina-ia audio {
         font-family: inherit;
       }
 
@@ -83,15 +140,15 @@
         min-width: 340px;
         display: flex;
         flex-direction: column;
-        border-right: 1px solid rgba(51,65,85,.8);
-        background:
-          linear-gradient(180deg, rgba(13,19,31,.98), rgba(10,15,24,.98));
-        backdrop-filter: blur(10px);
+        background: var(--ia-sidebar);
+        border-right: 1px solid var(--ia-border);
+        backdrop-filter: blur(16px);
+        box-shadow: inset -1px 0 0 rgba(255,255,255,.03);
       }
 
       #pagina-ia .ia-sidebar-header {
-        padding: 24px 22px 18px;
-        border-bottom: 1px solid rgba(30,41,59,.65);
+        padding: 26px 22px 18px;
+        border-bottom: 1px solid var(--ia-border);
       }
 
       #pagina-ia .ia-brand {
@@ -108,28 +165,28 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #06b6d4, #22d3ee);
-        color: #083344;
+        background: linear-gradient(135deg, var(--ia-accent-strong), #43d4ee);
+        color: #073345;
         font-size: 20px;
         font-weight: 900;
-        box-shadow: 0 14px 28px rgba(6,182,212,.18);
+        box-shadow: 0 16px 32px rgba(18,189,223,.18);
         flex-shrink: 0;
       }
 
       #pagina-ia .ia-brand-copy h1 {
         margin: 0;
-        font-size: 18px;
-        line-height: 1.1;
+        font-size: 17px;
+        line-height: 1.05;
         font-weight: 800;
-        color: #f8fafc;
+        color: var(--ia-title);
         letter-spacing: -.03em;
       }
 
       #pagina-ia .ia-brand-copy span {
         display: inline-block;
-        margin-top: 4px;
+        margin-top: 5px;
         font-size: 10px;
-        color: #64748b;
+        color: var(--ia-text-faint);
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: .18em;
@@ -142,7 +199,8 @@
 
       #pagina-ia .btn-primary,
       #pagina-ia .btn-secondary,
-      #pagina-ia .ia-icon-btn {
+      #pagina-ia .ia-icon-btn,
+      #pagina-ia .ia-image-nav-btn {
         border: none;
         outline: none;
         cursor: pointer;
@@ -157,16 +215,16 @@
         gap: 10px;
         padding: 14px 18px;
         border-radius: 16px;
-        background: linear-gradient(135deg, #06b6d4, #22d3ee);
-        color: #083344;
+        background: linear-gradient(135deg, var(--ia-accent-strong), #35cae7);
+        color: #072f42;
         font-size: 14px;
         font-weight: 800;
-        box-shadow: 0 14px 30px rgba(6,182,212,.15);
+        box-shadow: 0 16px 34px rgba(18,189,223,.18);
       }
 
       #pagina-ia .btn-primary:hover:not(:disabled) {
         transform: translateY(-1px);
-        box-shadow: 0 18px 34px rgba(6,182,212,.22);
+        box-shadow: 0 20px 38px rgba(18,189,223,.24);
       }
 
       #pagina-ia .btn-primary:disabled {
@@ -181,25 +239,25 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
-        padding: 12px 14px;
+        padding: 12px 15px;
         border-radius: 14px;
-        background: rgba(15,23,42,.7);
-        border: 1px solid rgba(51,65,85,.95);
-        color: #cbd5e1;
+        background: var(--ia-bg-soft);
+        border: 1px solid var(--ia-border);
+        color: var(--ia-text);
         font-size: 12px;
         font-weight: 700;
+        box-shadow: 0 4px 18px rgba(0,0,0,.04);
       }
 
       #pagina-ia .btn-secondary:hover:not(:disabled) {
-        background: rgba(30,41,59,.92);
-        border-color: rgba(71,85,105,1);
         transform: translateY(-1px);
+        background: var(--ia-panel-strong);
+        border-color: var(--ia-border-strong);
       }
 
       #pagina-ia .btn-secondary:disabled {
-        opacity: .5;
+        opacity: .55;
         cursor: not-allowed;
-        transform: none;
       }
 
       #pagina-ia .ia-search-wrap {
@@ -211,7 +269,7 @@
         left: 14px;
         top: 50%;
         transform: translateY(-50%);
-        color: #64748b;
+        color: var(--ia-text-faint);
         width: 16px;
         height: 16px;
       }
@@ -220,24 +278,30 @@
       #pagina-ia .ia-ticket-input,
       #pagina-ia #ia-report-editor {
         width: 100%;
-        border-radius: 14px;
-        border: 1px solid rgba(51,65,85,.92);
-        background: rgba(15,23,42,.84);
-        color: #f1f5f9;
+        border-radius: 15px;
+        border: 1px solid var(--ia-border);
+        background: var(--ia-panel-strong);
+        color: var(--ia-text);
         outline: none;
-        transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+        transition: border-color .18s ease, box-shadow .18s ease, background .18s ease, transform .18s ease;
       }
 
       #pagina-ia #ia-search-input {
-        padding: 12px 14px 12px 42px;
+        padding: 13px 14px 13px 42px;
         font-size: 13px;
+      }
+
+      #pagina-ia #ia-search-input::placeholder,
+      #pagina-ia .ia-ticket-input::placeholder,
+      #pagina-ia #ia-report-editor::placeholder {
+        color: var(--ia-text-faint);
       }
 
       #pagina-ia #ia-search-input:focus,
       #pagina-ia .ia-ticket-input:focus,
       #pagina-ia #ia-report-editor:focus {
-        border-color: rgba(6,182,212,.9);
-        box-shadow: 0 0 0 4px rgba(6,182,212,.10);
+        border-color: rgba(18,189,223,.62);
+        box-shadow: 0 0 0 4px rgba(18,189,223,.10);
       }
 
       #pagina-ia .ia-ticket-input {
@@ -252,8 +316,8 @@
       }
 
       #pagina-ia .ia-sidebar-footer {
-        padding: 12px 16px 16px;
-        border-top: 1px solid rgba(30,41,59,.65);
+        padding: 14px 16px 16px;
+        border-top: 1px solid var(--ia-border);
       }
 
       #pagina-ia .ia-sidebar-footer-row {
@@ -261,10 +325,10 @@
         align-items: center;
         justify-content: space-between;
         gap: 10px;
-        color: #64748b;
+        color: var(--ia-text-faint);
         font-size: 10px;
-        font-weight: 700;
-        letter-spacing: .12em;
+        font-weight: 800;
+        letter-spacing: .16em;
         text-transform: uppercase;
       }
 
@@ -273,8 +337,7 @@
         min-width: 0;
         display: flex;
         flex-direction: column;
-        background:
-          linear-gradient(180deg, rgba(10,15,24,.96), rgba(10,15,24,1));
+        background: transparent;
       }
 
       #pagina-ia .ia-empty-state {
@@ -290,10 +353,11 @@
         width: min(520px, 100%);
         padding: 34px 28px;
         border-radius: 28px;
-        background: rgba(15,23,42,.55);
-        border: 1px solid rgba(30,41,59,.95);
+        background: var(--ia-panel);
+        border: 1px solid var(--ia-border);
         text-align: center;
-        box-shadow: 0 24px 60px rgba(0,0,0,.24);
+        box-shadow: var(--ia-shadow);
+        backdrop-filter: blur(18px);
       }
 
       #pagina-ia .ia-empty-card-icon {
@@ -304,9 +368,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(15,23,42,.95);
-        color: #475569;
-        border: 1px solid rgba(30,41,59,.95);
+        background: var(--ia-panel-strong);
+        color: var(--ia-text-faint);
+        border: 1px solid var(--ia-border);
       }
 
       #pagina-ia .ia-empty-card h3 {
@@ -314,12 +378,12 @@
         font-size: 28px;
         font-weight: 800;
         letter-spacing: -.03em;
-        color: #f8fafc;
+        color: var(--ia-title);
       }
 
       #pagina-ia .ia-empty-card p {
         margin: 0;
-        color: #94a3b8;
+        color: var(--ia-text-soft);
         font-size: 14px;
         line-height: 1.65;
       }
@@ -334,6 +398,7 @@
         display: flex;
         flex-direction: column;
         height: 100%;
+        background: var(--ia-glow);
       }
 
       #pagina-ia .ia-topbar {
@@ -341,9 +406,9 @@
         align-items: flex-start;
         justify-content: space-between;
         gap: 24px;
-        padding: 30px 32px 20px;
-        border-bottom: 1px solid rgba(30,41,59,.55);
-        background: linear-gradient(180deg, rgba(10,15,24,.95), rgba(10,15,24,.82));
+        padding: 28px 32px 20px;
+        border-bottom: 1px solid var(--ia-border);
+        background: linear-gradient(180deg, rgba(255,255,255,.015), transparent);
       }
 
       #pagina-ia .ia-topbar-meta {
@@ -357,28 +422,29 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 4px 10px;
+        padding: 5px 10px;
         border-radius: 999px;
-        background: rgba(6,182,212,.12);
-        color: #22d3ee;
+        background: rgba(18,189,223,.13);
+        color: var(--ia-accent);
         font-size: 10px;
         font-weight: 800;
-        letter-spacing: .12em;
+        letter-spacing: .14em;
         text-transform: uppercase;
+        box-shadow: inset 0 0 0 1px rgba(18,189,223,.08);
       }
 
       #pagina-ia #ia-active-date {
-        color: #64748b;
+        color: var(--ia-text-faint);
         font-size: 12px;
         font-weight: 600;
       }
 
       #pagina-ia #ia-active-title {
         margin: 0;
-        font-size: clamp(28px, 2.8vw, 38px);
-        line-height: 1.05;
-        letter-spacing: -.045em;
-        color: #ffffff;
+        font-size: clamp(28px, 2.8vw, 40px);
+        line-height: 1.04;
+        letter-spacing: -.05em;
+        color: var(--ia-title);
         font-weight: 900;
         max-width: 780px;
         word-break: break-word;
@@ -394,7 +460,7 @@
       #pagina-ia .ia-workspace-wrap {
         flex: 1;
         overflow-y: auto;
-        padding: 26px 32px 32px;
+        padding: 24px 32px 32px;
       }
 
       #pagina-ia .ia-workspace {
@@ -412,23 +478,24 @@
       #pagina-ia .ia-info-card {
         padding: 18px 18px 16px;
         border-radius: 22px;
-        background: rgba(15,23,42,.48);
-        border: 1px solid rgba(30,41,59,.92);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.015);
+        background: var(--ia-panel);
+        border: 1px solid var(--ia-border);
+        box-shadow: var(--ia-shadow-soft);
+        backdrop-filter: blur(12px);
       }
 
       #pagina-ia .ia-info-card-label {
         margin: 0 0 10px;
-        color: #64748b;
+        color: var(--ia-text-faint);
         font-size: 10px;
         font-weight: 800;
         text-transform: uppercase;
-        letter-spacing: .16em;
+        letter-spacing: .18em;
       }
 
       #pagina-ia .ia-info-card-value {
         margin: 0;
-        color: #e2e8f0;
+        color: var(--ia-text);
         font-size: 15px;
         font-weight: 700;
         line-height: 1.35;
@@ -448,7 +515,7 @@
 
       #pagina-ia .ia-grid-main {
         display: grid;
-        grid-template-columns: minmax(360px, 1.02fr) minmax(380px, .98fr);
+        grid-template-columns: minmax(360px, 1.05fr) minmax(380px, .95fr);
         gap: 24px;
         align-items: start;
       }
@@ -457,12 +524,11 @@
         display: flex;
         flex-direction: column;
         border-radius: 30px;
-        background: rgba(15,23,42,.44);
-        border: 1px solid rgba(30,41,59,.92);
+        background: linear-gradient(180deg, var(--ia-panel), rgba(255,255,255,.01));
+        border: 1px solid var(--ia-border);
         overflow: hidden;
-        box-shadow:
-          0 16px 46px rgba(0,0,0,.16),
-          inset 0 1px 0 rgba(255,255,255,.015);
+        box-shadow: var(--ia-shadow);
+        backdrop-filter: blur(16px);
       }
 
       #pagina-ia .ia-panel-header {
@@ -471,8 +537,8 @@
         justify-content: space-between;
         gap: 12px;
         padding: 18px 22px;
-        border-bottom: 1px solid rgba(30,41,59,.7);
-        background: rgba(15,23,42,.58);
+        border-bottom: 1px solid var(--ia-border);
+        background: linear-gradient(180deg, rgba(255,255,255,.03), transparent);
       }
 
       #pagina-ia .ia-panel-title {
@@ -484,7 +550,7 @@
 
       #pagina-ia .ia-panel-title h3 {
         margin: 0;
-        color: #f1f5f9;
+        color: var(--ia-title);
         font-size: 13px;
         line-height: 1;
         font-weight: 800;
@@ -498,9 +564,9 @@
       }
 
       #pagina-ia .ia-panel-meta {
-        color: #64748b;
+        color: var(--ia-text-faint);
         font-size: 10px;
-        font-weight: 700;
+        font-weight: 800;
         letter-spacing: .12em;
         text-transform: uppercase;
       }
@@ -512,7 +578,7 @@
       #pagina-ia #ia-report-view {
         min-height: 300px;
         white-space: pre-wrap;
-        color: #cbd5e1;
+        color: var(--ia-text);
         font-size: 14px;
         line-height: 1.72;
         font-weight: 500;
@@ -536,7 +602,7 @@
       #pagina-ia .ia-text-action {
         border: none;
         background: transparent;
-        color: #22d3ee;
+        color: var(--ia-accent);
         font-size: 10px;
         font-weight: 800;
         letter-spacing: .12em;
@@ -546,47 +612,79 @@
       }
 
       #pagina-ia .ia-text-action:hover {
-        color: #67e8f9;
+        color: var(--ia-accent-strong);
       }
 
       #pagina-ia .ia-text-danger {
-        color: #f87171;
+        color: var(--ia-danger);
       }
 
       #pagina-ia .ia-audio-section {
-        margin-top: 18px;
+        margin-top: 20px;
       }
 
       #pagina-ia #ia-audio-card {
         display: flex;
         flex-direction: column;
-        gap: 14px;
-        padding: 16px;
-        border-radius: 22px;
+        gap: 16px;
+        padding: 18px;
+        border-radius: 24px;
         background:
-          linear-gradient(135deg, rgba(6,182,212,.11), rgba(34,211,238,.03)),
-          rgba(15,23,42,.55);
-        border: 1px solid rgba(6,182,212,.18);
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.02);
+          linear-gradient(135deg, rgba(18,189,223,.12), rgba(18,189,223,.03)),
+          var(--ia-panel-strong);
+        border: 1px solid rgba(18,189,223,.20);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,.04),
+          0 12px 36px rgba(18,189,223,.10);
+        overflow: hidden;
+        position: relative;
+      }
+
+      html[data-theme="light"] #pagina-ia #ia-audio-card,
+      body[data-theme="light"] #pagina-ia #ia-audio-card,
+      html.light #pagina-ia #ia-audio-card,
+      body.light #pagina-ia #ia-audio-card,
+      .theme-light #pagina-ia #ia-audio-card,
+      [data-bs-theme="light"] #pagina-ia #ia-audio-card {
+        background:
+          linear-gradient(135deg, rgba(18,189,223,.10), rgba(18,189,223,.02)),
+          rgba(255,255,255,.92);
+        border: 1px solid rgba(18,189,223,.18);
+        box-shadow:
+          inset 0 1px 0 rgba(255,255,255,.75),
+          0 14px 32px rgba(78, 144, 182, .12);
+      }
+
+      #pagina-ia .ia-audio-ambient {
+        position: absolute;
+        inset: auto -60px -60px auto;
+        width: 160px;
+        height: 160px;
+        border-radius: 999px;
+        background: radial-gradient(circle, rgba(18,189,223,.18), transparent 62%);
+        pointer-events: none;
       }
 
       #pagina-ia .ia-audio-top {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 14px;
+        position: relative;
+        z-index: 1;
       }
 
       #pagina-ia .ia-audio-icon {
-        width: 46px;
-        height: 46px;
-        border-radius: 16px;
+        width: 50px;
+        height: 50px;
+        border-radius: 18px;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(6,182,212,.16);
-        color: #67e8f9;
-        border: 1px solid rgba(6,182,212,.14);
+        background: linear-gradient(135deg, rgba(18,189,223,.20), rgba(18,189,223,.07));
+        color: var(--ia-accent);
+        border: 1px solid rgba(18,189,223,.16);
         flex-shrink: 0;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
       }
 
       #pagina-ia .ia-audio-copy {
@@ -595,23 +693,80 @@
 
       #pagina-ia .ia-audio-copy strong {
         display: block;
-        color: #ecfeff;
-        font-size: 13px;
+        color: var(--ia-title);
+        font-size: 14px;
         font-weight: 800;
-        margin-bottom: 3px;
+        margin-bottom: 4px;
       }
 
       #pagina-ia .ia-audio-copy span {
         display: block;
-        color: #94a3b8;
+        color: var(--ia-text-soft);
         font-size: 12px;
         line-height: 1.45;
       }
 
+      #pagina-ia .ia-audio-visualizer {
+        display: flex;
+        align-items: end;
+        gap: 5px;
+        height: 28px;
+        margin-left: auto;
+        opacity: .92;
+      }
+
+      #pagina-ia .ia-audio-bar {
+        width: 5px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #66e3f7, var(--ia-accent-strong));
+        box-shadow: 0 0 12px rgba(18,189,223,.16);
+        animation: ia-audio-wave 1.2s ease-in-out infinite;
+        transform-origin: bottom center;
+      }
+
+      #pagina-ia .ia-audio-bar:nth-child(1) { height: 10px; animation-delay: .00s; }
+      #pagina-ia .ia-audio-bar:nth-child(2) { height: 18px; animation-delay: .14s; }
+      #pagina-ia .ia-audio-bar:nth-child(3) { height: 24px; animation-delay: .28s; }
+      #pagina-ia .ia-audio-bar:nth-child(4) { height: 14px; animation-delay: .42s; }
+
+      @keyframes ia-audio-wave {
+        0%, 100% { transform: scaleY(.6); opacity: .65; }
+        50% { transform: scaleY(1.18); opacity: 1; }
+      }
+
+      #pagina-ia .ia-audio-player-wrap {
+        position: relative;
+        z-index: 1;
+        padding: 10px;
+        border-radius: 20px;
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+          rgba(0,0,0,.10);
+        border: 1px solid rgba(18,189,223,.14);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-audio-player-wrap,
+      body[data-theme="light"] #pagina-ia .ia-audio-player-wrap,
+      html.light #pagina-ia .ia-audio-player-wrap,
+      body.light #pagina-ia .ia-audio-player-wrap,
+      .theme-light #pagina-ia .ia-audio-player-wrap,
+      [data-bs-theme="light"] #pagina-ia .ia-audio-player-wrap {
+        background:
+          linear-gradient(180deg, rgba(255,255,255,.9), rgba(245,250,255,.82));
+        border: 1px solid rgba(18,189,223,.12);
+      }
+
       #pagina-ia #ia-audio-player {
         width: 100%;
-        min-height: 44px;
-        filter: saturate(1.05);
+        display: block;
+        min-height: 48px;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+
+      #pagina-ia #ia-audio-player::-webkit-media-controls-panel {
+        background: transparent;
       }
 
       #pagina-ia .ia-image-stage-wrap {
@@ -625,51 +780,61 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 20px;
       }
 
       #pagina-ia #ia-image-empty {
         width: 100%;
         min-height: 460px;
-        border-radius: 26px;
-        border: 1px dashed rgba(71,85,105,.9);
+        border-radius: 28px;
+        border: 1px dashed rgba(124, 155, 197, .34);
         background:
-          radial-gradient(circle at top, rgba(148,163,184,.05), transparent 40%),
-          rgba(2,6,23,.18);
+          radial-gradient(circle at top center, rgba(18,189,223,.06), transparent 36%),
+          linear-gradient(180deg, rgba(255,255,255,.015), transparent);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 18px;
+        gap: 16px;
         text-align: center;
-        padding: 28px;
+        padding: 30px;
+      }
+
+      html[data-theme="light"] #pagina-ia #ia-image-empty,
+      body[data-theme="light"] #pagina-ia #ia-image-empty,
+      html.light #pagina-ia #ia-image-empty,
+      body.light #pagina-ia #ia-image-empty,
+      .theme-light #pagina-ia #ia-image-empty,
+      [data-bs-theme="light"] #pagina-ia #ia-image-empty {
+        background:
+          radial-gradient(circle at top center, rgba(18,189,223,.05), transparent 34%),
+          linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.38));
       }
 
       #pagina-ia .ia-image-empty-icon {
-        width: 72px;
-        height: 72px;
+        width: 74px;
+        height: 74px;
         border-radius: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #64748b;
-        background: rgba(15,23,42,.76);
-        border: 1px solid rgba(51,65,85,.95);
+        color: var(--ia-text-faint);
+        background: var(--ia-panel-strong);
+        border: 1px solid var(--ia-border);
       }
 
       #pagina-ia .ia-image-empty-title {
         margin: 0;
-        color: #e2e8f0;
+        color: var(--ia-title);
         font-size: 16px;
         font-weight: 800;
       }
 
       #pagina-ia .ia-image-empty-text {
         margin: 0;
-        max-width: 300px;
-        color: #94a3b8;
+        max-width: 320px;
+        color: var(--ia-text-soft);
         font-size: 13px;
-        line-height: 1.6;
+        line-height: 1.65;
       }
 
       #pagina-ia .ia-image-empty-text kbd {
@@ -679,17 +844,19 @@
         min-width: 28px;
         padding: 4px 8px;
         border-radius: 8px;
-        background: rgba(15,23,42,.95);
-        border: 1px solid rgba(51,65,85,.95);
-        color: #cbd5e1;
+        background: var(--ia-panel-strong);
+        border: 1px solid var(--ia-border);
+        color: var(--ia-text);
         font-size: 11px;
         font-weight: 700;
+        box-shadow: 0 3px 10px rgba(0,0,0,.05);
       }
 
       #pagina-ia #ia-image-stage {
         display: flex;
         flex-direction: column;
         gap: 16px;
+        width: 100%;
         height: 100%;
       }
 
@@ -697,11 +864,23 @@
         position: relative;
         width: 100%;
         min-height: 460px;
-        border-radius: 24px;
+        border-radius: 26px;
         overflow: hidden;
         background:
-          linear-gradient(180deg, rgba(2,6,23,.78), rgba(15,23,42,.88));
-        border: 1px solid rgba(30,41,59,.95);
+          radial-gradient(circle at center, rgba(18,189,223,.05), transparent 30%),
+          linear-gradient(180deg, rgba(6,13,26,.7), rgba(7,17,33,.9));
+        border: 1px solid var(--ia-border);
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-image-preview-shell,
+      body[data-theme="light"] #pagina-ia .ia-image-preview-shell,
+      html.light #pagina-ia .ia-image-preview-shell,
+      body.light #pagina-ia .ia-image-preview-shell,
+      .theme-light #pagina-ia .ia-image-preview-shell,
+      [data-bs-theme="light"] #pagina-ia .ia-image-preview-shell {
+        background:
+          radial-gradient(circle at center, rgba(18,189,223,.04), transparent 32%),
+          linear-gradient(180deg, rgba(245,249,255,.95), rgba(236,243,252,.90));
       }
 
       #pagina-ia #ia-active-image {
@@ -727,23 +906,33 @@
       }
 
       #pagina-ia .ia-image-nav-btn {
-        width: 46px;
-        height: 46px;
+        width: 48px;
+        height: 48px;
         border-radius: 999px;
-        background: rgba(2,6,23,.55);
-        border: 1px solid rgba(148,163,184,.12);
+        background: rgba(6, 13, 26, .52);
+        border: 1px solid rgba(255,255,255,.08);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        color: #f8fafc;
+        color: #fff;
         backdrop-filter: blur(10px);
-        cursor: pointer;
-        transition: all .18s ease;
+        box-shadow: 0 10px 26px rgba(0,0,0,.16);
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-image-nav-btn,
+      body[data-theme="light"] #pagina-ia .ia-image-nav-btn,
+      html.light #pagina-ia .ia-image-nav-btn,
+      body.light #pagina-ia .ia-image-nav-btn,
+      .theme-light #pagina-ia .ia-image-nav-btn,
+      [data-bs-theme="light"] #pagina-ia .ia-image-nav-btn {
+        background: rgba(255,255,255,.78);
+        color: #20314f;
+        border: 1px solid rgba(120,155,204,.24);
       }
 
       #pagina-ia .ia-image-nav-btn:hover:not(:disabled) {
-        background: rgba(6,182,212,.88);
-        color: #062f3b;
+        background: var(--ia-accent);
+        color: #063241;
         transform: translateY(-1px);
       }
 
@@ -761,7 +950,7 @@
       }
 
       #pagina-ia .ia-image-footer-copy {
-        color: #94a3b8;
+        color: var(--ia-text-soft);
         font-size: 12px;
         line-height: 1.55;
       }
@@ -779,21 +968,22 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        background: rgba(15,23,42,.7);
-        border: 1px solid rgba(51,65,85,.95);
-        color: #94a3b8;
+        background: var(--ia-bg-soft);
+        border: 1px solid var(--ia-border);
+        color: var(--ia-text-soft);
+        box-shadow: 0 6px 16px rgba(0,0,0,.04);
       }
 
       #pagina-ia .ia-icon-btn:hover:not(:disabled) {
-        color: #e2e8f0;
-        background: rgba(30,41,59,.95);
+        color: var(--ia-title);
+        background: var(--ia-panel-strong);
         transform: translateY(-1px);
       }
 
       #pagina-ia .ia-icon-danger:hover:not(:disabled) {
-        color: #f87171;
-        border-color: rgba(127,29,29,.45);
-        background: rgba(69,10,10,.34);
+        color: var(--ia-danger);
+        border-color: rgba(220,91,91,.24);
+        background: rgba(220,91,91,.08);
       }
 
       #pagina-ia .ia-ticket-item {
@@ -802,21 +992,39 @@
         padding: 14px;
         cursor: pointer;
         transition: all .18s ease;
-        background: rgba(15,23,42,.36);
+        background: rgba(255,255,255,.02);
         margin-bottom: 10px;
       }
 
+      html[data-theme="light"] #pagina-ia .ia-ticket-item,
+      body[data-theme="light"] #pagina-ia .ia-ticket-item,
+      html.light #pagina-ia .ia-ticket-item,
+      body.light #pagina-ia .ia-ticket-item,
+      .theme-light #pagina-ia .ia-ticket-item,
+      [data-bs-theme="light"] #pagina-ia .ia-ticket-item {
+        background: rgba(255,255,255,.48);
+      }
+
       #pagina-ia .ia-ticket-item:hover {
-        background: rgba(15,23,42,.72);
-        border-color: rgba(51,65,85,.7);
+        background: var(--ia-panel);
+        border-color: var(--ia-border);
         transform: translateY(-1px);
       }
 
       #pagina-ia .ia-ticket-item.active {
         background:
-          linear-gradient(180deg, rgba(6,182,212,.10), rgba(15,23,42,.84));
-        border-color: rgba(6,182,212,.28);
-        box-shadow: 0 10px 24px rgba(6,182,212,.08);
+          linear-gradient(180deg, rgba(18,189,223,.10), rgba(255,255,255,.02));
+        border-color: rgba(18,189,223,.26);
+        box-shadow: 0 12px 26px rgba(18,189,223,.08);
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-ticket-item.active,
+      body[data-theme="light"] #pagina-ia .ia-ticket-item.active,
+      html.light #pagina-ia .ia-ticket-item.active,
+      body.light #pagina-ia .ia-ticket-item.active,
+      .theme-light #pagina-ia .ia-ticket-item.active,
+      [data-bs-theme="light"] #pagina-ia .ia-ticket-item.active {
+        background: linear-gradient(180deg, rgba(18,189,223,.10), rgba(255,255,255,.58));
       }
 
       #pagina-ia .ia-ticket-line {
@@ -845,13 +1053,13 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        color: #e2e8f0;
+        color: var(--ia-title);
         font-size: 14px;
         font-weight: 800;
       }
 
       #pagina-ia .ia-ticket-meta {
-        color: #64748b;
+        color: var(--ia-text-faint);
         font-size: 11px;
         font-weight: 600;
         line-height: 1.4;
@@ -861,11 +1069,6 @@
         display: flex;
         align-items: center;
         gap: 6px;
-      }
-
-      #pagina-ia .ia-image-empty-list {
-        color: #64748b;
-        font-size: 12px;
       }
 
       #pagina-ia .is-uploading {
@@ -878,8 +1081,8 @@
         position: absolute;
         inset: 0 0 auto 0;
         height: 3px;
-        background: linear-gradient(90deg, transparent, #06b6d4, transparent);
-        animation: ia-loading-bar 1.4s linear infinite;
+        background: linear-gradient(90deg, transparent, var(--ia-accent), transparent);
+        animation: ia-loading-bar 1.35s linear infinite;
         z-index: 4;
       }
 
@@ -889,7 +1092,7 @@
       }
 
       #pagina-ia [aria-busy="true"] .ia-topbar {
-        opacity: .92;
+        opacity: .94;
       }
 
       #pagina-ia ::-webkit-scrollbar {
@@ -902,12 +1105,12 @@
       }
 
       #pagina-ia ::-webkit-scrollbar-thumb {
-        background: rgba(51,65,85,.95);
+        background: rgba(111,132,170,.45);
         border-radius: 999px;
       }
 
       #pagina-ia ::-webkit-scrollbar-thumb:hover {
-        background: rgba(71,85,105,1);
+        background: rgba(111,132,170,.72);
       }
 
       @media (max-width: 1320px) {
@@ -933,7 +1136,7 @@
           width: 100%;
           min-width: 0;
           border-right: none;
-          border-bottom: 1px solid rgba(51,65,85,.8);
+          border-bottom: 1px solid var(--ia-border);
         }
 
         #pagina-ia .ia-sidebar-list {
@@ -999,6 +1202,14 @@
         #pagina-ia .ia-image-actions {
           justify-content: flex-start;
         }
+
+        #pagina-ia .ia-audio-top {
+          align-items: flex-start;
+        }
+
+        #pagina-ia .ia-audio-visualizer {
+          display: none;
+        }
       }
     `;
     document.head.appendChild(style);
@@ -1007,7 +1218,6 @@
   function ensureLayout() {
     const page = document.getElementById("pagina-ia");
     if (!page) return;
-
     if (page.dataset.iaEnhancedLayout === "true") return;
 
     page.dataset.iaEnhancedLayout = "true";
@@ -1126,16 +1336,29 @@
 
                           <div class="ia-audio-section">
                             <div id="ia-audio-card" class="hidden">
+                              <div class="ia-audio-ambient"></div>
+
                               <div class="ia-audio-top">
                                 <div class="ia-audio-icon">
                                   <i data-lucide="volume-2" class="w-5 h-5"></i>
                                 </div>
+
                                 <div class="ia-audio-copy">
                                   <strong>Áudio da Transcrição</strong>
                                   <span>Ouça o arquivo enviado diretamente na interface.</span>
                                 </div>
+
+                                <div class="ia-audio-visualizer" aria-hidden="true">
+                                  <span class="ia-audio-bar"></span>
+                                  <span class="ia-audio-bar"></span>
+                                  <span class="ia-audio-bar"></span>
+                                  <span class="ia-audio-bar"></span>
+                                </div>
                               </div>
-                              <audio id="ia-audio-player" controls preload="metadata"></audio>
+
+                              <div class="ia-audio-player-wrap">
+                                <audio id="ia-audio-player" controls preload="metadata"></audio>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -1267,6 +1490,7 @@
       state.searchTerm = event.target.value || "";
       renderTicketList();
       lucide.createIcons();
+      animateTicketList();
     });
 
     els.toggleRegisteredBtn?.addEventListener("click", () => {
@@ -1326,6 +1550,7 @@
       if (!active?.images?.length) return;
       state.imageIndex = Math.max(state.imageIndex - 1, 0);
       renderImageViewer(active);
+      animateImageStage();
     });
 
     els.nextImageBtn?.addEventListener("click", () => {
@@ -1333,6 +1558,7 @@
       if (!active?.images?.length) return;
       state.imageIndex = Math.min(state.imageIndex + 1, active.images.length - 1);
       renderImageViewer(active);
+      animateImageStage();
     });
 
     els.copyImageBtn?.addEventListener("click", copyCurrentImage);
@@ -1350,12 +1576,14 @@
       }
 
       renderReport(getActiveTicket());
+      animateReportPanel();
     });
 
     els.cancelReportBtn?.addEventListener("click", () => {
       state.editingReport = false;
       state.reportDraft = "";
       renderReport(getActiveTicket());
+      animateReportPanel();
     });
 
     els.reportEditor?.addEventListener("input", (event) => {
@@ -1367,6 +1595,21 @@
     els.ticketList?.addEventListener("focusout", handleTicketListFocusOut);
 
     window.addEventListener("paste", handlePasteImages);
+
+    els.audioPlayer?.addEventListener("play", () => {
+      els.audioCard?.classList.add("is-playing");
+      animateAudioCard(true);
+    });
+
+    els.audioPlayer?.addEventListener("pause", () => {
+      els.audioCard?.classList.remove("is-playing");
+      animateAudioCard(false);
+    });
+
+    els.audioPlayer?.addEventListener("ended", () => {
+      els.audioCard?.classList.remove("is-playing");
+      animateAudioCard(false);
+    });
   }
 
   function restoreState() {
@@ -1435,6 +1678,7 @@
     renderTicketList();
     renderActiveTicket();
     lucide.createIcons();
+    animateInterface();
   }
 
   function renderTicketList() {
@@ -1533,6 +1777,7 @@
     renderTicketList();
     lucide.createIcons();
     focusTicketInput(ticketId);
+    animateTicketList();
   }
 
   async function deleteTicket(ticketId) {
@@ -1708,6 +1953,7 @@
       if (els.audioPlayer.src !== active.audioUrl) {
         els.audioPlayer.src = active.audioUrl;
       }
+      animateAudioCard(!els.audioPlayer.paused);
       return;
     }
 
@@ -1893,6 +2139,7 @@
     state.imageIndex = active.images.length - images.length;
     persist();
     renderImageViewer(active);
+    animateImageStage();
     notify(`${images.length} imagem(ns) adicionada(s).`, "success");
   }
 
@@ -1927,6 +2174,7 @@
     state.imageIndex = Math.min(state.imageIndex, Math.max(active.images.length - 1, 0));
     persist();
     renderImageViewer(active);
+    animateImageStage();
   }
 
   function revokeObjectUrlIfNeeded(url) {
@@ -2019,6 +2267,7 @@
       active.audioUrl = URL.createObjectURL(localAudio.blob);
       els.audioCard.classList.remove("hidden");
       els.audioPlayer.src = active.audioUrl;
+      animateAudioCard(!els.audioPlayer.paused);
     } catch (error) {
       console.error("Falha ao hidratar áudio local:", error);
       els.audioCard.classList.add("hidden");
@@ -2118,6 +2367,155 @@
     }
 
     console.log(`[${type || "info"}] ${message}`);
+  }
+
+  async function loadMotionClient() {
+    if (!motionClientPromise) {
+      motionClientPromise = import("https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm").catch(() => null);
+    }
+    return motionClientPromise;
+  }
+
+  function primeMotionRuntime() {
+    loadMotionClient();
+  }
+
+  async function animateInterface() {
+    const motion = await loadMotionClient();
+    if (!motion) return;
+
+    const { animate, stagger } = motion;
+
+    const topbarTitle = els.activeTitle;
+    const infoCards = Array.from(document.querySelectorAll("#pagina-ia .ia-info-card"));
+    const panels = Array.from(document.querySelectorAll("#pagina-ia .ia-panel"));
+    const buttons = Array.from(document.querySelectorAll("#pagina-ia .ia-actions-bar button"));
+
+    if (topbarTitle) {
+      animate(
+        topbarTitle,
+        { opacity: [0, 1], y: [10, 0], filter: ["blur(8px)", "blur(0px)"] },
+        { duration: 0.35, easing: "ease-out" }
+      );
+    }
+
+    if (infoCards.length) {
+      animate(
+        infoCards,
+        { opacity: [0, 1], y: [16, 0] },
+        { duration: 0.4, delay: stagger(0.05), easing: "ease-out" }
+      );
+    }
+
+    if (buttons.length) {
+      animate(
+        buttons,
+        { opacity: [0, 1], y: [10, 0], scale: [0.98, 1] },
+        { duration: 0.32, delay: stagger(0.04), easing: "ease-out" }
+      );
+    }
+
+    if (panels.length) {
+      animate(
+        panels,
+        { opacity: [0, 1], y: [18, 0] },
+        { duration: 0.42, delay: stagger(0.06), easing: "ease-out" }
+      );
+    }
+
+    animateTicketList();
+  }
+
+  async function animateTicketList() {
+    const motion = await loadMotionClient();
+    if (!motion) return;
+
+    const { animate, stagger } = motion;
+    const items = Array.from(document.querySelectorAll("#pagina-ia .ia-ticket-item"));
+
+    if (!items.length) return;
+
+    animate(
+      items,
+      { opacity: [0, 1], x: [-10, 0] },
+      { duration: 0.28, delay: stagger(0.03), easing: "ease-out" }
+    );
+  }
+
+  async function animateReportPanel() {
+    const motion = await loadMotionClient();
+    if (!motion) return;
+
+    const { animate } = motion;
+    const panel = els.reportView?.closest(".ia-panel");
+
+    if (!panel) return;
+
+    animate(
+      panel,
+      { scale: [0.992, 1], opacity: [0.75, 1] },
+      { duration: 0.28, easing: "ease-out" }
+    );
+  }
+
+  async function animateImageStage() {
+    const motion = await loadMotionClient();
+    if (!motion) return;
+
+    const { animate } = motion;
+    const stage = els.imageStage?.classList.contains("hidden") ? els.imageEmpty : els.imageStage;
+
+    if (!stage) return;
+
+    animate(
+      stage,
+      { opacity: [0.55, 1], scale: [0.99, 1] },
+      { duration: 0.28, easing: "ease-out" }
+    );
+  }
+
+  async function animateAudioCard(isPlaying) {
+    const motion = await loadMotionClient();
+    if (!motion || !els.audioCard) return;
+
+    const { animate } = motion;
+    const bars = Array.from(els.audioCard.querySelectorAll(".ia-audio-bar"));
+    const icon = els.audioCard.querySelector(".ia-audio-icon");
+
+    animate(
+      els.audioCard,
+      {
+        boxShadow: isPlaying
+          ? [
+              "0 12px 36px rgba(18,189,223,.08)",
+              "0 18px 42px rgba(18,189,223,.18)",
+              "0 12px 36px rgba(18,189,223,.10)"
+            ]
+          : [
+              "0 18px 42px rgba(18,189,223,.12)",
+              "0 12px 36px rgba(18,189,223,.08)"
+            ]
+      },
+      { duration: 0.8, easing: "ease-in-out" }
+    );
+
+    if (icon) {
+      animate(
+        icon,
+        isPlaying
+          ? { scale: [1, 1.06, 1], rotate: [0, -2, 2, 0] }
+          : { scale: [1.02, 1], rotate: [0, 0] },
+        { duration: isPlaying ? 1.2 : 0.3, easing: "ease-in-out" }
+      );
+    }
+
+    if (bars.length && isPlaying) {
+      animate(
+        bars,
+        { scaleY: [0.55, 1.2, 0.7, 1] },
+        { duration: 1.05, repeat: Infinity, delay: 0.08, easing: "ease-in-out" }
+      );
+    }
   }
 
   document.addEventListener("DOMContentLoaded", init);
