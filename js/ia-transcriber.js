@@ -7,6 +7,7 @@
   let blobClientPromise = null;
   let audioDbPromise = null;
   let motionClientPromise = null;
+  let plyrClientPromise = null;
 
   const state = {
     tickets: [],
@@ -47,6 +48,7 @@
     style.id = "protocord-ia-enhanced-style";
     style.textContent = `
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+      @import url('https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css');
 
       #pagina-ia,
       #pagina-ia * {
@@ -757,6 +759,10 @@
         border: 1px solid rgba(18,189,223,.12);
       }
 
+      #pagina-ia .audio-container {
+        width: 100%;
+      }
+
       #pagina-ia #ia-audio-player {
         width: 100%;
         display: block;
@@ -765,8 +771,102 @@
         overflow: hidden;
       }
 
-      #pagina-ia #ia-audio-player::-webkit-media-controls-panel {
+      #pagina-ia .plyr {
+        --plyr-color-main: #1cc7e8;
+        --plyr-audio-controls-background: linear-gradient(180deg, rgba(250,252,255,.98), rgba(237,244,250,.94));
+        --plyr-audio-control-color: #0b2436;
+        --plyr-audio-control-background-hover: rgba(28,199,232,.14);
+        --plyr-range-thumb-background: #16b7d8;
+        --plyr-range-fill-background: linear-gradient(90deg, #1cc7e8, #54dcf2);
+        --plyr-range-track-background: rgba(10,28,42,.22);
+        --plyr-tooltip-background: #092030;
+        --plyr-tooltip-color: #e8eefc;
+        border-radius: 999px;
+        overflow: hidden;
+        box-shadow: 0 8px 22px rgba(0,0,0,.12);
+      }
+
+      #pagina-ia .plyr--audio {
+        width: 100%;
         background: transparent;
+      }
+
+      #pagina-ia .plyr--full-ui input[type=range] {
+        color: #16b7d8;
+      }
+
+      #pagina-ia .plyr__controls {
+        padding: 10px 14px;
+        gap: 8px;
+        border-radius: 999px;
+      }
+
+      #pagina-ia .plyr__control {
+        border-radius: 999px;
+        transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease;
+      }
+
+      #pagina-ia .plyr__control:hover {
+        transform: translateY(-1px);
+      }
+
+      #pagina-ia .plyr__control--overlaid,
+      #pagina-ia .plyr__control[data-plyr="play"] {
+        background: linear-gradient(135deg, #22cbe9, #11b8d8);
+        color: #062536;
+        box-shadow: 0 8px 18px rgba(18,189,223,.20);
+      }
+
+      #pagina-ia .plyr__control[data-plyr="play"]:hover,
+      #pagina-ia .plyr__control[data-plyr="play"][aria-pressed="true"] {
+        background: linear-gradient(135deg, #2fd2ee, #18bfdc);
+      }
+
+      #pagina-ia .plyr__time {
+        color: #16354a;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      #pagina-ia .plyr__progress__container,
+      #pagina-ia .plyr__volume {
+        margin-left: 6px;
+        margin-right: 6px;
+      }
+
+      #pagina-ia .plyr__menu__container {
+        border-radius: 16px;
+        background: rgba(6,18,34,.96);
+        border: 1px solid rgba(59,130,246,.12);
+        color: #e8eefc;
+        backdrop-filter: blur(16px);
+      }
+
+      #pagina-ia .plyr__menu__container .plyr__control {
+        color: #e8eefc;
+        border-radius: 12px;
+      }
+
+      #pagina-ia .plyr__menu__container .plyr__control:hover {
+        background: rgba(28,199,232,.14);
+      }
+
+      html[data-theme="light"] #pagina-ia .plyr,
+      body[data-theme="light"] #pagina-ia .plyr,
+      html.light #pagina-ia .plyr,
+      body.light #pagina-ia .plyr,
+      .theme-light #pagina-ia .plyr,
+      [data-bs-theme="light"] #pagina-ia .plyr {
+        --plyr-audio-controls-background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(245,250,255,.96));
+        --plyr-audio-control-color: #16354a;
+        --plyr-range-track-background: rgba(32,49,79,.18);
+        box-shadow: 0 10px 24px rgba(104,136,180,.14);
+      }
+
+      #pagina-ia #ia-audio-card.is-playing .plyr {
+        box-shadow:
+          0 10px 26px rgba(18,189,223,.18),
+          0 0 0 1px rgba(18,189,223,.10);
       }
 
       #pagina-ia .ia-image-stage-wrap {
@@ -1210,90 +1310,7 @@
         #pagina-ia .ia-audio-visualizer {
           display: none;
         }
-
-        .audio-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #4a90e2, #9013fe);
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  max-width: 400px;
-  margin: 20px auto;
-}
-
-#audio-player,
-#audio-player::-webkit-media-controls-panel {
-  background-color: #fff;
-  border-radius: 8px;
-}
-
-#audio-player::-webkit-media-controls-play-button,
-#audio-player::-webkit-media-controls-pause-button {
-  background-color: #4a90e2;
-  border-radius: 50%;
-}
-
-#audio-player::-webkit-media-controls-current-time-display,
-#audio-player::-webkit-media-controls-time-remaining-display {
-  color: #4a90e2;
-  font-weight: bold;
-}
-
       }
-      /* ===== AUDIO PLAYER REFINO (NÃO QUEBRA NADA EXISTENTE) ===== */
-
-#pagina-ia #ia-audio-player {
-  border-radius: 999px;
-  overflow: hidden;
-  min-height: 48px;
-  filter: contrast(1.05) saturate(1.05);
-}
-
-/* fundo do player */
-#pagina-ia #ia-audio-player::-webkit-media-controls-panel {
-  background: linear-gradient(
-    180deg,
-    rgba(255,255,255,.94),
-    rgba(240,247,255,.90)
-  );
-  border-radius: 999px;
-  padding: 6px 10px;
-}
-
-/* botão play/pause */
-#pagina-ia #ia-audio-player::-webkit-media-controls-play-button,
-#pagina-ia #ia-audio-player::-webkit-media-controls-pause-button {
-  background-color: #12bddf;
-  border-radius: 999px;
-  transform: scale(1.05);
-}
-
-/* timeline */
-#pagina-ia #ia-audio-player::-webkit-media-controls-timeline {
-  margin: 0 10px;
-  border-radius: 999px;
-  height: 4px;
-}
-
-/* volume */
-#pagina-ia #ia-audio-player::-webkit-media-controls-volume-slider {
-  border-radius: 999px;
-}
-
-/* tempo */
-#pagina-ia #ia-audio-player::-webkit-media-controls-current-time-display,
-#pagina-ia #ia-audio-player::-webkit-media-controls-time-remaining-display {
-  color: #0f2f44;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-/* menu */
-#pagina-ia #ia-audio-player::-webkit-media-controls-overflow-button {
-  border-radius: 999px;
-}
     `;
     document.head.appendChild(style);
   }
@@ -2029,7 +2046,9 @@
   function renderAudio(active) {
     if (!active) {
       els.audioCard.classList.add("hidden");
-      els.audioPlayer.removeAttribute("src");
+      if (els.audioPlayer) {
+        els.audioPlayer.removeAttribute("src");
+      }
       return;
     }
 
@@ -2038,6 +2057,7 @@
       if (els.audioPlayer.src !== active.audioUrl) {
         els.audioPlayer.src = active.audioUrl;
       }
+      ensurePlyrPlayer();
       animateAudioCard(!els.audioPlayer.paused);
       return;
     }
@@ -2352,6 +2372,7 @@
       active.audioUrl = URL.createObjectURL(localAudio.blob);
       els.audioCard.classList.remove("hidden");
       els.audioPlayer.src = active.audioUrl;
+      await ensurePlyrPlayer();
       animateAudioCard(!els.audioPlayer.paused);
     } catch (error) {
       console.error("Falha ao hidratar áudio local:", error);
@@ -2395,6 +2416,38 @@
     }
 
     return blobClientPromise;
+  }
+
+  async function loadPlyrClient() {
+    if (!plyrClientPromise) {
+      plyrClientPromise = import("https://cdn.jsdelivr.net/npm/plyr@3.7.8/+esm").catch(() => null);
+    }
+    return plyrClientPromise;
+  }
+
+  async function ensurePlyrPlayer() {
+    const module = await loadPlyrClient();
+    if (!module || !els.audioPlayer) return null;
+
+    if (els.audioPlayer.__plyrInstance) {
+      return els.audioPlayer.__plyrInstance;
+    }
+
+    const Plyr = module.default || module.Plyr || module;
+    const instance = new Plyr(els.audioPlayer, {
+      controls: ["play", "progress", "current-time", "mute", "volume", "settings"],
+      settings: ["speed"],
+      speed: { selected: 1, options: [0.75, 1, 1.25, 1.5] },
+      volume: 1,
+      tooltips: { controls: false, seek: true },
+      keyboard: { focused: true, global: false },
+      seekTime: 10,
+      hideControls: false,
+      resetOnEnd: false
+    });
+
+    els.audioPlayer.__plyrInstance = instance;
+    return instance;
   }
 
   function sanitizeBlobFilename(filename) {
@@ -2463,6 +2516,7 @@
 
   function primeMotionRuntime() {
     loadMotionClient();
+    loadPlyrClient();
   }
 
   async function animateInterface() {
