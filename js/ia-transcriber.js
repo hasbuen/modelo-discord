@@ -2731,12 +2731,8 @@ els.audioPlayer?.addEventListener("ended", () => {
     const image = new Image();
 
     image.onload = () => {
-      const maxWidth = Math.min(window.innerWidth - 220, 1180);
-      const maxHeight = Math.min(window.innerHeight - 220, 760);
-      const ratio = Math.min(maxWidth / image.width, maxHeight / image.height, 1);
-
-      canvas.width = Math.max(1, Math.round(image.width * ratio));
-      canvas.height = Math.max(1, Math.round(image.height * ratio));
+      canvas.width = image.width;
+      canvas.height = image.height;
       canvas.__imageEditorBaseImage = image;
       canvas.__imageEditorBaseSource = imageSrc;
       canvas.__imageEditorScaleX = image.width / canvas.width;
