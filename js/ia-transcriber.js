@@ -1311,9 +1311,7 @@
           display: none;
         }
       }
-
-      /* ===== PLAYER CUSTOMIZADO: APENAS DESIGN ===== */
-      #pagina-ia .ia-audio-player-custom {
+            #pagina-ia .ia-audio-player-custom {
         position: relative;
         display: flex;
         align-items: center;
@@ -1612,6 +1610,7 @@
           height: 36px;
         }
       }
+
     `;
     document.head.appendChild(style);
   }
@@ -1968,7 +1967,7 @@
       if (!active) return;
 
       const payload = {
-        contato: active.customName ? \`\${active.customName} (\${active.phone})\` : \`(\${active.phone})\`,
+        contato: active.customName ? `${active.customName} (${active.phone})` : `(${active.phone})`,
         relatorio: buildHtml(active),
         assunto: active.resumo || "Solicitacao de Suporte",
       };
@@ -2168,7 +2167,7 @@ els.audioPlayer?.addEventListener("ended", () => {
 
     const term = state.searchTerm.trim().toLowerCase();
     const filtered = state.tickets.filter((ticket) => {
-      const composite = \`\${ticket.phone || ""} \${ticket.customName || ""}\`.toLowerCase();
+      const composite = `${ticket.phone || ""} ${ticket.customName || ""}`.toLowerCase();
       return !term || composite.includes(term);
     });
 
@@ -2230,7 +2229,7 @@ els.audioPlayer?.addEventListener("ended", () => {
 
   function commitTicketName(ticketId) {
     const ticket = state.tickets.find((entry) => entry.id === ticketId);
-    const input = els.ticketList.querySelector(\`[data-ticket-edit-input="\${ticketId}"]\`);
+    const input = els.ticketList.querySelector(`[data-ticket-edit-input="${ticketId}"]`);
     if (!ticket || !input) return;
 
     const value = input.value.trim();
@@ -2241,7 +2240,7 @@ els.audioPlayer?.addEventListener("ended", () => {
   }
 
   function focusTicketInput(ticketId) {
-    const input = els.ticketList?.querySelector(\`[data-ticket-edit-input="\${ticketId}"]\`);
+    const input = els.ticketList?.querySelector(`[data-ticket-edit-input="${ticketId}"]`);
     if (!input) return;
     input.focus();
     input.select();
@@ -2345,7 +2344,7 @@ els.audioPlayer?.addEventListener("ended", () => {
     window.requestAnimationFrame(() => {
       const activeElement = document.activeElement;
       if (activeElement === input) return;
-      if (activeElement?.closest?.(\`[data-ticket-id="\${ticketId}"][data-action="rename"]\`)) return;
+      if (activeElement?.closest?.(`[data-ticket-id="${ticketId}"][data-action="rename"]`)) return;
       commitTicketName(ticketId);
     });
   }
@@ -2400,7 +2399,7 @@ els.audioPlayer?.addEventListener("ended", () => {
     els.imageEmpty.classList.add("hidden");
     els.imageStage.classList.remove("hidden");
     els.activeImage.src = images[state.imageIndex];
-    els.imageCounter.textContent = \`\${state.imageIndex + 1} / \${images.length}\`;
+    els.imageCounter.textContent = `${state.imageIndex + 1} / ${images.length}`;
     toggleDisabled(els.prevImageBtn, state.imageIndex === 0);
     toggleDisabled(els.nextImageBtn, state.imageIndex >= images.length - 1);
   }
@@ -2511,7 +2510,7 @@ function renderAudio(active) {
 
     if (file.size > MAX_UPLOAD_BYTES) {
       const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
-      throw new Error(\`Áudio muito grande para envio (\${sizeMb} MB). Envie um arquivo menor que 128 MB.\`);
+      throw new Error(`Áudio muito grande para envio (${sizeMb} MB). Envie um arquivo menor que 128 MB.`);
     }
 
     return file;
@@ -2532,7 +2531,7 @@ function renderAudio(active) {
   }
 
   async function requestBlobTranscription(blobUpload, file) {
-    const response = await fetch(\`\${apiBaseUrl}/transcrever\`, {
+    const response = await fetch(`${apiBaseUrl}/transcrever`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -2548,7 +2547,7 @@ function renderAudio(active) {
     const data = await parseJsonSafe(response);
 
     if (!response.ok || !data?.sucesso) {
-      throw createHttpError(data?.erro || \`Falha ao transcrever o áudio armazenado. Status \${response.status}\`, response.status);
+      throw createHttpError(data?.erro || `Falha ao transcrever o áudio armazenado. Status ${response.status}`, response.status);
     }
 
     return data;
@@ -2561,15 +2560,15 @@ function renderAudio(active) {
       "",
       "ENCAMINHAMENTO / SOLUCAO:",
       ticket?.solucao || "",
-    ].join("\\n").trim();
+    ].join("\n").trim();
   }
 
   function parseSingleReportText(text) {
-    const normalized = String(text || "").replace(/\\r\\n/g, "\\n");
+    const normalized = String(text || "").replace(/\r\n/g, "\n");
     const problemMatch = normalized.match(
-      /PROBLEMA\\s*\\/\\s*DUVIDA\\s*:\\s*([\\s\\S]*?)(?:\\n{2,}ENCAMINHAMENTO\\s*\\/\\s*SOLUCAO\\s*:|$)/i
+      /PROBLEMA\s*\/\s*DUVIDA\s*:\s*([\s\S]*?)(?:\n{2,}ENCAMINHAMENTO\s*\/\s*SOLUCAO\s*:|$)/i
     );
-    const solutionMatch = normalized.match(/ENCAMINHAMENTO\\s*\\/\\s*SOLUCAO\\s*:\\s*([\\s\\S]*)/i);
+    const solutionMatch = normalized.match(/ENCAMINHAMENTO\s*\/\s*SOLUCAO\s*:\s*([\s\S]*)/i);
 
     return {
       analysis: problemMatch ? problemMatch[1].trim() : normalized.trim(),
@@ -2628,7 +2627,7 @@ function renderAudio(active) {
     persist();
     renderImageViewer(active);
     animateImageStage();
-    notify(\`\${images.length} imagem(ns) adicionada(s).\`, "success");
+    notify(`${images.length} imagem(ns) adicionada(s).`, "success");
   }
 
   function readFileAsDataUrl(file) {
@@ -2785,11 +2784,11 @@ els.audioPlayer.load();
     }
 
     const { upload } = await loadBlobClient();
-    const pathname = \`audios/\${Date.now()}-\${sanitizeBlobFilename(file.name)}\`;
+    const pathname = `audios/${Date.now()}-${sanitizeBlobFilename(file.name)}`;
 
     return upload(pathname, file, {
       access: "public",
-      handleUploadUrl: \`\${apiBaseUrl}/blob-upload\`,
+      handleUploadUrl: `${apiBaseUrl}/blob-upload`,
       multipart: true,
     });
   }
@@ -2836,13 +2835,13 @@ els.audioPlayer.load();
 
   function sanitizeBlobFilename(filename) {
     return String(filename || "audio.bin")
-      .replace(/[^\\w.\\-]+/g, "_")
+      .replace(/[^\w.\-]+/g, "_")
       .replace(/_+/g, "_");
   }
 
   async function pingBackendHealth() {
     try {
-      await fetch(\`\${apiBaseUrl}/health\`, {
+      await fetch(`${apiBaseUrl}/health`, {
         method: "GET",
         cache: "no-store",
       });
@@ -2853,14 +2852,14 @@ els.audioPlayer.load();
 
   function buildHtml(ticket) {
     const phone = ticket.phone || "telefone";
-    const contact = ticket.customName ? \`\${ticket.customName} (\${phone})\` : \`(\${phone})\`;
+    const contact = ticket.customName ? `${ticket.customName} (${phone})` : `(${phone})`;
 
     return [
       '<span style="color:#f39c12"><strong>PROBLEMA / DUVIDA:</strong></span><br />',
-      \`<span>Em contato com usuario <b>\${escapeHtml(contact)}</b>.</span><br />\`,
-      \`<span>\${escapeHtml(ticket.analysis || "Aguardando transcricao...")}</span><br /><br />\`,
+      `<span>Em contato com usuario <b>${escapeHtml(contact)}</b>.</span><br />`,
+      `<span>${escapeHtml(ticket.analysis || "Aguardando transcricao...")}</span><br /><br />`,
       '<span style="color:#4dabf7"><strong>ENCAMINHAMENTO / SOLUCAO:</strong></span><br />',
-      \`<span>\${escapeHtml(ticket.solucao || "Aguardando transcricao...")}</span>\`,
+      `<span>${escapeHtml(ticket.solucao || "Aguardando transcricao...")}</span>`,
     ].join("");
   }
 
@@ -2888,7 +2887,7 @@ els.audioPlayer.load();
       return;
     }
 
-    console.log(\`[\${type || "info"}] \${message}\`);
+    console.log(`[${type || "info"}] ${message}`);
   }
 
   async function loadMotionClient() {
@@ -3071,7 +3070,7 @@ function syncAudioUi() {
   }
 
   if (els.audioProgressFill) {
-    els.audioProgressFill.style.width = \`\${progress}%\`;
+    els.audioProgressFill.style.width = `${progress}%`;
   }
 
   if (els.audioVolume) {
@@ -3097,7 +3096,7 @@ function formatAudioTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
-  return \`\${mins}:\${secs < 10 ? "0" : ""}\${secs}\`;
+  return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
 }
 
   document.addEventListener("DOMContentLoaded", init);
