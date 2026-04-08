@@ -22,7 +22,8 @@
     imageEditorTool: "arrow",
     imageEditorHistory: [],
     imageEditorColor: "#ff3b30",
-    imageEditorTextValue: "Texto"
+    imageEditorTextValue: "",
+    imageEditorFontSize: 28,
   };
 
   const els = {};
@@ -956,6 +957,33 @@
         font-weight: 700;
         box-shadow: 0 3px 10px rgba(0,0,0,.05);
       }
+
+      #pagina-ia .ia-image-editor-canvas-wrap {
+  position: relative;
+}
+
+#pagina-ia .ia-image-editor-floating-text {
+  position: absolute;
+  min-width: 120px;
+  min-height: 40px;
+  padding: 4px 6px;
+  border: 1px dashed rgba(255,255,255,.35);
+  background: transparent;
+  color: #ff3b30;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+  white-space: pre-wrap;
+  z-index: 3;
+}
+
+#pagina-ia .ia-image-editor-floating-text.hidden {
+  display: none !important;
+}
 
       #pagina-ia #ia-image-stage {
         display: flex;
@@ -2130,7 +2158,6 @@
                 </button>
 
                 <input id="ia-image-editor-color" type="color" value="#ff3b30" title="Cor" />
-                <input id="ia-image-editor-text" type="text" value="Texto" placeholder="Digite o texto" />
               </div>
 
               <div class="ia-image-editor-stage">
@@ -2151,6 +2178,7 @@
 
                 <div class="ia-image-editor-canvas-wrap">
                   <canvas id="ia-image-editor-canvas"></canvas>
+                  <textarea id="ia-image-editor-floating-text" class="ia-image-editor-floating-text hidden"></textarea>
                 </div>
               </div>
             </div>
@@ -2213,6 +2241,7 @@
     els.imageEditorClose = document.getElementById("ia-image-editor-close");
     els.imageEditorColor = document.getElementById("ia-image-editor-color");
     els.imageEditorTextInput = document.getElementById("ia-image-editor-text");
+    els.imageEditorFloatingText = document.getElementById("ia-image-editor-floating-text");
     els.imageEditorModal = document.getElementById("ia-image-editor-modal");
     els.imageEditorCanvas = document.getElementById("ia-image-editor-canvas");
     els.imageToolArrow = document.getElementById("ia-image-tool-arrow");
@@ -2434,6 +2463,41 @@ els.audioPlayer?.addEventListener("ended", () => {
   syncAudioUi();
   animateAudioCard(false);
 });
+
+    els.imageToolText?.addEventListener("click", () => setImageEditorTool("text"));
+
+els.imageEditorColor?.addEventListener("input", (event) => {
+  state.imageEditorColor = event.target.value || "#ff3b30";
+
+  if (els.imageEditorFloatingText && !els.imageEditorFloatingText.classList.contains("hidden")) {
+    els.imageEditorFloatingText.style.color = state.imageEditorColor;
+  }
+});
+
+els.imageEditorCanvas?.addEventListener("dblclick", (event) => {
+  if (state.imageEditorTool !== "text") return;
+  openImageEditorTextInput(event);
+});
+
+els.imageEditorCanvas?.addEventListener("click", (event) => {
+  if (state.imageEditorTool !== "text") return;
+  openImageEditorTextInput(event);
+});
+
+els.imageEditorFloatingText?.addEventListener("blur", commitImageEditorText);
+
+els.imageEditorFloatingText?.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    cancelImageEditorText();
+  }
+
+  if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+    event.preventDefault();
+    commitImageEditorText();
+  }
+});
+
+els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { passive: false });
   }
 
   function restoreState() {
@@ -2783,15 +2847,90 @@ els.audioPlayer?.addEventListener("ended", () => {
     delete els.imageEditorCanvas.__imageEditorStartX;
     delete els.imageEditorCanvas.__imageEditorStartY;
     delete els.imageEditorCanvas.__imageEditorCurrentShape;
+    if (els.imageEditorFloatingText) {
+      els.imageEditorFloatingText.value = "";
+      els.imageEditorFloatingText.classList.add("hidden");
+    }
   }
 
-  function setImageEditorTool(tool) {
-    state.imageEditorTool = tool;
-    els.imageToolArrow?.classList.toggle("active", tool === "arrow");
-    els.imageToolRect?.classList.toggle("active", tool === "rect");
-    els.imageToolCircle?.classList.toggle("active", tool === "circle");
-    els.imageToolText?.classList.toggle("active", tool === "text");
+function setImageEditorTool(tool) {
+  state.imageEditorTool = tool;
+
+  els.imageToolArrow?.classList.toggle("active", tool === "arrow");
+  els.imageToolRect?.classList.toggle("active", tool === "rect");
+  els.imageToolCircle?.classList.toggle("active", tool === "circle");
+  els.imageToolText?.classList.toggle("active", tool === "text");
+
+  if (tool !== "text") {
+    commitImageEditorText();
   }
+}
+
+  function openImageEditorTextInput(event) {
+  if (!els.imageEditorCanvas || !els.imageEditorFloatingText) return;
+
+  const point = getImageEditorPoint(event);
+  const rect = els.imageEditorCanvas.getBoundingClientRect();
+
+  const scaleX = rect.width / els.imageEditorCanvas.width;
+  const scaleY = rect.height / els.imageEditorCanvas.height;
+
+  const left = point.x * scaleX;
+  const top = point.y * scaleY;
+
+  els.imageEditorFloatingText.value = "";
+  els.imageEditorFloatingText.dataset.canvasX = String(point.x);
+  els.imageEditorFloatingText.dataset.canvasY = String(point.y);
+  els.imageEditorFloatingText.style.left = `${left}px`;
+  els.imageEditorFloatingText.style.top = `${top}px`;
+  els.imageEditorFloatingText.style.color = state.imageEditorColor || "#ff3b30";
+  els.imageEditorFloatingText.style.fontSize = `${state.imageEditorFontSize || 28}px`;
+  els.imageEditorFloatingText.classList.remove("hidden");
+  els.imageEditorFloatingText.focus();
+}
+
+function commitImageEditorText() {
+  if (!els.imageEditorFloatingText || els.imageEditorFloatingText.classList.contains("hidden")) return;
+
+  const text = els.imageEditorFloatingText.value.trim();
+  const x = Number(els.imageEditorFloatingText.dataset.canvasX || 0);
+  const y = Number(els.imageEditorFloatingText.dataset.canvasY || 0);
+
+  if (text) {
+    state.imageEditorHistory.push({
+      type: "text",
+      x1: x,
+      y1: y,
+      x2: x,
+      y2: y,
+      text,
+      color: state.imageEditorColor || "#ff3b30",
+      fontSize: state.imageEditorFontSize || 28,
+    });
+
+    redrawImageEditorCanvas();
+  }
+
+  els.imageEditorFloatingText.value = "";
+  els.imageEditorFloatingText.classList.add("hidden");
+}
+
+function cancelImageEditorText() {
+  if (!els.imageEditorFloatingText) return;
+  els.imageEditorFloatingText.value = "";
+  els.imageEditorFloatingText.classList.add("hidden");
+}
+
+function handleImageEditorTextWheel(event) {
+  if (state.imageEditorTool !== "text") return;
+  if (!els.imageEditorFloatingText || els.imageEditorFloatingText.classList.contains("hidden")) return;
+
+  event.preventDefault();
+
+  const delta = event.deltaY < 0 ? 2 : -2;
+  state.imageEditorFontSize = Math.max(12, Math.min(120, (state.imageEditorFontSize || 28) + delta));
+  els.imageEditorFloatingText.style.fontSize = `${state.imageEditorFontSize}px`;
+}
 
   function loadImageEditorCanvas(imageSrc) {
     if (!els.imageEditorCanvas) return;
@@ -2880,48 +3019,43 @@ function drawImageEditorShape(ctx, shape) {
     ctx.fill();
   }
 
-  if (shape.type === "text") {
-    ctx.font = `${shape.fontSize || 28}px Inter, sans-serif`;
-    ctx.fillStyle = shape.color || "#ff3b30";
-    ctx.textBaseline = "top";
-    ctx.fillText(shape.text || "Texto", shape.x1, shape.y1);
-  }
+if (shape.type === "text") {
+  ctx.font = `700 ${shape.fontSize || 28}px Inter, sans-serif`;
+  ctx.fillStyle = shape.color || "#ff3b30";
+  ctx.textBaseline = "top";
+
+  const lines = String(shape.text || "").split("\n");
+  const lineHeight = (shape.fontSize || 28) * 1.2;
+
+  lines.forEach((line, index) => {
+    ctx.fillText(line, shape.x1, shape.y1 + (index * lineHeight));
+  });
+}
 
   ctx.restore();
 }
 
-  function getImageEditorPoint(event) {
-     if (!els.imageEditorCanvas) return { x: 0, y: 0 };
+function getImageEditorPoint(event) {
+  if (!els.imageEditorCanvas) return { x: 0, y: 0 };
 
-      const rect = els.imageEditorCanvas.getBoundingClientRect();
-      const scaleX = els.imageEditorCanvas.width / rect.width;
-      const scaleY = els.imageEditorCanvas.height / rect.height;
+  const rect = els.imageEditorCanvas.getBoundingClientRect();
+  const scaleX = els.imageEditorCanvas.width / rect.width;
+  const scaleY = els.imageEditorCanvas.height / rect.height;
 
-      return {
-        x: Math.min(Math.max((event.clientX - rect.left) * scaleX, 0), els.imageEditorCanvas.width),
-        y: Math.min(Math.max((event.clientY - rect.top) * scaleY, 0), els.imageEditorCanvas.height),
-      };
-  }
+  return {
+    x: Math.min(Math.max((event.clientX - rect.left) * scaleX, 0), els.imageEditorCanvas.width),
+    y: Math.min(Math.max((event.clientY - rect.top) * scaleY, 0), els.imageEditorCanvas.height),
+  };
+}
 
 function startImageEditorDraw(event) {
   if (!state.imageEditorOpen || !els.imageEditorCanvas) return;
 
-  const point = getImageEditorPoint(event);
-
   if (state.imageEditorTool === "text") {
-    state.imageEditorHistory.push({
-      type: "text",
-      x1: point.x,
-      y1: point.y,
-      x2: point.x,
-      y2: point.y,
-      text: state.imageEditorTextValue || "Texto",
-      color: state.imageEditorColor || "#ff3b30",
-      fontSize: 28,
-    });
-    redrawImageEditorCanvas();
     return;
   }
+
+  const point = getImageEditorPoint(event);
 
   els.imageEditorCanvas.__imageEditorDrawing = true;
   els.imageEditorCanvas.__imageEditorStartX = point.x;
