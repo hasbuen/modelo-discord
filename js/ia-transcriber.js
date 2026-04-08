@@ -18,6 +18,9 @@
     reportDraft: "",
     imageIndex: 0,
     uploading: false,
+    imageEditorOpen: false,
+    imageEditorTool: "arrow",
+    imageEditorHistory: [],
   };
 
   const els = {};
@@ -1648,6 +1651,178 @@
         }
       }
 
+
+      #pagina-ia .ia-image-preview-shell {
+        cursor: zoom-in;
+      }
+
+      #pagina-ia .ia-image-editor-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 26px;
+        background: rgba(2, 8, 20, .82);
+        backdrop-filter: blur(10px);
+      }
+
+      #pagina-ia .ia-image-editor-modal.is-open {
+        display: flex;
+      }
+
+      #pagina-ia .ia-image-editor-shell {
+        width: min(1400px, 100%);
+        height: min(88vh, 920px);
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 16px;
+      }
+
+      #pagina-ia .ia-image-editor-toolbar {
+        width: 84px;
+        padding: 14px 10px;
+        border-radius: 24px;
+        background: linear-gradient(180deg, rgba(8, 20, 38, .96), rgba(5, 14, 28, .92));
+        border: 1px solid rgba(76, 112, 168, .28);
+        box-shadow: 0 18px 44px rgba(0,0,0,.28);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+
+      #pagina-ia .ia-image-editor-tool,
+      #pagina-ia .ia-image-editor-close,
+      #pagina-ia .ia-image-editor-save,
+      #pagina-ia .ia-image-editor-undo {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        border: 1px solid rgba(113, 149, 205, .22);
+        background: rgba(255,255,255,.03);
+        color: var(--ia-text);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all .18s ease;
+      }
+
+      #pagina-ia .ia-image-editor-tool:hover,
+      #pagina-ia .ia-image-editor-close:hover,
+      #pagina-ia .ia-image-editor-save:hover,
+      #pagina-ia .ia-image-editor-undo:hover {
+        transform: translateY(-1px);
+        border-color: rgba(40,198,229,.34);
+        background: rgba(40,198,229,.10);
+      }
+
+      #pagina-ia .ia-image-editor-tool.active {
+        background: linear-gradient(135deg, rgba(40,198,229,.20), rgba(111,99,255,.16));
+        border-color: rgba(40,198,229,.42);
+        color: #ffffff;
+        box-shadow: 0 10px 22px rgba(18,189,223,.14);
+      }
+
+      #pagina-ia .ia-image-editor-stage {
+        min-width: 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border-radius: 28px;
+        background: linear-gradient(180deg, rgba(7,17,33,.98), rgba(5,12,24,.96));
+        border: 1px solid rgba(76, 112, 168, .28);
+        box-shadow: 0 22px 50px rgba(0,0,0,.32);
+      }
+
+      #pagina-ia .ia-image-editor-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 18px;
+        border-bottom: 1px solid rgba(76, 112, 168, .22);
+      }
+
+      #pagina-ia .ia-image-editor-title {
+        color: var(--ia-title);
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+
+      #pagina-ia .ia-image-editor-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      #pagina-ia .ia-image-editor-canvas-wrap {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        overflow: auto;
+        background:
+          radial-gradient(circle at top center, rgba(40,198,229,.06), transparent 30%),
+          linear-gradient(180deg, rgba(3,8,18,.7), rgba(7,17,31,.9));
+      }
+
+      #pagina-ia #ia-image-editor-canvas {
+        display: block;
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 18px 42px rgba(0,0,0,.34);
+        cursor: crosshair;
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-image-editor-toolbar,
+      body[data-theme="light"] #pagina-ia .ia-image-editor-toolbar,
+      html.light #pagina-ia .ia-image-editor-toolbar,
+      body.light #pagina-ia .ia-image-editor-toolbar,
+      .theme-light #pagina-ia .ia-image-editor-toolbar,
+      [data-bs-theme="light"] #pagina-ia .ia-image-editor-toolbar,
+      html[data-theme="light"] #pagina-ia .ia-image-editor-stage,
+      body[data-theme="light"] #pagina-ia .ia-image-editor-stage,
+      html.light #pagina-ia .ia-image-editor-stage,
+      body.light #pagina-ia .ia-image-editor-stage,
+      .theme-light #pagina-ia .ia-image-editor-stage,
+      [data-bs-theme="light"] #pagina-ia .ia-image-editor-stage {
+        background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(245,249,255,.96));
+        border-color: rgba(120, 155, 204, .28);
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-image-editor-title,
+      body[data-theme="light"] #pagina-ia .ia-image-editor-title,
+      html.light #pagina-ia .ia-image-editor-title,
+      body.light #pagina-ia .ia-image-editor-title,
+      .theme-light #pagina-ia .ia-image-editor-title,
+      [data-bs-theme="light"] #pagina-ia .ia-image-editor-title {
+        color: #12213c;
+      }
+
+      @media (max-width: 980px) {
+        #pagina-ia .ia-image-editor-shell {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto 1fr;
+        }
+
+        #pagina-ia .ia-image-editor-toolbar {
+          width: 100%;
+          flex-direction: row;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+      }
+
 `;
     document.head.appendChild(style);
   }
@@ -1905,6 +2080,43 @@
               </p>
             </div>
           </div>
+          <div id="ia-image-editor-modal" class="ia-image-editor-modal">
+            <div class="ia-image-editor-shell">
+              <div class="ia-image-editor-toolbar">
+                <button id="ia-image-tool-arrow" class="ia-image-editor-tool active" type="button" title="Seta">
+                  <i data-lucide="move-up-right" class="w-5 h-5"></i>
+                </button>
+                <button id="ia-image-tool-rect" class="ia-image-editor-tool" type="button" title="Retângulo">
+                  <i data-lucide="square" class="w-5 h-5"></i>
+                </button>
+                <button id="ia-image-tool-circle" class="ia-image-editor-tool" type="button" title="Círculo">
+                  <i data-lucide="circle" class="w-5 h-5"></i>
+                </button>
+              </div>
+
+              <div class="ia-image-editor-stage">
+                <div class="ia-image-editor-header">
+                  <div class="ia-image-editor-title">Visualizar e editar evidência</div>
+                  <div class="ia-image-editor-actions">
+                    <button id="ia-image-editor-undo" class="ia-image-editor-undo" type="button" title="Desfazer">
+                      <i data-lucide="undo-2" class="w-4 h-4"></i>
+                    </button>
+                    <button id="ia-image-editor-save" class="ia-image-editor-save" type="button" title="Salvar edição">
+                      <i data-lucide="save" class="w-4 h-4"></i>
+                    </button>
+                    <button id="ia-image-editor-close" class="ia-image-editor-close" type="button" title="Fechar">
+                      <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="ia-image-editor-canvas-wrap">
+                  <canvas id="ia-image-editor-canvas"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </main>
       </div>
     `;
@@ -1951,6 +2163,15 @@
     els.audioProgressFill = document.getElementById("ia-audio-progress-fill");
     els.audioMuteBtn = document.getElementById("ia-audio-mute-btn");
     els.audioVolume = document.getElementById("ia-audio-volume");
+    els.imageEditorModal = document.getElementById("ia-image-editor-modal");
+    els.imageEditorCanvas = document.getElementById("ia-image-editor-canvas");
+    els.imageToolArrow = document.getElementById("ia-image-tool-arrow");
+    els.imageToolRect = document.getElementById("ia-image-tool-rect");
+    els.imageToolCircle = document.getElementById("ia-image-tool-circle");
+    els.imageEditorUndo = document.getElementById("ia-image-editor-undo");
+    els.imageEditorSave = document.getElementById("ia-image-editor-save");
+    els.imageEditorClose = document.getElementById("ia-image-editor-close");
+
   }
 
   function bindEvents() {
@@ -2036,6 +2257,32 @@
 
     els.copyImageBtn?.addEventListener("click", copyCurrentImage);
     els.deleteImageBtn?.addEventListener("click", deleteCurrentImage);
+
+    els.activeImage?.addEventListener("dblclick", openImageEditorFromActive);
+
+    els.imageToolArrow?.addEventListener("click", () => setImageEditorTool("arrow"));
+    els.imageToolRect?.addEventListener("click", () => setImageEditorTool("rect"));
+    els.imageToolCircle?.addEventListener("click", () => setImageEditorTool("circle"));
+    els.imageEditorUndo?.addEventListener("click", undoImageEditorAnnotation);
+    els.imageEditorSave?.addEventListener("click", saveImageEditorAnnotation);
+    els.imageEditorClose?.addEventListener("click", closeImageEditor);
+
+    els.imageEditorModal?.addEventListener("click", (event) => {
+      if (event.target === els.imageEditorModal) {
+        closeImageEditor();
+      }
+    });
+
+    els.imageEditorCanvas?.addEventListener("pointerdown", startImageEditorDraw);
+    els.imageEditorCanvas?.addEventListener("pointermove", moveImageEditorDraw);
+    window.addEventListener("pointerup", endImageEditorDraw);
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && state.imageEditorOpen) {
+        closeImageEditor();
+      }
+    });
+
 
     els.editReportBtn?.addEventListener("click", () => {
       const active = getActiveTicket();
@@ -2436,10 +2683,217 @@ els.audioPlayer?.addEventListener("ended", () => {
     els.imageEmpty.classList.add("hidden");
     els.imageStage.classList.remove("hidden");
     els.activeImage.src = images[state.imageIndex];
+    els.activeImage.title = "Dê dois cliques para ampliar e editar";
     els.imageCounter.textContent = `${state.imageIndex + 1} / ${images.length}`;
     toggleDisabled(els.prevImageBtn, state.imageIndex === 0);
     toggleDisabled(els.nextImageBtn, state.imageIndex >= images.length - 1);
   }
+
+
+  function openImageEditorFromActive() {
+    const active = getActiveTicket();
+    const image = active?.images?.[state.imageIndex];
+    if (!image || !els.imageEditorModal || !els.imageEditorCanvas) return;
+
+    state.imageEditorOpen = true;
+    state.imageEditorTool = state.imageEditorTool || "arrow";
+    state.imageEditorHistory = [];
+    els.imageEditorModal.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+
+    setImageEditorTool(state.imageEditorTool);
+    loadImageEditorCanvas(image);
+  }
+
+  function closeImageEditor() {
+    if (!els.imageEditorModal) return;
+    state.imageEditorOpen = false;
+    els.imageEditorModal.classList.remove("is-open");
+    document.body.style.overflow = "";
+    delete els.imageEditorCanvas.__imageEditorBaseImage;
+    delete els.imageEditorCanvas.__imageEditorDrawing;
+    delete els.imageEditorCanvas.__imageEditorStartX;
+    delete els.imageEditorCanvas.__imageEditorStartY;
+    delete els.imageEditorCanvas.__imageEditorCurrentShape;
+  }
+
+  function setImageEditorTool(tool) {
+    state.imageEditorTool = tool;
+    els.imageToolArrow?.classList.toggle("active", tool === "arrow");
+    els.imageToolRect?.classList.toggle("active", tool === "rect");
+    els.imageToolCircle?.classList.toggle("active", tool === "circle");
+  }
+
+  function loadImageEditorCanvas(imageSrc) {
+    if (!els.imageEditorCanvas) return;
+    const canvas = els.imageEditorCanvas;
+    const ctx = canvas.getContext("2d");
+    const image = new Image();
+
+    image.onload = () => {
+      const maxWidth = Math.min(window.innerWidth - 220, 1180);
+      const maxHeight = Math.min(window.innerHeight - 220, 760);
+      const ratio = Math.min(maxWidth / image.width, maxHeight / image.height, 1);
+
+      canvas.width = Math.max(1, Math.round(image.width * ratio));
+      canvas.height = Math.max(1, Math.round(image.height * ratio));
+      canvas.__imageEditorBaseImage = image;
+      canvas.__imageEditorBaseSource = imageSrc;
+      canvas.__imageEditorScaleX = image.width / canvas.width;
+      canvas.__imageEditorScaleY = image.height / canvas.height;
+      state.imageEditorHistory = [];
+      redrawImageEditorCanvas();
+    };
+
+    image.src = imageSrc;
+  }
+
+  function redrawImageEditorCanvas(previewShape) {
+    if (!els.imageEditorCanvas) return;
+    const canvas = els.imageEditorCanvas;
+    const ctx = canvas.getContext("2d");
+    const image = canvas.__imageEditorBaseImage;
+    if (!ctx || !image) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const shapes = previewShape ? [...state.imageEditorHistory, previewShape] : state.imageEditorHistory;
+    shapes.forEach((shape) => drawImageEditorShape(ctx, shape));
+  }
+
+  function drawImageEditorShape(ctx, shape) {
+    if (!shape) return;
+
+    ctx.save();
+    ctx.strokeStyle = "#ff3b30";
+    ctx.fillStyle = "#ff3b30";
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    if (shape.type === "rect") {
+      const x = Math.min(shape.x1, shape.x2);
+      const y = Math.min(shape.y1, shape.y2);
+      const w = Math.abs(shape.x2 - shape.x1);
+      const h = Math.abs(shape.y2 - shape.y1);
+      ctx.strokeRect(x, y, w, h);
+    }
+
+    if (shape.type === "circle") {
+      const centerX = (shape.x1 + shape.x2) / 2;
+      const centerY = (shape.y1 + shape.y2) / 2;
+      const radiusX = Math.abs(shape.x2 - shape.x1) / 2;
+      const radiusY = Math.abs(shape.y2 - shape.y1) / 2;
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    if (shape.type === "arrow") {
+      const headLength = 14;
+      const dx = shape.x2 - shape.x1;
+      const dy = shape.y2 - shape.y1;
+      const angle = Math.atan2(dy, dx);
+
+      ctx.beginPath();
+      ctx.moveTo(shape.x1, shape.y1);
+      ctx.lineTo(shape.x2, shape.y2);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(shape.x2, shape.y2);
+      ctx.lineTo(
+        shape.x2 - headLength * Math.cos(angle - Math.PI / 6),
+        shape.y2 - headLength * Math.sin(angle - Math.PI / 6)
+      );
+      ctx.lineTo(
+        shape.x2 - headLength * Math.cos(angle + Math.PI / 6),
+        shape.y2 - headLength * Math.sin(angle + Math.PI / 6)
+      );
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  function getImageEditorPoint(event) {
+    if (!els.imageEditorCanvas) return { x: 0, y: 0 };
+    const rect = els.imageEditorCanvas.getBoundingClientRect();
+    return {
+      x: Math.min(Math.max(event.clientX - rect.left, 0), rect.width),
+      y: Math.min(Math.max(event.clientY - rect.top, 0), rect.height),
+    };
+  }
+
+  function startImageEditorDraw(event) {
+    if (!state.imageEditorOpen || !els.imageEditorCanvas) return;
+    const point = getImageEditorPoint(event);
+    els.imageEditorCanvas.__imageEditorDrawing = true;
+    els.imageEditorCanvas.__imageEditorStartX = point.x;
+    els.imageEditorCanvas.__imageEditorStartY = point.y;
+    els.imageEditorCanvas.__imageEditorCurrentShape = {
+      type: state.imageEditorTool,
+      x1: point.x,
+      y1: point.y,
+      x2: point.x,
+      y2: point.y,
+    };
+  }
+
+  function moveImageEditorDraw(event) {
+    if (!state.imageEditorOpen || !els.imageEditorCanvas?.__imageEditorDrawing) return;
+    const point = getImageEditorPoint(event);
+    const shape = els.imageEditorCanvas.__imageEditorCurrentShape;
+    if (!shape) return;
+
+    shape.x2 = point.x;
+    shape.y2 = point.y;
+    redrawImageEditorCanvas(shape);
+  }
+
+  function endImageEditorDraw() {
+    if (!state.imageEditorOpen || !els.imageEditorCanvas?.__imageEditorDrawing) return;
+
+    const shape = els.imageEditorCanvas.__imageEditorCurrentShape;
+    els.imageEditorCanvas.__imageEditorDrawing = false;
+
+    if (shape) {
+      const moved = Math.abs(shape.x2 - shape.x1) + Math.abs(shape.y2 - shape.y1);
+      if (moved > 6) {
+        state.imageEditorHistory.push({ ...shape });
+      }
+    }
+
+    els.imageEditorCanvas.__imageEditorCurrentShape = null;
+    redrawImageEditorCanvas();
+  }
+
+  function undoImageEditorAnnotation() {
+    if (!state.imageEditorHistory.length) return;
+    state.imageEditorHistory.pop();
+    redrawImageEditorCanvas();
+  }
+
+  function saveImageEditorAnnotation() {
+    const active = getActiveTicket();
+    if (!active?.images?.length || !els.imageEditorCanvas) return;
+
+    const sourceImage = new Image();
+    const editedDataUrl = els.imageEditorCanvas.toDataURL("image/png");
+
+    sourceImage.onload = () => {
+      active.images[state.imageIndex] = editedDataUrl;
+      persist();
+      renderImageViewer(active);
+      closeImageEditor();
+      notify("Imagem editada com sucesso.", "success");
+    };
+
+    sourceImage.src = editedDataUrl;
+  }
+
 
   function renderReport(active) {
     const text = state.editingReport ? state.reportDraft : buildSingleReportText(active);
