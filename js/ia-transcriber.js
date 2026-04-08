@@ -1311,19 +1311,46 @@
           display: none;
         }
       }
-            #pagina-ia .ia-audio-player-custom {
+
+      /* ===== PLAYER CUSTOMIZADO: APENAS DESIGN ===== */
+      #pagina-ia .ia-audio-player-custom {
         position: relative;
         display: flex;
         align-items: center;
         gap: 14px;
         width: 100%;
-        padding: 12px 16px;
+        padding: 12px 14px;
         border-radius: 999px;
         background:
-          linear-gradient(180deg, rgba(248,252,255,.98), rgba(236,244,250,.95));
+          linear-gradient(135deg, rgba(255,255,255,.96), rgba(238,246,252,.92));
+        border: 1px solid rgba(255,255,255,.58);
         box-shadow:
-          0 10px 24px rgba(0,0,0,.14),
-          inset 0 1px 0 rgba(255,255,255,.95);
+          0 18px 40px rgba(4, 18, 31, .18),
+          inset 0 1px 0 rgba(255,255,255,.95),
+          inset 0 -1px 0 rgba(16, 52, 74, .05);
+        overflow: hidden;
+        backdrop-filter: blur(14px);
+      }
+
+      #pagina-ia .ia-audio-player-custom::before {
+        content: "";
+        position: absolute;
+        inset: 1px;
+        border-radius: inherit;
+        background:
+          linear-gradient(90deg, rgba(40,198,229,.10), rgba(255,255,255,0) 22%, rgba(255,255,255,0) 78%, rgba(142,123,255,.08));
+        pointer-events: none;
+      }
+
+      #pagina-ia .ia-audio-player-custom::after {
+        content: "";
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        top: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,.92), transparent);
+        pointer-events: none;
       }
 
       #pagina-ia .ia-audio-player-custom audio {
@@ -1331,27 +1358,37 @@
       }
 
       #pagina-ia .ia-audio-play-btn {
-        width: 42px;
-        height: 42px;
+        position: relative;
+        width: 52px;
+        height: 52px;
         border: none;
         border-radius: 999px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #22cbe9, #11b8d8);
+        background: linear-gradient(135deg, #32d6ef, #08b6d6);
         color: #04293a;
-        font-size: 16px;
+        font-size: 18px;
         font-weight: 800;
         cursor: pointer;
-        box-shadow: 0 8px 18px rgba(18,189,223,.28);
+        box-shadow:
+          0 12px 24px rgba(18,189,223,.28),
+          inset 0 1px 0 rgba(255,255,255,.55);
         transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
         flex-shrink: 0;
+        z-index: 1;
       }
 
       #pagina-ia .ia-audio-play-btn:hover {
         transform: translateY(-1px) scale(1.03);
-        box-shadow: 0 10px 22px rgba(18,189,223,.34);
+        box-shadow:
+          0 14px 28px rgba(18,189,223,.34),
+          inset 0 1px 0 rgba(255,255,255,.6);
         filter: brightness(1.03);
+      }
+
+      #pagina-ia .ia-audio-play-btn:active {
+        transform: scale(.98);
       }
 
       #pagina-ia .ia-audio-play-icon {
@@ -1361,64 +1398,97 @@
       #pagina-ia .ia-audio-time-wrap {
         display: flex;
         align-items: center;
-        gap: 4px;
-        min-width: 74px;
+        gap: 5px;
+        min-width: 96px;
         flex-shrink: 0;
+        padding: 0 2px;
+        z-index: 1;
       }
 
       #pagina-ia .ia-audio-time,
       #pagina-ia .ia-audio-time-separator {
-        color: #16354a;
-        font-size: 12px;
+        color: #17364b;
+        font-size: 14px;
         font-weight: 800;
         font-variant-numeric: tabular-nums;
+        letter-spacing: -.01em;
+      }
+
+      #pagina-ia .ia-audio-time-separator {
+        opacity: .45;
       }
 
       #pagina-ia .ia-audio-progress-container {
         position: relative;
         flex: 1;
-        height: 8px;
+        height: 10px;
         border-radius: 999px;
-        background: rgba(15, 47, 68, .22);
+        background: linear-gradient(180deg, rgba(11, 39, 56, .14), rgba(11, 39, 56, .22));
         cursor: pointer;
         overflow: hidden;
+        box-shadow:
+          inset 0 1px 2px rgba(0,0,0,.10),
+          inset 0 -1px 0 rgba(255,255,255,.35);
+        z-index: 1;
       }
 
       #pagina-ia .ia-audio-progress-fill {
+        position: relative;
         width: 0%;
         height: 100%;
         border-radius: inherit;
-        background: linear-gradient(90deg, #16b7d8, #53dff3);
-        box-shadow: 0 0 12px rgba(18,189,223,.18);
+        background: linear-gradient(90deg, #11b8d8 0%, #41d8ef 55%, #7cecff 100%);
+        box-shadow:
+          0 0 16px rgba(18,189,223,.26),
+          inset 0 1px 0 rgba(255,255,255,.38);
         transition: width .08s linear;
       }
 
+      #pagina-ia .ia-audio-progress-fill::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: 0;
+        width: 16px;
+        height: 16px;
+        border-radius: 999px;
+        transform: translate(50%, -50%);
+        background: radial-gradient(circle at 35% 35%, #ffffff, #b7f4ff 55%, #2ccfe8 100%);
+        box-shadow:
+          0 0 0 4px rgba(18,189,223,.14),
+          0 4px 12px rgba(18,189,223,.26);
+      }
+
       #pagina-ia .ia-audio-mini-btn {
-        width: 34px;
-        height: 34px;
+        width: 40px;
+        height: 40px;
         border: none;
-        background: transparent;
-        color: #16354a;
+        background: rgba(18,189,223,.08);
+        color: #15364a;
         font-size: 16px;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border-radius: 10px;
-        transition: background-color .18s ease, transform .18s ease;
+        border-radius: 12px;
+        transition: background-color .18s ease, transform .18s ease, box-shadow .18s ease;
         flex-shrink: 0;
+        z-index: 1;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.42);
       }
 
       #pagina-ia .ia-audio-mini-btn:hover {
-        background: rgba(18,189,223,.10);
+        background: rgba(18,189,223,.14);
         transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(18,189,223,.10);
       }
 
       #pagina-ia .ia-audio-volume-wrap {
-        width: 88px;
+        width: 100px;
         display: flex;
         align-items: center;
         flex-shrink: 0;
+        z-index: 1;
       }
 
       #pagina-ia .ia-audio-volume {
@@ -1427,40 +1497,44 @@
         height: 6px;
         border-radius: 999px;
         outline: none;
-        background: rgba(15, 47, 68, .22);
+        background: linear-gradient(180deg, rgba(15, 47, 68, .14), rgba(15, 47, 68, .22));
         cursor: pointer;
       }
 
       #pagina-ia .ia-audio-volume::-webkit-slider-runnable-track {
         height: 6px;
         border-radius: 999px;
-        background: rgba(15, 47, 68, .22);
+        background: linear-gradient(180deg, rgba(15, 47, 68, .14), rgba(15, 47, 68, .22));
       }
 
       #pagina-ia .ia-audio-volume::-webkit-slider-thumb {
         appearance: none;
-        width: 14px;
-        height: 14px;
-        margin-top: -4px;
+        width: 15px;
+        height: 15px;
+        margin-top: -4.5px;
         border-radius: 999px;
         border: none;
-        background: #16b7d8;
-        box-shadow: 0 0 0 3px rgba(18,189,223,.14);
+        background: radial-gradient(circle at 35% 35%, #ffffff, #b7f4ff 55%, #16b7d8 100%);
+        box-shadow:
+          0 0 0 3px rgba(18,189,223,.14),
+          0 6px 14px rgba(18,189,223,.20);
       }
 
       #pagina-ia .ia-audio-volume::-moz-range-track {
         height: 6px;
         border-radius: 999px;
-        background: rgba(15, 47, 68, .22);
+        background: linear-gradient(180deg, rgba(15, 47, 68, .14), rgba(15, 47, 68, .22));
       }
 
       #pagina-ia .ia-audio-volume::-moz-range-thumb {
-        width: 14px;
-        height: 14px;
+        width: 15px;
+        height: 15px;
         border: none;
         border-radius: 999px;
-        background: #16b7d8;
-        box-shadow: 0 0 0 3px rgba(18,189,223,.14);
+        background: radial-gradient(circle at 35% 35%, #ffffff, #b7f4ff 55%, #16b7d8 100%);
+        box-shadow:
+          0 0 0 3px rgba(18,189,223,.14),
+          0 6px 14px rgba(18,189,223,.20);
       }
 
       html[data-theme="light"] #pagina-ia .ia-audio-player-custom,
@@ -1470,7 +1544,43 @@
       .theme-light #pagina-ia .ia-audio-player-custom,
       [data-bs-theme="light"] #pagina-ia .ia-audio-player-custom {
         background:
-          linear-gradient(180deg, rgba(255,255,255,.98), rgba(244,248,252,.96));
+          linear-gradient(135deg, rgba(255,255,255,.99), rgba(243,248,252,.96));
+        border: 1px solid rgba(155, 196, 220, .28);
+        box-shadow:
+          0 18px 38px rgba(92, 129, 168, .14),
+          inset 0 1px 0 rgba(255,255,255,.96),
+          inset 0 -1px 0 rgba(101, 141, 174, .06);
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-audio-play-btn,
+      body[data-theme="light"] #pagina-ia .ia-audio-play-btn,
+      html.light #pagina-ia .ia-audio-play-btn,
+      body.light #pagina-ia .ia-audio-play-btn,
+      .theme-light #pagina-ia .ia-audio-play-btn,
+      [data-bs-theme="light"] #pagina-ia .ia-audio-play-btn {
+        color: #083446;
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-audio-mini-btn,
+      body[data-theme="light"] #pagina-ia .ia-audio-mini-btn,
+      html.light #pagina-ia .ia-audio-mini-btn,
+      body.light #pagina-ia .ia-audio-mini-btn,
+      .theme-light #pagina-ia .ia-audio-mini-btn,
+      [data-bs-theme="light"] #pagina-ia .ia-audio-mini-btn {
+        background: rgba(18,189,223,.08);
+      }
+
+      #pagina-ia #ia-audio-card.is-playing .ia-audio-player-custom {
+        box-shadow:
+          0 20px 42px rgba(18,189,223,.18),
+          inset 0 1px 0 rgba(255,255,255,.96),
+          inset 0 -1px 0 rgba(16, 52, 74, .05);
+      }
+
+      #pagina-ia #ia-audio-card.is-playing .ia-audio-play-btn {
+        box-shadow:
+          0 16px 32px rgba(18,189,223,.38),
+          inset 0 1px 0 rgba(255,255,255,.55);
       }
 
       @media (max-width: 640px) {
@@ -1479,12 +1589,27 @@
           padding: 10px 12px;
         }
 
+        #pagina-ia .ia-audio-play-btn {
+          width: 46px;
+          height: 46px;
+        }
+
         #pagina-ia .ia-audio-time-wrap {
-          min-width: 66px;
+          min-width: 78px;
+        }
+
+        #pagina-ia .ia-audio-time,
+        #pagina-ia .ia-audio-time-separator {
+          font-size: 12px;
         }
 
         #pagina-ia .ia-audio-volume-wrap {
-          width: 64px;
+          width: 70px;
+        }
+
+        #pagina-ia .ia-audio-mini-btn {
+          width: 36px;
+          height: 36px;
         }
       }
     `;
@@ -1843,7 +1968,7 @@
       if (!active) return;
 
       const payload = {
-        contato: active.customName ? `${active.customName} (${active.phone})` : `(${active.phone})`,
+        contato: active.customName ? \`\${active.customName} (\${active.phone})\` : \`(\${active.phone})\`,
         relatorio: buildHtml(active),
         assunto: active.resumo || "Solicitacao de Suporte",
       };
@@ -2043,7 +2168,7 @@ els.audioPlayer?.addEventListener("ended", () => {
 
     const term = state.searchTerm.trim().toLowerCase();
     const filtered = state.tickets.filter((ticket) => {
-      const composite = `${ticket.phone || ""} ${ticket.customName || ""}`.toLowerCase();
+      const composite = \`\${ticket.phone || ""} \${ticket.customName || ""}\`.toLowerCase();
       return !term || composite.includes(term);
     });
 
@@ -2105,7 +2230,7 @@ els.audioPlayer?.addEventListener("ended", () => {
 
   function commitTicketName(ticketId) {
     const ticket = state.tickets.find((entry) => entry.id === ticketId);
-    const input = els.ticketList.querySelector(`[data-ticket-edit-input="${ticketId}"]`);
+    const input = els.ticketList.querySelector(\`[data-ticket-edit-input="\${ticketId}"]\`);
     if (!ticket || !input) return;
 
     const value = input.value.trim();
@@ -2116,7 +2241,7 @@ els.audioPlayer?.addEventListener("ended", () => {
   }
 
   function focusTicketInput(ticketId) {
-    const input = els.ticketList?.querySelector(`[data-ticket-edit-input="${ticketId}"]`);
+    const input = els.ticketList?.querySelector(\`[data-ticket-edit-input="\${ticketId}"]\`);
     if (!input) return;
     input.focus();
     input.select();
@@ -2220,7 +2345,7 @@ els.audioPlayer?.addEventListener("ended", () => {
     window.requestAnimationFrame(() => {
       const activeElement = document.activeElement;
       if (activeElement === input) return;
-      if (activeElement?.closest?.(`[data-ticket-id="${ticketId}"][data-action="rename"]`)) return;
+      if (activeElement?.closest?.(\`[data-ticket-id="\${ticketId}"][data-action="rename"]\`)) return;
       commitTicketName(ticketId);
     });
   }
@@ -2275,7 +2400,7 @@ els.audioPlayer?.addEventListener("ended", () => {
     els.imageEmpty.classList.add("hidden");
     els.imageStage.classList.remove("hidden");
     els.activeImage.src = images[state.imageIndex];
-    els.imageCounter.textContent = `${state.imageIndex + 1} / ${images.length}`;
+    els.imageCounter.textContent = \`\${state.imageIndex + 1} / \${images.length}\`;
     toggleDisabled(els.prevImageBtn, state.imageIndex === 0);
     toggleDisabled(els.nextImageBtn, state.imageIndex >= images.length - 1);
   }
@@ -2386,7 +2511,7 @@ function renderAudio(active) {
 
     if (file.size > MAX_UPLOAD_BYTES) {
       const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
-      throw new Error(`Áudio muito grande para envio (${sizeMb} MB). Envie um arquivo menor que 128 MB.`);
+      throw new Error(\`Áudio muito grande para envio (\${sizeMb} MB). Envie um arquivo menor que 128 MB.\`);
     }
 
     return file;
@@ -2407,7 +2532,7 @@ function renderAudio(active) {
   }
 
   async function requestBlobTranscription(blobUpload, file) {
-    const response = await fetch(`${apiBaseUrl}/transcrever`, {
+    const response = await fetch(\`\${apiBaseUrl}/transcrever\`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -2423,7 +2548,7 @@ function renderAudio(active) {
     const data = await parseJsonSafe(response);
 
     if (!response.ok || !data?.sucesso) {
-      throw createHttpError(data?.erro || `Falha ao transcrever o áudio armazenado. Status ${response.status}`, response.status);
+      throw createHttpError(data?.erro || \`Falha ao transcrever o áudio armazenado. Status \${response.status}\`, response.status);
     }
 
     return data;
@@ -2436,15 +2561,15 @@ function renderAudio(active) {
       "",
       "ENCAMINHAMENTO / SOLUCAO:",
       ticket?.solucao || "",
-    ].join("\n").trim();
+    ].join("\\n").trim();
   }
 
   function parseSingleReportText(text) {
-    const normalized = String(text || "").replace(/\r\n/g, "\n");
+    const normalized = String(text || "").replace(/\\r\\n/g, "\\n");
     const problemMatch = normalized.match(
-      /PROBLEMA\s*\/\s*DUVIDA\s*:\s*([\s\S]*?)(?:\n{2,}ENCAMINHAMENTO\s*\/\s*SOLUCAO\s*:|$)/i
+      /PROBLEMA\\s*\\/\\s*DUVIDA\\s*:\\s*([\\s\\S]*?)(?:\\n{2,}ENCAMINHAMENTO\\s*\\/\\s*SOLUCAO\\s*:|$)/i
     );
-    const solutionMatch = normalized.match(/ENCAMINHAMENTO\s*\/\s*SOLUCAO\s*:\s*([\s\S]*)/i);
+    const solutionMatch = normalized.match(/ENCAMINHAMENTO\\s*\\/\\s*SOLUCAO\\s*:\\s*([\\s\\S]*)/i);
 
     return {
       analysis: problemMatch ? problemMatch[1].trim() : normalized.trim(),
@@ -2503,7 +2628,7 @@ function renderAudio(active) {
     persist();
     renderImageViewer(active);
     animateImageStage();
-    notify(`${images.length} imagem(ns) adicionada(s).`, "success");
+    notify(\`\${images.length} imagem(ns) adicionada(s).\`, "success");
   }
 
   function readFileAsDataUrl(file) {
@@ -2660,11 +2785,11 @@ els.audioPlayer.load();
     }
 
     const { upload } = await loadBlobClient();
-    const pathname = `audios/${Date.now()}-${sanitizeBlobFilename(file.name)}`;
+    const pathname = \`audios/\${Date.now()}-\${sanitizeBlobFilename(file.name)}\`;
 
     return upload(pathname, file, {
       access: "public",
-      handleUploadUrl: `${apiBaseUrl}/blob-upload`,
+      handleUploadUrl: \`\${apiBaseUrl}/blob-upload\`,
       multipart: true,
     });
   }
@@ -2711,13 +2836,13 @@ els.audioPlayer.load();
 
   function sanitizeBlobFilename(filename) {
     return String(filename || "audio.bin")
-      .replace(/[^\w.\-]+/g, "_")
+      .replace(/[^\\w.\\-]+/g, "_")
       .replace(/_+/g, "_");
   }
 
   async function pingBackendHealth() {
     try {
-      await fetch(`${apiBaseUrl}/health`, {
+      await fetch(\`\${apiBaseUrl}/health\`, {
         method: "GET",
         cache: "no-store",
       });
@@ -2728,14 +2853,14 @@ els.audioPlayer.load();
 
   function buildHtml(ticket) {
     const phone = ticket.phone || "telefone";
-    const contact = ticket.customName ? `${ticket.customName} (${phone})` : `(${phone})`;
+    const contact = ticket.customName ? \`\${ticket.customName} (\${phone})\` : \`(\${phone})\`;
 
     return [
       '<span style="color:#f39c12"><strong>PROBLEMA / DUVIDA:</strong></span><br />',
-      `<span>Em contato com usuario <b>${escapeHtml(contact)}</b>.</span><br />`,
-      `<span>${escapeHtml(ticket.analysis || "Aguardando transcricao...")}</span><br /><br />`,
+      \`<span>Em contato com usuario <b>\${escapeHtml(contact)}</b>.</span><br />\`,
+      \`<span>\${escapeHtml(ticket.analysis || "Aguardando transcricao...")}</span><br /><br />\`,
       '<span style="color:#4dabf7"><strong>ENCAMINHAMENTO / SOLUCAO:</strong></span><br />',
-      `<span>${escapeHtml(ticket.solucao || "Aguardando transcricao...")}</span>`,
+      \`<span>\${escapeHtml(ticket.solucao || "Aguardando transcricao...")}</span>\`,
     ].join("");
   }
 
@@ -2763,7 +2888,7 @@ els.audioPlayer.load();
       return;
     }
 
-    console.log(`[${type || "info"}] ${message}`);
+    console.log(\`[\${type || "info"}] \${message}\`);
   }
 
   async function loadMotionClient() {
@@ -2946,7 +3071,7 @@ function syncAudioUi() {
   }
 
   if (els.audioProgressFill) {
-    els.audioProgressFill.style.width = `${progress}%`;
+    els.audioProgressFill.style.width = \`\${progress}%\`;
   }
 
   if (els.audioVolume) {
@@ -2972,7 +3097,7 @@ function formatAudioTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  return \`\${mins}:\${secs < 10 ? "0" : ""}\${secs}\`;
 }
 
   document.addEventListener("DOMContentLoaded", init);
