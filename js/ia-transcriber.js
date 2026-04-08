@@ -1782,6 +1782,7 @@
         background: #fff;
         box-shadow: 0 18px 42px rgba(0,0,0,.34);
         cursor: crosshair;
+        touch-action: none;
       }
 
       html[data-theme="light"] #pagina-ia .ia-image-editor-toolbar,
@@ -2815,12 +2816,16 @@ els.audioPlayer?.addEventListener("ended", () => {
   }
 
   function getImageEditorPoint(event) {
-    if (!els.imageEditorCanvas) return { x: 0, y: 0 };
-    const rect = els.imageEditorCanvas.getBoundingClientRect();
-    return {
-      x: Math.min(Math.max(event.clientX - rect.left, 0), rect.width),
-      y: Math.min(Math.max(event.clientY - rect.top, 0), rect.height),
-    };
+     if (!els.imageEditorCanvas) return { x: 0, y: 0 };
+
+      const rect = els.imageEditorCanvas.getBoundingClientRect();
+      const scaleX = els.imageEditorCanvas.width / rect.width;
+      const scaleY = els.imageEditorCanvas.height / rect.height;
+
+      return {
+        x: Math.min(Math.max((event.clientX - rect.left) * scaleX, 0), els.imageEditorCanvas.width),
+        y: Math.min(Math.max((event.clientY - rect.top) * scaleY, 0), els.imageEditorCanvas.height),
+      };
   }
 
   function startImageEditorDraw(event) {
