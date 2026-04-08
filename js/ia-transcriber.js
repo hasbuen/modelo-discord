@@ -1311,43 +1311,42 @@
           display: none;
         }
       }
+
             #pagina-ia .ia-audio-player-custom {
         position: relative;
-        display: flex;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        grid-template-rows: auto auto auto;
         align-items: center;
-        gap: 14px;
         width: 100%;
-        padding: 12px 14px;
-        border-radius: 999px;
+        row-gap: 14px;
+        column-gap: 12px;
+        padding: 20px 22px 18px;
+        border-radius: 24px;
         background:
-          linear-gradient(135deg, rgba(255,255,255,.96), rgba(238,246,252,.92));
-        border: 1px solid rgba(255,255,255,.58);
+          linear-gradient(180deg, #1e293b 0%, #172334 100%);
+        border: 1px solid rgba(148, 163, 184, .16);
         box-shadow:
-          0 18px 40px rgba(4, 18, 31, .18),
-          inset 0 1px 0 rgba(255,255,255,.95),
-          inset 0 -1px 0 rgba(16, 52, 74, .05);
+          0 20px 40px rgba(0, 0, 0, .34),
+          inset 0 1px 0 rgba(255,255,255,.04);
         overflow: hidden;
-        backdrop-filter: blur(14px);
       }
 
       #pagina-ia .ia-audio-player-custom::before {
         content: "";
         position: absolute;
-        inset: 1px;
-        border-radius: inherit;
+        inset: 0;
         background:
-          linear-gradient(90deg, rgba(40,198,229,.10), rgba(255,255,255,0) 22%, rgba(255,255,255,0) 78%, rgba(142,123,255,.08));
+          radial-gradient(circle at top center, rgba(99, 102, 241, .12), transparent 46%);
         pointer-events: none;
       }
 
       #pagina-ia .ia-audio-player-custom::after {
         content: "";
         position: absolute;
-        left: 16px;
-        right: 16px;
-        top: 0;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,.92), transparent);
+        inset: 0;
+        border-radius: inherit;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
         pointer-events: none;
       }
 
@@ -1355,34 +1354,199 @@
         display: none;
       }
 
-      #pagina-ia .ia-audio-play-btn {
+      #pagina-ia .ia-audio-time-wrap {
+        grid-column: 1 / 4;
+        grid-row: 1;
+        width: 100%;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 8px;
+        z-index: 1;
+      }
+
+      #pagina-ia .ia-audio-time,
+      #pagina-ia .ia-audio-time-separator {
+        color: #94a3b8;
+        font-size: 12px;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0;
+      }
+
+      #pagina-ia #ia-audio-current-time {
+        justify-self: start;
+      }
+
+      #pagina-ia #ia-audio-duration {
+        justify-self: end;
+      }
+
+      #pagina-ia .ia-audio-time-separator {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      #pagina-ia .ia-audio-progress-container {
+        grid-column: 1 / 4;
+        grid-row: 2;
         position: relative;
-        width: 52px;
-        height: 52px;
-        border: none;
+        width: 100%;
+        height: 6px;
         border-radius: 999px;
+        background: #334155;
+        cursor: pointer;
+        overflow: hidden;
+        box-shadow: none;
+        z-index: 1;
+      }
+
+      #pagina-ia .ia-audio-progress-fill {
+        position: relative;
+        width: 0%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #6366f1, #6366f1);
+        box-shadow: none;
+        transition: width .08s linear;
+      }
+
+      #pagina-ia .ia-audio-progress-fill::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: 0;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        transform: translate(50%, -50%);
+        background: #ffffff;
+        box-shadow: 0 0 5px rgba(0,0,0,.28);
+      }
+
+      #pagina-ia .ia-audio-mini-btn {
+        grid-column: 1;
+        grid-row: 3;
+        justify-self: start;
+        width: 38px;
+        height: 38px;
+        border: none;
+        background: transparent;
+        color: #f8fafc;
+        font-size: 20px;
+        cursor: pointer;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #32d6ef, #08b6d6);
-        color: #04293a;
-        font-size: 18px;
+        border-radius: 12px;
+        transition: color .2s ease, transform .2s ease;
+        flex-shrink: 0;
+        z-index: 1;
+        box-shadow: none;
+      }
+
+      #pagina-ia .ia-audio-mini-btn:hover {
+        color: #6366f1;
+        transform: scale(1.08);
+        background: transparent;
+        box-shadow: none;
+      }
+
+      #pagina-ia .ia-audio-volume-wrap {
+        grid-column: 1;
+        grid-row: 3;
+        justify-self: start;
+        display: flex;
+        align-items: center;
+        width: 92px;
+        margin-left: 42px;
+        z-index: 1;
+      }
+
+      #pagina-ia .ia-audio-volume {
+        width: 100%;
+        appearance: none;
+        height: 4px;
+        border-radius: 999px;
+        outline: none;
+        background-color: #334155;
+        background-image: linear-gradient(#6366f1, #6366f1);
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        cursor: pointer;
+      }
+
+      #pagina-ia .ia-audio-volume::-webkit-slider-runnable-track {
+        height: 4px;
+        border-radius: 999px;
+        background: transparent;
+      }
+
+      #pagina-ia .ia-audio-volume::-webkit-slider-thumb {
+        appearance: none;
+        width: 14px;
+        height: 14px;
+        margin-top: -5px;
+        border-radius: 50%;
+        border: none;
+        background: #fff;
+        box-shadow: 0 0 5px rgba(0,0,0,.3);
+        transition: transform .1s ease;
+      }
+
+      #pagina-ia .ia-audio-volume::-webkit-slider-thumb:hover {
+        transform: scale(1.3);
+      }
+
+      #pagina-ia .ia-audio-volume::-moz-range-track {
+        height: 4px;
+        border-radius: 999px;
+        background: #334155;
+      }
+
+      #pagina-ia .ia-audio-volume::-moz-range-progress {
+        height: 4px;
+        border-radius: 999px;
+        background: #6366f1;
+      }
+
+      #pagina-ia .ia-audio-volume::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border: none;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 0 5px rgba(0,0,0,.3);
+      }
+
+      #pagina-ia .ia-audio-play-btn {
+        grid-column: 2;
+        grid-row: 3;
+        justify-self: center;
+        width: 56px;
+        height: 56px;
+        border: none;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #6366f1;
+        color: #ffffff;
+        font-size: 20px;
         font-weight: 800;
         cursor: pointer;
-        box-shadow:
-          0 12px 24px rgba(18,189,223,.28),
-          inset 0 1px 0 rgba(255,255,255,.55);
-        transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        transition: background-color .2s ease, transform .2s ease, box-shadow .2s ease;
         flex-shrink: 0;
         z-index: 1;
       }
 
       #pagina-ia .ia-audio-play-btn:hover {
-        transform: translateY(-1px) scale(1.03);
-        box-shadow:
-          0 14px 28px rgba(18,189,223,.34),
-          inset 0 1px 0 rgba(255,255,255,.6);
-        filter: brightness(1.03);
+        background: #4f46e5;
+        color: #ffffff;
+        transform: scale(1.05);
+        box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
+        filter: none;
       }
 
       #pagina-ia .ia-audio-play-btn:active {
@@ -1393,146 +1557,8 @@
         line-height: 1;
       }
 
-      #pagina-ia .ia-audio-time-wrap {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        min-width: 96px;
-        flex-shrink: 0;
-        padding: 0 2px;
-        z-index: 1;
-      }
-
-      #pagina-ia .ia-audio-time,
-      #pagina-ia .ia-audio-time-separator {
-        color: #17364b;
-        font-size: 14px;
-        font-weight: 800;
-        font-variant-numeric: tabular-nums;
-        letter-spacing: -.01em;
-      }
-
-      #pagina-ia .ia-audio-time-separator {
-        opacity: .45;
-      }
-
-      #pagina-ia .ia-audio-progress-container {
-        position: relative;
-        flex: 1;
-        height: 10px;
-        border-radius: 999px;
-        background: linear-gradient(180deg, rgba(11, 39, 56, .14), rgba(11, 39, 56, .22));
-        cursor: pointer;
-        overflow: hidden;
-        box-shadow:
-          inset 0 1px 2px rgba(0,0,0,.10),
-          inset 0 -1px 0 rgba(255,255,255,.35);
-        z-index: 1;
-      }
-
-      #pagina-ia .ia-audio-progress-fill {
-        position: relative;
-        width: 0%;
-        height: 100%;
-        border-radius: inherit;
-        background: linear-gradient(90deg, #11b8d8 0%, #41d8ef 55%, #7cecff 100%);
-        box-shadow:
-          0 0 16px rgba(18,189,223,.26),
-          inset 0 1px 0 rgba(255,255,255,.38);
-        transition: width .08s linear;
-      }
-
-      #pagina-ia .ia-audio-progress-fill::after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        right: 0;
-        width: 16px;
-        height: 16px;
-        border-radius: 999px;
-        transform: translate(50%, -50%);
-        background: radial-gradient(circle at 35% 35%, #ffffff, #b7f4ff 55%, #2ccfe8 100%);
-        box-shadow:
-          0 0 0 4px rgba(18,189,223,.14),
-          0 4px 12px rgba(18,189,223,.26);
-      }
-
-      #pagina-ia .ia-audio-mini-btn {
-        width: 40px;
-        height: 40px;
-        border: none;
-        background: rgba(18,189,223,.08);
-        color: #15364a;
-        font-size: 16px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 12px;
-        transition: background-color .18s ease, transform .18s ease, box-shadow .18s ease;
-        flex-shrink: 0;
-        z-index: 1;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,.42);
-      }
-
-      #pagina-ia .ia-audio-mini-btn:hover {
-        background: rgba(18,189,223,.14);
-        transform: translateY(-1px);
-        box-shadow: 0 8px 18px rgba(18,189,223,.10);
-      }
-
-      #pagina-ia .ia-audio-volume-wrap {
-        width: 100px;
-        display: flex;
-        align-items: center;
-        flex-shrink: 0;
-        z-index: 1;
-      }
-
-      #pagina-ia .ia-audio-volume {
-        width: 100%;
-        appearance: none;
-        height: 6px;
-        border-radius: 999px;
-        outline: none;
-        background: linear-gradient(180deg, rgba(15, 47, 68, .14), rgba(15, 47, 68, .22));
-        cursor: pointer;
-      }
-
-      #pagina-ia .ia-audio-volume::-webkit-slider-runnable-track {
-        height: 6px;
-        border-radius: 999px;
-        background: linear-gradient(180deg, rgba(15, 47, 68, .14), rgba(15, 47, 68, .22));
-      }
-
-      #pagina-ia .ia-audio-volume::-webkit-slider-thumb {
-        appearance: none;
-        width: 15px;
-        height: 15px;
-        margin-top: -4.5px;
-        border-radius: 999px;
-        border: none;
-        background: radial-gradient(circle at 35% 35%, #ffffff, #b7f4ff 55%, #16b7d8 100%);
-        box-shadow:
-          0 0 0 3px rgba(18,189,223,.14),
-          0 6px 14px rgba(18,189,223,.20);
-      }
-
-      #pagina-ia .ia-audio-volume::-moz-range-track {
-        height: 6px;
-        border-radius: 999px;
-        background: linear-gradient(180deg, rgba(15, 47, 68, .14), rgba(15, 47, 68, .22));
-      }
-
-      #pagina-ia .ia-audio-volume::-moz-range-thumb {
-        width: 15px;
-        height: 15px;
-        border: none;
-        border-radius: 999px;
-        background: radial-gradient(circle at 35% 35%, #ffffff, #b7f4ff 55%, #16b7d8 100%);
-        box-shadow:
-          0 0 0 3px rgba(18,189,223,.14),
-          0 6px 14px rgba(18,189,223,.20);
+      #pagina-ia .ia-audio-play-icon-play {
+        transform: translateX(2px);
       }
 
       html[data-theme="light"] #pagina-ia .ia-audio-player-custom,
@@ -1542,12 +1568,11 @@
       .theme-light #pagina-ia .ia-audio-player-custom,
       [data-bs-theme="light"] #pagina-ia .ia-audio-player-custom {
         background:
-          linear-gradient(135deg, rgba(255,255,255,.99), rgba(243,248,252,.96));
-        border: 1px solid rgba(155, 196, 220, .28);
+          linear-gradient(180deg, #1e293b 0%, #172334 100%);
+        border: 1px solid rgba(148, 163, 184, .16);
         box-shadow:
-          0 18px 38px rgba(92, 129, 168, .14),
-          inset 0 1px 0 rgba(255,255,255,.96),
-          inset 0 -1px 0 rgba(101, 141, 174, .06);
+          0 20px 40px rgba(0, 0, 0, .30),
+          inset 0 1px 0 rgba(255,255,255,.04);
       }
 
       html[data-theme="light"] #pagina-ia .ia-audio-play-btn,
@@ -1556,7 +1581,7 @@
       body.light #pagina-ia .ia-audio-play-btn,
       .theme-light #pagina-ia .ia-audio-play-btn,
       [data-bs-theme="light"] #pagina-ia .ia-audio-play-btn {
-        color: #083446;
+        color: #ffffff;
       }
 
       html[data-theme="light"] #pagina-ia .ia-audio-mini-btn,
@@ -1564,54 +1589,66 @@
       html.light #pagina-ia .ia-audio-mini-btn,
       body.light #pagina-ia .ia-audio-mini-btn,
       .theme-light #pagina-ia .ia-audio-mini-btn,
-      [data-bs-theme="light"] #pagina-ia .ia-audio-mini-btn {
-        background: rgba(18,189,223,.08);
+      [data-bs-theme="light"] #pagina-ia .ia-audio-mini-btn,
+      html[data-theme="light"] #pagina-ia .ia-audio-time,
+      body[data-theme="light"] #pagina-ia .ia-audio-time,
+      html.light #pagina-ia .ia-audio-time,
+      body.light #pagina-ia .ia-audio-time,
+      .theme-light #pagina-ia .ia-audio-time,
+      [data-bs-theme="light"] #pagina-ia .ia-audio-time {
+        color: #f8fafc;
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-audio-time-separator,
+      body[data-theme="light"] #pagina-ia .ia-audio-time-separator,
+      html.light #pagina-ia .ia-audio-time-separator,
+      body.light #pagina-ia .ia-audio-time-separator,
+      .theme-light #pagina-ia .ia-audio-time-separator,
+      [data-bs-theme="light"] #pagina-ia .ia-audio-time-separator {
+        color: transparent;
       }
 
       #pagina-ia #ia-audio-card.is-playing .ia-audio-player-custom {
         box-shadow:
-          0 20px 42px rgba(18,189,223,.18),
-          inset 0 1px 0 rgba(255,255,255,.96),
-          inset 0 -1px 0 rgba(16, 52, 74, .05);
+          0 20px 42px rgba(0, 0, 0, .38),
+          0 0 0 1px rgba(99, 102, 241, .14),
+          inset 0 1px 0 rgba(255,255,255,.04);
       }
 
       #pagina-ia #ia-audio-card.is-playing .ia-audio-play-btn {
-        box-shadow:
-          0 16px 32px rgba(18,189,223,.38),
-          inset 0 1px 0 rgba(255,255,255,.55);
+        box-shadow: 0 6px 18px rgba(99, 102, 241, 0.48);
       }
 
       @media (max-width: 640px) {
         #pagina-ia .ia-audio-player-custom {
-          gap: 10px;
-          padding: 10px 12px;
-        }
-
-        #pagina-ia .ia-audio-play-btn {
-          width: 46px;
-          height: 46px;
-        }
-
-        #pagina-ia .ia-audio-time-wrap {
-          min-width: 78px;
+          padding: 16px 16px 14px;
+          row-gap: 12px;
+          column-gap: 10px;
         }
 
         #pagina-ia .ia-audio-time,
         #pagina-ia .ia-audio-time-separator {
-          font-size: 12px;
+          font-size: 11px;
+        }
+
+        #pagina-ia .ia-audio-play-btn {
+          width: 50px;
+          height: 50px;
         }
 
         #pagina-ia .ia-audio-volume-wrap {
-          width: 70px;
+          width: 74px;
+          margin-left: 38px;
         }
 
         #pagina-ia .ia-audio-mini-btn {
-          width: 36px;
-          height: 36px;
+          width: 34px;
+          height: 34px;
+          font-size: 18px;
         }
       }
 
-    `;
+`;
     document.head.appendChild(style);
   }
 
