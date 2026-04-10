@@ -1,27 +1,24 @@
 (function () {
   const STORAGE_KEY = "protocord_ia_assistant_v1";
-  const apiBaseUrl = window.getProtocordApiBaseUrl();
+
+  function getApiBaseUrlSafe() {
+    try {
+      if (typeof window.getProtocordApiBaseUrl === "function") {
+        return window.getProtocordApiBaseUrl();
+      }
+    } catch (_) {}
+    return "";
+  }
 
   const state = {
     messages: [],
     sending: false,
     motion: null,
+    initialized: false,
+    originalMarkup: "",
   };
 
   const els = {};
-
-  function init() {
-    bindElements();
-    if (!els.page) return;
-
-    injectStyles();
-    enhanceLayout();
-    bindElements();
-    restoreState();
-    bindEvents();
-    render();
-    bootMotion();
-  }
 
   function bindElements() {
     els.page = document.getElementById("pagina-assistente");
@@ -30,7 +27,50 @@
     els.input = document.getElementById("assistant-input");
     els.sendBtn = document.getElementById("assistant-send-btn");
     els.clearBtn = document.getElementById("assistant-clear-btn");
-    els.suggestions = Array.from(document.querySelectorAll("[data-assistant-prompt]"));
+    els.suggestions = Array.from(document.querySelectorAll("#pagina-assistente [data-assistant-prompt]"));
+  }
+
+  function init() {
+    bindElements();
+    if (!els.page) return null;
+
+    if (state.initialized && els.page.dataset.assistantEnhanced === "true") {
+      return api;
+    }
+
+    if (!state.originalMarkup) {
+      state.originalMarkup = els.page.innerHTML;
+    }
+
+    injectStyles();
+    enhanceLayout();
+    bindElements();
+    restoreState();
+    bindEvents();
+    render();
+    bootMotion();
+
+    state.initialized = true;
+    els.page.dataset.assistantEnhanced = "true";
+
+    return api;
+  }
+
+  function destroy() {
+    bindElements();
+    if (!els.page) return;
+
+    if (state.originalMarkup) {
+      els.page.innerHTML = state.originalMarkup;
+    }
+
+    els.page.classList.remove("assistant-ui-upgraded");
+    delete els.page.dataset.assistantEnhanced;
+
+    state.initialized = false;
+    state.motion = null;
+
+    bindElements();
   }
 
   function bindEvents() {
@@ -100,7 +140,7 @@
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
       state.messages = Array.isArray(parsed.messages) ? parsed.messages.slice(-20) : [];
-    } catch (error) {
+    } catch (_) {
       state.messages = [];
     }
   }
@@ -140,7 +180,7 @@
           </div>
           <div class="assistant-empty-badge">CORDIA</div>
           <h3>Consulta operacional com contexto híbrido</h3>
-          <p>Consulte PRTs, releases, modulos e FAQ publica.</p>
+          <p>Consulte PRTs, releases, módulos e FAQ pública.</p>
         </article>
       `;
       els.messages.scrollTop = 0;
@@ -172,6 +212,12 @@
   async function submitMessage() {
     const message = String(els.input?.value || "").trim();
     if (!message || state.sending) return;
+
+    const apiBaseUrl = getApiBaseUrlSafe();
+    if (!apiBaseUrl) {
+      notify("API base não configurada.", "error");
+      return;
+    }
 
     state.sending = true;
     toggleSending(true);
@@ -205,7 +251,7 @@
 
       state.messages.push({
         role: "assistant",
-        content: data.resposta || "Nao encontrei uma resposta util com o contexto disponivel.",
+        content: data.resposta || "Não encontrei uma resposta útil com o contexto disponível.",
       });
 
       persist();
@@ -314,8 +360,7 @@
         overflow: hidden;
         border-radius: 24px;
         border: 1px solid rgba(59,130,246,.14);
-        background:
-          linear-gradient(180deg, rgba(8,19,42,.92), rgba(5,14,32,.96));
+        background: linear-gradient(180deg, rgba(8,19,42,.92), rgba(5,14,32,.96));
         box-shadow:
           0 18px 42px rgba(2,6,23,.35),
           inset 0 1px 0 rgba(255,255,255,.03),
@@ -361,7 +406,6 @@
         line-height: 1.08;
         font-weight: 800;
         color: rgba(245,250,255,.96);
-        text-wrap: balance;
       }
 
       #pagina-assistente .assistant-hero-subtitle {
@@ -391,16 +435,6 @@
         letter-spacing: .12em;
         text-transform: uppercase;
         backdrop-filter: blur(8px);
-        transition:
-          transform 180ms ease,
-          border-color 180ms ease,
-          box-shadow 180ms ease;
-      }
-
-      #pagina-assistente .assistant-hero-tag:hover {
-        transform: translateY(-1px);
-        border-color: rgba(96,165,250,.26);
-        box-shadow: 0 0 18px rgba(59,130,246,.10);
       }
 
       #pagina-assistente .assistant-panel {
@@ -408,8 +442,7 @@
         overflow: hidden;
         border-radius: 24px;
         border: 1px solid rgba(59,130,246,.12);
-        background:
-          linear-gradient(180deg, rgba(6,16,36,.94), rgba(4,12,28,.98));
+        background: linear-gradient(180deg, rgba(6,16,36,.94), rgba(4,12,28,.98));
         box-shadow:
           0 18px 40px rgba(2,6,23,.28),
           inset 0 1px 0 rgba(255,255,255,.02);
@@ -471,7 +504,6 @@
         color: #7ee7ff;
         background: rgba(20,42,82,.48);
         border: 1px solid rgba(96,165,250,.18);
-        box-shadow: 0 0 24px rgba(34,211,238,.08);
       }
 
       #pagina-assistente .assistant-empty-badge {
@@ -525,34 +557,17 @@
         border-radius: 20px;
         padding: 16px 18px 15px;
         backdrop-filter: blur(10px);
-        transition:
-          transform 180ms ease,
-          border-color 180ms ease,
-          box-shadow 220ms ease,
-          background 220ms ease;
-      }
-
-      #pagina-assistente .assistant-message:hover .assistant-message-shell {
-        transform: translateY(-1px);
       }
 
       #pagina-assistente .assistant-message.user .assistant-message-shell {
         border: 1px solid rgba(34,211,238,.16);
-        background:
-          linear-gradient(135deg, rgba(30,64,175,.34), rgba(37,99,235,.22));
-        box-shadow:
-          0 12px 28px rgba(2,6,23,.18),
-          0 0 22px rgba(59,130,246,.10);
+        background: linear-gradient(135deg, rgba(30,64,175,.34), rgba(37,99,235,.22));
       }
 
       #pagina-assistente .assistant-message.assistant .assistant-message-shell,
       #pagina-assistente .assistant-message.system .assistant-message-shell {
         border: 1px solid rgba(59,130,246,.14);
-        background:
-          linear-gradient(180deg, rgba(13,27,54,.88), rgba(8,18,38,.94));
-        box-shadow:
-          0 12px 28px rgba(2,6,23,.16),
-          0 0 0 1px rgba(59,130,246,.03);
+        background: linear-gradient(180deg, rgba(13,27,54,.88), rgba(8,18,38,.94));
       }
 
       #pagina-assistente .assistant-message-role {
@@ -578,16 +593,14 @@
       #pagina-assistente .assistant-composer {
         padding: 18px 20px 20px;
         border-top: 1px solid rgba(59,130,246,.10);
-        background:
-          linear-gradient(180deg, rgba(8,18,37,.45), rgba(5,14,29,.72));
+        background: linear-gradient(180deg, rgba(8,18,37,.45), rgba(5,14,29,.72));
       }
 
       #pagina-assistente .assistant-form-shell {
         position: relative;
         border-radius: 22px;
         border: 1px solid rgba(59,130,246,.12);
-        background:
-          linear-gradient(180deg, rgba(6,16,33,.98), rgba(6,15,30,.96));
+        background: linear-gradient(180deg, rgba(6,16,33,.98), rgba(6,15,30,.96));
         box-shadow:
           inset 0 1px 0 rgba(255,255,255,.02),
           0 12px 28px rgba(2,6,23,.16);
@@ -597,30 +610,9 @@
           transform 180ms ease;
       }
 
-      #pagina-assistente .assistant-form-shell::before {
-        content: "";
-        position: absolute;
-        inset: -1px;
-        border-radius: inherit;
-        pointer-events: none;
-        opacity: 0;
-        transition: opacity 180ms ease;
-        background:
-          linear-gradient(135deg, rgba(34,211,238,.14), rgba(59,130,246,.10), transparent 54%);
-      }
-
       #pagina-assistente .assistant-form-shell.assistant-form-focus,
       #pagina-assistente .assistant-form-shell.assistant-form-has-value {
         border-color: rgba(96,165,250,.22);
-        box-shadow:
-          0 0 0 1px rgba(96,165,250,.06),
-          0 0 28px rgba(59,130,246,.10),
-          inset 0 1px 0 rgba(255,255,255,.03);
-      }
-
-      #pagina-assistente .assistant-form-shell.assistant-form-focus::before,
-      #pagina-assistente .assistant-form-shell.assistant-form-has-value::before {
-        opacity: 1;
       }
 
       #pagina-assistente .assistant-form-shell.is-sending {
@@ -668,7 +660,6 @@
       }
 
       #pagina-assistente .assistant-btn {
-        position: relative;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -680,18 +671,6 @@
         background: rgba(12,26,51,.72);
         color: rgba(231,239,255,.94);
         font-weight: 700;
-        transition:
-          transform 180ms ease,
-          border-color 180ms ease,
-          box-shadow 180ms ease,
-          background 180ms ease,
-          opacity 180ms ease;
-      }
-
-      #pagina-assistente .assistant-btn:hover:not(:disabled) {
-        transform: translateY(-1px);
-        border-color: rgba(96,165,250,.24);
-        box-shadow: 0 0 18px rgba(59,130,246,.10);
       }
 
       #pagina-assistente .assistant-btn:disabled {
@@ -701,22 +680,8 @@
 
       #pagina-assistente .assistant-btn-primary {
         border-color: rgba(34,211,238,.14);
-        background:
-          linear-gradient(135deg, rgba(56,189,248,.94), rgba(59,130,246,.88));
+        background: linear-gradient(135deg, rgba(56,189,248,.94), rgba(59,130,246,.88));
         color: #061423;
-        box-shadow:
-          0 10px 24px rgba(37,99,235,.22),
-          0 0 24px rgba(34,211,238,.12);
-      }
-
-      #pagina-assistente .assistant-btn-primary:hover:not(:disabled) {
-        box-shadow:
-          0 12px 26px rgba(37,99,235,.24),
-          0 0 30px rgba(34,211,238,.16);
-      }
-
-      #pagina-assistente .assistant-btn-primary.is-loading {
-        filter: saturate(.92);
       }
 
       #pagina-assistente .assistant-hidden-suggestions {
@@ -776,7 +741,7 @@
         <div class="assistant-hero-copy">
           <div class="assistant-eyebrow">CordIA</div>
           <h1 class="assistant-hero-title">Consulta operacional com contexto híbrido</h1>
-          <p class="assistant-hero-subtitle">Pergunte por PRTs, releases, modulos e FAQ publica.</p>
+          <p class="assistant-hero-subtitle">Pergunte por PRTs, releases, módulos e FAQ pública.</p>
         </div>
         <div class="assistant-hero-tags">
           <span class="assistant-hero-tag">Interno</span>
@@ -807,10 +772,10 @@
         id="assistant-input"
         class="assistant-input"
         rows="4"
-        placeholder="Ex.: qual release contem o PRT 12345?"
+        placeholder="Ex.: qual release contém o PRT 12345?"
       ></textarea>
       <div class="assistant-toolbar">
-        <div class="assistant-toolbar-meta">Consulte PRTs, releases, modulos e FAQ publica.</div>
+        <div class="assistant-toolbar-meta">Consulte PRTs, releases, módulos e FAQ pública.</div>
         <div class="assistant-actions">
           <button id="assistant-clear-btn" class="assistant-btn" type="button">
             <i data-lucide="eraser"></i>
@@ -860,7 +825,7 @@
       const motionModule = await import("https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm");
       state.motion = motionModule;
       animateSections();
-    } catch (error) {
+    } catch (_) {
       state.motion = null;
     }
   }
@@ -917,17 +882,12 @@
   function animateHover(element, scale, y) {
     if (!state.motion || !element) return;
     const { animate } = state.motion;
-    animate(
-      element,
-      { scale: scale, y: y },
-      { duration: 0.16, easing: "ease-out" }
-    );
+    animate(element, { scale, y }, { duration: 0.16, easing: "ease-out" });
   }
 
   function animateFocus(active) {
     if (!state.motion || !els.form) return;
     const { animate } = state.motion;
-
     animate(
       els.form,
       { scale: active ? 1.003 : 1, y: active ? -1 : 0 },
@@ -935,5 +895,14 @@
     );
   }
 
-  document.addEventListener("DOMContentLoaded", init);
+  const api = {
+    init,
+    destroy,
+    getState() {
+      return state;
+    },
+  };
+
+  window.initAssistentePage = init;
+  window.destroyAssistentePage = destroy;
 })();
