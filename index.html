@@ -823,6 +823,10 @@
       if (nome === 'relatorios' && typeof window.populateRelatoriosFilters === 'function') {
         window.populateRelatoriosFilters();
       }
+      
+      if (nome !== 'assistente' && typeof window.destroyAssistentePage === 'function') {
+        window.destroyAssistentePage();
+      }
 
       if (nome === 'metas') {
         iniciarMetasSeNecessario();
