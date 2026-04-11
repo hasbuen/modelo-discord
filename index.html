@@ -1420,24 +1420,19 @@
     </div>
   </div>
 
-        <div id="pagina-metas" class="hidden animate__animated animate__fadeIn">
-          <section class="kpi-shell legacy-shell">
-            <section class="kpi-hero">
-              <div class="kpi-hero-copy">
-                <p class="kpi-eyebrow">Metas</p>
-                <h2 class="kpi-title">Painel de metas</h2>
-                <p class="kpi-subtitle">Acompanhe progresso, tarefas e desempenho diário.</p>
-              </div>
-              <div class="kpi-hero-metrics">
-                <span class="kpi-badge">IndexedDB</span>
-                <span class="kpi-badge kpi-badge-soft">Dashboard</span>
-                <span class="kpi-badge kpi-badge-soft">Kanban</span>
-              </div>
-            </section>
+<div id="pagina-metas" class="hidden animate__animated animate__fadeIn">
+  <section class="kpi-shell legacy-shell">
+    <section class="kpi-hero">
+      <div class="kpi-hero-copy">
+        <p class="kpi-eyebrow">Metas</p>
+        <h2 class="kpi-title">Painel de metas</h2>
+        <p class="kpi-subtitle">Acompanhe progresso, tarefas e desempenho diário.</p>
+      </div>
+    </section>
 
-            <div id="metas-app"></div>
-          </section>
-        </div>
+    <div id="metas-app" class="w-full"></div>
+  </section>
+</div>
 
   <!-- Loader para geração de PDF -->
   <div id="pdfLoader" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
@@ -2827,6 +2822,12 @@
 
   #ia-audio-player::-webkit-media-controls-panel {
     background: transparent;
+  }
+
+  #metas-app {
+    width: 100%;
+    min-height: 240px;
+    margin-top: 0;
   }
 
   @media (prefers-reduced-motion: reduce) {
