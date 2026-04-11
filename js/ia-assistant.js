@@ -16,6 +16,11 @@
     motion: null,
     initialized: false,
     originalMarkup: "",
+    recording: false,
+    mediaRecorder: null,
+    mediaStream: null,
+    audioChunks: [],
+    transcriptionBusy: false,
   };
 
   const els = {};
@@ -27,6 +32,8 @@
     els.input = document.getElementById("assistant-input");
     els.sendBtn = document.getElementById("assistant-send-btn");
     els.clearBtn = document.getElementById("assistant-clear-btn");
+    els.micBtn = document.getElementById("assistant-mic-btn");
+    els.voiceStatus = document.getElementById("assistant-voice-status");
     els.suggestions = Array.from(document.querySelectorAll("#pagina-assistente [data-assistant-prompt]"));
   }
 
@@ -60,15 +67,23 @@
     bindElements();
     if (!els.page) return;
 
+    stopVoiceCapture(true);
+
     if (state.originalMarkup) {
       els.page.innerHTML = state.originalMarkup;
     }
 
     els.page.classList.remove("assistant-ui-upgraded");
     delete els.page.dataset.assistantEnhanced;
+    delete els.page.dataset.enhanced;
 
     state.initialized = false;
     state.motion = null;
+    state.recording = false;
+    state.mediaRecorder = null;
+    state.mediaStream = null;
+    state.audioChunks = [];
+    state.transcriptionBusy = false;
 
     bindElements();
   }
@@ -89,6 +104,16 @@
       notify("Conversa limpa.", "success");
     });
 
+    els.micBtn?.addEventListener("click", async function () {
+      if (state.transcriptionBusy || state.sending) return;
+
+      if (state.recording) {
+        stopVoiceCapture(false);
+      } else {
+        await startVoiceCapture();
+      }
+    });
+
     els.suggestions.forEach(function (button) {
       if (button.dataset.bound === "true") return;
       button.dataset.bound = "true";
@@ -97,6 +122,7 @@
         if (!els.input) return;
         els.input.value = button.dataset.assistantPrompt || "";
         syncInputState();
+        autoResizeTextarea();
         await submitMessage();
       });
     });
@@ -132,8 +158,17 @@
       animateHover(els.clearBtn, 1, 0);
     });
 
+    els.micBtn?.addEventListener("mouseenter", function () {
+      animateHover(els.micBtn, 1.02, -2);
+    });
+
+    els.micBtn?.addEventListener("mouseleave", function () {
+      animateHover(els.micBtn, 1, 0);
+    });
+
     autoResizeTextarea();
     syncInputState();
+    syncVoiceUi();
   }
 
   function restoreState() {
@@ -186,6 +221,7 @@
       els.messages.scrollTop = 0;
       if (window.lucide) lucide.createIcons();
       animateMessageEntry();
+      syncVoiceUi();
       return;
     }
 
@@ -207,11 +243,12 @@
     els.messages.scrollTop = els.messages.scrollHeight;
     if (window.lucide) lucide.createIcons();
     animateMessageEntry();
+    syncVoiceUi();
   }
 
   async function submitMessage() {
     const message = String(els.input?.value || "").trim();
-    if (!message || state.sending) return;
+    if (!message || state.sending || state.transcriptionBusy) return;
 
     const apiBaseUrl = getApiBaseUrlSafe();
     if (!apiBaseUrl) {
@@ -284,12 +321,14 @@
     }
 
     if (els.input) {
-      els.input.disabled = sending;
+      els.input.disabled = sending || state.transcriptionBusy;
     }
 
     if (els.form) {
       els.form.classList.toggle("is-sending", sending);
     }
+
+    syncVoiceUi();
   }
 
   function escapeHtml(value) {
@@ -321,6 +360,244 @@
     if (!els.input) return;
     els.input.style.height = "0px";
     els.input.style.height = Math.min(Math.max(120, els.input.scrollHeight), 260) + "px";
+  }
+
+  function syncVoiceUi() {
+    if (els.micBtn) {
+      els.micBtn.disabled = state.sending || state.transcriptionBusy;
+      els.micBtn.classList.toggle("assistant-btn-recording", state.recording);
+      els.micBtn.classList.toggle("assistant-btn-busy", state.transcriptionBusy);
+
+      const icon = els.micBtn.querySelector("[data-assistant-mic-icon]");
+      const label = els.micBtn.querySelector("[data-assistant-mic-label]");
+
+      if (icon) {
+        icon.setAttribute("data-lucide", state.recording ? "square" : "mic");
+      }
+
+      if (label) {
+        if (state.transcriptionBusy) {
+          label.textContent = "Transcrevendo...";
+        } else if (state.recording) {
+          label.textContent = "Parar gravação";
+        } else {
+          label.textContent = "Falar por voz";
+        }
+      }
+    }
+
+    if (els.voiceStatus) {
+      if (state.transcriptionBusy) {
+        els.voiceStatus.textContent = "Transcrevendo áudio...";
+        els.voiceStatus.classList.add("is-busy");
+        els.voiceStatus.classList.remove("is-recording");
+      } else if (state.recording) {
+        els.voiceStatus.textContent = "Gravando voz...";
+        els.voiceStatus.classList.add("is-recording");
+        els.voiceStatus.classList.remove("is-busy");
+      } else {
+        els.voiceStatus.textContent = "Digite ou fale sua pergunta";
+        els.voiceStatus.classList.remove("is-recording");
+        els.voiceStatus.classList.remove("is-busy");
+      }
+    }
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  }
+
+  async function startVoiceCapture() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      notify("Seu navegador não suporta captura de áudio.", "error");
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mimeType = getSupportedRecordingMimeType();
+
+      state.audioChunks = [];
+      state.mediaStream = stream;
+      state.mediaRecorder = mimeType
+        ? new MediaRecorder(stream, { mimeType })
+        : new MediaRecorder(stream);
+
+      state.mediaRecorder.addEventListener("dataavailable", function (event) {
+        if (event.data && event.data.size > 0) {
+          state.audioChunks.push(event.data);
+        }
+      });
+
+      state.mediaRecorder.addEventListener("stop", async function () {
+        const blob = new Blob(state.audioChunks, {
+          type: state.audioChunks[0]?.type || mimeType || "audio/webm",
+        });
+
+        state.audioChunks = [];
+        await transcribeRecordedAudio(blob);
+      });
+
+      state.mediaRecorder.start();
+      state.recording = true;
+      syncVoiceUi();
+      notify("Gravação iniciada.", "info");
+    } catch (error) {
+      notify("Não foi possível acessar o microfone.", "error");
+    }
+  }
+
+  function stopVoiceCapture(silent) {
+    if (state.mediaRecorder && state.mediaRecorder.state !== "inactive") {
+      state.mediaRecorder.stop();
+    }
+
+    if (state.mediaStream) {
+      state.mediaStream.getTracks().forEach(function (track) {
+        track.stop();
+      });
+    }
+
+    state.recording = false;
+    state.mediaStream = null;
+    state.mediaRecorder = null;
+    syncVoiceUi();
+
+    if (!silent) {
+      notify("Gravação finalizada.", "info");
+    }
+  }
+
+  function getSupportedRecordingMimeType() {
+    const mimeTypes = [
+      "audio/webm;codecs=opus",
+      "audio/webm",
+      "audio/ogg;codecs=opus",
+      "audio/mp4",
+    ];
+
+    for (const mimeType of mimeTypes) {
+      try {
+        if (window.MediaRecorder && MediaRecorder.isTypeSupported(mimeType)) {
+          return mimeType;
+        }
+      } catch (_) {}
+    }
+
+    return "";
+  }
+
+  async function transcribeRecordedAudio(blob) {
+    const apiBaseUrl = getApiBaseUrlSafe();
+    if (!apiBaseUrl) {
+      notify("API base não configurada.", "error");
+      return;
+    }
+
+    if (!blob || !blob.size) {
+      notify("Nenhum áudio válido foi capturado.", "warning");
+      return;
+    }
+
+    state.transcriptionBusy = true;
+    syncVoiceUi();
+
+    try {
+      const text = await sendBlobToTranscription(blob, apiBaseUrl);
+      if (!text) {
+        throw new Error("Não foi possível obter a transcrição do áudio.");
+      }
+
+      if (els.input) {
+        const current = String(els.input.value || "").trim();
+        els.input.value = current ? `${current}\n${text}` : text;
+        autoResizeTextarea();
+        syncInputState();
+        els.input.focus();
+      }
+
+      notify("Transcrição concluída.", "success");
+    } catch (error) {
+      notify(error.message || "Falha ao transcrever o áudio.", "error");
+    } finally {
+      state.transcriptionBusy = false;
+      syncVoiceUi();
+    }
+  }
+
+  async function sendBlobToTranscription(blob, apiBaseUrl) {
+    const candidatePaths = [
+      "/transcrever",
+      "/transcribe",
+      "/api/transcrever",
+      "/api/transcribe",
+    ];
+
+    const candidateFieldNames = ["audio", "file"];
+
+    let lastError = null;
+
+    for (const path of candidatePaths) {
+      for (const fieldName of candidateFieldNames) {
+        try {
+          const formData = new FormData();
+          const extension = resolveAudioExtension(blob.type);
+          const filename = `assistente-voz.${extension}`;
+          formData.append(fieldName, blob, filename);
+
+          const response = await fetch(`${apiBaseUrl}${path}`, {
+            method: "POST",
+            body: formData,
+          });
+
+          const raw = await response.text();
+          let data = null;
+
+          try {
+            data = raw ? JSON.parse(raw) : null;
+          } catch (_) {
+            data = null;
+          }
+
+          if (!response.ok) {
+            throw new Error(
+              data?.erro ||
+                data?.error ||
+                `Falha na transcrição (${response.status}) em ${path}`
+            );
+          }
+
+          const text =
+            data?.texto ||
+            data?.transcricao ||
+            data?.transcription ||
+            data?.conteudo ||
+            data?.content ||
+            data?.resumo ||
+            "";
+
+          if (String(text || "").trim()) {
+            return String(text).trim();
+          }
+
+          throw new Error(`Resposta sem texto utilizável em ${path}`);
+        } catch (error) {
+          lastError = error;
+        }
+      }
+    }
+
+    throw lastError || new Error("Nenhuma rota de transcrição respondeu corretamente.");
+  }
+
+  function resolveAudioExtension(mimeType) {
+    const value = String(mimeType || "").toLowerCase();
+
+    if (value.includes("ogg")) return "ogg";
+    if (value.includes("mp4")) return "mp4";
+    if (value.includes("mpeg")) return "mp3";
+    if (value.includes("wav")) return "wav";
+    return "webm";
   }
 
   function injectStyles() {
@@ -358,9 +635,10 @@
       #pagina-assistente .assistant-hero {
         position: relative;
         overflow: hidden;
-        border-radius: 24px;
+        border-radius: 28px;
         border: 1px solid rgba(59,130,246,.14);
-        background: linear-gradient(180deg, rgba(8,19,42,.92), rgba(5,14,32,.96));
+        background:
+          linear-gradient(180deg, rgba(8,19,42,.92), rgba(5,14,32,.96));
         box-shadow:
           0 18px 42px rgba(2,6,23,.35),
           inset 0 1px 0 rgba(255,255,255,.03),
@@ -435,14 +713,25 @@
         letter-spacing: .12em;
         text-transform: uppercase;
         backdrop-filter: blur(8px);
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          box-shadow 180ms ease;
+      }
+
+      #pagina-assistente .assistant-hero-tag:hover {
+        transform: translateY(-1px);
+        border-color: rgba(96,165,250,.26);
+        box-shadow: 0 0 18px rgba(59,130,246,.10);
       }
 
       #pagina-assistente .assistant-panel {
         position: relative;
         overflow: hidden;
-        border-radius: 24px;
+        border-radius: 28px;
         border: 1px solid rgba(59,130,246,.12);
-        background: linear-gradient(180deg, rgba(6,16,36,.94), rgba(4,12,28,.98));
+        background:
+          linear-gradient(180deg, rgba(6,16,36,.94), rgba(4,12,28,.98));
         box-shadow:
           0 18px 40px rgba(2,6,23,.28),
           inset 0 1px 0 rgba(255,255,255,.02);
@@ -647,9 +936,42 @@
       }
 
       #pagina-assistente .assistant-toolbar-meta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         font-size: 12px;
-        color: rgba(156,183,224,.62);
+        color: rgba(156,183,224,.72);
         padding-left: 4px;
+      }
+
+      #pagina-assistente .assistant-voice-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 28px;
+        padding: 0 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(59,130,246,.14);
+        background: rgba(12,26,51,.52);
+      }
+
+      #pagina-assistente .assistant-voice-status::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(148,163,184,.75);
+        box-shadow: 0 0 0 rgba(34,211,238,0);
+      }
+
+      #pagina-assistente .assistant-voice-status.is-recording::before {
+        background: #fb7185;
+        box-shadow: 0 0 16px rgba(251,113,133,.45);
+      }
+
+      #pagina-assistente .assistant-voice-status.is-busy::before {
+        background: #22d3ee;
+        box-shadow: 0 0 16px rgba(34,211,238,.45);
       }
 
       #pagina-assistente .assistant-actions {
@@ -657,9 +979,11 @@
         align-items: center;
         gap: 10px;
         margin-left: auto;
+        flex-wrap: wrap;
       }
 
       #pagina-assistente .assistant-btn {
+        position: relative;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -671,6 +995,18 @@
         background: rgba(12,26,51,.72);
         color: rgba(231,239,255,.94);
         font-weight: 700;
+        transition:
+          transform 180ms ease,
+          border-color 180ms ease,
+          box-shadow 180ms ease,
+          background 180ms ease,
+          opacity 180ms ease;
+      }
+
+      #pagina-assistente .assistant-btn:hover:not(:disabled) {
+        transform: translateY(-1px);
+        border-color: rgba(96,165,250,.24);
+        box-shadow: 0 0 18px rgba(59,130,246,.10);
       }
 
       #pagina-assistente .assistant-btn:disabled {
@@ -682,6 +1018,41 @@
         border-color: rgba(34,211,238,.14);
         background: linear-gradient(135deg, rgba(56,189,248,.94), rgba(59,130,246,.88));
         color: #061423;
+        box-shadow:
+          0 10px 24px rgba(37,99,235,.22),
+          0 0 24px rgba(34,211,238,.12);
+      }
+
+      #pagina-assistente .assistant-btn-primary:hover:not(:disabled) {
+        box-shadow:
+          0 12px 26px rgba(37,99,235,.24),
+          0 0 30px rgba(34,211,238,.16);
+      }
+
+      #pagina-assistente .assistant-btn-primary.is-loading {
+        filter: saturate(.92);
+      }
+
+      #pagina-assistente .assistant-btn-voice {
+        border-color: rgba(34,211,238,.16);
+        background:
+          linear-gradient(135deg, rgba(10,26,53,.94), rgba(15,36,72,.88));
+      }
+
+      #pagina-assistente .assistant-btn-voice.assistant-btn-recording {
+        border-color: rgba(251,113,133,.28);
+        background:
+          linear-gradient(135deg, rgba(76,29,49,.96), rgba(127,29,29,.82));
+        box-shadow:
+          0 0 0 1px rgba(251,113,133,.10),
+          0 0 24px rgba(251,113,133,.18);
+      }
+
+      #pagina-assistente .assistant-btn-voice.assistant-btn-busy {
+        border-color: rgba(34,211,238,.28);
+        box-shadow:
+          0 0 0 1px rgba(34,211,238,.10),
+          0 0 24px rgba(34,211,238,.18);
       }
 
       #pagina-assistente .assistant-hidden-suggestions {
@@ -775,8 +1146,14 @@
         placeholder="Ex.: qual release contém o PRT 12345?"
       ></textarea>
       <div class="assistant-toolbar">
-        <div class="assistant-toolbar-meta">Consulte PRTs, releases, módulos e FAQ pública.</div>
+        <div class="assistant-toolbar-meta">
+          <span id="assistant-voice-status" class="assistant-voice-status">Digite ou fale sua pergunta</span>
+        </div>
         <div class="assistant-actions">
+          <button id="assistant-mic-btn" class="assistant-btn assistant-btn-voice" type="button">
+            <i data-lucide="mic" data-assistant-mic-icon></i>
+            <span data-assistant-mic-label>Falar por voz</span>
+          </button>
           <button id="assistant-clear-btn" class="assistant-btn" type="button">
             <i data-lucide="eraser"></i>
             <span>Limpar conversa</span>
