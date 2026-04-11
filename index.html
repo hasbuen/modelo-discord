@@ -1514,48 +1514,93 @@
     document.getElementById('btn-mobile-close')?.addEventListener('click', closeMobile);
     document.getElementById('mobile-overlay')?.addEventListener('click', closeMobile);
 
-    // Controle de Navega??o e Estado Ativo
-    window.mostrarPagina = function (paginaId) {
-      // Esconde todas
-      document.querySelectorAll('[id^="pagina-"]').forEach(el => el.classList.add('hidden'));
-      // Mostra atual
-      const target = document.getElementById(`pagina-${paginaId}`);
-      if (target) target.classList.remove('hidden');
+let __assistenteStarted = false;
 
-      // Atualiza bot?es (Desktop e Mobile)
-      document.querySelectorAll('.sidebar-item').forEach(btn => btn.classList.remove('active'));
+window.mostrarPagina = function (paginaId) {
+  try {
+    // Esconde todas as páginas
+    document.querySelectorAll('[id^="pagina-"]').forEach(function (el) {
+      el.classList.add('hidden');
+    });
 
-      const btnDesktop = document.getElementById(`btn-${paginaId}`);
-      const btnMobile = document.getElementById(`btn-${paginaId}-mobile`);
+    // Mostra a página atual
+    const paginaAtual = document.getElementById('pagina-' + paginaId);
+    if (paginaAtual) {
+      paginaAtual.classList.remove('hidden');
+    }
 
-      if (btnDesktop) btnDesktop.classList.add('active');
-      if (btnMobile) btnMobile.classList.add('active');
+    // Remove active de todos os botões desktop/mobile
+    document.querySelectorAll('.sidebar-item').forEach(function (btn) {
+      btn.classList.remove('active');
+    });
 
-      if (paginaId === 'historico-liberacoes') {
-        carregarHistoricoLiberacoes();
-        setTimeout(() => gerarDashboardLiberacoes(), 200);
-        setTimeout(() => window.renderKpiWorkspace && window.renderKpiWorkspace(), 420);
-      }
+    // Marca botão ativo desktop
+    const btnDesktop = document.getElementById('btn-' + paginaId);
+    if (btnDesktop) {
+      btnDesktop.classList.add('active');
+    }
 
-      if (paginaId === 'historico') {
-        if (typeof window.renderizarTabela === 'function') window.renderizarTabela();
-      }
+    // Marca botão ativo mobile
+    const btnMobile = document.getElementById('btn-' + paginaId + '-mobile');
+    if (btnMobile) {
+      btnMobile.classList.add('active');
+    }
 
-      if (paginaId === 'relatorios') {
-        if (typeof window.populateRelatoriosFilters === 'function') window.populateRelatoriosFilters();
-      }
-
-      if (paginaId === 'metas') {
-        const alvoMetas = document.getElementById('metas-app');
-        if (alvoMetas && !__metasStarted && typeof window.initMetaFlowUltra === 'function') {
-          window.initMetaFlowUltra('#metas-app');
-          __metasStarted = true;
+    // ===============================
+    // PÁGINA ASSISTENTE (CordIA)
+    // ===============================
+    if (paginaId === 'assistente') {
+      if (typeof window.initAssistentePage === 'function') {
+        if (!__assistenteStarted) {
+          window.initAssistentePage();
+          __assistenteStarted = true;
+        } else {
+          window.initAssistentePage();
         }
       }
+    }
 
-      // Fecha mobile se aberto
-      closeMobile();
-    };
+    // ===============================
+    // PÁGINA METAS
+    // ===============================
+    if (paginaId === 'metas') {
+      if (typeof window.initMetasPage === 'function') {
+        window.initMetasPage();
+      }
+    }
+
+    // ===============================
+    // HISTÓRICO
+    // ===============================
+    if (paginaId === 'historico') {
+      if (typeof window.carregarHistorico === 'function') {
+        window.carregarHistorico();
+      }
+    }
+
+    // ===============================
+    // KPI
+    // ===============================
+    if (paginaId === 'home') {
+      if (typeof window.initKpiDashboard === 'function') {
+        window.initKpiDashboard();
+      }
+    }
+
+    // Fecha menu mobile se existir
+    if (typeof window.closeMobile === 'function') {
+      window.closeMobile();
+    }
+
+    // Recria ícones
+    if (window.lucide && typeof window.lucide.createIcons === 'function') {
+      window.lucide.createIcons();
+    }
+
+  } catch (error) {
+    console.error('Erro ao trocar página:', error);
+  }
+};
 
     const mediaTheme = window.matchMedia('(prefers-color-scheme: dark)');
 
