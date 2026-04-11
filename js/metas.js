@@ -5,7 +5,6 @@
         id: "aurora",
         name: "Aurora Light",
         type: "light",
-        bg: "linear-gradient(135deg, #eff6ff 0%, #ecfeff 45%, #dbeafe 100%)",
         panel: "rgba(255,255,255,0.82)",
         panel2: "rgba(255,255,255,0.65)",
         text: "#0f172a",
@@ -18,7 +17,6 @@
         id: "minimalist",
         name: "Minimalist",
         type: "light",
-        bg: "#f8fafc",
         panel: "rgba(255,255,255,0.98)",
         panel2: "rgba(255,255,255,0.92)",
         text: "#111827",
@@ -31,7 +29,6 @@
         id: "midnight",
         name: "Midnight Navy",
         type: "dark",
-        bg: "linear-gradient(135deg, #0b1220 0%, #151a44 52%, #0b1220 100%)",
         panel: "rgba(18, 28, 55, 0.72)",
         panel2: "rgba(10, 17, 35, 0.62)",
         text: "#f1f5f9",
@@ -44,7 +41,6 @@
         id: "oled",
         name: "OLED Black",
         type: "dark",
-        bg: "#030303",
         panel: "rgba(18,18,18,0.92)",
         panel2: "rgba(12,12,12,0.8)",
         text: "#e5e7eb",
@@ -57,7 +53,6 @@
         id: "ametista",
         name: "Ametista",
         type: "dark",
-        bg: "linear-gradient(135deg, #3b0764 0%, #312e81 48%, #1e1b4b 100%)",
         panel: "rgba(76,29,149,0.28)",
         panel2: "rgba(59,7,100,0.22)",
         text: "#faf5ff",
@@ -75,7 +70,7 @@
       otimo: { label: "Ótimo", color: "#3b82f6", soft: "rgba(59,130,246,.15)" },
     };
 
-    const DB_NAME = "MetaFlowUltraDB_v4_embed";
+    const DB_NAME = "MetaFlowUltraDB_v5_embed";
     const DB_VERSION = 1;
 
     const mount =
@@ -83,9 +78,7 @@
         ? document.querySelector(mountSelector)
         : mountSelector;
 
-    if (!mount) {
-      throw new Error("Container do MetaFlow não encontrado.");
-    }
+    if (!mount) throw new Error("Container do MetaFlow não encontrado.");
 
     if (mount.dataset.metaflowMounted === "true") {
       return mount.__metaflowApi || null;
@@ -98,28 +91,35 @@
           const req = indexedDB.open(DB_NAME, DB_VERSION);
           req.onupgradeneeded = (e) => {
             const idb = e.target.result;
+
             if (!idb.objectStoreNames.contains("goals")) {
               idb.createObjectStore("goals", { keyPath: "id" });
             }
+
             if (!idb.objectStoreNames.contains("entries")) {
               const store = idb.createObjectStore("entries", { keyPath: "id" });
               store.createIndex("goalId", "goalId", { unique: false });
               store.createIndex("date", "date", { unique: false });
             }
+
             if (!idb.objectStoreNames.contains("tasks")) {
               idb.createObjectStore("tasks", { keyPath: "id" });
             }
+
             if (!idb.objectStoreNames.contains("settings")) {
               idb.createObjectStore("settings", { keyPath: "id" });
             }
           };
+
           req.onsuccess = (e) => {
             this.db = e.target.result;
             resolve();
           };
+
           req.onerror = (e) => reject(e.target.error);
         });
       },
+
       async get(store, id) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction(store, "readonly");
@@ -128,6 +128,7 @@
           req.onerror = () => reject(req.error);
         });
       },
+
       async getAll(store) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction(store, "readonly");
@@ -136,6 +137,7 @@
           req.onerror = () => reject(req.error);
         });
       },
+
       async put(store, data) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction(store, "readwrite");
@@ -144,6 +146,7 @@
           req.onerror = () => reject(req.error);
         });
       },
+
       async delete(store, id) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction(store, "readwrite");
@@ -161,7 +164,6 @@
       themeId: "midnight",
       currentView: "dashboard",
       pendingKanbanAction: null,
-      ready: false,
     };
 
     function getTodayStr() {
@@ -231,21 +233,20 @@
           .mfu * { box-sizing: border-box; }
 
           .mfu {
-            --bg: #0b1220;
-            --panel: rgba(18,28,55,.72);
-            --panel-2: rgba(10,17,35,.62);
+            --panel: rgba(18, 28, 55, 0.72);
+            --panel-2: rgba(10, 17, 35, 0.62);
             --text: #f1f5f9;
             --muted: #9fb0cc;
-            --border: rgba(113,136,185,.16);
+            --border: rgba(113, 136, 185, 0.16);
             --primary: #60a5fa;
             --primary-hover: #3b82f6;
             --radius-xl: 24px;
             --radius-lg: 18px;
             --radius-md: 14px;
             --shadow: 0 18px 40px rgba(0,0,0,.22);
-            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             width: 100%;
             color: var(--text);
+            margin-top: 0;
           }
 
           .mfu-shell {
@@ -255,24 +256,21 @@
             gap: 18px;
           }
 
-          .mfu-topbar {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            box-shadow: var(--shadow);
-            padding: 16px;
-            backdrop-filter: blur(18px);
-          }
-
-          .mfu-topbar-row {
+          .mfu-compactbar {
             display: flex;
             justify-content: space-between;
-            gap: 16px;
             align-items: center;
+            gap: 14px;
             flex-wrap: wrap;
+            padding: 14px 18px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--panel);
+            backdrop-filter: blur(18px);
+            box-shadow: var(--shadow);
           }
 
-          .mfu-tabs {
+          .mfu-compactbar-left {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
@@ -318,13 +316,6 @@
             box-shadow: var(--shadow);
           }
 
-          .mfu-panel-soft {
-            background: var(--panel-2);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-xl);
-            backdrop-filter: blur(18px);
-          }
-
           .mfu-pad { padding: 24px; }
 
           .mfu-title {
@@ -332,12 +323,14 @@
             font-size: clamp(1.8rem, 3vw, 2.8rem);
             font-weight: 900;
             letter-spacing: -.04em;
+            text-align: center;
           }
 
           .mfu-subtitle {
             margin: 0;
             color: var(--muted);
             font-size: 1rem;
+            text-align: center;
           }
 
           .mfu-field {
@@ -422,7 +415,7 @@
 
           .mfu-onboarding-card {
             width: 100%;
-            max-width: 980px;
+            max-width: 940px;
           }
 
           .mfu-center-head {
@@ -710,7 +703,7 @@
           }
 
           .mfu-loader {
-            min-height: 260px;
+            min-height: 220px;
             display: grid;
             place-items: center;
           }
@@ -744,7 +737,8 @@
             }
 
             .mfu-goal-head,
-            .mfu-item-row {
+            .mfu-item-row,
+            .mfu-compactbar {
               flex-direction: column;
               align-items: stretch;
             }
@@ -772,7 +766,6 @@
       const root = mount.querySelector(".mfu");
       if (!root) return;
 
-      root.style.setProperty("--bg", theme.bg);
       root.style.setProperty("--panel", theme.panel);
       root.style.setProperty("--panel-2", theme.panel2);
       root.style.setProperty("--text", theme.text);
@@ -910,29 +903,25 @@
       };
     }
 
-    function renderTopbar() {
-      const theme = getTheme();
-
+    function renderCompactBar() {
       return `
-        <div class="mfu-topbar">
-          <div class="mfu-topbar-row">
-            <div class="mfu-tabs">
-              <button class="mfu-tab ${state.currentView === "dashboard" ? "active" : ""}" data-action="view" data-view="dashboard">Dashboard</button>
-              <button class="mfu-tab ${state.currentView === "kanban" ? "active" : ""}" data-action="view" data-view="kanban">Kanban</button>
-              <button class="mfu-tab ${state.currentView === "stats" ? "active" : ""}" data-action="view" data-view="stats">Estatísticas</button>
-              <button class="mfu-tab ${state.currentView === "settings" ? "active" : ""}" data-action="view" data-view="settings">Configurações</button>
-            </div>
-
-            <select class="mfu-theme-select" data-action="theme-select">
-              ${Object.values(THEMES)
-                .map(
-                  (item) => `
-                  <option value="${item.id}" ${item.id === theme.id ? "selected" : ""}>${escapeHtml(item.name)}</option>
-                `
-                )
-                .join("")}
-            </select>
+        <div class="mfu-compactbar">
+          <div class="mfu-compactbar-left">
+            <button class="mfu-tab ${state.currentView === "dashboard" ? "active" : ""}" data-action="view" data-view="dashboard">Dashboard</button>
+            <button class="mfu-tab ${state.currentView === "kanban" ? "active" : ""}" data-action="view" data-view="kanban">Kanban</button>
+            <button class="mfu-tab ${state.currentView === "stats" ? "active" : ""}" data-action="view" data-view="stats">Estatísticas</button>
+            <button class="mfu-tab ${state.currentView === "settings" ? "active" : ""}" data-action="view" data-view="settings">Configurações</button>
           </div>
+
+          <select class="mfu-theme-select" data-action="theme-select">
+            ${Object.values(THEMES)
+              .map(
+                (item) => `
+                  <option value="${item.id}" ${item.id === state.themeId ? "selected" : ""}>${escapeHtml(item.name)}</option>
+                `
+              )
+              .join("")}
+          </select>
         </div>
       `;
     }
@@ -1138,9 +1127,7 @@
               <label>Meta vinculada</label>
               <select name="goalId">
                 <option value="">Nenhuma meta vinculada</option>
-                ${state.goals
-                  .map((g) => `<option value="${g.id}">${escapeHtml(g.name)}</option>`)
-                  .join("")}
+                ${state.goals.map((g) => `<option value="${g.id}">${escapeHtml(g.name)}</option>`).join("")}
               </select>
             </div>
 
@@ -1207,14 +1194,14 @@
                   ? topGoals
                       .map(
                         (goal, index) => `
-                        <div class="mfu-item-row">
-                          <div>
-                            <h4>#${index + 1} ${escapeHtml(goal.name)}</h4>
-                            <p>Unidade: ${escapeHtml(goal.unit)}</p>
+                          <div class="mfu-item-row">
+                            <div>
+                              <h4>#${index + 1} ${escapeHtml(goal.name)}</h4>
+                              <p>Unidade: ${escapeHtml(goal.unit)}</p>
+                            </div>
+                            <strong>${goal.total}</strong>
                           </div>
-                          <strong>${goal.total}</strong>
-                        </div>
-                      `
+                        `
                       )
                       .join("")
                   : `<div class="mfu-empty">Sem dados suficientes ainda.</div>`
@@ -1299,7 +1286,7 @@
 
       root.innerHTML = `
         <div class="mfu-shell">
-          ${state.goals.length ? renderTopbar() : ""}
+          ${state.goals.length ? renderCompactBar() : ""}
           ${renderCurrentView()}
         </div>
         ${renderModal()}
@@ -1421,7 +1408,6 @@
       }
 
       state.currentView = state.goals.length ? "dashboard" : "onboarding";
-      state.ready = true;
       render();
     }
 
@@ -1441,7 +1427,6 @@
     mount.__metaflowApi = api;
 
     bootstrap();
-
     return api;
   }
 
