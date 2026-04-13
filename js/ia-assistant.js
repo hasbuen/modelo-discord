@@ -67,6 +67,11 @@
     bindElements();
     if (!els.page) return;
 
+    if (_voiceTimerInterval) {
+      clearInterval(_voiceTimerInterval);
+      _voiceTimerInterval = null;
+    }
+
     stopVoiceCapture(true);
 
     if (state.originalMarkup) {
@@ -362,7 +367,14 @@
     els.input.style.height = Math.min(Math.max(120, els.input.scrollHeight), 260) + "px";
   }
 
+  let _voiceTimerInterval = null;
+
   function syncVoiceUi() {
+    if (_voiceTimerInterval) {
+      clearInterval(_voiceTimerInterval);
+      _voiceTimerInterval = null;
+    }
+
     if (els.micBtn) {
       els.micBtn.disabled = state.sending || state.transcriptionBusy;
       els.micBtn.classList.toggle("assistant-btn-recording", state.recording);
@@ -379,7 +391,8 @@
         if (state.transcriptionBusy) {
           label.textContent = "Transcrevendo...";
         } else if (state.recording) {
-          label.textContent = "Parar gravação";
+          updateRecordingTimer(label);
+          _voiceTimerInterval = setInterval(() => updateRecordingTimer(label), 1000);
         } else {
           label.textContent = "Falar por voz";
         }
@@ -405,6 +418,14 @@
     if (window.lucide) {
       lucide.createIcons();
     }
+  }
+
+  function updateRecordingTimer(label) {
+    if (!label || !state.mediaRecorder?._startTime) return;
+    const totalSeconds = Math.floor((Date.now() - state.mediaRecorder._startTime) / 1000);
+    const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+    const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+    label.textContent = `Parar (${minutes}:${seconds})`;
   }
 
   async function startVoiceCapture() {
@@ -439,6 +460,7 @@
       });
 
       state.mediaRecorder.start();
+      state.mediaRecorder._startTime = Date.now();
       state.recording = true;
       syncVoiceUi();
       notify("Gravação iniciada.", "info");
@@ -448,6 +470,11 @@
   }
 
   function stopVoiceCapture(silent) {
+    if (_voiceTimerInterval) {
+      clearInterval(_voiceTimerInterval);
+      _voiceTimerInterval = null;
+    }
+
     if (state.mediaRecorder && state.mediaRecorder.state !== "inactive") {
       state.mediaRecorder.stop();
     }
@@ -502,6 +529,16 @@
     state.transcriptionBusy = true;
     syncVoiceUi();
 
+    const audioSizeKB = (blob.size / 1024).toFixed(1);
+    const audioDuration = state.mediaRecorder?._startTime 
+      ? Math.floor((Date.now() - state.mediaRecorder._startTime) / 1000) 
+      : 0;
+    const durationStr = audioDuration > 0 
+      ? `${Math.floor(audioDuration / 60)}min ${audioDuration % 60}s` 
+      : "instantâneo";
+
+    notify(`Enviando áudio (${audioSizeKB} KB, ${durationStr})...`, "info");
+
     try {
       const text = await sendBlobToTranscription(blob, apiBaseUrl);
       if (!text) {
@@ -527,13 +564,15 @@
 
   async function sendBlobToTranscription(blob, apiBaseUrl) {
     const candidatePaths = [
-      "/transcrever",
-      "/transcribe",
+      "/api/transcricao-direta",
+      "/transcricao-direta",
       "/api/transcrever",
+      "/transcrever",
       "/api/transcribe",
+      "/transcribe",
     ];
 
-    const candidateFieldNames = ["audio", "file"];
+    const candidateFieldNames = ["audio", "file", "media", "sound"];
 
     let lastError = null;
 
@@ -542,8 +581,11 @@
         try {
           const formData = new FormData();
           const extension = resolveAudioExtension(blob.type);
-          const filename = `assistente-voz.${extension}`;
+          const filename = `assistente-voz-${Date.now()}.${extension}`;
+          
           formData.append(fieldName, blob, filename);
+          formData.append("source", "assistant-mic");
+          formData.append("timestamp", new Date().toISOString());
 
           const response = await fetch(`${apiBaseUrl}${path}`, {
             method: "POST",
@@ -574,6 +616,7 @@
             data?.conteudo ||
             data?.content ||
             data?.resumo ||
+            data?.text ||
             "";
 
           if (String(text || "").trim()) {
