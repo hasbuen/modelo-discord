@@ -425,6 +425,8 @@
           </section>
         </div>
 
+        <div id="embed-chat-home"></div>
+
         <div id="pagina-protocolar" class="hidden animate__animated animate__fadeIn">
           <section class="kpi-shell legacy-shell">
             <section class="kpi-hero">
@@ -477,6 +479,8 @@
             </article>
           </section>
         </div>
+
+        <div id="embed-chat-protocolar"></div>
 
         <div id="pagina-historico" class="hidden animate__animated animate__fadeIn">
           <section class="kpi-shell legacy-shell">
@@ -556,6 +560,8 @@
             </article>
           </section>
         </div>
+
+        <div id="embed-chat-historico"></div>
 
         <div id="pagina-liberacoes" class="hidden animate__animated animate__fadeIn">
           <div id="liberacoes-container" class="bg-gray-900 p-4 rounded-xl"></div>
@@ -787,6 +793,8 @@
           </div>
         </div>
 
+        <div id="embed-chat-kpi"></div>
+
         <!-- Página: Relatórios -->
         <div id="pagina-relatorios" class="hidden animate__animated animate__fadeIn">
           <section class="reports-shell">
@@ -967,6 +975,8 @@
             </section>
           </section>
         </div>
+
+        <div id="embed-chat-relatorios"></div>
 
         <div id="pagina-sefaz" class="hidden animate__animated animate__fadeIn">
           <div class="kpi-shell legacy-shell monitor-shell">
@@ -1180,6 +1190,8 @@
             </div>
           </div>
         </div>
+
+        <div id="embed-chat-sefaz"></div>
 
         <div id="pagina-ia" class="hidden animate__animated animate__fadeIn">
           <div class="ia-workspace">
@@ -1404,6 +1416,8 @@
           </div>
         </div>
 
+        <div id="embed-chat-ia"></div>
+
         <div id="pagina-metas" class="hidden animate__animated animate__fadeIn">
           <section class="kpi-shell legacy-shell">
             <section class="kpi-hero">
@@ -1417,6 +1431,8 @@
             <div id="metas-app" class="w-full"></div>
           </section>
         </div>
+
+        <div id="embed-chat-metas"></div>
 
 
       </div>
@@ -1495,6 +1511,7 @@
   <script src="js/monitor_sefaz.js"></script>
   <script src="js/ia-transcriber.js"></script>
   <script src="js/ia-assistant.js"></script>
+  <script src="js/ia-assistant-embedded.js"></script>
   <script>
     window.__metasAutoInitDisabled = true;
   </script>
@@ -1545,6 +1562,18 @@
     document.getElementById('mobile-overlay')?.addEventListener('click', closeMobile);
 
 let __assistenteStarted = false;
+const __embeddedChatInitialized = {};
+
+const PAGE_CONTEXTS = {
+  'home': 'Página de Registro - Cadastro operacional de protocolos',
+  'protocolar': 'Página Layout PRT - Templates de protocolo técnico',
+  'historico': 'Página Histórico - Base de registros de protocolos',
+  'historico-liberacoes': 'Página KPI - Painel de releases e métricas operacionais',
+  'relatorios': 'Página Relatórios - Exportação e análise de dados',
+  'sefaz': 'Página SEFAZ - Monitor de disponibilidade SEFAZ',
+  'ia': 'Página Transcrever - Transcrição de áudio para tickets',
+  'metas': 'Página Metas - Acompanhamento de metas e desempenho',
+};
 
 window.mostrarPagina = function (paginaId) {
   try {
@@ -1574,6 +1603,18 @@ window.mostrarPagina = function (paginaId) {
     const btnMobile = document.getElementById('btn-' + paginaId + '-mobile');
     if (btnMobile) {
       btnMobile.classList.add('active');
+    }
+
+    // ===============================
+    // CHAT EMBED - Inicializa chat contextual na página atual
+    // ===============================
+    const embedContainerId = 'embed-chat-' + paginaId;
+    const embedContainer = document.getElementById(embedContainerId);
+    
+    if (embedContainer && !__embeddedChatInitialized[embedContainerId] && typeof window.initEmbeddedChat === 'function') {
+      const context = PAGE_CONTEXTS[paginaId] || 'ProtoCord';
+      window.initEmbeddedChat(embedContainerId, context);
+      __embeddedChatInitialized[embedContainerId] = true;
     }
 
     // ===============================
