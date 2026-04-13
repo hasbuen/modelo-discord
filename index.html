@@ -526,6 +526,33 @@
                   <tbody></tbody>
                 </table>
               </div>
+
+              <div id="tabela-paginacao" class="legacy-pagination" style="display:none;margin-top:20px;padding:16px 0;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+                  <div style="display:flex;align-items:center;gap:12px;color:var(--muted,#9fb0cc);font-size:.88rem;">
+                    <span id="paginacao-info">Mostrando 1-6 de 0 registros</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <button id="pag-btn-primeiro" type="button" onclick="irParaPagina(1)" class="legacy-page-btn" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;border:1px solid rgba(113,136,185,0.16);background:rgba(255,255,255,0.04);color:var(--text,#f1f5f9);font-weight:600;transition:all 0.18s ease;" disabled>
+                      <i data-lucide="chevrons-left" class="w-4 h-4"></i>
+                      <span>Primeiro</span>
+                    </button>
+                    <button id="pag-btn-anterior" type="button" onclick="mudarPagina(-1)" class="legacy-page-btn" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;border:1px solid rgba(113,136,185,0.16);background:rgba(255,255,255,0.04);color:var(--text,#f1f5f9);font-weight:600;transition:all 0.18s ease;" disabled>
+                      <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                      <span>Anterior</span>
+                    </button>
+                    <div id="paginacao-numeros" style="display:flex;gap:6px;align-items:center;"></div>
+                    <button id="pag-btn-proximo" type="button" onclick="mudarPagina(1)" class="legacy-page-btn" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;border:1px solid rgba(113,136,185,0.16);background:rgba(255,255,255,0.04);color:var(--text,#f1f5f9);font-weight:600;transition:all 0.18s ease;" disabled>
+                      <span>Próximo</span>
+                      <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                    <button id="pag-btn-ultimo" type="button" onclick="irParaPagina(999)" class="legacy-page-btn" style="display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;border:1px solid rgba(113,136,185,0.16);background:rgba(255,255,255,0.04);color:var(--text,#f1f5f9);font-weight:600;transition:all 0.18s ease;" disabled>
+                      <span>Último</span>
+                      <i data-lucide="chevrons-right" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </article>
           </section>
         </div>

@@ -320,25 +320,274 @@ async function popularModulosSelect(modulosCarregados) {
 window.popularModulosSelect = popularModulosSelect;
 
 // Tabela
+const PAGINACAO_CONFIG = {
+  registrosPorPagina: 6,
+  paginaAtual: 1,
+  registrosFiltrados: [],
+  registrosOriginais: [],
+  colunaOrdenacao: -1,
+  ordemAscendente: true,
+};
+
 function filtrarTabela() {
-  const f = document.getElementById("busca").value.toLowerCase();
-  document.querySelectorAll("#tabelaRegistros tbody tr").forEach(tr => {
-    tr.style.display = [...tr.children].some(td => td.textContent.toLowerCase().includes(f)) ? "" : "none";
-  });
+  const termoBusca = document.getElementById("busca").value.toLowerCase().trim();
+  
+  if (!termoBusca) {
+    PAGINACAO_CONFIG.registrosFiltrados = [...PAGINACAO_CONFIG.registrosOriginais];
+  } else {
+    PAGINACAO_CONFIG.registrosFiltrados = PAGINACAO_CONFIG.registrosOriginais.filter(reg => {
+      const ticket = String(reg.ticket || '').toLowerCase();
+      const prt = String(reg.prt || '').toLowerCase();
+      const tipo = reg.tipo === '1' ? 'sugestão' : 'erro';
+      const descricao = String(reg.descricao || '').toLowerCase();
+      
+      return ticket.includes(termoBusca) || 
+             prt.includes(termoBusca) || 
+             tipo.includes(termoBusca) || 
+             descricao.includes(termoBusca);
+    });
+  }
+  
+  PAGINACAO_CONFIG.paginaAtual = 1;
+  renderizarPaginaAtual();
 }
 
-let ultimaColuna = -1, ordemAsc = true;
 function ordenarTabela(idx) {
-  const tbody = document.querySelector("#tabelaRegistros tbody");
-  let linhas = [...tbody.querySelectorAll("tr")];
-  if (ultimaColuna === idx) ordemAsc = !ordemAsc; else { ordemAsc = true; ultimaColuna = idx; }
-  linhas.sort((a, b) => {
-    let va = a.children[idx].textContent.trim().toLowerCase();
-    let vb = b.children[idx].textContent.trim().toLowerCase();
-    return ordemAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+  const { registrosFiltrados, colunaOrdenacao, ordemAscendente } = PAGINACAO_CONFIG;
+  
+  if (PAGINACAO_CONFIG.colunaOrdenacao === idx) {
+    PAGINACAO_CONFIG.ordemAscendente = !PAGINACAO_CONFIG.ordemAscendente;
+  } else {
+    PAGINACAO_CONFIG.colunaOrdenacao = idx;
+    PAGINACAO_CONFIG.ordemAscendente = true;
+  }
+  
+  PAGINACAO_CONFIG.registrosFiltrados.sort((a, b) => {
+    const campos = ['ticket', 'prt', 'tipo', 'descricao'];
+    const campo = campos[idx];
+    
+    let va = String(a[campo] || '').trim().toLowerCase();
+    let vb = String(b[campo] || '').trim().toLowerCase();
+    
+    if (campo === 'tipo') {
+      va = va === '1' ? 'sugestão' : 'erro';
+      vb = vb === '1' ? 'sugestão' : 'erro';
+    }
+    
+    return PAGINACAO_CONFIG.ordemAscendente 
+      ? va.localeCompare(vb) 
+      : vb.localeCompare(va);
   });
-  linhas.forEach(l => tbody.appendChild(l));
+  
+  PAGINACAO_CONFIG.paginaAtual = 1;
+  renderizarPaginaAtual();
 }
+
+function renderizarPaginaAtual() {
+  const tbody = document.querySelector("#tabelaRegistros tbody");
+  if (!tbody) return;
+  
+  const { registrosFiltrados, paginaAtual, registrosPorPagina } = PAGINACAO_CONFIG;
+  const totalRegistros = registrosFiltrados.length;
+  const totalPaginas = Math.ceil(totalRegistros / registrosPorPagina);
+  
+  const inicio = (paginaAtual - 1) * registrosPorPagina;
+  const fim = Math.min(inicio + registrosPorPagina, totalRegistros);
+  const registrosPagina = registrosFiltrados.slice(inicio, fim);
+  
+  tbody.innerHTML = "";
+  
+  if (totalRegistros === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="text-center py-6 text-gray-400 italic">
+          Nenhum registro encontrado.
+        </td>
+      </tr>
+    `;
+    document.getElementById("tabela-paginacao").style.display = "none";
+    return;
+  }
+  
+  const escHTML = (s) => {
+    if (!s && s !== 0) return "";
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  };
+  
+  registrosPagina.forEach(reg => {
+    const tr = document.createElement("tr");
+    tr.className = "hover:bg-gray-800";
+    
+    const badgeHTML = reg.tipo === '1'
+      ? '<span class="px-3 py-1 text-xs font-bold rounded-full bg-green-700 text-green-100">Sugestão</span>'
+      : '<span class="px-3 py-1 text-xs font-bold rounded-full bg-red-700 text-red-100">Erro</span>';
+    
+    const descricaoEsc = escHTML(reg.descricao || "");
+    const descricaoTooltip = descricaoEsc.replace(/\n/g, "<br>");
+    
+    tr.innerHTML = `
+      <td class="py-2 px-3 align-top">
+        <a href="${escHTML(reg.link || '#')}" target="_blank" class="text-blue-400 underline">
+          ${escHTML(reg.ticket || '')}
+        </a>
+      </td>
+      <td class="py-2 px-3 align-top">${escHTML(reg.prt || '')}</td>
+      <td class="py-2 px-3 align-top legacy-type-cell">${badgeHTML}</td>
+      <td class="py-2 px-3 align-top">
+        <div class="tooltip-container relative">
+          <span class="desc-clamp">${escHTML((reg.descricao || '').slice(0, 300))}${(reg.descricao && reg.descricao.length > 300 ? ' ...' : '')}</span>
+          <div class="tooltip-text">${descricaoTooltip}</div>
+        </div>
+      </td>
+      <td class="py-2 px-3 align-top flex gap-2">
+        <button class="bg-blue-600 hover:bg-blue-500 px-2 py-1 rounded text-xs"
+                onclick="mostrarModalPaliativo('${escHTML(reg.paliativo || '').replace(/'/g, "\\'")}')">
+          Paliativo
+        </button>
+        <button class="bg-green-600 copy-btn hover:bg-green-500 px-2 py-1 rounded text-xs" type="button">
+          <i data-lucide="copy" class="w-4 h-4"></i>
+        </button>
+        <button class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded text-xs">
+          <i data-lucide="trash-2" class="w-4 h-4"></i>
+        </button>
+      </td>
+    `;
+    
+    const badgeTipo = tr.querySelector('.legacy-type-cell span');
+    if (badgeTipo) {
+      badgeTipo.className = reg.tipo === '1'
+        ? 'legacy-type-badge legacy-type-badge-success'
+        : 'legacy-type-badge legacy-type-badge-error';
+    }
+    
+    const btnExcluir = tr.querySelector('.bg-red-600');
+    if (btnExcluir) {
+      btnExcluir.onclick = () => abrirModalExclusao(Number(reg.id), reg.ticket);
+    }
+    
+    const btnCopy = tr.querySelector('.copy-btn');
+    if (btnCopy) {
+      btnCopy.onclick = () => copiarLinhaSafe(btnCopy, reg);
+    }
+    
+    tbody.appendChild(tr);
+  });
+  
+  if (window.lucide && typeof lucide.createIcons === 'function') {
+    lucide.createIcons();
+  }
+  
+  atualizarControlesPaginacao(totalRegistros, totalPaginas, inicio, fim);
+}
+
+function atualizarControlesPaginacao(totalRegistros, totalPaginas, inicio, fim) {
+  const container = document.getElementById("tabela-paginacao");
+  const info = document.getElementById("paginacao-info");
+  const btnPrimeiro = document.getElementById("pag-btn-primeiro");
+  const btnAnterior = document.getElementById("pag-btn-anterior");
+  const btnProximo = document.getElementById("pag-btn-proximo");
+  const btnUltimo = document.getElementById("pag-btn-ultimo");
+  const numerosContainer = document.getElementById("paginacao-numeros");
+  
+  const { paginaAtual } = PAGINACAO_CONFIG;
+  
+  if (totalPaginas <= 1) {
+    container.style.display = "none";
+    return;
+  }
+  
+  container.style.display = "block";
+  info.textContent = `Mostrando ${inicio + 1}-${fim} de ${totalRegistros} registros`;
+  
+  btnPrimeiro.disabled = paginaAtual === 1;
+  btnAnterior.disabled = paginaAtual === 1;
+  btnProximo.disabled = paginaAtual === totalPaginas;
+  btnUltimo.disabled = paginaAtual === totalPaginas;
+  
+  const hoverStyle = `
+    &:hover:not(:disabled) {
+      background: rgba(96,165,250,0.12) !important;
+      border-color: rgba(96,165,250,0.26) !important;
+      transform: translateY(-1px);
+    }
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  `;
+  
+  [btnPrimeiro, btnAnterior, btnProximo, btnUltimo].forEach(btn => {
+    if (!btn.dataset.styled) {
+      const style = document.createElement('style');
+      style.textContent = `.legacy-page-btn { ${hoverStyle} }`;
+      document.head.appendChild(style);
+      btn.dataset.styled = "true";
+    }
+  });
+  
+  numerosContainer.innerHTML = "";
+  
+  const maxButtonsVisiveis = 5;
+  let inicioBotao = Math.max(1, paginaAtual - Math.floor(maxButtonsVisiveis / 2));
+  let fimBotao = Math.min(totalPaginas, inicioBotao + maxButtonsVisiveis - 1);
+  
+  if (fimBotao - inicioBotao + 1 < maxButtonsVisiveis) {
+    inicioBotao = Math.max(1, fimBotao - maxButtonsVisiveis + 1);
+  }
+  
+  for (let i = inicioBotao; i <= fimBotao; i++) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = i;
+    btn.onclick = () => irParaPagina(i);
+    btn.className = "legacy-page-btn";
+    btn.style.cssText = `
+      display:inline-flex;align-items:center;justify-content:center;
+      min-width:36px;height:36px;padding:0 10px;border-radius:10px;
+      border:1px solid rgba(113,136,185,0.16);font-weight:700;font-size:.88rem;
+      transition:all 0.18s ease;cursor:pointer;
+      ${i === paginaAtual 
+        ? 'background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(59,130,246,0.3);' 
+        : 'background:rgba(255,255,255,0.04);color:var(--text,#f1f5f9);'}
+    `;
+    numerosContainer.appendChild(btn);
+  }
+  
+  if (window.lucide && typeof lucide.createIcons === 'function') {
+    lucide.createIcons();
+  }
+}
+
+function mudarPagina(direcao) {
+  const { paginaAtual, registrosFiltrados, registrosPorPagina } = PAGINACAO_CONFIG;
+  const totalPaginas = Math.ceil(registrosFiltrados.length / registrosPorPagina);
+  const novaPagina = paginaAtual + direcao;
+  
+  if (novaPagina >= 1 && novaPagina <= totalPaginas) {
+    PAGINACAO_CONFIG.paginaAtual = novaPagina;
+    renderizarPaginaAtual();
+    document.querySelector("#tabela-container")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+function irParaPagina(pagina) {
+  const { registrosFiltrados, registrosPorPagina } = PAGINACAO_CONFIG;
+  const totalPaginas = Math.ceil(registrosFiltrados.length / registrosPorPagina);
+  
+  if (pagina === 999) {
+    PAGINACAO_CONFIG.paginaAtual = totalPaginas;
+  } else {
+    PAGINACAO_CONFIG.paginaAtual = Math.max(1, Math.min(pagina, totalPaginas));
+  }
+  
+  renderizarPaginaAtual();
+  document.querySelector("#tabela-container")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 
 function mostrarModalPaliativo(paliativo) {
   const modal = document.getElementById("errorModal");
@@ -546,7 +795,7 @@ async function atualizarContadoresDosCards(registros) {
 
   const erroEl = document.getElementById("contador-erros");
   const sugestaoEl = document.getElementById("contador-sugestoes");
-  document.getElementById('card-total-registrado').innerText = registrosCache.length;
+  document.getElementById('card-total-registrado').innerText = registros.length;
 
   erroEl.classList.remove("skeleton");
   sugestaoEl.classList.remove("skeleton");
@@ -701,7 +950,6 @@ function criarLegendaModulos(chart) {
 async function renderizarTabela() {
   const tbody = document.querySelector("#tabelaRegistros tbody");
   if (!tbody) return [];
-  registrosCache = [];
 
   tbody.innerHTML = `
       <tr>
@@ -717,21 +965,17 @@ async function renderizarTabela() {
     </tr> `;
 
   try {
-    // Cria uma Promise para o timer (2 segundos)
     const timerPromise = new Promise(resolve => setTimeout(resolve, 350));
 
-    // Executa as requisições e o timer em paralelo
     const [registros,] = await Promise.all([
       carregarRegistrosProtocolos(),
-      timerPromise // Garante que o loading apareça por no mínimo 2 segundos
+      timerPromise
     ]);
 
     await atualizarContadoresDosCards(registros);
 
-    // FIM DO LOADING: Limpa o conteúdo de loading antes de renderizar os dados
     tbody.innerHTML = "";
 
-    // Mensagem quando não há registros
     if (!registros || registros.length === 0) {
       tbody.innerHTML = `
       <tr>
@@ -740,83 +984,19 @@ async function renderizarTabela() {
       </td>
         </tr>
       `;
+      PAGINACAO_CONFIG.registrosOriginais = [];
+      PAGINACAO_CONFIG.registrosFiltrados = [];
+      PAGINACAO_CONFIG.paginaAtual = 1;
+      document.getElementById("tabela-paginacao").style.display = "none";
       return [];
     }
 
-    // helpers para escapar conteúdo em HTML
-    const escHTML = (s) => {
-      if (!s && s !== 0) return "";
-      return String(s)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
-    };
-
-    // Preenche a tabela
-    registros.forEach(reg => {
-      const tr = document.createElement("tr");
-      tr.className = "hover:bg-gray-800";
-
-      const badgeHTML = reg.tipo === '1'
-        ? '<span class="px-3 py-1 text-xs font-bold rounded-full bg-green-700 text-green-100">Sugestão</span>'
-        : '<span class="px-3 py-1 text-xs font-bold rounded-full bg-red-700 text-red-100">Erro</span>';
-
-      const descricaoEsc = escHTML(reg.descricao || "");
-      const descricaoTooltip = descricaoEsc.replace(/\n/g, "<br>");
-
-      tr.innerHTML = `
-      <td class="py-2 px-3 align-top">
-        <a href="${escHTML(reg.link || '#')}" target="_blank" class="text-blue-400 underline">
-          ${escHTML(reg.ticket || '')}
-        </a>
-        </td>
-        <td class="py-2 px-3 align-top">${escHTML(reg.prt || '')}</td>
-        <td class="py-2 px-3 align-top legacy-type-cell">${badgeHTML}</td>
-        <td class="py-2 px-3 align-top">
-          <div class="tooltip-container relative">
-            <span class="desc-clamp">${escHTML((reg.descricao || '').slice(0, 300))}${(reg.descricao && reg.descricao.length > 300 ? ' ...' : '')}</span>
-            <div class="tooltip-text">${descricaoTooltip}</div>
-          </div>
-        </td>
-        <td class="py-2 px-3 align-top flex gap-2">
-          <button class="bg-blue-600 hover:bg-blue-500 px-2 py-1 rounded text-xs"
-                  onclick="mostrarModalPaliativo('${escHTML(reg.paliativo || '').replace(/'/g, "\\'")}')">
-            Paliativo
-          </button>
-          <button class="bg-green-600 copy-btn hover:bg-green-500 px-2 py-1 rounded text-xs" type="button">
-            <i data-lucide="copy" class="w-4 h-4"></i>
-          </button>
-          <button class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded text-xs">
-            <i data-lucide="trash-2" class="w-4 h-4"></i>
-          </button>
-        </td>
-      `;
-
-      const badgeTipo = tr.querySelector('.legacy-type-cell span');
-      if (badgeTipo) {
-        badgeTipo.className = reg.tipo === '1'
-          ? 'legacy-type-badge legacy-type-badge-success'
-          : 'legacy-type-badge legacy-type-badge-error';
-      }
-
-      const btnExcluir = tr.querySelector('.bg-red-600');
-      if (btnExcluir) {
-        btnExcluir.onclick = () => abrirModalExclusao(Number(reg.id), reg.ticket);
-      }
-
-      // Configura o botão de cópia para receber o objeto "reg" original
-      const btnCopy = tr.querySelector('.copy-btn');
-      if (btnCopy) {
-        btnCopy.onclick = () => copiarLinhaSafe(btnCopy, reg);
-      }
-
-      tbody.appendChild(tr);
-    });
-
-    if (window.lucide && typeof lucide.createIcons === 'function') {
-      lucide.createIcons();
-    }
+    PAGINACAO_CONFIG.registrosOriginais = [...registros];
+    PAGINACAO_CONFIG.registrosFiltrados = [...registros];
+    PAGINACAO_CONFIG.paginaAtual = 1;
+    
+    renderizarPaginaAtual();
+    
     return registros;
   } catch (error) {
     console.error("Erro ao carregar registros:", error);
@@ -827,6 +1007,9 @@ async function renderizarTabela() {
       </td>
       </tr>
       `;
+    PAGINACAO_CONFIG.registrosOriginais = [];
+    PAGINACAO_CONFIG.registrosFiltrados = [];
+    document.getElementById("tabela-paginacao").style.display = "none";
     return [];
   }
 }
@@ -993,3 +1176,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     console.error("Erro ao inicializar a página:", err);
   }
 });
+
+// Exportações globais para paginação
+window.filtrarTabela = filtrarTabela;
+window.ordenarTabela = ordenarTabela;
+window.renderizarTabela = renderizarTabela;
+window.mudarPagina = mudarPagina;
+window.irParaPagina = irParaPagina;
