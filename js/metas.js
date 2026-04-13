@@ -952,6 +952,11 @@
                 <input type="date" name="startDate" value="${getTodayStr()}" required />
               </div>
 
+              <div class="mfu-field">
+                <label>Data de Término (opcional)</label>
+                <input type="date" name="endDate" />
+              </div>
+
               <div class="mfu-grid mfu-grid-2">
                 <div class="mfu-field">
                   <label>Hora Início</label>
@@ -1009,6 +1014,9 @@
               const progress = Math.min(100, Math.max(0, (value / Number(goal.ceiling || 1)) * 100));
               const minPercent = Math.min(100, (Number(goal.min || 0) / Number(goal.ceiling || 1)) * 100);
               const tolPercent = Math.min(100, (Number(goal.tol || 0) / Number(goal.ceiling || 1)) * 100);
+              const remaining = Math.max(0, Number(goal.ceiling) - value);
+              const todayProgress = progress > 0 ? `${progress.toFixed(0)}%` : "0%";
+              const daysUntilEnd = calculateDaysRemaining(goal);
 
               return `
                 <article class="mfu-goal-card">
@@ -1022,34 +1030,52 @@
                           ${status.label}
                         </span>
                         <span class="mfu-badge" style="background:rgba(255,255,255,.05);color:var(--muted);">
-                          Streak: ${streak} dias
+                          🔥 ${streak} dia${streak !== 1 ? 's' : ''}
                         </span>
                       </div>
                     </div>
 
                     <div class="mfu-goal-value">
-                      <strong>${value}</strong>
+                      <strong>${value}/${goal.ceiling}</strong>
                       <span>${escapeHtml(goal.unit)}</span>
                     </div>
                   </div>
 
                   <div class="mfu-progress">
                     <div class="mfu-progress-track">
-                      <div class="mfu-progress-bar" style="width:${progress}%;background:${status.color};"></div>
-                      <div class="mfu-progress-mark" style="left:${minPercent}%;"></div>
-                      <div class="mfu-progress-mark" style="left:${tolPercent}%;"></div>
+                      <div class="mfu-progress-bar" style="width:${progress}%;background:linear-gradient(90deg, ${status.color}, ${status.color}dd);"></div>
+                      <div class="mfu-progress-mark" style="left:${minPercent}%;background:rgba(255,255,255,.35);"></div>
+                      <div class="mfu-progress-mark" style="left:${tolPercent}%;background:rgba(255,255,255,.35);"></div>
                     </div>
 
                     <div class="mfu-progress-labels">
                       <span>0</span>
+                      <span style="color:${status.color};font-weight:700;">${todayProgress}</span>
                       <span>Min ${goal.min}</span>
                       <span>Tol ${goal.tol}</span>
                       <span>Teto ${goal.ceiling}</span>
                     </div>
                   </div>
 
+                  <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+                    <div style="flex:1;min-width:100px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--border);text-align:center;">
+                      <small style="color:var(--muted);font-size:.75rem;display:block;margin-bottom:4px;">Restante</small>
+                      <strong style="font-size:1.1rem;">${remaining}</strong>
+                    </div>
+                    <div style="flex:1;min-width:100px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--border);text-align:center;">
+                      <small style="color:var(--muted);font-size:.75rem;display:block;margin-bottom:4px;">Período</small>
+                      <strong style="font-size:.95rem;">${goal.startTime || '--'} - ${goal.endTime || '--'}</strong>
+                    </div>
+                    ${daysUntilEnd > 0 ? `
+                    <div style="flex:1;min-width:100px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--border);text-align:center;">
+                      <small style="color:var(--muted);font-size:.75rem;display:block;margin-bottom:4px;">Dias restantes</small>
+                      <strong style="font-size:1.1rem;">${daysUntilEnd}</strong>
+                    </div>
+                    ` : ''}
+                  </div>
+
                   <div class="mfu-actions">
-                    <button class="neg" data-action="entry" data-goal-id="${goal.id}" data-inc="-1">-1</button>
+                    <button class="neg" data-action="entry" data-goal-id="${goal.id}" data-inc="-1">−1</button>
                     <button data-action="entry" data-goal-id="${goal.id}" data-inc="1">+1</button>
                     <button data-action="entry" data-goal-id="${goal.id}" data-inc="5">+5</button>
                     <button data-action="entry" data-goal-id="${goal.id}" data-inc="10">+10</button>
@@ -1060,6 +1086,15 @@
             .join("")}
         </section>
       `;
+    }
+
+    function calculateDaysRemaining(goal) {
+      if (!goal.endDate) return 0;
+      const today = getTodayStr();
+      const end = new Date(goal.endDate + "T12:00:00");
+      const now = new Date(today + "T12:00:00");
+      const diff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+      return Math.max(0, diff);
     }
 
     function renderKanban() {
@@ -1216,7 +1251,10 @@
       return `
         <section class="mfu-panel mfu-pad">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px;">
-            <h3 style="margin:0;">Metas</h3>
+            <div>
+              <h3 style="margin:0;">Metas Cadastradas</h3>
+              <p style="margin:4px 0 0;color:var(--muted);font-size:.92rem;">Gerencie suas metas ativas e histórico.</p>
+            </div>
             <button class="mfu-btn mfu-btn-primary" data-action="new-goal">Nova meta</button>
           </div>
 
@@ -1225,22 +1263,44 @@
               state.goals.length
                 ? state.goals
                     .map(
-                      (goal) => `
-                        <div class="mfu-item-row">
-                          <div>
-                            <h4>${escapeHtml(goal.name)}</h4>
-                            <p>${escapeHtml(goal.unit)} · Min ${goal.min} · Tol ${goal.tol} · Teto ${goal.ceiling}</p>
+                      (goal) => {
+                        const today = getTodayStr();
+                        const todayEntry = entryFor(goal.id, today);
+                        const todayValue = todayEntry ? Number(todayEntry.value || 0) : 0;
+                        const statusKey = calculateStatus(todayValue, Number(goal.min), Number(goal.tol), Number(goal.ceiling));
+                        const status = STATUS_COLORS[statusKey];
+                        const totalEntries = state.entries.filter(e => e.goalId === goal.id);
+                        const totalValue = totalEntries.reduce((sum, e) => sum + Number(e.value || 0), 0);
+                        const avgDaily = totalEntries.length > 0 ? (totalValue / totalEntries.length).toFixed(1) : 0;
+
+                        return `
+                          <div class="mfu-item-row">
+                            <div style="flex:1;">
+                              <h4 style="display:flex;align-items:center;gap:8px;">
+                                <span style="display:inline-block;width:8px;height:8px;border-radius:999px;background:${status.color};"></span>
+                                ${escapeHtml(goal.name)}
+                              </h4>
+                              <p style="margin-top:4px;">
+                                ${escapeHtml(goal.unit)} · Min ${goal.min} · Tol ${goal.tol} · Teto ${goal.ceiling}
+                              </p>
+                              <div style="display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;font-size:.85rem;color:var(--muted);">
+                                <span>📊 Hoje: <strong style="color:var(--text);">${todayValue}</strong></span>
+                                <span>📈 Total: <strong style="color:var(--text);">${totalValue}</strong></span>
+                                <span>📉 Média/dia: <strong style="color:var(--text);">${avgDaily}</strong></span>
+                                ${goal.endDate ? `<span>📅 Fim: <strong style="color:var(--text);">${goal.endDate}</strong></span>` : ''}
+                              </div>
+                            </div>
+                            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                              <button class="mfu-btn mfu-btn-danger" data-action="delete-goal" data-goal-id="${goal.id}">
+                                Excluir
+                              </button>
+                            </div>
                           </div>
-                          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                            <button class="mfu-btn mfu-btn-danger" data-action="delete-goal" data-goal-id="${goal.id}">
-                              Excluir
-                            </button>
-                          </div>
-                        </div>
-                      `
+                        `;
+                      }
                     )
                     .join("")
-                : `<div class="mfu-empty">Nenhuma meta cadastrada.</div>`
+                : `<div class="mfu-empty">Nenhuma meta cadastrada ainda.<br /><small>Clique em "Nova meta" para começar.</small></div>`
             }
           </div>
         </section>
@@ -1307,6 +1367,7 @@
             name: fd.get("name"),
             unit: fd.get("unit"),
             startDate: fd.get("startDate"),
+            endDate: fd.get("endDate") || null,
             startTime: fd.get("startTime"),
             endTime: fd.get("endTime"),
             min: fd.get("min"),
@@ -1431,4 +1492,20 @@
   }
 
   window.initMetaFlowUltra = initMetaFlowUltra;
+  
+  if (!window.__metasAutoInitDisabled) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        const mountEl = document.querySelector("#metas-app");
+        if (mountEl && !mountEl.dataset.metaflowMounted) {
+          initMetaFlowUltra("#metas-app");
+        }
+      });
+    } else {
+      const mountEl = document.querySelector("#metas-app");
+      if (mountEl && !mountEl.dataset.metaflowMounted) {
+        initMetaFlowUltra("#metas-app");
+      }
+    }
+  }
 })();
