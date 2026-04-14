@@ -104,7 +104,7 @@
       state.messages = [];
       persist();
       render();
-      notify("Conversa limpa.", "success");
+      notify("Pesquisas limpas.", "success");
     });
 
     els.audioBtn?.addEventListener("click", async () => {
