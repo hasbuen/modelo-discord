@@ -89,6 +89,17 @@
       await submitMessage();
     });
 
+    els.input?.addEventListener("input", () => {
+      autoResizeInput();
+    });
+
+    els.input?.addEventListener("keydown", async (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        await submitMessage();
+      }
+    });
+
     els.clearBtn?.addEventListener("click", () => {
       state.messages = [];
       persist();
@@ -109,9 +120,12 @@
       button.addEventListener("click", async () => {
         if (!els.input) return;
         els.input.value = button.dataset.assistantPrompt || "";
+        autoResizeInput();
         await submitMessage();
       });
     });
+
+    autoResizeInput();
   }
 
   function restoreState() {
@@ -189,6 +203,7 @@
     if (els.input) {
       els.input.value = "";
     }
+    resetInputHeight();
     render();
     persist();
 
@@ -385,6 +400,7 @@
       if (els.input) {
         els.input.value = transcript;
       }
+      autoResizeInput();
 
       await submitProvidedMessage(transcript);
     } catch (error) {
@@ -415,6 +431,12 @@
     if (els.audioBtn) {
       els.audioBtn.classList.toggle("recording", state.recording);
       els.audioBtn.disabled = state.sending || state.transcribing;
+      els.audioBtn.title = state.recording
+        ? "Parar gravação"
+        : state.transcribing
+          ? "Transcrevendo áudio"
+          : "Gravar áudio";
+      els.audioBtn.setAttribute("aria-label", els.audioBtn.title);
     }
 
     if (els.audioLabel) {
@@ -477,6 +499,19 @@
     if (typeof window.showToast === "function") {
       window.showToast(message, type);
     }
+  }
+
+  function autoResizeInput() {
+    if (!els.input) return;
+
+    els.input.style.height = "52px";
+    const nextHeight = Math.min(Math.max(52, els.input.scrollHeight), 104);
+    els.input.style.height = `${nextHeight}px`;
+  }
+
+  function resetInputHeight() {
+    if (!els.input) return;
+    els.input.style.height = "52px";
   }
 
   window.toggleAssistantWidget = function () {
