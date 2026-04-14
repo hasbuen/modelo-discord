@@ -182,14 +182,6 @@
           </span>
         </button>
 
-        <button onclick="mostrarPagina('assistente')" data-tooltip="CordIA" class="sidebar-item" id="btn-assistente">
-          <i data-lucide="messages-square" class="sidebar-icon"></i>
-          <span class="sidebar-label flex items-center">
-            CordIA
-              <span class="sidebar-pill ml-2">Plus</span>
-          </span>
-        </button>
-
         <button onclick="mostrarPagina('metas')" data-tooltip="Metas" class="sidebar-item" id="btn-metas">
           <i data-lucide="target" class="sidebar-icon"></i>
           <span class="sidebar-label">Metas</span>
@@ -269,10 +261,6 @@
         </button>
         <button onclick="mostrarPagina('ia')" class="sidebar-item" id="btn-ia-mobile">
             <i data-lucide="bot" class="sidebar-icon"></i> Transcrever
-            <span class="sidebar-pill ml-2">Plus</span>
-          </button>
-          <button onclick="mostrarPagina('assistente')" class="sidebar-item" id="btn-assistente-mobile">
-            <i data-lucide="messages-square" class="sidebar-icon"></i> CordIA
             <span class="sidebar-pill ml-2">Plus</span>
           </button>
           <button onclick="mostrarPagina('metas')" class="sidebar-item" id="btn-metas-mobile">
@@ -1354,7 +1342,8 @@
           </div>
         </div>
 
-        <div id="pagina-assistente" class="hidden animate__animated animate__fadeIn">
+        <!-- assistant page removed in favor of global floating widget -->
+        <div id="pagina-assistente-legado" class="hidden animate__animated animate__fadeIn hidden">
           <div class="assistant-shell">
             <section class="assistant-hero">
               <div>
@@ -1397,15 +1386,15 @@
               </aside>
 
               <section class="assistant-card">
-                <div id="assistant-messages" class="assistant-messages"></div>
-                <form id="assistant-form" class="assistant-form">
-                  <textarea id="assistant-input" class="assistant-input" rows="3" placeholder="Ex.: qual release contém o PRT 12345?"></textarea>
+                <div id="assistant-messages-legado" class="assistant-messages"></div>
+                <form id="assistant-form-legado" class="assistant-form">
+                  <textarea id="assistant-input-legado" class="assistant-input" rows="3" placeholder="Ex.: qual release contém o PRT 12345?"></textarea>
                   <div class="assistant-actions">
-                    <button id="assistant-clear-btn" class="ia-btn-secondary" type="button">
+                    <button id="assistant-clear-btn-legado" class="ia-btn-secondary" type="button">
                       <i data-lucide="eraser" class="w-4 h-4"></i>
                       <span>Limpar conversa</span>
                     </button>
-                    <button id="assistant-send-btn" class="ia-btn-primary assistant-send" type="submit">
+                    <button id="assistant-send-btn-legado" class="ia-btn-primary assistant-send" type="submit">
                       <i data-lucide="send" class="w-4 h-4"></i>
                       <span>Perguntar</span>
                     </button>
@@ -1416,7 +1405,7 @@
           </div>
         </div>
 
-        <div id="embed-chat-ia"></div>
+        <!-- embedded assistant removed -->
 
         <div id="pagina-metas" class="hidden animate__animated animate__fadeIn">
           <section class="kpi-shell legacy-shell">
@@ -1432,11 +1421,68 @@
           </section>
         </div>
 
-        <div id="embed-chat-metas"></div>
+        <!-- embedded metas assistant removed -->
 
 
       </div>
     </main>
+  </div>
+
+  <div id="assistant-widget" class="assistant-widget">
+    <button id="assistant-fab" class="assistant-fab" type="button" aria-label="Abrir assistente">
+      <i data-lucide="messages-square" class="w-5 h-5"></i>
+      <span>CordIA</span>
+      <span id="assistant-fab-badge" class="assistant-fab-badge">Online</span>
+    </button>
+
+    <section id="assistant-panel" class="assistant-widget-panel hidden" aria-live="polite">
+      <header class="assistant-widget-header">
+        <div>
+          <p class="assistant-eyebrow">Assistente</p>
+          <h2 class="assistant-widget-title">CordIA</h2>
+          <p class="assistant-widget-subtitle">Pergunte o que precisa sem sair da página atual.</p>
+          <div class="assistant-widget-meta">
+            <span id="assistant-status-badge" class="assistant-status-badge assistant-status-online">
+              <span class="assistant-status-dot"></span>
+              <span id="assistant-status-label">Online</span>
+            </span>
+            <span id="assistant-recording-pill" class="assistant-recording-pill hidden">
+              <span class="assistant-recording-pulse"></span>
+              <span id="assistant-recording-time">00:00</span>
+            </span>
+          </div>
+        </div>
+        <button id="assistant-close-btn" class="assistant-widget-close" type="button" aria-label="Fechar assistente">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </header>
+
+      <div class="assistant-widget-suggestions">
+        <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais releases recentes liberaram mais PRTs?">Releases com mais PRTs</button>
+        <button class="assistant-suggestion" type="button" data-assistant-prompt="Existe protocolo relacionado ao módulo fiscal com certificado digital?">Protocolos por módulo</button>
+        <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais PRTs aparecem na release mais recente?">PRTs da última release</button>
+      </div>
+
+      <div id="assistant-messages" class="assistant-messages assistant-messages-widget"></div>
+
+      <form id="assistant-form" class="assistant-form assistant-form-widget">
+        <textarea id="assistant-input" class="assistant-input" rows="3" placeholder="Ex.: qual release contém o PRT 12345?"></textarea>
+        <div class="assistant-actions">
+          <button id="assistant-audio-btn" class="assistant-audio-btn" type="button" title="Gravar áudio">
+            <i data-lucide="mic" class="w-4 h-4"></i>
+            <span id="assistant-audio-label">Áudio</span>
+          </button>
+          <button id="assistant-clear-btn" class="ia-btn-secondary" type="button">
+            <i data-lucide="eraser" class="w-4 h-4"></i>
+            <span>Limpar</span>
+          </button>
+          <button id="assistant-send-btn" class="ia-btn-primary assistant-send" type="submit">
+            <i data-lucide="send" class="w-4 h-4"></i>
+            <span>Perguntar</span>
+          </button>
+        </div>
+      </form>
+    </section>
   </div>
 
   <div id="errorModal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4">
@@ -1511,7 +1557,6 @@
   <script src="js/monitor_sefaz.js"></script>
   <script src="js/ia-transcriber.js"></script>
   <script src="js/ia-assistant.js"></script>
-  <script src="js/ia-assistant-embedded.js"></script>
   <script>
     window.__metasAutoInitDisabled = true;
   </script>
