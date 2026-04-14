@@ -87,7 +87,9 @@
       toggleWidget(!state.open);
     });
 
-    els.closeBtn?.addEventListener("click", () => {
+    els.closeBtn?.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
       toggleWidget(false);
     });
 
@@ -125,17 +127,16 @@
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
       state.messages = Array.isArray(parsed.messages) ? parsed.messages.slice(-20) : [];
-      state.open = Boolean(parsed.open);
     } catch (_error) {
       state.messages = [];
-      state.open = false;
     }
+
+    state.open = false;
   }
 
   function persist() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       messages: state.messages.slice(-20),
-      open: state.open,
     }));
   }
 
