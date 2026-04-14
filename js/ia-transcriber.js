@@ -3184,12 +3184,21 @@ function renderAudio(active) {
       await pingBackendHealth();
 
       const fileForUpload = await prepareAudioForTranscription(file);
+      let data;
 
       notify("Enviando áudio temporário para processamento...", "info");
-      const blobUpload = await uploadAudioToBlob(fileForUpload);
+      try {
+        data = await sendTranscriptionRequest(fileForUpload);
+      } catch (error) {
+        if (!shouldFallbackToBlob(error)) {
+          throw error;
+        }
+
+        const blobUpload = await uploadAudioToBlob(fileForUpload);
 
       notify("Processando áudio no backend...", "info");
-      const data = await requestBlobTranscription(blobUpload, fileForUpload);
+        data = await requestBlobTranscription(blobUpload, fileForUpload);
+      }
 
       if (active.localAudioKey) {
         await deleteLocalAudio(active.localAudioKey);
@@ -3251,6 +3260,24 @@ function renderAudio(active) {
     }
   }
 
+  async function sendTranscriptionRequest(file) {
+    const formData = new FormData();
+    formData.append("audio", file);
+
+    const response = await fetch(`${apiBaseUrl}/transcrever`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await parseJsonSafe(response);
+
+    if (!response.ok || !data?.sucesso) {
+      throw createHttpError(data?.erro || `Falha ao transcrever o áudio. Status ${response.status}`, response.status);
+    }
+
+    return data;
+  }
+
   async function requestBlobTranscription(blobUpload, file) {
     const response = await fetch(`${apiBaseUrl}/transcrever`, {
       method: "POST",
@@ -3272,6 +3299,16 @@ function renderAudio(active) {
     }
 
     return data;
+  }
+
+  function shouldFallbackToBlob(error) {
+    return (
+      error?.status === 408 ||
+      error?.status === 413 ||
+      error?.status === 429 ||
+      error?.status >= 500 ||
+      /timeout|network|fetch|gateway|payload too large/i.test(String(error?.message || ""))
+    );
   }
 
   function buildSingleReportText(ticket) {
