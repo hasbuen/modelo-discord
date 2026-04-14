@@ -1587,6 +1587,13 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
   gap: 12px;
 }
 
+.assistant-widget-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
 .assistant-widget-title {
   margin: 4px 0 0;
   color: #f4f8ff;
@@ -1684,6 +1691,30 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
 .assistant-widget-close:hover {
   border-color: rgba(103, 232, 249, 0.28);
   background: rgba(17, 38, 65, 0.9);
+}
+
+.assistant-widget-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(103, 232, 249, 0.18);
+  background: rgba(10, 23, 42, 0.72);
+  color: #bfeaff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.assistant-widget-clear:hover {
+  transform: translateY(-1px);
+  border-color: rgba(103, 232, 249, 0.34);
+  background: rgba(17, 38, 65, 0.9);
+  color: #eef9ff;
 }
 
 .assistant-widget-suggestions {
@@ -1816,6 +1847,16 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
     max-height: calc(100vh - 96px);
     border-radius: 22px;
     padding: 14px;
+  }
+
+  .assistant-widget-header-actions {
+    gap: 8px;
+  }
+
+  .assistant-widget-clear {
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 0.72rem;
   }
 
   .ia-main-header,
