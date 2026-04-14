@@ -29,6 +29,7 @@
     removeLegacyAssistantUi();
     bindElements();
     if (!els.widget) return;
+    applyPanelVisibility(false);
     restoreState();
     bindEvents();
     render();
@@ -260,9 +261,7 @@
   function toggleWidget(forceState, persistState = true) {
     state.open = typeof forceState === "boolean" ? forceState : !state.open;
 
-    if (els.panel) {
-      els.panel.classList.toggle("hidden", !state.open);
-    }
+    applyPanelVisibility(state.open);
 
     if (els.fab) {
       els.fab.setAttribute("aria-expanded", String(state.open));
@@ -284,6 +283,15 @@
     }
 
     lucide.createIcons();
+  }
+
+  function applyPanelVisibility(isOpen) {
+    if (!els.panel) return;
+
+    els.panel.classList.toggle("hidden", !isOpen);
+    els.panel.hidden = !isOpen;
+    els.panel.setAttribute("aria-hidden", String(!isOpen));
+    els.panel.style.display = isOpen ? "grid" : "none";
   }
 
   async function startRecording() {
