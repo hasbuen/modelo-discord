@@ -14,7 +14,11 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
-  <link rel="stylesheet" href="style.css">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
+  <link rel="stylesheet" href="style.css?v=20260414b">
 </head>
 
 <body class="bg-gray-900 text-gray-200">
@@ -133,14 +137,6 @@
           </span>
         </button>
 
-        <button onclick="mostrarPagina('assistente')" data-tooltip="CordIA" class="sidebar-item" id="btn-assistente">
-          <i data-lucide="messages-square" class="sidebar-icon"></i>
-          <span class="sidebar-label flex items-center">
-            CordIA
-              <span class="sidebar-pill ml-2">Plus</span>
-          </span>
-        </button>
-
       </nav>
 
       <div class="mt-auto sidebar-footer-panel">
@@ -215,10 +211,6 @@
         </button>
         <button onclick="mostrarPagina('ia')" class="sidebar-item" id="btn-ia-mobile">
             <i data-lucide="bot" class="sidebar-icon"></i> Transcrever
-            <span class="sidebar-pill ml-2">Plus</span>
-          </button>
-          <button onclick="mostrarPagina('assistente')" class="sidebar-item" id="btn-assistente-mobile">
-            <i data-lucide="messages-square" class="sidebar-icon"></i> CordIA
             <span class="sidebar-pill ml-2">Plus</span>
           </button>
           <button onclick="mostrarPagina('relatorios')" class="sidebar-item" id="btn-relatorios-mobile">
@@ -1258,70 +1250,65 @@
           </div>
         </div>
 
-        <div id="pagina-assistente" class="hidden animate__animated animate__fadeIn">
-          <div class="assistant-shell">
-            <section class="assistant-hero">
-              <div>
-                <p class="assistant-eyebrow">CordIA</p>
-                <h2 class="assistant-title">Consulta operacional com contexto híbrido</h2>
-                <p class="assistant-subtitle">Pergunte por PRTs, releases, módulos e FAQ pública.</p>
-                <div class="assistant-hero-metrics">
-                  <article class="assistant-metric-card">
-                    <span class="assistant-metric-label">Base</span>
-                    <strong>Dados internos</strong>
-                  </article>
-                  <article class="assistant-metric-card">
-                    <span class="assistant-metric-label">Referência</span>
-                    <strong>FAQ pública</strong>
-                  </article>
-                  <article class="assistant-metric-card">
-                    <span class="assistant-metric-label">Resposta</span>
-                    <strong>Sinaliza lacunas</strong>
-                  </article>
-                </div>
-              </div>
-              <div class="assistant-hero-pills">
-                <span class="assistant-pill">Interno</span>
-                <span class="assistant-pill">FAQ Znuny</span>
-                <span class="assistant-pill">Pesquisa assistida</span>
-              </div>
-            </section>
-
-            <section class="assistant-layout">
-              <aside class="assistant-sidecard">
-                <h3 class="assistant-side-title">Atalhos</h3>
-                <div class="assistant-suggestions">
-                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais releases recentes liberaram mais PRTs?">Releases com mais PRTs</button>
-                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Existe protocolo relacionado ao módulo fiscal com certificado digital?">Protocolos por módulo</button>
-                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais PRTs aparecem na release mais recente?">PRTs da última release</button>
-                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Explique rapidamente o que você encontrou sobre monitor rede.">Resumo operacional</button>
-                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Procure na FAQ pública do Znuny algo sobre certificado digital vencido.">Buscar na FAQ pública</button>
-                </div>
-                <p class="assistant-side-note">Se faltar contexto, o agente sinaliza.</p>
-              </aside>
-
-              <section class="assistant-card">
-                <div id="assistant-messages" class="assistant-messages"></div>
-                <form id="assistant-form" class="assistant-form">
-                  <textarea id="assistant-input" class="assistant-input" rows="3" placeholder="Ex.: qual release contém o PRT 12345?"></textarea>
-                  <div class="assistant-actions">
-                    <button id="assistant-clear-btn" class="ia-btn-secondary" type="button">
-                      <i data-lucide="eraser" class="w-4 h-4"></i>
-                      <span>Limpar conversa</span>
-                    </button>
-                    <button id="assistant-send-btn" class="ia-btn-primary assistant-send" type="submit">
-                      <i data-lucide="send" class="w-4 h-4"></i>
-                      <span>Perguntar</span>
-                    </button>
-                  </div>
-                </form>
-              </section>
-            </section>
-          </div>
-        </div>
-
       </div>
     </main>
+  </div>
+
+  <div id="assistant-widget" class="assistant-widget">
+    <button id="assistant-fab" class="assistant-fab" type="button" aria-label="Abrir assistente">
+      <i data-lucide="messages-square" class="w-5 h-5"></i>
+      <span>CordIA</span>
+      <span id="assistant-fab-badge" class="assistant-fab-badge">Online</span>
+    </button>
+
+    <section id="assistant-panel" class="assistant-widget-panel hidden" aria-live="polite">
+      <header class="assistant-widget-header">
+        <div>
+          <p class="assistant-eyebrow">Assistente</p>
+          <h2 class="assistant-widget-title">CordIA</h2>
+          <p class="assistant-widget-subtitle">Pergunte o que precisa sem sair da página atual.</p>
+          <div class="assistant-widget-meta">
+            <span id="assistant-status-badge" class="assistant-status-badge assistant-status-online">
+              <span class="assistant-status-dot"></span>
+              <span id="assistant-status-label">Online</span>
+            </span>
+            <span id="assistant-recording-pill" class="assistant-recording-pill hidden">
+              <span class="assistant-recording-pulse"></span>
+              <span id="assistant-recording-time">00:00</span>
+            </span>
+          </div>
+        </div>
+        <button id="assistant-close-btn" class="assistant-widget-close" type="button" aria-label="Fechar assistente">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </header>
+
+      <div class="assistant-widget-suggestions">
+        <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais releases recentes liberaram mais PRTs?">Releases com mais PRTs</button>
+        <button class="assistant-suggestion" type="button" data-assistant-prompt="Existe protocolo relacionado ao módulo fiscal com certificado digital?">Protocolos por módulo</button>
+        <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais PRTs aparecem na release mais recente?">PRTs da última release</button>
+      </div>
+
+      <div id="assistant-messages" class="assistant-messages assistant-messages-widget"></div>
+
+      <form id="assistant-form" class="assistant-form assistant-form-widget">
+        <textarea id="assistant-input" class="assistant-input" rows="3" placeholder="Ex.: qual release contém o PRT 12345?"></textarea>
+        <div class="assistant-actions">
+          <button id="assistant-audio-btn" class="assistant-audio-btn" type="button" title="Gravar áudio">
+            <i data-lucide="mic" class="w-4 h-4"></i>
+            <span id="assistant-audio-label">Áudio</span>
+          </button>
+          <button id="assistant-clear-btn" class="ia-btn-secondary" type="button">
+            <i data-lucide="eraser" class="w-4 h-4"></i>
+            <span>Limpar</span>
+          </button>
+          <button id="assistant-send-btn" class="ia-btn-primary assistant-send" type="submit">
+            <i data-lucide="send" class="w-4 h-4"></i>
+            <span>Perguntar</span>
+          </button>
+        </div>
+      </form>
+    </section>
   </div>
 
   <div id="errorModal" class="hidden fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4">
@@ -1382,21 +1369,21 @@
   <script
     src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder@1.3.3/dist/universal-sentence-encoder.js"></script>
 
-  <script src="js/runtime-config.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/config.js"></script>
-  <script src="js/mecanica.js"></script>
-  <script src="js/verificacao_release.js"></script>
-  <script src="js/dom.js"></script>
-  <script src="js/history.js"></script>
-  <script src="js/protocolos.js"></script>
-  <script src="js/dashboard-liberacoes.js"></script>
-  <script src="js/similarity.js"></script>
-  <script src="js/responses.js"></script>
-  <script src="js/monitor_sefaz.js"></script>
-  <script src="js/ia-transcriber.js"></script>
-  <script src="js/ia-assistant.js"></script>
-  <script type="module" src="js/modal.js"></script>
+  <script src="js/runtime-config.js?v=20260414b"></script>
+  <script src="js/auth.js?v=20260414b"></script>
+  <script src="js/config.js?v=20260414b"></script>
+  <script src="js/mecanica.js?v=20260414b"></script>
+  <script src="js/verificacao_release.js?v=20260414b"></script>
+  <script src="js/dom.js?v=20260414b"></script>
+  <script src="js/history.js?v=20260414b"></script>
+  <script src="js/protocolos.js?v=20260414b"></script>
+  <script src="js/dashboard-liberacoes.js?v=20260414b"></script>
+  <script src="js/similarity.js?v=20260414b"></script>
+  <script src="js/responses.js?v=20260414b"></script>
+  <script src="js/monitor_sefaz.js?v=20260414b"></script>
+  <script src="js/ia-transcriber.js?v=20260414b"></script>
+  <script src="js/ia-assistant.js?v=20260414b"></script>
+  <script type="module" src="js/modal.js?v=20260414b"></script>
 
 
   <script>

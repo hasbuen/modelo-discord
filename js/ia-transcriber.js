@@ -519,12 +519,20 @@
     try {
       await pingBackendHealth();
       const fileForTranscription = await prepareAudioForTranscription(file);
+      let data;
 
-      notify("Enviando áudio temporário para processamento...", "info");
-      const blobUpload = await uploadAudioToBlob(fileForTranscription);
+      try {
+        notify("Processando áudio...", "info");
+        data = await sendTranscriptionRequest(fileForTranscription);
+      } catch (error) {
+        if (!shouldFallbackToBlob(error)) {
+          throw error;
+        }
 
-      notify("Solicitando transcrição do áudio armazenado...", "info");
-      const data = await requestBlobTranscription(blobUpload, fileForTranscription);
+        notify("Áudio grande demais para envio direto. Usando upload otimizado...", "info");
+        const blobUpload = await uploadAudioToBlob(fileForTranscription);
+        data = await requestBlobTranscription(blobUpload, fileForTranscription);
+      }
 
       if (active.localAudioKey) {
         await deleteLocalAudio(active.localAudioKey);
@@ -591,9 +599,6 @@
   async function sendTranscriptionRequest(file) {
     const formData = new FormData();
     formData.append("audio", file);
-    formData.append("modo", "openai");
-
-    notify("Enviando áudio para a API...", "info");
 
     const response = await fetch(`${apiBaseUrl}/transcrever`, {
       method: "POST",
@@ -1045,6 +1050,19 @@
 
   function isPayloadTooLargeError(error) {
     return error?.status === 413 || /413|payload too large|function_payload_too_large/i.test(String(error?.message || ""));
+  }
+
+  function shouldFallbackToBlob(error) {
+    if (isPayloadTooLargeError(error)) {
+      return true;
+    }
+
+    return (
+      error?.status === 408 ||
+      error?.status === 429 ||
+      error?.status >= 500 ||
+      /timeout|network|fetch|gateway/i.test(String(error?.message || ""))
+    );
   }
 
   function pickRecorderMimeType() {
