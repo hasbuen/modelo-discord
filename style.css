@@ -1565,6 +1565,10 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
   overflow: hidden;
 }
 
+.assistant-widget-panel[hidden] {
+  display: none !important;
+}
+
 @keyframes assistant-widget-enter {
   from {
     opacity: 0;
