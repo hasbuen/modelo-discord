@@ -1429,7 +1429,7 @@
   </div>
 
   <div id="assistant-widget" class="assistant-widget">
-    <button id="assistant-fab" class="assistant-fab" type="button" aria-label="Abrir assistente" aria-expanded="false">
+    <button id="assistant-fab" class="assistant-fab" type="button" aria-label="Abrir assistente" aria-expanded="false" onclick="return window.toggleAssistantWidget ? window.toggleAssistantWidget() : false;">
       <i data-lucide="messages-square" class="w-5 h-5"></i>
       <span>CordIA</span>
       <span id="assistant-fab-badge" class="assistant-fab-badge">Online</span>
@@ -1452,7 +1452,7 @@
             </span>
           </div>
         </div>
-        <button id="assistant-close-btn" class="assistant-widget-close" type="button" aria-label="Fechar assistente">
+        <button id="assistant-close-btn" class="assistant-widget-close" type="button" aria-label="Fechar assistente" onclick="return window.closeAssistantWidget ? window.closeAssistantWidget(event) : false;">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </header>

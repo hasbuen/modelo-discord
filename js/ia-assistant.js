@@ -84,16 +84,6 @@
   }
 
   function bindEvents() {
-    els.fab?.addEventListener("click", () => {
-      toggleWidget(!state.open);
-    });
-
-    els.closeBtn?.addEventListener("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      toggleWidget(false);
-    });
-
     els.form?.addEventListener("submit", async (event) => {
       event.preventDefault();
       await submitMessage();
@@ -488,6 +478,25 @@
       window.showToast(message, type);
     }
   }
+
+  window.toggleAssistantWidget = function () {
+    bindElements();
+    if (!els.widget) return false;
+    toggleWidget(!state.open);
+    return false;
+  };
+
+  window.closeAssistantWidget = function (event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    bindElements();
+    if (!els.widget) return false;
+    toggleWidget(false);
+    return false;
+  };
 
   document.addEventListener("DOMContentLoaded", init);
 })();
