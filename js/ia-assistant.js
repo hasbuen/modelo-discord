@@ -1,5 +1,6 @@
 (function () {
   const STORAGE_KEY = "protocord_ia_assistant_v1";
+  const WIDGET_STORAGE_KEY = "protocord_ia_widget_v1";
 
   function getApiBaseUrlSafe() {
     try {
@@ -21,6 +22,7 @@
     mediaStream: null,
     audioChunks: [],
     transcriptionBusy: false,
+    widgetOpen: false,
   };
 
   const els = {};
@@ -1129,6 +1131,423 @@
           justify-content: flex-end;
         }
       }
+
+      /* ============ WIDGET FLUTUANTE ============ */
+
+      #cordia-widget {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 9999;
+        pointer-events: none;
+      }
+
+      #cordia-widget * {
+        pointer-events: auto;
+      }
+
+      .cordia-widget-toggle {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 12px 16px;
+        border-radius: 16px;
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(30, 41, 59, 0.94));
+        color: rgba(231, 239, 255, 0.94);
+        box-shadow: 0 8px 24px rgba(2, 6, 23, 0.32), 0 0 28px rgba(59, 130, 246, 0.08);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+
+      .cordia-widget-toggle:hover {
+        transform: translateY(-2px);
+        border-color: rgba(96, 165, 250, 0.3);
+        box-shadow: 0 12px 32px rgba(2, 6, 23, 0.36), 0 0 36px rgba(59, 130, 246, 0.14);
+      }
+
+      .cordia-widget-icon {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.88), rgba(59, 130, 246, 0.82));
+        color: #061423;
+      }
+
+      .cordia-widget-icon svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .cordia-widget-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: rgba(231, 239, 255, 0.88);
+      }
+
+      .cordia-widget-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        min-width: 48px;
+        height: 18px;
+        padding: 0 8px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.92), rgba(22, 163, 74, 0.88));
+        color: #ffffff;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(34, 197, 94, 0.28);
+      }
+
+      .cordia-widget-panel {
+        position: absolute;
+        bottom: calc(100% + 12px);
+        right: 0;
+        width: 420px;
+        max-width: calc(100vw - 48px);
+        height: 600px;
+        max-height: calc(100vh - 140px);
+        border-radius: 20px;
+        border: 1px solid rgba(59, 130, 246, 0.14);
+        background: linear-gradient(180deg, rgba(8, 19, 42, 0.97), rgba(5, 14, 32, 0.99));
+        box-shadow: 0 20px 48px rgba(2, 6, 23, 0.42), 0 0 0 1px rgba(59, 130, 246, 0.06);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        opacity: 0;
+        transform: translateY(12px) scale(0.96);
+        pointer-events: none;
+        transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+
+      .cordia-widget-panel.cordia-widget-panel-open {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+      }
+
+      .cordia-widget-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 18px;
+        border-bottom: 1px solid rgba(59, 130, 246, 0.10);
+        background: linear-gradient(180deg, rgba(10, 22, 46, 0.96), rgba(8, 18, 38, 0.94));
+        flex-shrink: 0;
+      }
+
+      .cordia-widget-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        font-weight: 700;
+        color: rgba(245, 250, 255, 0.96);
+      }
+
+      .cordia-widget-panel-icon {
+        width: 22px;
+        height: 22px;
+        color: #60a5fa;
+      }
+
+      .cordia-widget-close {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        border: 1px solid rgba(59, 130, 246, 0.14);
+        background: rgba(255, 255, 255, 0.04);
+        color: rgba(231, 239, 255, 0.7);
+        cursor: pointer;
+        transition: all 0.18s ease;
+      }
+
+      .cordia-widget-close:hover {
+        background: rgba(239, 68, 68, 0.12);
+        color: #fca5a5;
+        border-color: rgba(239, 68, 68, 0.2);
+      }
+
+      .cordia-widget-close svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .cordia-widget-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .cordia-widget-messages::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .cordia-widget-messages::-webkit-scrollbar-thumb {
+        background: rgba(96, 165, 250, 0.18);
+        border-radius: 999px;
+      }
+
+      .cordia-widget-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        flex: 1;
+        padding: 32px 24px;
+      }
+
+      .cordia-widget-empty-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 16px;
+        margin-bottom: 12px;
+        color: #7ee7ff;
+        background: rgba(20, 42, 82, 0.48);
+        border: 1px solid rgba(96, 165, 250, 0.18);
+      }
+
+      .cordia-widget-empty-icon svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      .cordia-widget-empty-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 80px;
+        height: 28px;
+        margin-bottom: 10px;
+        padding: 0 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(96, 165, 250, 0.18);
+        background: rgba(20, 42, 82, 0.44);
+        color: #64deff;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .cordia-widget-empty h4 {
+        margin: 0 0 8px;
+        color: rgba(245, 250, 255, 0.96);
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .cordia-widget-empty p {
+        margin: 0;
+        color: rgba(182, 203, 234, 0.78);
+        font-size: 13px;
+        line-height: 1.6;
+      }
+
+      .cordia-widget-message {
+        display: flex;
+        flex-direction: column;
+        animation: widgetFadeIn 0.25s ease;
+      }
+
+      @keyframes widgetFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .cordia-widget-message.user {
+        align-items: flex-end;
+      }
+
+      .cordia-widget-message.assistant {
+        align-items: flex-start;
+      }
+
+      .cordia-widget-message-role {
+        margin-bottom: 6px;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: rgba(121, 189, 255, 0.7);
+      }
+
+      .cordia-widget-message.user .cordia-widget-message-role {
+        color: #73e3ff;
+      }
+
+      .cordia-widget-message-content {
+        max-width: 88%;
+        border-radius: 16px;
+        padding: 12px 14px;
+        font-size: 13px;
+        line-height: 1.65;
+        word-break: break-word;
+      }
+
+      .cordia-widget-message.user .cordia-widget-message-content {
+        border: 1px solid rgba(34, 211, 238, 0.16);
+        background: linear-gradient(135deg, rgba(30, 64, 175, 0.34), rgba(37, 99, 235, 0.22));
+        color: rgba(235, 242, 255, 0.95);
+      }
+
+      .cordia-widget-message.assistant .cordia-widget-message-content {
+        border: 1px solid rgba(59, 130, 246, 0.14);
+        background: linear-gradient(180deg, rgba(13, 27, 54, 0.88), rgba(8, 18, 38, 0.94));
+        color: rgba(235, 242, 255, 0.92);
+      }
+
+      .cordia-widget-composer {
+        padding: 16px 18px 18px;
+        border-top: 1px solid rgba(59, 130, 246, 0.10);
+        background: linear-gradient(180deg, rgba(8, 18, 37, 0.45), rgba(5, 14, 29, 0.72));
+        flex-shrink: 0;
+      }
+
+      .cordia-widget-form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .cordia-widget-input {
+        width: 100%;
+        min-height: 60px;
+        max-height: 140px;
+        resize: none;
+        border: 1px solid rgba(59, 130, 246, 0.12);
+        border-radius: 14px;
+        background: linear-gradient(180deg, rgba(6, 16, 33, 0.98), rgba(6, 15, 30, 0.96));
+        color: rgba(240, 247, 255, 0.96);
+        padding: 12px 14px;
+        font-size: 13px;
+        line-height: 1.6;
+        outline: none;
+        transition: border-color 0.18s ease, box-shadow 0.18s ease;
+      }
+
+      .cordia-widget-input::placeholder {
+        color: rgba(162, 186, 224, 0.48);
+      }
+
+      .cordia-widget-input:focus {
+        border-color: rgba(96, 165, 250, 0.26);
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+      }
+
+      .cordia-widget-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .cordia-widget-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 24px;
+        padding: 0 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(59, 130, 246, 0.12);
+        background: rgba(12, 26, 51, 0.52);
+        font-size: 11px;
+        color: rgba(156, 183, 224, 0.72);
+      }
+
+      .cordia-widget-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .cordia-widget-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-height: 38px;
+        padding: 0 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(59, 130, 246, 0.14);
+        background: rgba(12, 26, 51, 0.72);
+        color: rgba(231, 239, 255, 0.94);
+        font-weight: 700;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.18s ease;
+      }
+
+      .cordia-widget-btn:hover:not(:disabled) {
+        transform: translateY(-1px);
+        border-color: rgba(96, 165, 250, 0.24);
+        box-shadow: 0 0 16px rgba(59, 130, 246, 0.10);
+      }
+
+      .cordia-widget-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      .cordia-widget-btn svg {
+        width: 15px;
+        height: 15px;
+      }
+
+      .cordia-widget-btn-primary {
+        border-color: rgba(34, 211, 238, 0.14);
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.94), rgba(59, 130, 246, 0.88));
+        color: #061423;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.22), 0 0 20px rgba(34, 211, 238, 0.12);
+      }
+
+      .cordia-widget-btn-primary:hover:not(:disabled) {
+        box-shadow: 0 10px 22px rgba(37, 99, 235, 0.24), 0 0 26px rgba(34, 211, 238, 0.16);
+      }
+
+      @media (max-width: 768px) {
+        #cordia-widget {
+          bottom: 16px;
+          right: 16px;
+        }
+
+        .cordia-widget-panel {
+          width: calc(100vw - 32px);
+          height: calc(100vh - 120px);
+          max-height: calc(100vh - 120px);
+        }
+      }
     `;
 
     document.head.appendChild(style);
@@ -1315,6 +1734,243 @@
     );
   }
 
+  // ============ WIDGET FLUTUANTE ============
+
+  function initFloatingWidget() {
+    if (document.getElementById("cordia-widget")) return;
+
+    const widgetContainer = document.createElement("div");
+    widgetContainer.id = "cordia-widget";
+    widgetContainer.innerHTML = `
+      <button id="cordia-widget-toggle" class="cordia-widget-toggle" type="button" aria-label="Abrir assistente CordIA">
+        <div class="cordia-widget-icon">
+          <i data-lucide="bot" class="cordia-widget-icon-svg"></i>
+        </div>
+        <span class="cordia-widget-label">CordIA</span>
+        <div class="cordia-widget-badge">Online</div>
+      </button>
+      <div id="cordia-widget-panel" class="cordia-widget-panel">
+        <div class="cordia-widget-panel-header">
+          <div class="cordia-widget-panel-title">
+            <i data-lucide="bot" class="cordia-widget-panel-icon"></i>
+            <span>CordIA - Assistente</span>
+          </div>
+          <button type="button" id="cordia-widget-close" class="cordia-widget-close" aria-label="Fechar">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div id="cordia-widget-messages" class="cordia-widget-messages"></div>
+        <div class="cordia-widget-composer">
+          <form id="cordia-widget-form" class="cordia-widget-form" autocomplete="off">
+            <textarea
+              id="cordia-widget-input"
+              class="cordia-widget-input"
+              rows="3"
+              placeholder="Ex.: qual release contém o PRT 12345?"
+            ></textarea>
+            <div class="cordia-widget-toolbar">
+              <span id="cordia-widget-status" class="cordia-widget-status">Digite sua pergunta</span>
+              <div class="cordia-widget-actions">
+                <button type="button" id="cordia-widget-clear" class="cordia-widget-btn" title="Limpar">
+                  <i data-lucide="eraser"></i>
+                </button>
+                <button type="submit" id="cordia-widget-send" class="cordia-widget-btn cordia-widget-btn-primary">
+                  <i data-lucide="send"></i>
+                  <span>Perguntar</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(widgetContainer);
+
+    const toggleBtn = document.getElementById("cordia-widget-toggle");
+    const closeBtn = document.getElementById("cordia-widget-close");
+    const panel = document.getElementById("cordia-widget-panel");
+    const form = document.getElementById("cordia-widget-form");
+    const input = document.getElementById("cordia-widget-input");
+    const sendBtn = document.getElementById("cordia-widget-send");
+    const clearBtn = document.getElementById("cordia-widget-clear");
+
+    restoreWidgetState();
+
+    toggleBtn?.addEventListener("click", () => {
+      state.widgetOpen = !state.widgetOpen;
+      panel.classList.toggle("cordia-widget-panel-open", state.widgetOpen);
+      persistWidgetState();
+
+      if (state.widgetOpen && !panel.dataset.initialized) {
+        initWidgetChat();
+        panel.dataset.initialized = "true";
+      }
+
+      if (window.lucide) lucide.createIcons();
+    });
+
+    closeBtn?.addEventListener("click", () => {
+      state.widgetOpen = false;
+      panel.classList.remove("cordia-widget-panel-open");
+      persistWidgetState();
+    });
+
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await submitWidgetMessage();
+    });
+
+    clearBtn?.addEventListener("click", () => {
+      state.messages = [];
+      persist();
+      renderWidgetMessages();
+    });
+
+    input?.addEventListener("input", () => {
+      autoResizeWidgetInput();
+    });
+
+    input?.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        submitWidgetMessage();
+      }
+    });
+
+    if (window.lucide) lucide.createIcons();
+  }
+
+  function restoreWidgetState() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(WIDGET_STORAGE_KEY) || "{}");
+      state.widgetOpen = parsed.open || false;
+    } catch (_) {
+      state.widgetOpen = false;
+    }
+  }
+
+  function persistWidgetState() {
+    localStorage.setItem(
+      WIDGET_STORAGE_KEY,
+      JSON.stringify({
+        open: state.widgetOpen,
+      })
+    );
+  }
+
+  function initWidgetChat() {
+    restoreState();
+    renderWidgetMessages();
+  }
+
+  function renderWidgetMessages() {
+    const messagesContainer = document.getElementById("cordia-widget-messages");
+    if (!messagesContainer) return;
+
+    if (!state.messages.length) {
+      messagesContainer.innerHTML = `
+        <div class="cordia-widget-empty">
+          <div class="cordia-widget-empty-icon">
+            <i data-lucide="sparkles"></i>
+          </div>
+          <div class="cordia-widget-empty-badge">CORDIA</div>
+          <h4>Assistente Operacional</h4>
+          <p>Consulte PRTs, releases e módulos.</p>
+        </div>
+      `;
+      if (window.lucide) lucide.createIcons();
+      return;
+    }
+
+    messagesContainer.innerHTML = state.messages
+      .map(function (message, index) {
+        const label = message.role === "user" ? "Você" : "CordIA";
+
+        return `
+          <div class="cordia-widget-message ${message.role}">
+            <div class="cordia-widget-message-role">${label}</div>
+            <div class="cordia-widget-message-content">${formatMessage(message.content)}</div>
+          </div>
+        `;
+      })
+      .join("");
+
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    if (window.lucide) lucide.createIcons();
+  }
+
+  async function submitWidgetMessage() {
+    const input = document.getElementById("cordia-widget-input");
+    const sendBtn = document.getElementById("cordia-widget-send");
+    const sendLabel = sendBtn?.querySelector("span");
+
+    const message = String(input?.value || "").trim();
+    if (!message || state.sending) return;
+
+    const apiBaseUrl = getApiBaseUrlSafe();
+    if (!apiBaseUrl) {
+      notify("API base não configurada.", "error");
+      return;
+    }
+
+    state.sending = true;
+    if (sendBtn) sendBtn.disabled = true;
+    if (sendLabel) sendLabel.textContent = "Consultando...";
+
+    state.messages.push({ role: "user", content: message });
+    input.value = "";
+    input.style.height = "auto";
+    renderWidgetMessages();
+    persist();
+
+    try {
+      const response = await fetch(`${apiBaseUrl}/assistente`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message,
+          history: getHistoryForRequest(),
+        }),
+      });
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok || !data?.sucesso) {
+        throw new Error(data?.erro || `Falha ao consultar assistente. Status ${response.status}`);
+      }
+
+      state.messages.push({
+        role: "assistant",
+        content: data.resposta || "Não encontrei uma resposta útil.",
+      });
+
+      persist();
+      renderWidgetMessages();
+    } catch (error) {
+      state.messages.push({
+        role: "assistant",
+        content: error.message || "Falha ao consultar o assistente.",
+      });
+
+      persist();
+      renderWidgetMessages();
+      notify(error.message || "Falha ao consultar o assistente.", "error");
+    } finally {
+      state.sending = false;
+      if (sendBtn) sendBtn.disabled = false;
+      if (sendLabel) sendLabel.textContent = "Perguntar";
+      input?.focus();
+    }
+  }
+
+  function autoResizeWidgetInput() {
+    const input = document.getElementById("cordia-widget-input");
+    if (!input) return;
+    input.style.height = "auto";
+    input.style.height = Math.min(Math.max(60, input.scrollHeight), 140) + "px";
+  }
+
   const api = {
     init,
     destroy,
@@ -1325,4 +1981,11 @@
 
   window.initAssistentePage = init;
   window.destroyAssistentePage = destroy;
+
+  // Inicializa o widget flutuante automaticamente
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initFloatingWidget);
+  } else {
+    initFloatingWidget();
+  }
 })();
