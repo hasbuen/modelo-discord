@@ -1,5 +1,10 @@
 (function () {
   const STORAGE_KEY = "protocord_ia_assistant_v1";
+  const LAYOUT_STORAGE_KEY = "protocord_ia_assistant_layout_v1";
+  const MIN_WIDGET_WIDTH = 360;
+  const MAX_WIDGET_WIDTH = 760;
+  const MIN_WIDGET_HEIGHT = 420;
+  const MAX_WIDGET_HEIGHT = 860;
 
   function getApiBaseUrlSafe() {
     try {
@@ -21,6 +26,9 @@
     recordingChunks: [],
     recordingStartedAt: 0,
     recordingTimerId: null,
+    panelWidth: null,
+    panelHeight: null,
+    resizing: false,
   };
 
   const els = {};
@@ -52,6 +60,7 @@
     els.recordingPill = document.getElementById("assistant-recording-pill");
     els.recordingTime = document.getElementById("assistant-recording-time");
     els.fabBadge = document.getElementById("assistant-fab-badge");
+    els.resizeHandle = document.getElementById("assistant-resize-handle");
     els.suggestions = Array.from(document.querySelectorAll("[data-assistant-prompt]"));
   }
 
@@ -89,6 +98,8 @@
       await submitMessage();
     });
 
+    els.resizeHandle?.addEventListener("pointerdown", startPanelResize);
+
     els.input?.addEventListener("input", () => {
       autoResizeInput();
     });
@@ -125,6 +136,7 @@
       });
     });
 
+    window.addEventListener("resize", applyPanelLayout);
     autoResizeInput();
   }
 
@@ -137,11 +149,30 @@
     }
 
     state.open = false;
+    restoreLayoutState();
   }
 
   function persist() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       messages: state.messages.slice(-20),
+    }));
+  }
+
+  function restoreLayoutState() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(LAYOUT_STORAGE_KEY) || "{}");
+      state.panelWidth = Number.isFinite(parsed.panelWidth) ? parsed.panelWidth : null;
+      state.panelHeight = Number.isFinite(parsed.panelHeight) ? parsed.panelHeight : null;
+    } catch (_error) {
+      state.panelWidth = null;
+      state.panelHeight = null;
+    }
+  }
+
+  function persistLayoutState() {
+    localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify({
+      panelWidth: state.panelWidth,
+      panelHeight: state.panelHeight,
     }));
   }
 
@@ -297,6 +328,83 @@
     els.panel.hidden = !isOpen;
     els.panel.setAttribute("aria-hidden", String(!isOpen));
     els.panel.style.display = isOpen ? "grid" : "none";
+    applyPanelLayout();
+  }
+
+  function applyPanelLayout() {
+    if (!els.panel) return;
+
+    const maxWidth = Math.max(MIN_WIDGET_WIDTH, Math.min(MAX_WIDGET_WIDTH, window.innerWidth - 32));
+    const maxHeight = Math.max(MIN_WIDGET_HEIGHT, Math.min(MAX_WIDGET_HEIGHT, window.innerHeight - 48));
+
+    if (state.panelWidth) {
+      state.panelWidth = clampNumber(state.panelWidth, MIN_WIDGET_WIDTH, maxWidth);
+      els.panel.style.width = `${state.panelWidth}px`;
+    } else {
+      els.panel.style.removeProperty("width");
+    }
+
+    if (state.panelHeight) {
+      state.panelHeight = clampNumber(state.panelHeight, MIN_WIDGET_HEIGHT, maxHeight);
+      els.panel.style.height = `${state.panelHeight}px`;
+      els.panel.style.maxHeight = `${state.panelHeight}px`;
+    } else {
+      els.panel.style.removeProperty("height");
+      els.panel.style.removeProperty("max-height");
+    }
+  }
+
+  function startPanelResize(event) {
+    if (!els.panel || window.innerWidth <= 640) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const rect = els.panel.getBoundingClientRect();
+    state.resizing = {
+      startX: event.clientX,
+      startY: event.clientY,
+      startWidth: rect.width,
+      startHeight: rect.height,
+    };
+
+    document.addEventListener("pointermove", handlePanelResizeMove);
+    document.addEventListener("pointerup", stopPanelResize);
+    document.addEventListener("pointercancel", stopPanelResize);
+  }
+
+  function handlePanelResizeMove(event) {
+    if (!state.resizing || !els.panel) return;
+
+    const nextWidth = clampNumber(
+      state.resizing.startWidth - (event.clientX - state.resizing.startX),
+      MIN_WIDGET_WIDTH,
+      Math.min(MAX_WIDGET_WIDTH, window.innerWidth - 32)
+    );
+
+    const nextHeight = clampNumber(
+      state.resizing.startHeight - (event.clientY - state.resizing.startY),
+      MIN_WIDGET_HEIGHT,
+      Math.min(MAX_WIDGET_HEIGHT, window.innerHeight - 48)
+    );
+
+    state.panelWidth = nextWidth;
+    state.panelHeight = nextHeight;
+    applyPanelLayout();
+  }
+
+  function stopPanelResize() {
+    if (!state.resizing) return;
+
+    state.resizing = false;
+    persistLayoutState();
+    document.removeEventListener("pointermove", handlePanelResizeMove);
+    document.removeEventListener("pointerup", stopPanelResize);
+    document.removeEventListener("pointercancel", stopPanelResize);
+  }
+
+  function clampNumber(value, min, max) {
+    return Math.min(Math.max(value, min), max);
   }
 
   async function startRecording() {
