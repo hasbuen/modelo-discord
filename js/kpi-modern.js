@@ -32,6 +32,30 @@
     if (el) el.textContent = value;
   }
 
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function formatBytes(value) {
+    const units = ["B", "KB", "MB", "GB", "TB"];
+    let size = Number(value) || 0;
+    let unitIndex = 0;
+    while (size >= 1024 && unitIndex < units.length - 1) {
+      size /= 1024;
+      unitIndex += 1;
+    }
+    return `${size.toFixed(size >= 100 || unitIndex === 0 ? 0 : 1).replace(".", ",")} ${units[unitIndex]}`;
+  }
+
+  function formatCount(value) {
+    return new Intl.NumberFormat("pt-BR").format(Number(value) || 0);
+  }
+
   async function fetchJson(path) {
     const response = await fetch(`${API_BASE}/${path}`);
     if (!response.ok) {
@@ -468,6 +492,386 @@
     };
   }
 
+  async function fetchKpiInsights() {
+    if (window.__kpiInsightsPromise) {
+      return window.__kpiInsightsPromise;
+    }
+
+    window.__kpiInsightsPromise = fetch(window.getProtocordApiUrl("/kpi-insights"))
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(`Falha ao carregar insights do KPI: ${response.status}`);
+        }
+        const payload = await response.json();
+        return payload.data || {};
+      })
+      .catch((error) => {
+        window.__kpiInsightsPromise = null;
+        throw error;
+      });
+
+    return window.__kpiInsightsPromise;
+  }
+
+  function ensureModalShell() {
+    let overlay = byId("kpi-insight-modal-overlay");
+    if (overlay) return overlay;
+
+    overlay = document.createElement("div");
+    overlay.id = "kpi-insight-modal-overlay";
+    overlay.className = "kpi-insight-overlay hidden";
+    overlay.innerHTML = `
+      <div class="kpi-insight-modal" role="dialog" aria-modal="true" aria-labelledby="kpi-insight-modal-title">
+        <div class="kpi-insight-modal-head">
+          <div>
+            <span id="kpi-insight-modal-eyebrow" class="kpi-insight-eyebrow">Painel detalhado</span>
+            <h3 id="kpi-insight-modal-title" class="kpi-insight-title">KPI</h3>
+            <p id="kpi-insight-modal-subtitle" class="kpi-insight-subtitle">Aguarde...</p>
+          </div>
+          <button type="button" id="kpi-insight-close-btn" class="kpi-insight-close" data-kpi-close="true" aria-label="Fechar modal">×</button>
+        </div>
+        <div id="kpi-insight-modal-body" class="kpi-insight-body"></div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+    const closeButton = overlay.querySelector("#kpi-insight-close-btn");
+    if (closeButton) {
+      closeButton.onclick = closeInsightModal;
+    }
+
+    overlay.addEventListener("click", (event) => {
+      if (event.target === overlay) {
+        closeInsightModal();
+        return;
+      }
+
+      if (event.target.closest(".kpi-insight-close") || event.target.closest("[data-kpi-close='true']")) {
+        closeInsightModal();
+        return;
+      }
+
+      const paginationButton = event.target.closest("[data-kpi-page-action]");
+      if (paginationButton) {
+        renderInsightModalPage(Number(paginationButton.getAttribute("data-kpi-page")));
+      }
+    });
+
+    overlay.querySelector("#kpi-insight-close-btn")?.addEventListener("click", closeInsightModal);
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeInsightModal();
+    });
+
+    return overlay;
+  }
+
+  function openInsightModal({ eyebrow, title, subtitle, body, renderBody }) {
+    const overlay = ensureModalShell();
+    const resolvedRenderBody =
+      typeof renderBody === "function"
+        ? renderBody
+        : () => body || '<div class="kpi-insight-empty">Sem conteúdo para exibir.</div>';
+    window.__kpiCurrentModalConfig = { eyebrow, title, subtitle, renderBody: resolvedRenderBody };
+    byId("kpi-insight-modal-eyebrow").textContent = eyebrow;
+    byId("kpi-insight-modal-title").textContent = title;
+    byId("kpi-insight-modal-subtitle").textContent = subtitle;
+    overlay.classList.remove("hidden");
+    document.body.classList.add("modal-open");
+    renderInsightModalPage(1);
+  }
+
+  function closeInsightModal() {
+    byId("kpi-insight-modal-overlay")?.classList.add("hidden");
+    document.body.classList.remove("modal-open");
+    window.__kpiCurrentModalConfig = null;
+    window.__kpiCurrentModalPage = 1;
+  }
+
+  window.closeKpiInsightModal = closeInsightModal;
+
+  function renderInsightModalPage(page) {
+    const config = window.__kpiCurrentModalConfig;
+    if (!config) return;
+
+    window.__kpiCurrentModalPage = Math.max(1, Number(page) || 1);
+    byId("kpi-insight-modal-body").innerHTML = config.renderBody(window.__kpiCurrentModalPage);
+  }
+
+  function buildMetricCards(cards) {
+    return `
+      <div class="kpi-insight-metrics">
+        ${cards.map((card) => `
+          <article class="kpi-insight-metric-card">
+            <span>${escapeHtml(card.label)}</span>
+            <strong>${escapeHtml(card.value)}</strong>
+            <small>${escapeHtml(card.note || "")}</small>
+          </article>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  function buildTable(headers, rows, options = {}) {
+    const pageSize = options.pageSize || 6;
+    const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+    const requestedPage = options.page || window.__kpiCurrentModalPage || 1;
+    const currentPage = Math.min(Math.max(1, requestedPage), totalPages);
+    const start = (currentPage - 1) * pageSize;
+    const pageRows = rows.slice(start, start + pageSize);
+
+    if (!rows.length) {
+      return '<div class="kpi-insight-empty">Nenhum dado encontrado para este recorte.</div>';
+    }
+
+    return `
+      <div class="kpi-insight-table-wrap">
+        <table class="kpi-insight-table">
+          <thead>
+            <tr>${headers.map((header) => `<th>${escapeHtml(header)}</th>`).join("")}</tr>
+          </thead>
+          <tbody>
+            ${pageRows.map((row) => `
+              <tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+      <div class="kpi-insight-pagination">
+        <span class="kpi-insight-pagination-note">Página ${currentPage} de ${totalPages} · ${formatCount(rows.length)} registros</span>
+        <div class="kpi-insight-pagination-actions">
+          <button type="button" class="kpi-insight-page-btn" data-kpi-page-action="prev" data-kpi-page="${Math.max(1, currentPage - 1)}" ${currentPage === 1 ? "disabled" : ""}>Anterior</button>
+          <button type="button" class="kpi-insight-page-btn" data-kpi-page-action="next" data-kpi-page="${Math.min(totalPages, currentPage + 1)}" ${currentPage === totalPages ? "disabled" : ""}>Próxima</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function buildStatusPill(active, positiveLabel, neutralLabel) {
+    const label = active ? positiveLabel : neutralLabel;
+    const variant = active ? "success" : "neutral";
+    return `<span class="kpi-insight-pill kpi-insight-pill-${variant}">${escapeHtml(label)}</span>`;
+  }
+
+  function buildStorageModal(insights, state) {
+    const storage = insights?.storage || {};
+    const sourceLabel = storage.source === "supabase-management"
+      ? "Supabase Management API"
+      : "Monitoramento do workspace";
+    const cards = [
+      { label: "Espaço monitorado", value: formatBytes(storage.totalBytes), note: "Faixa usada para acompanhamento do workspace." },
+      { label: "Espaço em uso", value: formatBytes(storage.usedBytes), note: `${storage.usagePercent || 0}% ocupado no recorte atual.` },
+      { label: "Espaço livre", value: formatBytes(storage.freeBytes), note: "Margem disponível antes do próximo patamar." },
+    ];
+    const rows = Object.entries(storage.tables || {}).map(([table, details]) => ([
+      escapeHtml(table),
+      escapeHtml(formatCount(details.rows)),
+      escapeHtml(formatBytes(details.usedBytes)),
+    ]));
+
+    openInsightModal({
+      eyebrow: "Base monitorada",
+      title: "Panorama do workspace",
+      subtitle: `Leitura consolidada com ${formatCount(state.metrics.totalRecords)} protocolos acompanhados no Supabase.`,
+      renderBody: (page) => `
+        ${buildMetricCards(cards)}
+        ${buildTable(["Tabela", "Linhas", "Espaço estimado"], rows)}
+      `,
+    });
+  }
+
+  function buildErrorsModal(state) {
+    const errorRows = state.dataset.allProtocols
+      .filter((item) => item.tipo === "0")
+      .sort((a, b) => Number(state.dataset.releasedSet.has(b.prt)) - Number(state.dataset.releasedSet.has(a.prt)))
+      .map((item) => {
+        const releaseItem = state.releases.find((release) => release.protocolos.includes(item.prt));
+        return [
+          `<strong>${escapeHtml(item.prt)}</strong>`,
+          escapeHtml(item.modulo),
+          escapeHtml(item.ticket || "Sem ticket"),
+          buildStatusPill(Boolean(releaseItem), "Liberado", "Pendente"),
+          escapeHtml(releaseItem?.release || "Aguardando release"),
+        ];
+      });
+
+    openInsightModal({
+      eyebrow: "Erros monitorados",
+      title: "Protocolos de erro",
+      subtitle: "Confira quais erros já estão em release e quais seguem pendentes para acompanhamento.",
+      renderBody: (page) => `
+        ${buildMetricCards([
+          { label: "Erros na base", value: formatCount(state.metrics.errors), note: "Itens classificados como erro." },
+          { label: "Erros liberados", value: formatCount(errorRows.filter((row) => row[3].includes("Liberado")).length), note: "Já presentes em release." },
+          { label: "Erros pendentes", value: formatCount(errorRows.filter((row) => row[3].includes("Pendente")).length), note: "Ainda sem confirmação de release." },
+        ])}
+        ${buildTable(["PRT", "Módulo", "Ticket", "Confirmação", "Release"], errorRows)}
+      `,
+    });
+  }
+
+  function buildSuggestionsModal(state) {
+    const rows = state.dataset.allProtocols
+      .filter((item) => item.tipo !== "0")
+      .slice(0, 80)
+      .map((item) => {
+        const releaseItem = state.releases.find((release) => release.protocolos.includes(item.prt));
+        return [
+          `<strong>${escapeHtml(item.prt)}</strong>`,
+          escapeHtml(item.modulo),
+          escapeHtml(item.ticket || "Sem ticket"),
+          buildStatusPill(Boolean(releaseItem), "Já liberada", "Backlog"),
+          escapeHtml(item.descricao || "Sem resumo"),
+        ];
+      });
+
+    openInsightModal({
+      eyebrow: "Sugestões catalogadas",
+      title: "Backlog de melhoria",
+      subtitle: "Sugestões com status operacional para leitura rápida do que já entrou em release.",
+      renderBody: (page) => `
+        ${buildMetricCards([
+          { label: "Sugestões", value: formatCount(state.metrics.suggestions), note: "Itens classificados como sugestão." },
+          { label: "Cobertura", value: formatPercent(state.metrics.suggestionRate), note: "Participação sobre a base total." },
+          { label: "Último RLS", value: state.metrics.latestRelease || "--", note: "Recorte mais recente encontrado." },
+        ])}
+        ${buildTable(["PRT", "Módulo", "Ticket", "Situação", "Resumo"], rows)}
+      `,
+    });
+  }
+
+  function buildReleasesModal(state) {
+    const rows = state.releases.map((release) => [
+      `<strong>${escapeHtml(release.release)}</strong>`,
+      escapeHtml(formatCount(release.protocolos.length)),
+      escapeHtml(release.protocolos.slice(0, 5).join(", ") || "Sem PRT"),
+    ]);
+
+    openInsightModal({
+      eyebrow: "Calendário de releases",
+      title: "Releases verificadas",
+      subtitle: "Distribuição cronológica das liberações para consulta rápida de volume e cobertura.",
+      renderBody: (page) => `
+        ${buildMetricCards([
+          { label: "Releases", value: formatCount(state.metrics.releaseCount), note: "Datas com PRTs associados." },
+          { label: "Média", value: `${state.metrics.avgPerRelease.toFixed(1).replace(".", ",")} PRT`, note: "Densidade média por release." },
+          { label: "Mais carregada", value: state.metrics.topRelease?.label || "--", note: `${formatCount(state.metrics.topRelease?.count || 0)} protocolos.` },
+        ])}
+        ${buildTable(["Release", "Qtd. PRTs", "Amostra"], rows)}
+      `,
+    });
+  }
+
+  function buildReleasedModal(state) {
+    const rows = state.dataset.releasedDetails
+      .slice()
+      .sort((a, b) => parseReleaseDate(b.release) - parseReleaseDate(a.release))
+      .slice(0, 120)
+      .map((item) => [
+        `<strong>${escapeHtml(item.prt)}</strong>`,
+        escapeHtml(item.release),
+        escapeHtml(item.modulo),
+        escapeHtml(item.ticket || "Sem ticket"),
+      ]);
+
+    openInsightModal({
+      eyebrow: "Confirmação de entrega",
+      title: "PRTs liberados",
+      subtitle: "Lista operacional dos PRTs que já constam em release publicada.",
+      renderBody: (page) => `
+        ${buildMetricCards([
+          { label: "PRTs liberados", value: formatCount(state.metrics.releasedProtocols), note: "Únicos nas releases publicadas." },
+          { label: "Cobertura", value: formatPercent(state.metrics.coverageRate), note: "Participação sobre a base total." },
+          { label: "Módulo foco", value: state.metrics.topModule?.label || "--", note: "Maior incidência no recorte." },
+        ])}
+        ${buildTable(["PRT", "Release", "Módulo", "Ticket"], rows)}
+      `,
+    });
+  }
+
+  function buildLatestModal(state) {
+    const latest = state.releases[0];
+    const rows = (latest?.protocolos || []).map((prt) => {
+      const info = state.protocolIndex[prt] || {};
+      return [
+        `<strong>${escapeHtml(prt)}</strong>`,
+        escapeHtml(info.modulo || "Desconhecido"),
+        buildStatusPill(true, "Confirmado", "Confirmado"),
+        escapeHtml(info.ticket || "Sem ticket"),
+      ];
+    });
+
+    openInsightModal({
+      eyebrow: "Última janela liberada",
+      title: latest?.release || "Sem release disponível",
+      subtitle: "Detalhe da release mais recente para conferência rápida dos protocolos envolvidos.",
+      renderBody: (page) => `
+        ${buildMetricCards([
+          { label: "Release", value: latest?.release || "--", note: "Janela de maior recência detectada." },
+          { label: "PRTs na janela", value: formatCount(latest?.protocolos?.length || 0), note: "Itens confirmados nesta release." },
+          { label: "Módulos", value: formatCount(new Set((latest?.protocolos || []).map((prt) => state.protocolIndex[prt]?.modulo).filter(Boolean)).size), note: "Áreas impactadas na janela." },
+        ])}
+        ${buildTable(["PRT", "Módulo", "Status", "Ticket"], rows)}
+      `,
+    });
+  }
+
+  async function handleKpiAction(action) {
+    const state = window.__kpiWorkspaceState;
+    if (!state) return;
+
+    try {
+      if (action === "storage") {
+        const insights = await fetchKpiInsights();
+        buildStorageModal(insights, state);
+        return;
+      }
+
+      if (action === "errors") {
+        buildErrorsModal(state);
+        return;
+      }
+
+      if (action === "suggestions") {
+        buildSuggestionsModal(state);
+        return;
+      }
+
+      if (action === "releases") {
+        buildReleasesModal(state);
+        return;
+      }
+
+      if (action === "released") {
+        buildReleasedModal(state);
+        return;
+      }
+
+      if (action === "latest") {
+        buildLatestModal(state);
+      }
+    } catch (error) {
+      openInsightModal({
+        eyebrow: "Falha na consulta",
+        title: "Não foi possível abrir o detalhe",
+        subtitle: "Tente novamente em instantes.",
+        renderBody: () => `<div class="kpi-insight-empty">${escapeHtml(error.message || "Erro inesperado.")}</div>`,
+      });
+    }
+  }
+
+  function bindKpiActionButtons() {
+    if (window.__kpiActionButtonsBound) return;
+
+    document.addEventListener("click", (event) => {
+      const button = event.target.closest(".kpi-stat-action");
+      if (!button) return;
+      handleKpiAction(button.getAttribute("data-kpi-action"));
+    });
+
+    window.__kpiActionButtonsBound = true;
+  }
+
   async function renderWorkspace() {
     const page = byId("pagina-historico-liberacoes");
     if (!page) return;
@@ -476,16 +880,29 @@
       const [protocolIndex, releases] = await Promise.all([ensureProtocols(), ensureReleases()]);
       const dataset = buildDataset(protocolIndex, releases);
       const metrics = buildMetrics(protocolIndex, releases, dataset);
+      window.__kpiWorkspaceState = {
+        protocolIndex,
+        releases,
+        dataset,
+        metrics,
+      };
 
       updateHero(metrics);
       updateCards(metrics);
       updateExecutiveSummary(metrics);
       renderRanking(metrics);
+      if (typeof window.renderizarTabelaLiberacoes === "function") {
+        const filteredRows = typeof window.obterLiberacoesFiltradasAtuais === "function"
+          ? window.obterLiberacoesFiltradasAtuais()
+          : releases;
+        window.renderizarTabelaLiberacoes(filteredRows);
+      }
       renderTop5Chart(metrics);
       renderEvolutionChart(metrics);
       renderReleaseChart(metrics);
       renderTrendChart(metrics);
       renderModuleChart(metrics);
+      bindKpiActionButtons();
 
       if (window.lucide?.createIcons) {
         window.lucide.createIcons();

@@ -268,6 +268,9 @@ function fecharModalProtocolo() {
 }
 
 function inicializarClicksProtocolos() {
+  if (window.__protocolosClicksInitialized) return;
+  window.__protocolosClicksInitialized = true;
+
   document.addEventListener("click", (event) => {
     const badge = event.target.closest(".badge-protocolo");
     if (!badge) return;
@@ -285,6 +288,120 @@ function inicializarClicksProtocolos() {
       fecharModalProtocolo();
     }
   });
+}
+
+function criarBadgeProtocolo(prt) {
+  const protocolo = obterProtocolo(prt);
+  const tipo = protocolo?.tipo || "1";
+  const tipoLabel = getTipoLabel(tipo);
+  const variant = String(tipo) === "0" ? "error" : "success";
+
+  return `
+    <button
+      type="button"
+      class="kpi-protocol-badge kpi-protocol-badge-${variant} badge-protocolo"
+      data-prt="${prt}"
+      title="Clique para ver detalhes - ${tipoLabel}"
+    >
+      <span class="kpi-protocol-badge-label">${prt}</span>
+      <span class="kpi-protocol-badge-meta">${tipoLabel}</span>
+    </button>
+  `;
+}
+
+function abrirModalProtocolo(prt) {
+  const protocolo = obterProtocolo(prt);
+  if (!protocolo) return;
+
+  const tipo = getTipoLabel(protocolo.tipo);
+  const variant = String(protocolo.tipo) === "0" ? "error" : "success";
+  const modulo = protocolo.modulo || window.protocolosIndex?.[prt]?.modulo || "Módulo não informado";
+  const ticket = protocolo.ticket || "Sem ticket vinculado";
+  const descricao = protocolo.descricao || "Sem descrição operacional registrada.";
+  const paliativo = protocolo.paliativo || "Nenhum paliativo informado até o momento.";
+
+  const modalHTML = `
+    <div id="modal-protocolo-overlay" class="protocol-modal-overlay">
+      <div class="protocol-modal-card" role="dialog" aria-modal="true" aria-labelledby="protocol-modal-title">
+        <div class="protocol-modal-header">
+          <div class="protocol-modal-heading">
+            <span class="protocol-modal-eyebrow">Protocolo selecionado</span>
+            <h2 id="protocol-modal-title">${protocolo.prt}</h2>
+            <p>${ticket}</p>
+          </div>
+          <button
+            type="button"
+            onclick="fecharModalProtocolo()"
+            class="protocol-modal-close"
+            aria-label="Fechar detalhes do protocolo"
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="protocol-modal-meta">
+          <span class="protocol-modal-pill protocol-modal-pill-${variant}">${tipo}</span>
+          <span class="protocol-modal-pill">${modulo}</span>
+          <span class="protocol-modal-pill">PRT ${protocolo.prt}</span>
+        </div>
+
+        <div class="protocol-modal-grid">
+          <section class="protocol-modal-section">
+            <span class="protocol-modal-section-label">Descrição</span>
+            <p>${descricao}</p>
+          </section>
+          <section class="protocol-modal-section">
+            <span class="protocol-modal-section-label">Paliativo</span>
+            <p>${paliativo}</p>
+          </section>
+        </div>
+
+        ${
+          protocolo.link
+            ? `
+          <div class="protocol-modal-link-wrap">
+            <a
+              href="${protocolo.link}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="protocol-modal-link"
+            >
+              Abrir ticket relacionado
+            </a>
+          </div>
+        `
+            : ""
+        }
+
+        <div class="protocol-modal-actions">
+          <button
+            type="button"
+            onclick="fecharModalProtocolo()"
+            class="protocol-modal-btn protocol-modal-btn-secondary"
+          >
+            Fechar
+          </button>
+          ${
+            protocolo.link
+              ? `
+            <a
+              href="${protocolo.link}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="protocol-modal-btn protocol-modal-btn-primary"
+            >
+              Ver ticket
+            </a>
+          `
+              : ""
+          }
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("modal-protocolo-overlay")?.remove();
+  document.body.insertAdjacentHTML("beforeend", modalHTML);
 }
 
 window.obterProtocolo = obterProtocolo;
