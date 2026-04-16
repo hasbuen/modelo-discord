@@ -13,6 +13,27 @@ function toMD5(str) {
   return CryptoJS.MD5(str).toString();
 }
 
+function hasActiveAuthSession() {
+  const token = localStorage.getItem('authToken');
+  const tempo = localStorage.getItem('authTime');
+
+  if (!token || !tempo) {
+    return false;
+  }
+
+  const agora = new Date();
+  const loginTime = new Date(tempo);
+  const diffMs = agora - loginTime;
+  const diffHoras = diffMs / (1000 * 60 * 60);
+  return diffHoras < 24;
+}
+
+function broadcastAuthState(authenticated) {
+  window.dispatchEvent(new CustomEvent('protocord:auth-changed', {
+    detail: { authenticated: Boolean(authenticated) },
+  }));
+}
+
 /**
  * Valida a senha contra a API
  */
@@ -67,14 +88,17 @@ async function validarSenha() {
       
       // Limpa o input
       senhaInput.value = '';
+      broadcastAuthState(true);
     } else {
       // Autenticação falhou
       msgErro.textContent = 'Senha incorreta. Tente novamente.';
       msgErro.classList.remove('hidden');
+      broadcastAuthState(false);
     }
   } catch (error) {
     msgErro.textContent = 'Erro ao conectar com o servidor. Tente novamente.';
     msgErro.classList.remove('hidden');
+    broadcastAuthState(false);
   } finally {
     // Re-habilita bot?o
     btnAuth.disabled = false;
@@ -87,8 +111,6 @@ async function validarSenha() {
  * Inicializa o sistema de autenticação ao carregar a página
  */
 function initAuth() {
-  const token = localStorage.getItem('authToken');
-  const tempo = localStorage.getItem('authTime');
   const authContainer = document.getElementById('auth-container');
   const appContainers = [
     document.getElementById('desktop-header'),
@@ -97,25 +119,20 @@ function initAuth() {
     document.getElementById('main-content')
   ].filter(Boolean);
 
-  if (token && tempo) {
-    const agora = new Date();
-    const loginTime = new Date(tempo);
-    const diffMs = agora - loginTime;
-    const diffHoras = diffMs / (1000 * 60 * 60);
-
-    if (diffHoras < 24) {
-      if (authContainer) authContainer.classList.add('hidden');
-      appContainers.forEach((el) => el.classList.remove('hidden'));
-      return;
-    } else {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('authTime');
-    }
+  if (hasActiveAuthSession()) {
+    if (authContainer) authContainer.classList.add('hidden');
+    appContainers.forEach((el) => el.classList.remove('hidden'));
+    broadcastAuthState(true);
+    return;
+  } else {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('authTime');
   }
 
   // Mostra tela de login
   if (authContainer) authContainer.classList.remove('hidden');
   appContainers.forEach((el) => el.classList.remove('hidden'));
+  broadcastAuthState(false);
 
   // Adiciona listener de SUBMIT ao formulário
   const authForm = document.getElementById('auth-form');
@@ -144,8 +161,11 @@ function initAuth() {
 function fazerLogout() {
   localStorage.removeItem('authToken');
   localStorage.removeItem('authTime');
+  broadcastAuthState(false);
   location.reload();
 }
+
+window.hasActiveAuthSession = hasActiveAuthSession;
 
 // Executa ao carregar a p?gina
 window.addEventListener('DOMContentLoaded', initAuth);
