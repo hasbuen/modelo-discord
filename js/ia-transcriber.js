@@ -2548,6 +2548,7 @@
 
   function bindEvents() {
     els.newTicketBtn?.addEventListener("click", () => {
+      if (state.uploading) return;
       createTicket();
       render();
     });
@@ -3066,6 +3067,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     }
 
     toggleDisabled(els.toggleRegisteredBtn, !hasActive);
+    toggleDisabled(els.newTicketBtn, state.uploading);
     toggleDisabled(els.uploadAudioBtn, !hasActive || state.uploading);
     toggleDisabled(els.copyZnunyBtn, !hasActive);
     toggleDisabled(els.copyHtmlBtn, !hasActive);
