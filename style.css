@@ -3658,6 +3658,7 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
   inset: auto 30px 0;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.26), transparent);
+  pointer-events: none;
 }
 
 .kpi-insight-eyebrow {

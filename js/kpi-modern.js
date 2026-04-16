@@ -537,6 +537,7 @@
     document.body.appendChild(overlay);
     const closeButton = overlay.querySelector("#kpi-insight-close-btn");
     if (closeButton) {
+      closeButton.setAttribute("onclick", "window.closeKpiInsightModal && window.closeKpiInsightModal()");
       closeButton.onclick = closeInsightModal;
     }
 
