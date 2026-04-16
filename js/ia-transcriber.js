@@ -1236,7 +1236,6 @@
       }
 
       #pagina-ia .is-uploading {
-        pointer-events: none;
         position: relative;
       }
 
@@ -1255,8 +1254,244 @@
         100% { transform: translateX(100%); }
       }
 
+      @keyframes ia-processing-pulse {
+        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(51, 214, 255, 0.32); }
+        70% { transform: scale(1.02); box-shadow: 0 0 0 18px rgba(51, 214, 255, 0); }
+        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(51, 214, 255, 0); }
+      }
+
+      @keyframes ia-processing-blink {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: .45; transform: scale(.82); }
+      }
+
+      @keyframes ia-processing-shimmer {
+        100% { transform: translateX(100%); }
+      }
+
+      @keyframes ia-processing-progress {
+        0% { transform: translateX(-120%); }
+        100% { transform: translateX(320%); }
+      }
+
       #pagina-ia [aria-busy="true"] .ia-topbar {
         opacity: .94;
+      }
+
+      #pagina-ia .ia-workspace {
+        position: relative;
+      }
+
+      #pagina-ia .ia-processing-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 8;
+        display: grid;
+        place-items: center;
+        padding: 28px;
+        background:
+          radial-gradient(circle at top, rgba(43, 205, 255, 0.14), transparent 42%),
+          linear-gradient(180deg, rgba(6, 14, 28, 0.78), rgba(6, 14, 28, 0.92));
+        backdrop-filter: blur(14px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .24s ease;
+      }
+
+      #pagina-ia .ia-processing-overlay:not(.hidden) {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      #pagina-ia .ia-processing-shell {
+        width: min(100%, 880px);
+        display: grid;
+        gap: 18px;
+        padding: 26px;
+        border-radius: 28px;
+        border: 1px solid rgba(76, 119, 188, 0.22);
+        background: linear-gradient(180deg, rgba(9, 18, 34, 0.92), rgba(7, 15, 30, 0.98));
+        box-shadow: 0 30px 80px rgba(1, 8, 20, 0.52);
+      }
+
+      #pagina-ia .ia-processing-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      #pagina-ia .ia-processing-brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      #pagina-ia .ia-processing-pulse {
+        width: 54px;
+        height: 54px;
+        display: grid;
+        place-items: center;
+        border-radius: 18px;
+        color: #09111f;
+        background: linear-gradient(135deg, #33d6ff, #1fb8e6);
+        box-shadow: 0 0 0 0 rgba(51, 214, 255, 0.36);
+        animation: ia-processing-pulse 1.9s ease infinite;
+      }
+
+      #pagina-ia .ia-processing-copy strong {
+        display: block;
+        color: #f4f8ff;
+        font-size: 1.15rem;
+        font-weight: 800;
+        letter-spacing: .02em;
+      }
+
+      #pagina-ia .ia-processing-copy span {
+        display: block;
+        margin-top: 6px;
+        color: rgba(168, 188, 220, 0.84);
+        font-size: .94rem;
+        line-height: 1.6;
+      }
+
+      #pagina-ia .ia-processing-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(74, 211, 255, 0.18);
+        background: rgba(16, 29, 54, 0.74);
+        color: #89ecff;
+        font-size: .74rem;
+        font-weight: 800;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      #pagina-ia .ia-processing-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: currentColor;
+        box-shadow: 0 0 14px currentColor;
+        animation: ia-processing-blink 1.1s ease infinite;
+      }
+
+      #pagina-ia .ia-processing-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(320px, .9fr);
+        gap: 18px;
+      }
+
+      #pagina-ia .ia-processing-preview,
+      #pagina-ia .ia-processing-notes {
+        border-radius: 24px;
+        border: 1px solid rgba(76, 119, 188, 0.18);
+        background: rgba(9, 18, 34, 0.72);
+        overflow: hidden;
+      }
+
+      #pagina-ia .ia-processing-preview {
+        padding: 22px;
+      }
+
+      #pagina-ia .ia-processing-lines {
+        display: grid;
+        gap: 14px;
+      }
+
+      #pagina-ia .ia-processing-line,
+      #pagina-ia .ia-processing-block,
+      #pagina-ia .ia-processing-bar {
+        position: relative;
+        overflow: hidden;
+        background: rgba(36, 54, 92, 0.72);
+      }
+
+      #pagina-ia .ia-processing-line::after,
+      #pagina-ia .ia-processing-block::after,
+      #pagina-ia .ia-processing-bar::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(90deg, transparent, rgba(123, 234, 255, 0.22), transparent);
+        animation: ia-processing-shimmer 1.3s ease infinite;
+      }
+
+      #pagina-ia .ia-processing-line {
+        height: 14px;
+        border-radius: 999px;
+      }
+
+      #pagina-ia .ia-processing-line.w-92 { width: 92%; }
+      #pagina-ia .ia-processing-line.w-76 { width: 76%; }
+      #pagina-ia .ia-processing-line.w-64 { width: 64%; }
+      #pagina-ia .ia-processing-line.w-58 { width: 58%; }
+
+      #pagina-ia .ia-processing-bar {
+        height: 182px;
+        border-radius: 22px;
+        background:
+          linear-gradient(180deg, rgba(12, 26, 50, 0.92), rgba(10, 21, 39, 0.86)),
+          repeating-linear-gradient(
+            90deg,
+            rgba(72, 107, 170, 0.16) 0 14px,
+            rgba(72, 107, 170, 0.05) 14px 28px
+          );
+      }
+
+      #pagina-ia .ia-processing-notes {
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      #pagina-ia .ia-processing-note-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 20px;
+        border-bottom: 1px solid rgba(76, 119, 188, 0.16);
+      }
+
+      #pagina-ia .ia-processing-note-head strong {
+        color: #f4f8ff;
+        font-size: .92rem;
+        font-weight: 800;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+      }
+
+      #pagina-ia .ia-processing-note-body {
+        display: grid;
+        gap: 14px;
+        padding: 20px;
+      }
+
+      #pagina-ia .ia-processing-block {
+        height: 108px;
+        border-radius: 18px;
+      }
+
+      #pagina-ia .ia-processing-progress {
+        position: relative;
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(31, 50, 84, 0.88);
+        overflow: hidden;
+      }
+
+      #pagina-ia .ia-processing-progress::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        width: 38%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, rgba(67, 214, 255, 0.06), rgba(67, 214, 255, 0.92), rgba(67, 214, 255, 0.06));
+        animation: ia-processing-progress 1.4s ease-in-out infinite;
       }
 
       #pagina-ia ::-webkit-scrollbar {
@@ -1324,6 +1559,15 @@
 
         #pagina-ia .ia-info-grid {
           grid-template-columns: 1fr;
+        }
+
+        #pagina-ia .ia-processing-grid {
+          grid-template-columns: 1fr;
+        }
+
+        #pagina-ia .ia-processing-head {
+          flex-direction: column;
+          align-items: flex-start;
         }
       }
 
@@ -1952,6 +2196,52 @@
 
               <div class="ia-workspace-wrap">
                 <div class="ia-workspace">
+                  <div id="ia-processing-overlay" class="ia-processing-overlay hidden" aria-hidden="true">
+                    <div class="ia-processing-shell" role="status" aria-live="polite">
+                      <div class="ia-processing-head">
+                        <div class="ia-processing-brand">
+                          <div class="ia-processing-pulse">
+                            <i data-lucide="sparkles" class="w-5 h-5"></i>
+                          </div>
+
+                          <div class="ia-processing-copy">
+                            <strong>Processando estrutura do atendimento</strong>
+                            <span id="ia-processing-message">Aguarde enquanto o audio, o resumo e o relatorio sao preparados.</span>
+                          </div>
+                        </div>
+
+                        <div class="ia-processing-status">
+                          <span class="ia-processing-dot"></span>
+                          <span>Em Andamento</span>
+                        </div>
+                      </div>
+
+                      <div class="ia-processing-grid">
+                        <div class="ia-processing-preview">
+                          <div class="ia-processing-lines">
+                            <div class="ia-processing-line w-92"></div>
+                            <div class="ia-processing-line w-76"></div>
+                            <div class="ia-processing-bar"></div>
+                            <div class="ia-processing-line w-64"></div>
+                          </div>
+                        </div>
+
+                        <div class="ia-processing-notes">
+                          <div class="ia-processing-note-head">
+                            <strong>Analise em curso</strong>
+                          </div>
+
+                          <div class="ia-processing-note-body">
+                            <div class="ia-processing-block"></div>
+                            <div class="ia-processing-line w-92"></div>
+                            <div class="ia-processing-line w-58"></div>
+                            <div class="ia-processing-progress"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <div class="ia-info-grid">
                     <div class="ia-info-card">
                       <p class="ia-info-card-label">Entrada</p>
@@ -2203,6 +2493,8 @@
     els.activeDate = document.getElementById("ia-active-date");
     els.toggleRegisteredBtn = document.getElementById("ia-toggle-registered-btn");
     els.uploadAudioBtn = document.getElementById("ia-upload-audio-btn");
+    els.processingOverlay = document.getElementById("ia-processing-overlay");
+    els.processingMessage = document.getElementById("ia-processing-message");
     els.copyZnunyBtn = document.getElementById("ia-copy-znuny-btn");
     els.copyHtmlBtn = document.getElementById("ia-copy-html-btn");
     els.audioInput = document.getElementById("ia-audio-input");
@@ -2764,6 +3056,14 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
 
     workspace?.classList.toggle("is-uploading", state.uploading);
     els.page?.setAttribute("aria-busy", state.uploading ? "true" : "false");
+    els.processingOverlay?.classList.toggle("hidden", !state.uploading);
+    els.processingOverlay?.setAttribute("aria-hidden", state.uploading ? "false" : "true");
+
+    if (els.processingMessage) {
+      els.processingMessage.textContent = state.uploading
+        ? "Aguarde enquanto o audio e processado, a analise e consolidada e o relatorio final e montado."
+        : "Aguarde enquanto o audio, o resumo e o relatorio sao preparados.";
+    }
 
     toggleDisabled(els.toggleRegisteredBtn, !hasActive);
     toggleDisabled(els.uploadAudioBtn, !hasActive || state.uploading);
