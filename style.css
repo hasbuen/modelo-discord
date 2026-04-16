@@ -1525,6 +1525,7 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
   pointer-events: auto;
   position: relative;
   overflow: visible;
+  cursor: grab;
 }
 
 .assistant-fab:hover {
@@ -1607,6 +1608,15 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+  cursor: grab;
+  user-select: none;
+}
+
+.assistant-widget-header button,
+.assistant-widget-header input,
+.assistant-widget-header textarea,
+.assistant-widget-header a {
+  cursor: pointer;
 }
 
 .assistant-widget-header-actions {

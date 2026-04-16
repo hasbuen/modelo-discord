@@ -3186,18 +3186,18 @@ function renderAudio(active) {
       const fileForUpload = await prepareAudioForTranscription(file);
       let data;
 
-      notify("Enviando áudio temporário para processamento...", "info");
+      notify("Enviando audio temporario para processamento...", "info");
       try {
-        data = await sendTranscriptionRequest(fileForUpload);
+        const blobUpload = await uploadAudioToBlob(fileForUpload);
+        notify("Processando audio no backend...", "info");
+        data = await requestBlobTranscription(blobUpload, fileForUpload);
       } catch (error) {
-        if (!shouldFallbackToBlob(error)) {
+        if (!shouldFallbackToDirectUpload(error)) {
           throw error;
         }
 
-        const blobUpload = await uploadAudioToBlob(fileForUpload);
-
-      notify("Processando áudio no backend...", "info");
-        data = await requestBlobTranscription(blobUpload, fileForUpload);
+        notify("Aplicando compatibilidade com backend legado...", "info");
+        data = await sendLegacyTranscriptionRequest(fileForUpload);
       }
 
       if (active.localAudioKey) {
@@ -3300,6 +3300,9 @@ function renderAudio(active) {
 
     return data;
   }
+  async function sendLegacyTranscriptionRequest(file) {
+    return sendTranscriptionRequest(file);
+  }
 
   function shouldFallbackToBlob(error) {
     return (
@@ -3308,6 +3311,19 @@ function renderAudio(active) {
       error?.status === 429 ||
       error?.status >= 500 ||
       /timeout|network|fetch|gateway|payload too large/i.test(String(error?.message || ""))
+    );
+  }
+
+  function shouldFallbackToDirectUpload(error) {
+    return (
+      error?.status === 400 ||
+      error?.status === 404 ||
+      error?.status === 405 ||
+      error?.status === 408 ||
+      error?.status === 413 ||
+      error?.status === 429 ||
+      error?.status >= 500 ||
+      /blob|upload|token|multipart|network|fetch|gateway|payload too large/i.test(String(error?.message || ""))
     );
   }
 

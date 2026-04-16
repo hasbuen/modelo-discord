@@ -5,6 +5,7 @@
   const MAX_WIDGET_WIDTH = 760;
   const MIN_WIDGET_HEIGHT = 420;
   const MAX_WIDGET_HEIGHT = 860;
+  const ZNUNY_ATTENDANT_PORTAL_URL = "https://rhede.serviceup.app/portal/index.html";
 
   function getApiBaseUrlSafe() {
     try {
@@ -20,6 +21,7 @@
     messages: [],
     sending: false,
     open: false,
+    authenticated: false,
     recording: false,
     transcribing: false,
     mediaRecorder: null,
@@ -28,6 +30,10 @@
     recordingTimerId: null,
     panelWidth: null,
     panelHeight: null,
+    widgetX: null,
+    widgetY: null,
+    dragging: null,
+    suppressToggleClick: false,
     resizing: false,
   };
 
@@ -40,6 +46,7 @@
     applyPanelVisibility(false);
     restoreState();
     bindEvents();
+    syncAssistantVisibility();
     render();
   }
 
@@ -48,6 +55,7 @@
     els.panel = document.getElementById("assistant-panel");
     els.fab = document.getElementById("assistant-fab");
     els.closeBtn = document.getElementById("assistant-close-btn");
+    els.header = document.querySelector("#assistant-panel .assistant-widget-header");
     els.messages = document.getElementById("assistant-messages");
     els.form = document.getElementById("assistant-form");
     els.input = document.getElementById("assistant-input");
@@ -93,6 +101,9 @@
   }
 
   function bindEvents() {
+    els.fab?.addEventListener("pointerdown", startWidgetDrag);
+    els.header?.addEventListener("pointerdown", startWidgetDrag);
+
     els.form?.addEventListener("submit", async (event) => {
       event.preventDefault();
       await submitMessage();
@@ -137,6 +148,8 @@
     });
 
     window.addEventListener("resize", applyPanelLayout);
+    window.addEventListener("resize", applyWidgetPosition);
+    window.addEventListener("protocord:auth-changed", handleAuthChanged);
     autoResizeInput();
   }
 
@@ -163,9 +176,13 @@
       const parsed = JSON.parse(localStorage.getItem(LAYOUT_STORAGE_KEY) || "{}");
       state.panelWidth = Number.isFinite(parsed.panelWidth) ? parsed.panelWidth : null;
       state.panelHeight = Number.isFinite(parsed.panelHeight) ? parsed.panelHeight : null;
+      state.widgetX = Number.isFinite(parsed.widgetX) ? parsed.widgetX : null;
+      state.widgetY = Number.isFinite(parsed.widgetY) ? parsed.widgetY : null;
     } catch (_error) {
       state.panelWidth = null;
       state.panelHeight = null;
+      state.widgetX = null;
+      state.widgetY = null;
     }
   }
 
@@ -173,6 +190,8 @@
     localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify({
       panelWidth: state.panelWidth,
       panelHeight: state.panelHeight,
+      widgetX: state.widgetX,
+      widgetY: state.widgetY,
     }));
   }
 
@@ -205,7 +224,7 @@
 
     els.messages.innerHTML = state.messages.map((message) => `
       <article class="assistant-message ${message.role}">
-        ${escapeHtml(message.content)}
+        ${renderMessageContent(message)}
       </article>
     `).join("");
 
@@ -295,6 +314,10 @@
   }
 
   function toggleWidget(forceState, persistState = true) {
+    if (!state.authenticated) {
+      return;
+    }
+
     state.open = typeof forceState === "boolean" ? forceState : !state.open;
 
     applyPanelVisibility(state.open);
@@ -329,6 +352,40 @@
     els.panel.setAttribute("aria-hidden", String(!isOpen));
     els.panel.style.display = isOpen ? "grid" : "none";
     applyPanelLayout();
+    requestAnimationFrame(applyWidgetPosition);
+  }
+
+  function isAuthenticated() {
+    try {
+      if (typeof window.hasActiveAuthSession === "function") {
+        return window.hasActiveAuthSession();
+      }
+    } catch (_error) {}
+
+    return false;
+  }
+
+  function handleAuthChanged(event) {
+    state.authenticated = Boolean(event?.detail?.authenticated);
+    syncAssistantVisibility();
+  }
+
+  function syncAssistantVisibility() {
+    state.authenticated = isAuthenticated();
+
+    if (!els.widget) return;
+
+    els.widget.hidden = !state.authenticated;
+    els.widget.classList.toggle("hidden", !state.authenticated);
+    els.widget.setAttribute("aria-hidden", String(!state.authenticated));
+
+    if (!state.authenticated) {
+      state.open = false;
+      applyPanelVisibility(false);
+      return;
+    }
+
+    requestAnimationFrame(applyWidgetPosition);
   }
 
   function applyPanelLayout() {
@@ -352,6 +409,30 @@
       els.panel.style.removeProperty("height");
       els.panel.style.removeProperty("max-height");
     }
+  }
+
+  function applyWidgetPosition() {
+    if (!els.widget || !state.authenticated) return;
+
+    if (!Number.isFinite(state.widgetX) || !Number.isFinite(state.widgetY)) {
+      els.widget.style.removeProperty("left");
+      els.widget.style.removeProperty("top");
+      els.widget.style.removeProperty("right");
+      els.widget.style.removeProperty("bottom");
+      return;
+    }
+
+    const rect = els.widget.getBoundingClientRect();
+    const maxLeft = Math.max(8, window.innerWidth - rect.width - 8);
+    const maxTop = Math.max(8, window.innerHeight - rect.height - 8);
+
+    state.widgetX = clampNumber(state.widgetX, 8, maxLeft);
+    state.widgetY = clampNumber(state.widgetY, 8, maxTop);
+
+    els.widget.style.left = `${state.widgetX}px`;
+    els.widget.style.top = `${state.widgetY}px`;
+    els.widget.style.right = "auto";
+    els.widget.style.bottom = "auto";
   }
 
   function startPanelResize(event) {
@@ -403,8 +484,97 @@
     document.removeEventListener("pointercancel", stopPanelResize);
   }
 
+  function startWidgetDrag(event) {
+    if (!els.widget || !state.authenticated || event.button !== 0) return;
+
+    const target = event.target instanceof Element ? event.target : null;
+    if (
+      event.currentTarget === els.header &&
+      target?.closest("button, input, textarea, a, [role='button']")
+    ) {
+      return;
+    }
+
+    const rect = els.widget.getBoundingClientRect();
+    state.dragging = {
+      startX: event.clientX,
+      startY: event.clientY,
+      startLeft: rect.left,
+      startTop: rect.top,
+      dragged: false,
+    };
+
+    document.addEventListener("pointermove", handleWidgetDragMove);
+    document.addEventListener("pointerup", stopWidgetDrag);
+    document.addEventListener("pointercancel", stopWidgetDrag);
+  }
+
+  function handleWidgetDragMove(event) {
+    if (!state.dragging || !els.widget) return;
+
+    const nextX = state.dragging.startLeft + (event.clientX - state.dragging.startX);
+    const nextY = state.dragging.startTop + (event.clientY - state.dragging.startY);
+
+    if (!state.dragging.dragged) {
+      const distance = Math.abs(event.clientX - state.dragging.startX) + Math.abs(event.clientY - state.dragging.startY);
+      state.dragging.dragged = distance > 4;
+    }
+
+    state.widgetX = nextX;
+    state.widgetY = nextY;
+    applyWidgetPosition();
+  }
+
+  function stopWidgetDrag() {
+    if (!state.dragging) return;
+
+    if (state.dragging.dragged) {
+      state.suppressToggleClick = true;
+      persistLayoutState();
+      window.setTimeout(() => {
+        state.suppressToggleClick = false;
+      }, 120);
+    }
+
+    state.dragging = null;
+    document.removeEventListener("pointermove", handleWidgetDragMove);
+    document.removeEventListener("pointerup", stopWidgetDrag);
+    document.removeEventListener("pointercancel", stopWidgetDrag);
+  }
+
   function clampNumber(value, min, max) {
     return Math.min(Math.max(value, min), max);
+  }
+
+  function renderMessageContent(message) {
+    const content = String(message?.content || "");
+    const normalizedContent = isZnunyAuthFailureMessage(content)
+      ? content.replace("/znuny/index.pl", "/portal/index.html")
+      : content;
+    const formattedContent = escapeHtml(normalizedContent).replace(/\n/g, "<br>");
+
+    if (message?.role !== "assistant" || !isZnunyAuthFailureMessage(content)) {
+      return formattedContent;
+    }
+
+    return `
+      <div>${formattedContent}</div>
+      <div style="margin-top:12px;padding:12px 14px;border-radius:14px;border:1px solid rgba(78,161,255,0.14);background:rgba(10,22,43,0.72);">
+        <div style="font-size:0.78rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:rgba(126,231,255,0.84);">Suporte ao login</div>
+        <div style="margin-top:6px;font-size:0.86rem;line-height:1.55;color:rgba(225,235,250,0.84);">
+          O vídeo mostra que o acesso manual do atendente acontece no portal `/portal/index.html`.
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
+          <button type="button" data-assistant-open-znuny-portal="true" style="display:inline-flex;align-items:center;justify-content:center;border-radius:10px;border:1px solid rgba(34,211,238,0.18);background:linear-gradient(135deg, rgba(8,145,178,0.26), rgba(37,99,235,0.24));color:rgba(244,249,255,0.96);font-size:0.8rem;font-weight:700;padding:9px 12px;cursor:pointer;">
+            Abrir portal do atendente
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function isZnunyAuthFailureMessage(content) {
+    return /autentica..o autom..tica falhou/i.test(String(content || "")) && /znuny/i.test(String(content || ""));
   }
 
   async function startRecording() {
@@ -479,7 +649,7 @@
     try {
       const apiBaseUrl = getApiBaseUrlSafe();
       if (!apiBaseUrl) {
-        throw new Error("API base não configurada.");
+        throw new Error("API base nao configurada.");
       }
 
       const extension = audioBlob.type.includes("ogg") ? "ogg" : "webm";
@@ -487,22 +657,10 @@
         type: audioBlob.type || "audio/webm",
       });
 
-      const formData = new FormData();
-      formData.append("audio", file);
-
-      const response = await fetch(`${apiBaseUrl}/transcrever`, {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json().catch(() => null);
-      if (!response.ok || !data?.sucesso) {
-        throw new Error(data?.erro || `Falha ao transcrever áudio. Status ${response.status}`);
-      }
-
-      const transcript = String(data.transcricao || data.analise || "").trim();
+      const data = await transcribeAudioFile(apiBaseUrl, file);
+      const transcript = String(data.transcricao || data.texto || data.analise || "").trim();
       if (!transcript) {
-        throw new Error("Não foi possível identificar conteúdo útil no áudio.");
+        throw new Error("Nao foi possivel identificar conteudo util no audio.");
       }
 
       if (els.input) {
@@ -512,12 +670,96 @@
 
       await submitProvidedMessage(transcript);
     } catch (error) {
-      notify(error.message || "Falha ao processar áudio.", "error");
+      notify(error.message || "Falha ao processar audio.", "error");
     } finally {
       state.transcribing = false;
       updateAudioUi();
       updateStatusBadge();
     }
+  }
+
+  async function transcribeAudioFile(apiBaseUrl, file) {
+    try {
+      const blobUpload = await uploadAudioBlobForAssistant(apiBaseUrl, file);
+      return await requestBlobTranscriptionForAssistant(apiBaseUrl, blobUpload, file);
+    } catch (error) {
+      if (!shouldFallbackToDirectAssistantUpload(error)) {
+        throw error;
+      }
+
+      return await requestDirectAssistantTranscription(apiBaseUrl, file);
+    }
+  }
+
+  async function uploadAudioBlobForAssistant(apiBaseUrl, file) {
+    const { upload } = await import("https://esm.sh/@vercel/blob/client?target=es2022");
+    const pathname = `audios/${Date.now()}-${String(file.name || "audio.webm").replace(/[^\w.\-]+/g, "_").replace(/_+/g, "_")}`;
+    return upload(pathname, file, {
+      access: "public",
+      handleUploadUrl: `${apiBaseUrl}/blob-upload`,
+      multipart: true,
+    });
+  }
+
+  async function requestBlobTranscriptionForAssistant(apiBaseUrl, blobUpload, file) {
+    const response = await fetch(`${apiBaseUrl}/transcrever`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        blobUrl: blobUpload.url,
+        pathname: blobUpload.pathname || "",
+        filename: file.name,
+        contentType: file.type || "application/octet-stream",
+      }),
+    });
+
+    const data = await response.json().catch(() => null);
+    if (!response.ok || !data?.sucesso) {
+      const message = data?.erro || `Falha ao transcrever audio. Status ${response.status}`;
+      const err = new Error(message);
+      err.status = response.status;
+      throw err;
+    }
+
+    return data;
+  }
+
+  async function requestDirectAssistantTranscription(apiBaseUrl, file) {
+    const formData = new FormData();
+    formData.append("audio", file);
+
+    let response = await fetch(`${apiBaseUrl}/transcricao-direta`, {
+      method: "POST",
+      body: formData,
+    });
+
+    let data = await response.json().catch(() => null);
+    if ((response.status === 404 || response.status === 405) && !data?.sucesso) {
+      response = await fetch(`${apiBaseUrl}/transcrever`, {
+        method: "POST",
+        body: formData,
+      });
+      data = await response.json().catch(() => null);
+    }
+
+    if (!response.ok || !data?.sucesso) {
+      throw new Error(data?.erro || `Falha ao transcrever audio. Status ${response.status}`);
+    }
+
+    return data;
+  }
+
+  function shouldFallbackToDirectAssistantUpload(error) {
+    return (
+      error?.status === 400 ||
+      error?.status === 404 ||
+      error?.status === 405 ||
+      error?.status === 408 ||
+      error?.status === 413 ||
+      error?.status === 429 ||
+      error?.status >= 500 ||
+      /blob|upload|token|multipart|network|fetch|gateway|payload too large/i.test(String(error?.message || ""))
+    );
   }
 
   function updateRecordingTimer() {
@@ -622,9 +864,22 @@
     els.input.style.height = "52px";
   }
 
+  document.addEventListener("click", (event) => {
+    const trigger = event.target instanceof Element
+      ? event.target.closest("[data-assistant-open-znuny-portal='true']")
+      : null;
+    if (!trigger) return;
+
+    event.preventDefault();
+    window.open(ZNUNY_ATTENDANT_PORTAL_URL, "_blank", "noopener,noreferrer");
+  });
+
   window.toggleAssistantWidget = function () {
     bindElements();
     if (!els.widget) return false;
+    if (state.suppressToggleClick || !state.authenticated) {
+      return false;
+    }
     toggleWidget(!state.open);
     return false;
   };
@@ -637,6 +892,7 @@
 
     bindElements();
     if (!els.widget) return false;
+    if (!state.authenticated) return false;
     toggleWidget(false);
     return false;
   };

@@ -1,6 +1,7 @@
 (function () {
   const STORAGE_PREFIX = "protocord_embed_chat_";
   const EMBED_INSTANCES = {};
+  const ZNUNY_ATTENDANT_PORTAL_URL = "https://rhede.serviceup.app/portal/index.html";
 
   function getApiBaseUrlSafe() {
     try {
@@ -63,6 +64,31 @@
       return escapeHtml(value).replace(/\n/g, "<br>");
     }
 
+    function isZnunyAuthFailureMessage(value) {
+      return /autentica..o autom..tica falhou/i.test(String(value || "")) && /znuny/i.test(String(value || ""));
+    }
+
+    function renderMessageContent(message) {
+      const content = String(message?.content || "");
+      const normalizedContent = isZnunyAuthFailureMessage(content)
+        ? content.replace("/znuny/index.pl", "/portal/index.html")
+        : content;
+      const formatted = formatMessage(normalizedContent);
+
+      if (message?.role !== "assistant" || !isZnunyAuthFailureMessage(content)) {
+        return formatted;
+      }
+
+      return `
+        <div>${formatted}</div>
+        <div class="embed-chat-portal-help">
+          <div class="embed-chat-portal-help-label">Suporte ao login</div>
+          <div class="embed-chat-portal-help-copy">O acesso manual do atendente ocorre no portal <code>/portal/index.html</code>.</div>
+          <button type="button" class="embed-chat-portal-link" data-embed-open-znuny-portal="true">Abrir portal do atendente</button>
+        </div>
+      `;
+    }
+
     function getHistoryForRequest() {
       return instance.messages
         .slice(0, -1)
@@ -106,7 +132,7 @@
           return `
             <div class="embed-chat-message ${isUser ? "user" : "assistant"}">
               <div class="embed-chat-message-role">${label}</div>
-              <div class="embed-chat-message-content">${formatMessage(message.content)}</div>
+              <div class="embed-chat-message-content">${renderMessageContent(message)}</div>
             </div>
           `;
         })
@@ -424,6 +450,44 @@
           color: rgba(235,242,255,0.92);
         }
 
+        .embed-chat-portal-help {
+          margin-top: 12px;
+          padding: 12px 14px;
+          border-radius: 12px;
+          border: 1px solid rgba(96,165,250,0.16);
+          background: rgba(8,18,37,0.74);
+        }
+
+        .embed-chat-portal-help-label {
+          font-size: 0.68rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: #7ee7ff;
+        }
+
+        .embed-chat-portal-help-copy {
+          margin-top: 6px;
+          color: rgba(225,235,250,0.82);
+          font-size: 0.8rem;
+          line-height: 1.55;
+        }
+
+        .embed-chat-portal-link {
+          margin-top: 12px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 10px;
+          border: 1px solid rgba(34,211,238,0.18);
+          background: linear-gradient(135deg, rgba(8,145,178,0.26), rgba(37,99,235,0.24));
+          color: rgba(244,249,255,0.96);
+          font-size: 0.78rem;
+          font-weight: 700;
+          padding: 9px 12px;
+          cursor: pointer;
+        }
+
         .embed-chat-composer {
           padding: 14px 16px;
           border-top: 1px solid rgba(59,130,246,0.10);
@@ -590,6 +654,16 @@
           e.preventDefault();
           submitMessage();
         }
+      });
+
+      container.addEventListener("click", (event) => {
+        const trigger = event.target instanceof Element
+          ? event.target.closest("[data-embed-open-znuny-portal='true']")
+          : null;
+        if (!trigger) return;
+
+        event.preventDefault();
+        window.open(ZNUNY_ATTENDANT_PORTAL_URL, "_blank", "noopener,noreferrer");
       });
 
       loadState();
