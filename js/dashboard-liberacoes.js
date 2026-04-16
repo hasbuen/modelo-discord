@@ -736,3 +736,79 @@ function inicializarBuscaModulo() {
     input.dispatchEvent(new Event('input'));
   }
 }
+
+function renderizarTabelaLiberacoes(liberacoes) {
+  const tbody = document.getElementById('tabelaLiberados');
+  if (!tbody) {
+    console.warn('Elemento tabelaLiberados não encontrado');
+    return;
+  }
+
+  tbody.innerHTML = '';
+
+  liberacoes.forEach(item => {
+    const detalhesProtocolos = (item.protocolos || []).map(prt => ({
+      prt,
+      info: (window.obterProtocolo?.(prt) || window.protocolosIndex?.[prt] || {})
+    }));
+    const modulos = [...new Set(detalhesProtocolos.map(({ info }) => info?.modulo).filter(Boolean))];
+    const descricaoDestaque =
+      detalhesProtocolos.find(({ info }) => info?.descricao)?.info?.descricao ||
+      'Sem descrição operacional disponível.';
+    const tr = document.createElement('tr');
+    tr.className = 'kpi-release-row';
+
+    const protocolosHTML = detalhesProtocolos
+      .map(({ prt }) => criarBadgeProtocolo(prt))
+      .join('');
+
+    tr.innerHTML = `
+      <td class="py-4 px-4 align-top">
+        <div class="kpi-release-cell">
+          <strong>${item.release}</strong>
+          <span>${modulos.slice(0, 2).join(' • ') || 'Sem módulo vinculado'}</span>
+        </div>
+      </td>
+      <td class="py-4 px-4 text-center align-top">
+        <div class="kpi-release-count">
+          <strong>${detalhesProtocolos.length}</strong>
+          <span>PRTs</span>
+        </div>
+      </td>
+      <td class="py-4 px-4 align-top">
+        <div class="kpi-release-protocols">
+          <div class="kpi-release-badges">${protocolosHTML}</div>
+          <p class="kpi-release-snippet">${descricaoDestaque}</p>
+        </div>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+
+  if (liberacoes.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-gray-400">Nenhum dado de liberação encontrado.</td></tr>';
+  }
+}
+
+function obterDadosVisiveisTabela() {
+  const linhas = document.querySelectorAll('#tabelaLiberados tr');
+  const dados = [];
+  linhas.forEach(tr => {
+    const tds = tr.querySelectorAll('td');
+    if (tds.length < 3) return;
+    const release = tds[0].querySelector('strong')?.innerText || tds[0].innerText;
+    const prts = [...tds[2].querySelectorAll('.badge-protocolo, .prt-badge')]
+      .map(badge => badge.getAttribute('data-prt') || badge.innerText.trim())
+      .filter(Boolean);
+    prts.forEach(prt => dados.push({
+      release,
+      prt,
+      modulo: protocolosIndex[prt]?.modulo || ''
+    }));
+  });
+  return dados;
+}
+
+window.renderizarTabelaLiberacoes = renderizarTabelaLiberacoes;
+window.obterLiberacoesFiltradasAtuais = obterLiberacoesFiltradasAtuais;
