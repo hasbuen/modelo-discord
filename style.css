@@ -3851,6 +3851,143 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
   cursor: not-allowed;
 }
 
+.kpi-storage-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(280px, 0.95fr);
+  gap: 16px;
+}
+
+.kpi-storage-hero-card,
+.kpi-storage-sidecard,
+.kpi-storage-progress-card {
+  border-radius: 24px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.68), rgba(9, 18, 32, 0.58));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.kpi-storage-hero-card {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.25fr);
+  gap: 18px;
+  padding: 22px;
+}
+
+.kpi-storage-hero-copy,
+.kpi-storage-sidecard,
+.kpi-storage-progress-copy,
+.kpi-storage-table-name,
+.kpi-storage-table-meter {
+  display: grid;
+  gap: 8px;
+}
+
+.kpi-storage-hero-copy span,
+.kpi-storage-sidecard span,
+.kpi-storage-progress-copy span,
+.kpi-storage-table-name small,
+.kpi-storage-table-meter-top span,
+.kpi-storage-hero-foot span,
+.kpi-storage-share-head span,
+.kpi-storage-progress-copy small {
+  color: var(--text-muted);
+}
+
+.kpi-storage-hero-copy strong,
+.kpi-storage-sidecard strong,
+.kpi-storage-progress-copy strong,
+.kpi-storage-table-name strong,
+.kpi-storage-table-meter-top strong,
+.kpi-storage-hero-meter-top strong,
+.kpi-storage-share-head strong {
+  color: var(--text-main);
+  font-family: var(--font-display);
+}
+
+.kpi-storage-hero-copy strong {
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+}
+
+.kpi-storage-sidecard {
+  align-content: start;
+  padding: 22px;
+}
+
+.kpi-storage-share-stack,
+.kpi-storage-progress-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.kpi-storage-progress-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.kpi-storage-hero-meter,
+.kpi-storage-share-row {
+  display: grid;
+  gap: 10px;
+}
+
+.kpi-storage-hero-meter-top,
+.kpi-storage-hero-foot,
+.kpi-storage-share-head,
+.kpi-storage-table-meter-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.kpi-storage-hero-track,
+.kpi-storage-progress-track,
+.kpi-storage-share-track {
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(30, 41, 59, 0.88);
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.08);
+}
+
+.kpi-storage-hero-track {
+  height: 18px;
+}
+
+.kpi-storage-progress-track,
+.kpi-storage-share-track {
+  height: 10px;
+}
+
+.kpi-storage-hero-fill,
+.kpi-storage-progress-fill,
+.kpi-storage-share-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #22d3ee 0%, #38bdf8 50%, #60a5fa 100%);
+  box-shadow: 0 0 24px rgba(34, 211, 238, 0.28);
+}
+
+.kpi-storage-progress-fill-blue,
+.kpi-storage-share-fill-blue {
+  background: linear-gradient(90deg, #60a5fa 0%, #3b82f6 100%);
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.24);
+}
+
+.kpi-storage-progress-fill-violet,
+.kpi-storage-share-fill-violet {
+  background: linear-gradient(90deg, #818cf8 0%, #a78bfa 100%);
+  box-shadow: 0 0 24px rgba(167, 139, 250, 0.22);
+}
+
+.kpi-storage-progress-card {
+  padding: 18px;
+}
+
+.kpi-storage-table-name strong,
+.kpi-storage-table-meter-top strong {
+  font-size: 1rem;
+}
+
 [data-theme="light"] .kpi-insight-modal,
 [data-theme="light"] .kpi-insight-metric-card,
 [data-theme="light"] .kpi-insight-table-wrap,
@@ -3888,8 +4025,27 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(241, 247, 255, 0.9));
 }
 
+[data-theme="light"] .kpi-storage-hero-card,
+[data-theme="light"] .kpi-storage-sidecard,
+[data-theme="light"] .kpi-storage-progress-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(241, 247, 255, 0.92));
+  border-color: rgba(100, 116, 139, 0.14);
+}
+
+[data-theme="light"] .kpi-storage-hero-track,
+[data-theme="light"] .kpi-storage-progress-track,
+[data-theme="light"] .kpi-storage-share-track {
+  background: rgba(226, 232, 240, 0.9);
+}
+
 @media (max-width: 860px) {
   .kpi-insight-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .kpi-storage-hero,
+  .kpi-storage-hero-card,
+  .kpi-storage-progress-grid {
     grid-template-columns: 1fr;
   }
 }
