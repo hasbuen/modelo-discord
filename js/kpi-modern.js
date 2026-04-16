@@ -497,7 +497,7 @@
       return window.__kpiInsightsPromise;
     }
 
-    window.__kpiInsightsPromise = fetch(window.getProtocordApiUrl("/kpi-insights"))
+    window.__kpiInsightsPromise = fetch(window.getProtocordApiUrl("/assistente?action=kpi-insights"))
       .then(async (response) => {
         if (!response.ok) {
           throw new Error(`Falha ao carregar insights do KPI: ${response.status}`);
