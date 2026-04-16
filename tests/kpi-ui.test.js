@@ -48,7 +48,7 @@ test('cards do KPI expõem atalhos acionáveis com modal detalhado', () => {
   assert.match(indexSource, /data-kpi-action="releases"/);
   assert.match(indexSource, /data-kpi-action="released"/);
   assert.match(indexSource, /data-kpi-action="latest"/);
-  assert.match(kpiSource, /fetch\(window\.getProtocordApiUrl\("\/kpi-insights"\)\)/);
+  assert.match(kpiSource, /fetch\(window\.getProtocordApiUrl\("\/assistente\?action=kpi-insights"\)\)/);
   assert.match(kpiSource, /id = "kpi-insight-modal-overlay"/);
   assert.match(styleSource, /\.kpi-insight-modal \{/);
 });
