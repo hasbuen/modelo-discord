@@ -25,9 +25,13 @@ test('transcritor principal prioriza upload em blob antes do fallback legado', (
   assert.ok(blobRequestIndex < legacyFallbackIndex, 'request JSON deve ocorrer antes do fallback legado');
 });
 
-test('assistant tenta blob-upload e fallback direto para transcricao', () => {
+test('assistant tenta transcricao direta e faz fallback para blob-upload', () => {
   assert.match(assistantSource, /handleUploadUrl:\s*`\$\{apiBaseUrl\}\/blob-upload`/);
   assert.match(assistantSource, /fetch\(`\$\{apiBaseUrl\}\/transcrever`/);
   assert.match(assistantSource, /fetch\(`\$\{apiBaseUrl\}\/transcricao-direta`/);
-  assert.match(assistantSource, /shouldFallbackToDirectAssistantUpload/);
+  assert.match(assistantSource, /shouldFallbackToBlobAssistantUpload/);
+  assert.ok(
+    assistantSource.indexOf('requestDirectAssistantTranscription(apiBaseUrl, file)') <
+    assistantSource.indexOf('uploadAudioBlobForAssistant(apiBaseUrl, file)')
+  );
 });

@@ -680,14 +680,14 @@
 
   async function transcribeAudioFile(apiBaseUrl, file) {
     try {
-      const blobUpload = await uploadAudioBlobForAssistant(apiBaseUrl, file);
-      return await requestBlobTranscriptionForAssistant(apiBaseUrl, blobUpload, file);
+      return await requestDirectAssistantTranscription(apiBaseUrl, file);
     } catch (error) {
-      if (!shouldFallbackToDirectAssistantUpload(error)) {
+      if (!shouldFallbackToBlobAssistantUpload(error)) {
         throw error;
       }
 
-      return await requestDirectAssistantTranscription(apiBaseUrl, file);
+      const blobUpload = await uploadAudioBlobForAssistant(apiBaseUrl, file);
+      return await requestBlobTranscriptionForAssistant(apiBaseUrl, blobUpload, file);
     }
   }
 
@@ -749,7 +749,7 @@
     return data;
   }
 
-  function shouldFallbackToDirectAssistantUpload(error) {
+  function shouldFallbackToBlobAssistantUpload(error) {
     return (
       error?.status === 400 ||
       error?.status === 404 ||
