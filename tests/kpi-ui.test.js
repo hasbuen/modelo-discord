@@ -33,6 +33,18 @@ test('workspace KPI moderno volta a renderizar a tabela consolidada', () => {
   assert.match(legacyDashboardSource, /window\.renderizarTabelaLiberacoes = renderizarTabelaLiberacoes/);
 });
 
+test('modal de storage usa barras visuais para apresentar volume do Supabase', () => {
+  assert.match(kpiSource, /function clampPercent\(value\)/);
+  assert.match(kpiSource, /class="kpi-storage-hero"/);
+  assert.match(kpiSource, /class="kpi-storage-hero-fill"/);
+  assert.match(kpiSource, /class="kpi-storage-progress-grid"/);
+  assert.match(kpiSource, /class="kpi-storage-share-fill kpi-storage-share-fill-\$\{tone\}"/);
+  assert.match(kpiSource, /buildTable\(\["Origem monitorada", "Volume estimado", "Linhas"\], rows, \{ page \}\)/);
+  assert.match(styleSource, /\.kpi-storage-hero \{/);
+  assert.match(styleSource, /\.kpi-storage-hero-fill,\s*[\r\n]+\s*\.kpi-storage-progress-fill,\s*[\r\n]+\s*\.kpi-storage-share-fill \{/);
+  assert.match(styleSource, /\.kpi-storage-share-track \{/);
+});
+
 test('badges e modal de protocolo usam a nova camada visual operacional', () => {
   assert.match(protocolosSource, /class="kpi-protocol-badge kpi-protocol-badge-\$\{variant\} badge-protocolo"/);
   assert.match(protocolosSource, /id="modal-protocolo-overlay" class="protocol-modal-overlay"/);

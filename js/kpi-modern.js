@@ -681,6 +681,121 @@
     });
   }
 
+  function clampPercent(value) {
+    const normalized = Number(value) || 0;
+    return Math.max(0, Math.min(100, normalized));
+  }
+
+  function buildStorageProgress(label, value, note, percent, tone = "cyan") {
+    const safePercent = clampPercent(percent);
+    return `
+      <article class="kpi-storage-progress-card">
+        <div class="kpi-storage-progress-copy">
+          <span>${escapeHtml(label)}</span>
+          <strong>${escapeHtml(value)}</strong>
+          <small>${escapeHtml(note)}</small>
+        </div>
+        <div class="kpi-storage-progress-track">
+          <div class="kpi-storage-progress-fill kpi-storage-progress-fill-${tone}" style="width:${safePercent}%"></div>
+        </div>
+      </article>
+    `;
+  }
+
+  function buildStorageShareRow(label, value, percent, tone = "cyan") {
+    const safePercent = clampPercent(percent);
+    return `
+      <div class="kpi-storage-share-row">
+        <div class="kpi-storage-share-head">
+          <strong>${escapeHtml(label)}</strong>
+          <span>${escapeHtml(value)}</span>
+        </div>
+        <div class="kpi-storage-share-track">
+          <div class="kpi-storage-share-fill kpi-storage-share-fill-${tone}" style="width:${safePercent}%"></div>
+        </div>
+      </div>
+    `;
+  }
+
+  function buildStorageModal(insights, state) {
+    const storage = insights?.storage || {};
+    const totalBytes = Math.max(Number(storage.totalBytes) || 0, 1);
+    const usedBytes = Number(storage.usedBytes) || 0;
+    const freeBytes = Math.max(Number(storage.freeBytes) || 0, 0);
+    const usagePercent = clampPercent(Number(storage.usagePercent) || ((usedBytes / totalBytes) * 100));
+    const sourceLabel = storage.source === "supabase-management"
+      ? "Supabase Management API"
+      : "Monitoramento do workspace";
+    const tableEntries = Object.entries(storage.tables || {});
+    const largestTableBytes = Math.max(1, ...tableEntries.map(([, details]) => Number(details?.usedBytes) || 0));
+    const rows = tableEntries.map(([table, details], index) => {
+      const tableBytes = Number(details?.usedBytes) || 0;
+      const tablePercent = (tableBytes / totalBytes) * 100;
+      const relativePercent = (tableBytes / largestTableBytes) * 100;
+      const tone = index % 3 === 1 ? "blue" : index % 3 === 2 ? "violet" : "cyan";
+      return [
+        `<div class="kpi-storage-table-name"><strong>${escapeHtml(table)}</strong><small>${escapeHtml(formatCount(details.rows))} linhas monitoradas</small></div>`,
+        `
+          <div class="kpi-storage-table-meter">
+            <div class="kpi-storage-table-meter-top">
+              <strong>${escapeHtml(formatBytes(tableBytes))}</strong>
+              <span>${escapeHtml(formatPercent(tablePercent))} do volume</span>
+            </div>
+            <div class="kpi-storage-share-track">
+              <div class="kpi-storage-share-fill kpi-storage-share-fill-${tone}" style="width:${clampPercent(relativePercent)}%"></div>
+            </div>
+          </div>
+        `,
+        escapeHtml(formatCount(details.rows)),
+      ];
+    });
+
+    openInsightModal({
+      eyebrow: "Base monitorada",
+      title: "Panorama do workspace",
+      subtitle: `Leitura consolidada com ${formatCount(state.metrics.totalRecords)} protocolos acompanhados no Supabase.`,
+      renderBody: (page) => `
+        <section class="kpi-storage-hero">
+          <article class="kpi-storage-hero-card">
+            <div class="kpi-storage-hero-copy">
+              <span>Capacidade acompanhada</span>
+              <strong>${escapeHtml(formatBytes(totalBytes))}</strong>
+              <small>${escapeHtml(sourceLabel)} com leitura segura apenas de volume operacional.</small>
+            </div>
+            <div class="kpi-storage-hero-meter">
+              <div class="kpi-storage-hero-meter-top">
+                <span>Uso atual</span>
+                <strong>${escapeHtml(formatPercent(usagePercent))}</strong>
+              </div>
+              <div class="kpi-storage-hero-track">
+                <div class="kpi-storage-hero-fill" style="width:${usagePercent}%"></div>
+              </div>
+              <div class="kpi-storage-hero-foot">
+                <span>${escapeHtml(formatBytes(usedBytes))} utilizados</span>
+                <span>${escapeHtml(formatBytes(freeBytes))} livres</span>
+              </div>
+            </div>
+          </article>
+          <article class="kpi-storage-sidecard">
+            <span>DistribuiÃ§Ã£o visÃ­vel</span>
+            <strong>${escapeHtml(formatCount(tableEntries.length))} fontes</strong>
+            <small>Recorte somado do workspace para leitura rÃ¡pida do banco.</small>
+            <div class="kpi-storage-share-stack">
+              ${buildStorageShareRow("Uso em ocupaÃ§Ã£o", formatBytes(usedBytes), usagePercent, "cyan")}
+              ${buildStorageShareRow("Margem livre", formatBytes(freeBytes), 100 - usagePercent, "violet")}
+            </div>
+          </article>
+        </section>
+        <section class="kpi-storage-progress-grid">
+          ${buildStorageProgress("EspaÃ§o monitorado", formatBytes(totalBytes), "Faixa total considerada neste painel.", 100, "blue")}
+          ${buildStorageProgress("EspaÃ§o em uso", formatBytes(usedBytes), `${formatPercent(usagePercent)} ocupado no recorte atual.`, usagePercent, "cyan")}
+          ${buildStorageProgress("EspaÃ§o livre", formatBytes(freeBytes), "Saldo operacional restante no teto acompanhado.", 100 - usagePercent, "violet")}
+        </section>
+        ${buildTable(["Origem monitorada", "Volume estimado", "Linhas"], rows, { page })}
+      `,
+    });
+  }
+
   function buildErrorsModal(state) {
     const errorRows = state.dataset.allProtocols
       .filter((item) => item.tipo === "0")
