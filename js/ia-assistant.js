@@ -34,6 +34,7 @@
     widgetY: null,
     dragging: null,
     suppressToggleClick: false,
+    recordingPointerId: null,
     resizing: false,
   };
 
@@ -129,14 +130,12 @@
       notify("Pesquisas limpas.", "success");
     });
 
-    els.audioBtn?.addEventListener("click", async () => {
-      if (state.transcribing) return;
-      if (state.recording) {
-        stopRecording();
-        return;
-      }
-      await startRecording();
-    });
+    els.audioBtn?.addEventListener("pointerdown", handleAudioPressStart);
+    els.audioBtn?.addEventListener("pointerup", handleAudioPressEnd);
+    els.audioBtn?.addEventListener("pointercancel", handleAudioPressCancel);
+    els.audioBtn?.addEventListener("lostpointercapture", handleAudioPressCancel);
+    els.audioBtn?.addEventListener("keydown", handleAudioKeyDown);
+    els.audioBtn?.addEventListener("keyup", handleAudioKeyUp);
 
     els.suggestions.forEach((button) => {
       button.addEventListener("click", async () => {
@@ -577,6 +576,62 @@
     return /autentica..o autom..tica falhou/i.test(String(content || "")) && /znuny/i.test(String(content || ""));
   }
 
+  async function handleAudioPressStart(event) {
+    if (event.button !== 0 || state.transcribing || state.sending || state.recording) {
+      return;
+    }
+
+    event.preventDefault();
+    state.recordingPointerId = event.pointerId;
+    els.audioBtn?.setPointerCapture?.(event.pointerId);
+    await startRecording();
+  }
+
+  function handleAudioPressEnd(event) {
+    if (!state.recording) return;
+    if (state.recordingPointerId !== null && event.pointerId !== state.recordingPointerId) return;
+
+    event.preventDefault();
+    releaseAudioPointer(event.pointerId);
+    stopRecording();
+  }
+
+  function handleAudioPressCancel(event) {
+    if (state.recordingPointerId !== null && event?.pointerId !== undefined && event.pointerId !== state.recordingPointerId) {
+      return;
+    }
+
+    releaseAudioPointer(event?.pointerId);
+    if (state.recording) {
+      stopRecording();
+    }
+  }
+
+  function handleAudioKeyDown(event) {
+    if (event.repeat) return;
+    if (event.key !== " " && event.key !== "Enter") return;
+
+    event.preventDefault();
+    handleAudioPressStart({ button: 0, pointerId: -1, preventDefault() {} });
+  }
+
+  function handleAudioKeyUp(event) {
+    if (event.key !== " " && event.key !== "Enter") return;
+
+    event.preventDefault();
+    handleAudioPressEnd({ pointerId: -1, preventDefault() {} });
+  }
+
+  function releaseAudioPointer(pointerId) {
+    if (pointerId !== undefined && pointerId !== null) {
+      try {
+        els.audioBtn?.releasePointerCapture?.(pointerId);
+      } catch (_error) {}
+    }
+
+    state.recordingPointerId = null;
+  }
+
   async function startRecording() {
     if (typeof MediaRecorder === "undefined" || !navigator.mediaDevices?.getUserMedia) {
       notify("Seu navegador não suporta gravação de áudio.", "error");
@@ -611,6 +666,7 @@
 
         state.recording = false;
         state.mediaRecorder = null;
+        state.recordingPointerId = null;
         clearRecordingTimer();
         updateAudioUi();
         updateStatusBadge();
