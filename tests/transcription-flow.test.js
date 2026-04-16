@@ -35,3 +35,11 @@ test('assistant tenta transcricao direta e faz fallback para blob-upload', () =>
     assistantSource.indexOf('uploadAudioBlobForAssistant(apiBaseUrl, file)')
   );
 });
+
+test('assistant usa hold-to-talk no microfone em vez de clique toggle', () => {
+  assert.match(assistantSource, /els\.audioBtn\?\.addEventListener\("pointerdown", handleAudioPressStart\)/);
+  assert.match(assistantSource, /els\.audioBtn\?\.addEventListener\("pointerup", handleAudioPressEnd\)/);
+  assert.match(assistantSource, /els\.audioBtn\?\.addEventListener\("pointercancel", handleAudioPressCancel\)/);
+  assert.match(assistantSource, /function handleAudioPressStart\(event\)/);
+  assert.match(assistantSource, /function handleAudioPressEnd\(event\)/);
+});
