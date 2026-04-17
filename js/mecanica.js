@@ -1167,12 +1167,32 @@ function limparTramite() {
   templateArea.value = "";
 }
 
-// Chamar a API assim que a página carregar
-window.addEventListener('DOMContentLoaded', async () => {
+window.initWorkspaceRegistroPage = async function initWorkspaceRegistroPage() {
+  if (window.__workspaceRegistroInitialized) return;
+  if (typeof window.hasActiveAuthSession === "function" && !window.hasActiveAuthSession()) return;
+
+  window.__workspaceRegistroInitialized = true;
+
   try {
     await inicializarWorkspaceRegistro();
   } catch (err) {
-    console.error("Erro ao inicializar a página:", err);
+    window.__workspaceRegistroInitialized = false;
+    console.error("Erro ao inicializar a p?gina:", err);
+  }
+};
+
+window.addEventListener('DOMContentLoaded', () => {
+  const paginaHome = document.getElementById('pagina-home');
+  if (paginaHome && !paginaHome.classList.contains('hidden')) {
+    window.initWorkspaceRegistroPage?.();
+  }
+});
+
+window.addEventListener('protocord:auth-changed', (event) => {
+  if (!event?.detail?.authenticated) return;
+  const paginaHome = document.getElementById('pagina-home');
+  if (paginaHome && !paginaHome.classList.contains('hidden')) {
+    window.initWorkspaceRegistroPage?.();
   }
 });
 

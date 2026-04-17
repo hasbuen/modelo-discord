@@ -4175,5 +4175,19 @@ function formatAudioTime(seconds) {
   return `${mins}:${secs < 10 ?"0" : ""}${secs}`;
 }
 
-  document.addEventListener("DOMContentLoaded", init);
+  let started = false;
+
+  window.initIaTranscriberPage = function initIaTranscriberPage() {
+    if (started) return;
+    if (typeof window.hasActiveAuthSession === "function" && !window.hasActiveAuthSession()) return;
+    started = true;
+    init();
+  };
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const page = document.getElementById("pagina-ia");
+    if (page && !page.classList.contains("hidden")) {
+      window.initIaTranscriberPage?.();
+    }
+  });
 })();
