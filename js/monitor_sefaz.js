@@ -586,8 +586,25 @@ function initSefazMonitor() {
     setupAutoRefresh();
 }
 
+window.initSefazPage = function initSefazPage() {
+    if (window.__sefazPageInitialized) return;
+    if (typeof window.hasActiveAuthSession === "function" && !window.hasActiveAuthSession()) return;
+    if (!document.getElementById('pagina-sefaz')) return;
+    window.__sefazPageInitialized = true;
+    initSefazMonitor();
+};
+
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('pagina-sefaz')) {
-        initSefazMonitor();
+    const page = document.getElementById('pagina-sefaz');
+    if (page && !page.classList.contains('hidden')) {
+        window.initSefazPage?.();
+    }
+});
+
+window.addEventListener('protocord:auth-changed', (event) => {
+    if (!event?.detail?.authenticated) return;
+    const page = document.getElementById('pagina-sefaz');
+    if (page && !page.classList.contains('hidden')) {
+        window.initSefazPage?.();
     }
 });

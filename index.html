@@ -1988,6 +1988,12 @@ window.mostrarPagina = function (paginaId) {
       }
     }
 
+    if (paginaId === 'home') {
+      if (typeof window.initWorkspaceRegistroPage === 'function') {
+        window.initWorkspaceRegistroPage();
+      }
+    }
+
     // ===============================
     // KPI
     // ===============================
@@ -1996,6 +2002,27 @@ window.mostrarPagina = function (paginaId) {
         window.renderKpiWorkspace();
       } else if (typeof window.initKpiDashboard === 'function') {
         window.initKpiDashboard();
+      }
+      if (typeof window.initLegacyHistoryDashboard === 'function') {
+        window.initLegacyHistoryDashboard();
+      }
+    }
+
+    if (paginaId === 'relatorios') {
+      if (typeof window.initReportsPage === 'function') {
+        window.initReportsPage();
+      }
+    }
+
+    if (paginaId === 'sefaz') {
+      if (typeof window.initSefazPage === 'function') {
+        window.initSefazPage();
+      }
+    }
+
+    if (paginaId === 'ia') {
+      if (typeof window.initIaTranscriberPage === 'function') {
+        window.initIaTranscriberPage();
       }
     }
 

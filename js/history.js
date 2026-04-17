@@ -88,6 +88,16 @@ async function gerarDashboardLiberacoes() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+window.initLegacyHistoryDashboard = function initLegacyHistoryDashboard() {
+  if (window.__legacyHistoryDashboardInitialized) return;
+  if (typeof window.hasActiveAuthSession === "function" && !window.hasActiveAuthSession()) return;
+  window.__legacyHistoryDashboardInitialized = true;
   gerarDashboardLiberacoes();
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  const page = document.getElementById("pagina-historico-liberacoes");
+  if (page && !page.classList.contains("hidden")) {
+    window.initLegacyHistoryDashboard?.();
+  }
 });

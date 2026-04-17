@@ -977,5 +977,19 @@
     return false;
   };
 
-  document.addEventListener("DOMContentLoaded", init);
+  let started = false;
+
+  function bootAssistant() {
+    if (started) return;
+    if (typeof window.hasActiveAuthSession === "function" && !window.hasActiveAuthSession()) return;
+    started = true;
+    init();
+  }
+
+  document.addEventListener("DOMContentLoaded", bootAssistant);
+  window.addEventListener("protocord:auth-changed", (event) => {
+    if (event?.detail?.authenticated) {
+      bootAssistant();
+    }
+  });
 })();

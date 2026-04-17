@@ -697,9 +697,32 @@
     renderWorkspace();
   };
 
-  document.addEventListener("DOMContentLoaded", () => {
+  let bootstrapped = false;
+
+  window.initReportsPage = async function initReportsPage() {
     if (!byId("pagina-relatorios")) return;
-    bindEvents();
-    refreshReports();
+    if (typeof window.hasActiveAuthSession === "function" && !window.hasActiveAuthSession()) return;
+
+    if (!bootstrapped) {
+      bindEvents();
+      bootstrapped = true;
+    }
+
+    await refreshReports();
+  };
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const page = byId("pagina-relatorios");
+    if (page && !page.classList.contains("hidden")) {
+      window.initReportsPage?.();
+    }
+  });
+
+  window.addEventListener("protocord:auth-changed", (event) => {
+    if (!event?.detail?.authenticated) return;
+    const page = byId("pagina-relatorios");
+    if (page && !page.classList.contains("hidden")) {
+      window.initReportsPage?.();
+    }
   });
 })();
