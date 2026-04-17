@@ -247,7 +247,7 @@ async function validarSenha() {
     msgErro.classList.remove('hidden');
     broadcastAuthState(false);
   } finally {
-    // Re-habilita bot?o
+    // Reabilita botão
     btnAuth.disabled = false;
     btnAuth.innerHTML = '<i data-lucide="log-in" class="w-4 h-4"></i> Entrar';
     window.requestLucideIcons?.();
@@ -315,6 +315,5 @@ function fazerLogout() {
 
 window.hasActiveAuthSession = hasActiveAuthSession;
 
-// Executa ao carregar a p?gina
+// Executa ao carregar a página
 window.addEventListener('DOMContentLoaded', initAuth);
-

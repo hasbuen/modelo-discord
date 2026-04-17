@@ -49,7 +49,7 @@ async function getBotResponse(userInput) {
 
   // 🔹 Fallback final
   return {
-    text: `> Eu n?o achei nada muito espec?fico sobre "${userInput}". Pode detalhar melhor?Talvez eu consiga relacionar com algum protocolo.`,
+    text: `Não achei nada muito específico sobre "${userInput}". Pode detalhar melhor? Talvez eu consiga relacionar com algum protocolo.`,
     meta: { source: "fallback" }
   };
 }

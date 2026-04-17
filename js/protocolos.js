@@ -48,7 +48,7 @@ async function criarIndiceProtocolos(protocolos) {
   });
 
   protocolos.forEach((item) => {
-    const moduloId = String(item.modulo ?? "");
+    const moduloId = String(item.modulo || "");
     window.protocolosIndex[item.prt] = {
       modulo: moduloMap[moduloId] || item.modulo || "Desconhecido",
       tipo: item.tipo,
@@ -122,7 +122,7 @@ function obterProtocolo(prt) {
 }
 
 function getTipoLabel(tipo) {
-  return String(tipo) === "0" ?"Erro" : "Sugest?o";
+  return String(tipo) === "0" ?"Erro" : "Sugestão";
 }
 
 function getCorTipo(tipo) {
@@ -315,7 +315,7 @@ function abrirModalProtocolo(prt) {
 
   const tipo = getTipoLabel(protocolo.tipo);
   const variant = String(protocolo.tipo) === "0" ?"error" : "success";
-  const modulo = protocolo.modulo || window.protocolosIndex?.[prt]?.modulo || "M?dulo n?o informado";
+  const modulo = protocolo.modulo || window.protocolosIndex?.[prt]?.modulo || "Módulo não informado";
   const ticket = protocolo.ticket || "Sem ticket vinculado";
   const descricao = protocolo.descricao || "Sem descrição operacional registrada.";
   const paliativo = protocolo.paliativo || "Nenhum paliativo informado até o momento.";

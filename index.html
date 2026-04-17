@@ -396,13 +396,13 @@
 
       <nav class="sidebar-nav flex-1 flex flex-col gap-1 overflow-y-auto overflow-x-hidden">
 
-        <button onclick="mostrarPagina('historico-liberacoes')" data-tooltip="Hist?rico Libera??es "
+        <button onclick="mostrarPagina('historico-liberacoes')" data-tooltip="Histórico de liberações"
           class="sidebar-item active" id="btn-historico-liberacoes">
           <i data-lucide="layout-dashboard" class="sidebar-icon"></i>
           <span class="sidebar-label"> KPI</span>
         </button>
 
-        <button onclick="mostrarPagina('home')" data-tooltip="In?cio" class="sidebar-item" id="btn-home">
+        <button onclick="mostrarPagina('home')" data-tooltip="Início" class="sidebar-item" id="btn-home">
           <i data-lucide="message-square-quote" class="sidebar-icon"></i>
           <span class="sidebar-label">Registrar</span>
         </button>
@@ -413,9 +413,9 @@
           <span class="sidebar-label">Layout PRT</span>
         </button>
 
-        <button onclick="mostrarPagina('historico')" data-tooltip="Hist?rico" class="sidebar-item" id="btn-historico">
+        <button onclick="mostrarPagina('historico')" data-tooltip="Histórico" class="sidebar-item" id="btn-historico">
           <i data-lucide="history" class="sidebar-icon"></i>
-          <span class="sidebar-label">Hist?rico</span>
+          <span class="sidebar-label">Histórico</span>
         </button>
 
         <button onclick="document.getElementById('arquivoRTF').click()" data-tooltip="Verificar Release"
@@ -425,11 +425,11 @@
         </button>
         <input type="file" id="arquivoRTF" accept=".rtf" class="hidden" onchange="processarRTF(event)" />
 
-        <button onclick="mostrarPagina('relatorios')" data-tooltip="Relat?rios" class="sidebar-item"
+        <button onclick="mostrarPagina('relatorios')" data-tooltip="Relatórios" class="sidebar-item"
           id="btn-relatorios">
           <i data-lucide="file-text" class="sidebar-icon"></i>
           <span class="sidebar-label flex items-center">
-            Relat?rios
+            Relatórios
               <span class="sidebar-pill ml-2">Plus</span>
           </span>
         </button>
@@ -514,7 +514,7 @@
           <i data-lucide="pen-line" class="sidebar-icon"></i> Layout PRT
         </button>
         <button onclick="mostrarPagina('historico')" class="sidebar-item" id="btn-historico-mobile">
-          <i data-lucide="history" class="sidebar-icon"></i> Hist?rico
+          <i data-lucide="history" class="sidebar-icon"></i> Histórico
         </button>
         <button onclick="document.getElementById('arquivoRTF').click()" class="sidebar-item">
           <i data-lucide="package-open" class="sidebar-icon"></i> Analisar RLS
@@ -535,7 +535,7 @@
             <i data-lucide="target" class="sidebar-icon"></i> Metas
           </button>
           <button onclick="mostrarPagina('relatorios')" class="sidebar-item" id="btn-relatorios-mobile">
-            <i data-lucide="file-text" class="sidebar-icon"></i> Relat?rios
+            <i data-lucide="file-text" class="sidebar-icon"></i> Relatórios
             <span class="sidebar-pill ml-2">Plus</span>
           </button>
       </nav>
@@ -568,12 +568,12 @@
             <section class="kpi-hero">
               <div class="kpi-hero-copy">
                 <p class="kpi-eyebrow">Registrar</p>
-                <h2 class="kpi-title">Cadastro operacional no padr?o ProtoCord</h2>
+                <h2 class="kpi-title">Cadastro operacional no padrão ProtoCord</h2>
                 <p class="kpi-subtitle">Preencha, gere e registre no mesmo fluxo.</p>
               </div>
               <div class="kpi-hero-metrics">
                 <span class="kpi-badge">Cadastro manual</span>
-                <span class="kpi-badge kpi-badge-soft">C?pia imediata</span>
+                <span class="kpi-badge kpi-badge-soft">Cópia imediata</span>
                 <span class="kpi-badge kpi-badge-soft">Base operacional</span>
               </div>
             </section>
@@ -583,7 +583,7 @@
                 <div class="kpi-panel-header">
                   <div>
                     <h3 class="kpi-panel-title">Dados do protocolo</h3>
-                    <p class="kpi-panel-subtitle">Escolha o tipo, informe ticket, PRT e contexto do atendimento para montar o texto padr?o.</p>
+                    <p class="kpi-panel-subtitle">Escolha o tipo, informe ticket, PRT e contexto do atendimento para montar o texto padrão.</p>
                   </div>
                   <span class="kpi-badge kpi-badge-soft">Entrada estruturada</span>
                 </div>
@@ -595,17 +595,17 @@
                   </button>
                   <button id="btn-sugestao" type="button" onclick="selecionarTipo('sugestao')" class="legacy-tone-btn legacy-tone-btn-success">
                     <i data-lucide="sparkles" class="w-4 h-4"></i>
-                    Sugest?o
+                    Sugestão
                   </button>
                 </div>
                 <input type="hidden" id="tipo" />
 
                 <div class="legacy-form-grid">
                   <label class="reports-field legacy-field">
-                    <span>M?dulo</span>
+                    <span>Módulo</span>
                     <div class="legacy-select-wrap">
                       <select id="modulo" class="reports-select legacy-select">
-                        <option value="" disabled selected hidden>Selecione o m?dulo...</option>
+                        <option value="" disabled selected hidden>Selecione o módulo...</option>
                       </select>
                       <div id="seta-modulo" class="legacy-select-icon">
                         <i data-lucide="chevron-down" class="w-5 h-5"></i>
@@ -624,7 +624,7 @@
                   </label>
 
                   <label class="reports-field legacy-field legacy-field-wide">
-                    <span>Descri??o</span>
+                    <span>Descrição</span>
                     <textarea id="descricao" rows="6" class="reports-input legacy-textarea"></textarea>
                   </label>
 
@@ -632,7 +632,7 @@
                     <span>Paliativo</span>
                     <input list="paliativosList" id="paliativo" type="text" placeholder="Selecione ou digite aqui..." class="reports-input" />
                     <datalist id="paliativosList">
-                      <option value="Paliativo n?o encontrado."></option>
+                      <option value="Paliativo não encontrado."></option>
                       <option value="Nova funcionalidade."></option>
                     </datalist>
                   </label>
@@ -654,7 +654,7 @@
 
                 <button type="button" onclick="gerarTexto()" class="ia-btn-primary legacy-action-btn">
                   <i data-lucide="wand-2" class="w-4 h-4"></i>
-                  Gerar tr?mite
+                  Gerar trâmite
                 </button>
               </article>
 
@@ -662,9 +662,9 @@
                 <div class="kpi-panel-header">
                   <div>
                     <h3 class="kpi-panel-title">Resultado para Discord</h3>
-                    <p class="kpi-panel-subtitle">Revise o texto final antes de copiar. Ao copiar, o registro tamb?m é salvo na base.</p>
+                    <p class="kpi-panel-subtitle">Revise o texto final antes de copiar. Ao copiar, o registro também é salvo na base.</p>
                   </div>
-                  <span class="kpi-badge kpi-badge-soft">Sa?da pronta</span>
+                  <span class="kpi-badge kpi-badge-soft">Saída pronta</span>
                 </div>
 
                 <label for="output" class="reports-field legacy-field">
@@ -688,13 +688,13 @@
             <section class="kpi-hero">
               <div class="kpi-hero-copy">
                 <p class="kpi-eyebrow">Layout PRT</p>
-                <h2 class="kpi-title">Template t?cnico com o padr?o do workspace</h2>
-                <p class="kpi-subtitle">Escolha um modelo e ajuste o conte?do final.</p>
+                <h2 class="kpi-title">Template técnico com o padrão do workspace</h2>
+                <p class="kpi-subtitle">Escolha um modelo e ajuste o conteúdo final.</p>
               </div>
               <div class="kpi-hero-metrics">
                 <span class="kpi-badge">Template guiado</span>
                 <span class="kpi-badge kpi-badge-soft">Erro</span>
-                <span class="kpi-badge kpi-badge-soft">Sugest?o</span>
+                <span class="kpi-badge kpi-badge-soft">Sugestão</span>
               </div>
             </section>
 
@@ -713,13 +713,13 @@
                 </button>
                 <button id="btn-sugestao-template" type="button" onclick="carregarTemplateProtocolo('sugestao')" class="legacy-tone-btn legacy-tone-btn-success">
                   <i data-lucide="lightbulb" class="w-4 h-4"></i>
-                  Sugest?o
+                  Sugestão
                 </button>
               </div>
 
               <label for="descricao-protocolar" class="reports-field legacy-field">
-                <span>Descri??o</span>
-                <textarea id="descricao-protocolar" rows="20" class="reports-input legacy-editor" placeholder="Selecione 'Erro' ou 'Sugest?o' para carregar o modelo de protocolo."></textarea>
+                <span>Descrição</span>
+                <textarea id="descricao-protocolar" rows="20" class="reports-input legacy-editor" placeholder="Selecione 'Erro' ou 'Sugestão' para carregar o modelo de protocolo."></textarea>
               </label>
 
               <div class="legacy-inline-actions">
@@ -742,13 +742,13 @@
           <section class="kpi-shell legacy-shell">
             <section class="kpi-hero">
               <div class="kpi-hero-copy">
-                <p class="kpi-eyebrow">Hist?rico</p>
-                <h2 class="kpi-title">Base registrada com consulta cont?nua</h2>
-                <p class="kpi-subtitle">Consulte, filtre e recupere registros em uma ?nica vis?o.</p>
+                <p class="kpi-eyebrow">Histórico</p>
+                <h2 class="kpi-title">Base registrada com consulta contínua</h2>
+                <p class="kpi-subtitle">Consulte, filtre e recupere registros em uma única visão.</p>
               </div>
               <div class="kpi-hero-metrics">
-                <span class="kpi-badge">Busca din?mica</span>
-                <span class="kpi-badge kpi-badge-soft">Atualiza??o sob demanda</span>
+                <span class="kpi-badge">Busca dinâmica</span>
+                <span class="kpi-badge kpi-badge-soft">Atualização sob demanda</span>
                 <span class="kpi-badge kpi-badge-soft">Base em tempo real</span>
               </div>
             </section>
@@ -768,7 +768,7 @@
               <div class="legacy-history-toolbar">
                 <label class="legacy-search">
                   <i data-lucide="search" class="w-4 h-4"></i>
-                  <input type="text" id="busca" placeholder="Buscar por ticket, protocolo, tipo ou descri??o..." onkeyup="filtrarTabela()" />
+                  <input type="text" id="busca" placeholder="Buscar por ticket, protocolo, tipo ou descrição..." onkeyup="filtrarTabela()" />
                 </label>
               </div>
 
@@ -779,7 +779,7 @@
                       <th class="cursor-pointer" onclick="ordenarTabela(0)">Ticket</th>
                       <th class="cursor-pointer" onclick="ordenarTabela(1)">Protocolo</th>
                       <th class="cursor-pointer" onclick="ordenarTabela(2)">Tipo</th>
-                      <th class="cursor-pointer" onclick="ordenarTabela(3)">Descri??o</th>
+                      <th class="cursor-pointer" onclick="ordenarTabela(3)">Descrição</th>
                       <th> </th>
                     </tr>
                   </thead>
@@ -936,7 +936,7 @@
               <article class="kpi-panel">
                 <div class="kpi-panel-header">
                   <div>
-                    <h3 class="kpi-panel-title">Evolu??o ao longo do tempo</h3>
+                    <h3 class="kpi-panel-title">Evolução ao longo do tempo</h3>
                     <p class="kpi-panel-subtitle">Acúmulo de protocolos publicados conforme a sequência histórica de releases.</p>
                   </div>
                 </div>
@@ -951,7 +951,7 @@
                 <div class="kpi-panel-header">
                   <div>
                     <h3 class="kpi-panel-title">Protocolos por release</h3>
-                    <p class="kpi-panel-subtitle">Distribui??o cronológica do volume por release, com foco em leitura de pico e estabilidade.</p>
+                    <p class="kpi-panel-subtitle">Distribuição cronológica do volume por release, com foco em leitura de pico e estabilidade.</p>
                   </div>
                 </div>
                 <div class="kpi-canvas kpi-canvas-lg">
@@ -961,8 +961,8 @@
                 <div class="kpi-subpanel">
                   <div class="kpi-panel-header">
                     <div>
-                      <h4 class="kpi-subpanel-title">Tendência por m?dulo</h4>
-                      <p class="kpi-panel-subtitle">Exibe automaticamente o m?dulo com maior concentração ou o filtro atual.</p>
+                      <h4 class="kpi-subpanel-title">Tendência por módulo</h4>
+                      <p class="kpi-panel-subtitle">Exibe automaticamente o módulo com maior concentração ou o filtro atual.</p>
                     </div>
                     <small id="trend-current" class="kpi-inline-note">Exibindo: <span id="trend-modulo-name">--</span></small>
                   </div>
@@ -977,7 +977,7 @@
                   <div class="kpi-panel-header">
                     <div>
                       <h3 class="kpi-panel-title">Leitura executiva</h3>
-                      <p class="kpi-panel-subtitle">Resumo autom?tico baseado no volume atual de releases, m?dulos e classifica??o.</p>
+                      <p class="kpi-panel-subtitle">Resumo automático baseado no volume atual de releases, módulos e classificação.</p>
                     </div>
                   </div>
                   <div id="kpi-executive-summary" class="kpi-summary-list">
@@ -988,8 +988,8 @@
                 <article class="kpi-panel">
                   <div class="kpi-panel-header">
                     <div>
-                      <h3 class="kpi-panel-title">Ranking de m?dulos</h3>
-                      <p class="kpi-panel-subtitle">M?dulos com maior incidência no recorte atual.</p>
+                      <h3 class="kpi-panel-title">Ranking de módulos</h3>
+                      <p class="kpi-panel-subtitle">Módulos com maior incidência no recorte atual.</p>
                     </div>
                   </div>
                   <div id="ranking-modulos" class="kpi-ranking-list"></div>
@@ -1001,8 +1001,8 @@
               <article class="kpi-panel">
                 <div class="kpi-panel-header">
                   <div>
-                    <h3 class="kpi-panel-title">Protocolos por m?dulo</h3>
-                    <p class="kpi-panel-subtitle">Participa??o dos principais m?dulos na base consolidada.</p>
+                    <h3 class="kpi-panel-title">Protocolos por módulo</h3>
+                    <p class="kpi-panel-subtitle">Participação dos principais módulos na base consolidada.</p>
                   </div>
                 </div>
                 <div class="kpi-canvas kpi-canvas-md">
@@ -1016,12 +1016,12 @@
               <div class="mb-5 space-y-3">
                 <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                   <div>
-                    <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Filtrar por m?dulo</p>
+                    <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Filtrar por módulo</p>
                     <div id="filtro-modulos" class="flex flex-wrap gap-2 mt-2"></div>
                   </div>
 
                   <div class="w-full md:w-80">
-                    <input id="busca-modulo" type="text" placeholder="Buscar PRT, m?dulo ou descri??o..." class="w-full px-4 py-3 rounded-xl bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition" />
+                    <input id="busca-modulo" type="text" placeholder="Buscar PRT, módulo ou descrição..." class="w-full px-4 py-3 rounded-xl bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition" />
                   </div>
                 </div>
               </div>
@@ -1051,13 +1051,13 @@
 
         <div id="embed-chat-kpi"></div>
 
-        <!-- Página: Relat?rios -->
+        <!-- Página: Relatórios -->
         <div id="pagina-relatorios" class="hidden animate__animated animate__fadeIn">
           <section class="reports-shell">
             <header class="reports-hero">
               <div>
-                <p class="reports-eyebrow">Central de Relat?rios</p>
-                <h2 class="reports-title">Exporta??o operacional e executiva</h2>
+                <p class="reports-eyebrow">Central de Relatórios</p>
+                <h2 class="reports-title">Exportação operacional e executiva</h2>
                 <p class="reports-subtitle">Filtre o recorte e gere saídas para conferência, gestão e auditoria.</p>
               </div>
               <div class="reports-actions">
@@ -1084,9 +1084,9 @@
                 <small class="reports-kpi-note">Ocorrências classificadas como erro.</small>
               </article>
               <article class="reports-kpi-card">
-                <span class="reports-kpi-label">Sugest?es</span>
+                <span class="reports-kpi-label">Sugestões</span>
                 <strong id="reports-kpi-sugestoes" class="reports-kpi-value text-emerald-300">0</strong>
-                <small class="reports-kpi-note">Itens classificados como sugest?o.</small>
+                <small class="reports-kpi-note">Itens classificados como sugestão.</small>
               </article>
               <article class="reports-kpi-card">
                 <span class="reports-kpi-label">Releases cobertos</span>
@@ -1100,7 +1100,7 @@
                 <div class="reports-card-header">
                   <div>
                     <h3 class="reports-card-title">Filtros avançados</h3>
-                    <p class="reports-card-subtitle">Crie recortes operacionais e exporte apenas o que faz sentido para a an?lise.</p>
+                    <p class="reports-card-subtitle">Crie recortes operacionais e exporte apenas o que faz sentido para a análise.</p>
                   </div>
                   <span id="reports-sync-badge" class="reports-sync-badge">Aguardando carga</span>
                 </div>
@@ -1111,7 +1111,7 @@
                     <select id="relatorio-tipo-select" class="reports-select">
                       <option value="todos">Todos</option>
                       <option value="erro">Apenas erros</option>
-                      <option value="sugestao">Apenas sugest?es</option>
+                      <option value="sugestao">Apenas sugestões</option>
                     </select>
                   </label>
 
@@ -1123,7 +1123,7 @@
                   </label>
 
                   <label class="reports-field">
-                    <span>M?dulo</span>
+                    <span>Módulo</span>
                     <select id="reports-modulo-select" class="reports-select">
                       <option value="todos">Todos</option>
                     </select>
@@ -1131,35 +1131,57 @@
 
                   <label class="reports-field">
                     <span>Buscar</span>
-                    <input id="reports-search-input" class="reports-input" type="text" placeholder="Ticket, PRT, descri??o ou m?dulo" />
+                    <input id="reports-search-input" class="reports-input" type="text" placeholder="Ticket, PRT, descrição ou módulo" />
                   </label>
 
                   <label class="reports-field">
                     <span>Ordenação</span>
                     <select id="reports-order-select" class="reports-select">
                       <option value="recentes">Release mais recente</option>
-                      <option value="maior-descricao">Descri??o mais longa</option>
+                      <option value="maior-descricao">Descrição mais longa</option>
                       <option value="ticket">Ticket</option>
-                      <option value="modulo">M?dulo</option>
+                      <option value="modulo">Módulo</option>
                     </select>
                   </label>
 
                   <div class="reports-field reports-field-actions">
                     <span>Atalhos</span>
                     <div class="reports-inline-actions">
-                      <button id="reports-clear-filters-btn" class="reports-btn reports-btn-secondary" type="button">Limpar</button>
-                      <button id="reports-apply-filters-btn" class="reports-btn reports-btn-primary" type="button">Aplicar</button>
+                      <button id="reports-clear-filters-btn" class="reports-btn reports-btn-secondary reports-btn-icon" type="button" title="Limpar filtros" aria-label="Limpar filtros">
+                        <i data-lucide="eraser" class="w-4 h-4"></i>
+                      </button>
+                      <button id="reports-apply-filters-btn" class="reports-btn reports-btn-primary reports-btn-icon" type="button" title="Aplicar filtros" aria-label="Aplicar filtros">
+                        <i data-lucide="filter" class="w-4 h-4"></i>
+                      </button>
                     </div>
                   </div>
                 </div>
 
                 <div class="reports-export-grid">
-                  <button id="reports-export-details-pdf-btn" class="reports-btn reports-btn-primary" type="button">Detalhes em PDF</button>
-                  <button id="reports-export-details-csv-btn" class="reports-btn reports-btn-secondary" type="button">Detalhes em CSV</button>
-                  <button id="reports-export-matrix-btn" class="reports-btn reports-btn-secondary" type="button">Matriz release x m?dulo</button>
-                  <button id="reports-export-json-btn" class="reports-btn reports-btn-secondary" type="button">Exportar JSON</button>
-                  <button id="reports-export-ranking-btn" class="reports-btn reports-btn-secondary" type="button">Ranking de m?dulos</button>
-                  <button id="reports-export-top5-btn" class="reports-btn reports-btn-secondary" type="button">Top 5 releases</button>
+                  <button id="reports-export-details-pdf-btn" class="reports-btn reports-btn-primary reports-btn-short" type="button" title="Exportar detalhes em PDF">
+                    <i data-lucide="file-output" class="w-4 h-4"></i>
+                    <span>PDF</span>
+                  </button>
+                  <button id="reports-export-details-csv-btn" class="reports-btn reports-btn-secondary reports-btn-short" type="button" title="Exportar detalhes em CSV">
+                    <i data-lucide="sheet" class="w-4 h-4"></i>
+                    <span>CSV</span>
+                  </button>
+                  <button id="reports-export-matrix-btn" class="reports-btn reports-btn-secondary reports-btn-short" type="button" title="Exportar matriz por release e módulo">
+                    <i data-lucide="table-properties" class="w-4 h-4"></i>
+                    <span>Matriz</span>
+                  </button>
+                  <button id="reports-export-json-btn" class="reports-btn reports-btn-secondary reports-btn-short" type="button" title="Exportar JSON">
+                    <i data-lucide="braces" class="w-4 h-4"></i>
+                    <span>JSON</span>
+                  </button>
+                  <button id="reports-export-ranking-btn" class="reports-btn reports-btn-secondary reports-btn-short" type="button" title="Exportar ranking de módulos">
+                    <i data-lucide="list-ordered" class="w-4 h-4"></i>
+                    <span>Ranking</span>
+                  </button>
+                  <button id="reports-export-top5-btn" class="reports-btn reports-btn-secondary reports-btn-short" type="button" title="Exportar Top 5 releases">
+                    <i data-lucide="medal" class="w-4 h-4"></i>
+                    <span>Top 5</span>
+                  </button>
                 </div>
               </article>
 
@@ -1167,7 +1189,7 @@
                 <div class="reports-card-header">
                   <div>
                     <h3 class="reports-card-title">Resumo executivo</h3>
-                    <p class="reports-card-subtitle">Leitura r?pida para liderança, conferência de recorte e tomada de decisão.</p>
+                    <p class="reports-card-subtitle">Leitura rápida para liderança, conferência de recorte e tomada de decisão.</p>
                   </div>
                 </div>
                 <div id="reports-summary-grid" class="reports-summary-grid"></div>
@@ -1198,9 +1220,9 @@
                         <th>Ticket</th>
                         <th>PRT</th>
                         <th>Tipo</th>
-                        <th>M?dulo</th>
+                        <th>Módulo</th>
                         <th>Release</th>
-                        <th>Descri??o</th>
+                        <th>Descrição</th>
                       </tr>
                     </thead>
                     <tbody id="reports-preview-body"></tbody>
@@ -1214,12 +1236,12 @@
                 <div class="reports-card-header">
                   <div>
                     <h3 class="reports-card-title">Ranking e cobertura</h3>
-                    <p class="reports-card-subtitle">Distribui??o por m?dulo e releases mais densos no recorte atual.</p>
+                    <p class="reports-card-subtitle">Distribuição por módulo e releases mais densos no recorte atual.</p>
                   </div>
                 </div>
                 <div class="reports-side-grid reports-side-grid-wide">
                   <div>
-                    <h4 class="reports-mini-title">M?dulos com mais incidência</h4>
+                    <h4 class="reports-mini-title">Módulos com mais incidência</h4>
                     <div id="reports-module-ranking" class="reports-ranking-list"></div>
                   </div>
                   <div>
@@ -1240,7 +1262,7 @@
               <div class="kpi-hero-copy">
                 <p class="kpi-eyebrow">SEFAZ</p>
                 <h2 class="kpi-title">Monitor operacional SEFAZ</h2>
-                <p class="kpi-subtitle">Disponibilidade, latência e leitura r?pida por UF.</p>
+                <p class="kpi-subtitle">Disponibilidade, latência e leitura rápida por UF.</p>
               </div>
               <div class="kpi-hero-metrics">
                 <span class="kpi-badge">Tempo real</span>
@@ -1273,7 +1295,7 @@
                       <div>
                         <p class="text-sm opacity-90">Status Geral</p>
                         <p id="overall-status-count" class="text-2xl font-bold">--/--</p>
-                        <p class="text-xs opacity-80">Servi?os Dispon?veis</p>
+                        <p class="text-xs opacity-80">Serviços disponíveis</p>
                       </div>
                       <div id="overall-status-icon">
                         <i data-lucide="help-circle" class="w-6 h-6 text-gray-300"></i>
@@ -1284,7 +1306,7 @@
                   <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
                     <div class="flex items-center justify-between">
                       <div>
-                        <p class="text-sm text-gray-400">�altima atualização</p>
+                        <p class="text-sm text-gray-400">Última atualização</p>
                         <p id="last-update-time" class="text-lg font-semibold text-white">--:--:--</p>
                         <p id="last-update-date" class="text-xs text-gray-400"></p>
                       </div>
@@ -1294,7 +1316,7 @@
                   <div class="bg-gray-700 border border-gray-600 rounded-lg p-4">
                     <div class="flex items-center justify-between">
                       <div>
-                        <p class="text-sm text-gray-400">Atualiza??o autom?tica</p>
+                        <p class="text-sm text-gray-400">Atualização automática</p>
                         <p class="text-lg font-semibold text-white">A cada 30s</p>
                       </div>
                     </div>
@@ -1386,7 +1408,7 @@
                         <th class="px-4 py-3 text-center text-sm font-semibold">Inutilização</th>
                         <th class="px-4 py-3 text-center text-sm font-semibold">Consulta Cad.</th>
                         <th class="px-4 py-3 text-center text-sm font-semibold">Recep. Evento</th>
-                        <th class="px-4 py-3 text-center text-sm font-semibold">Status Servi?o</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Status Serviço</th>
                         <th class="px-4 py-3 text-center text-sm font-semibold">NFC-e</th>
                         <th class="px-4 py-3 text-center text-sm font-semibold">Tempo Médio</th>
                       </tr>
@@ -1411,7 +1433,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div class="flex items-center gap-2">
                     <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
-                    <span class="text-sm text-gray-300">Serviço dispon?vel (online)</span>
+                    <span class="text-sm text-gray-300">Serviço disponível (online)</span>
                   </div>
                   <div class="flex items-center gap-2">
                     <i data-lucide="alert-circle" class="w-5 h-5 text-yellow-500"></i>
@@ -1419,7 +1441,7 @@
                   </div>
                   <div class="flex items-center gap-2">
                     <i data-lucide="x-circle" class="w-5 h-5 text-red-500"></i>
-                    <span class="text-sm text-gray-300">Serviço indispon?vel (offline)</span>
+                    <span class="text-sm text-gray-300">Serviço indisponível (offline)</span>
                   </div>
                 </div>
 
@@ -1471,9 +1493,9 @@
               <section class="ia-main">
                 <header class="ia-main-header">
                   <div>
-                    <p class="ia-eyebrow">Transcri??o</p>
+                    <p class="ia-eyebrow">Transcrição</p>
                     <h2 id="ia-active-title" class="ia-main-title">Selecione ou crie um ticket</h2>
-                    <p id="ia-active-date" class="ia-main-date">Opera??o pronta para atendimento.</p>
+                    <p id="ia-active-date" class="ia-main-date">Operação pronta para atendimento.</p>
                     <div class="ia-hero-pills">
                       <span class="ia-pill">Workspace</span>
                       <span class="ia-pill">Áudio local</span>
@@ -1489,8 +1511,8 @@
                         <strong>Imagem + áudio</strong>
                       </article>
                       <article class="ia-metric-card">
-                        <span class="ia-metric-label">Sa?da</span>
-                        <strong>Relat?rio pronto</strong>
+                        <span class="ia-metric-label">Saída</span>
+                        <strong>Relatório pronto</strong>
                       </article>
                     </div>
                   </div>
@@ -1502,7 +1524,7 @@
                     </button>
                     <button id="ia-upload-audio-btn" class="ia-btn-secondary" type="button" disabled>
                       <i data-lucide="headphones" class="w-4 h-4"></i>
-                      <span>Transcri??o</span>
+                      <span>Transcrição</span>
                     </button>
                     <button id="ia-copy-znuny-btn" class="ia-btn-secondary ia-btn-warm" type="button" disabled>
                       <i data-lucide="clipboard-plus" class="w-4 h-4"></i>
@@ -1518,7 +1540,7 @@
 
                 <div class="ia-privacy-note">
                   <i data-lucide="shield-check" class="w-4 h-4"></i>
-                  <span>Áudio e revis?o ficam neste navegador.</span>
+                  <span>Áudio e revisão ficam neste navegador.</span>
                 </div>
 
                 <div id="ia-empty-state" class="ia-empty-state">
@@ -1570,7 +1592,7 @@
                       <div>
                         <h3 class="ia-section-title">
                           <i data-lucide="file-text" class="w-4 h-4"></i>
-                          Relat?rio Gerado
+                          Relatório gerado
                         </h3>
                         <p class="ia-section-subtitle">Ajuste antes de transportar, se precisar.</p>
                       </div>
@@ -1617,7 +1639,7 @@
               <div>
                 <p class="assistant-eyebrow">CordIA</p>
                 <h2 class="assistant-title">Consulta operacional com contexto híbrido</h2>
-                <p class="assistant-subtitle">Pergunte por PRTs, releases, m?dulos e FAQ pública.</p>
+                <p class="assistant-subtitle">Pergunte por PRTs, releases, módulos e FAQ pública.</p>
                 <div class="assistant-hero-metrics">
                   <article class="assistant-metric-card">
                     <span class="assistant-metric-label">Base</span>
@@ -1645,8 +1667,8 @@
                 <h3 class="assistant-side-title">Atalhos</h3>
                 <div class="assistant-suggestions">
                   <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais releases recentes liberaram mais PRTs?">Releases com mais PRTs</button>
-                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Existe protocolo relacionado ao mï¿½dulo fiscal com certificado digital?">Protocolos por mï¿½dulo</button>
-                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais PRTs aparecem na release mais recente?">PRTs da ï¿½ltima release</button>
+                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Existe protocolo relacionado ao módulo fiscal com certificado digital?">Protocolos por módulo</button>
+                  <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais PRTs aparecem na release mais recente?">PRTs da última release</button>
                   <button class="assistant-suggestion" type="button" data-assistant-prompt="Explique rapidamente o que você encontrou sobre monitor rede.">Resumo operacional</button>
                   <button class="assistant-suggestion" type="button" data-assistant-prompt="Procure na FAQ pública do Znuny algo sobre certificado digital vencido.">Buscar na FAQ pública</button>
                 </div>
@@ -1656,7 +1678,7 @@
               <section class="assistant-card">
                 <div id="assistant-messages-legado" class="assistant-messages"></div>
                 <form id="assistant-form-legado" class="assistant-form">
-                  <textarea id="assistant-input-legado" class="assistant-input" rows="3" placeholder="Ex.: qual release contï¿½m o PRT 12345?"></textarea>
+                  <textarea id="assistant-input-legado" class="assistant-input" rows="3" placeholder="Ex.: qual release contém o PRT 12345?"></textarea>
                   <div class="assistant-actions">
                     <button id="assistant-clear-btn-legado" class="ia-btn-secondary" type="button">
                       <i data-lucide="eraser" class="w-4 h-4"></i>
@@ -1733,14 +1755,14 @@
 
       <div class="assistant-widget-suggestions">
         <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais releases recentes liberaram mais PRTs?">Releases com mais PRTs</button>
-        <button class="assistant-suggestion" type="button" data-assistant-prompt="Existe protocolo relacionado ao mï¿½dulo fiscal com certificado digital?">Protocolos por mï¿½dulo</button>
-        <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais PRTs aparecem na release mais recente?">PRTs da ï¿½ltima release</button>
+        <button class="assistant-suggestion" type="button" data-assistant-prompt="Existe protocolo relacionado ao módulo fiscal com certificado digital?">Protocolos por módulo</button>
+        <button class="assistant-suggestion" type="button" data-assistant-prompt="Quais PRTs aparecem na release mais recente?">PRTs da última release</button>
       </div>
 
       <div id="assistant-messages" class="assistant-messages assistant-messages-widget"></div>
 
       <form id="assistant-form" class="assistant-form assistant-form-widget">
-        <textarea id="assistant-input" class="assistant-input" rows="3" placeholder="Ex.: qual release contï¿½m o PRT 12345?"></textarea>
+        <textarea id="assistant-input" class="assistant-input" rows="3" placeholder="Ex.: qual release contém o PRT 12345?"></textarea>
         <div class="assistant-actions">
           <button id="assistant-audio-btn" class="assistant-audio-btn" type="button" title="Gravar áudio">
             <i data-lucide="mic" class="w-4 h-4"></i>
@@ -1761,7 +1783,7 @@
       <div class="flex items-center gap-4 mb-4 border-b border-gray-700 pb-3">
         <div id="modalIcon">
         </div>
-        <h3 class="text-xl font-bold text-white">Aten??o!</h3>
+        <h3 class="text-xl font-bold text-white">Atenção!</h3>
       </div>
       <p id="modalText" class="text-gray-300 mb-6 text-sm"></p>
       <div class="flex justify-end">
@@ -1794,7 +1816,7 @@
     </div>
   </div>
 
-  <!-- Loader para gera??o de PDF -->
+  <!-- Loader para geração de PDF -->
   <div id="pdfLoader" class="hidden fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4">
     <div class="bg-gray-800 p-4 rounded-lg flex items-center gap-3 border border-gray-700">
       <i data-lucide="loader-2" class="w-6 h-6 animate-spin text-blue-400"></i>
@@ -1802,7 +1824,7 @@
     </div>
   </div>
 
-  <!-- Container para toasts de notifica??o -->
+  <!-- Container para toasts de notificação -->
   <div id="toastContainer" class="fixed bottom-6 right-6 flex flex-col gap-2 z-60 pointer-events-none"></div>
 
   <script src="js/runtime-config.js"></script>
@@ -1873,12 +1895,12 @@ const __embeddedChatInitialized = {};
 
 const PAGE_CONTEXTS = {
   'home': 'Página de Registro - Cadastro operacional de protocolos',
-  'protocolar': 'Página Layout PRT - Templates de protocolo t?cnico',
-  'historico': 'Página Hist?rico - Base de registros de protocolos',
+  'protocolar': 'Página Layout PRT - Templates de protocolo técnico',
+  'historico': 'Página Histórico - Base de registros de protocolos',
   'historico-liberacoes': 'Página KPI - Painel de releases e métricas operacionais',
-  'relatorios': 'Página Relat?rios - Exporta??o e an?lise de dados',
+  'relatorios': 'Página Relatórios - Exportação e análise de dados',
   'sefaz': 'Página SEFAZ - Monitor de disponibilidade SEFAZ',
-  'ia': 'Página Transcrever - Transcri??o de áudio para tickets',
+  'ia': 'Página Transcrever - Transcrição de áudio para tickets',
   'metas': 'Página Metas - Acompanhamento de metas e desempenho',
 };
 
@@ -1948,7 +1970,7 @@ window.mostrarPagina = function (paginaId) {
     }
 
     // ===============================
-    // HISTÃ“RICO
+    // HISTÓRICO
     // ===============================
     if (paginaId === 'historico') {
       if (typeof window.carregarHistorico === 'function') {
@@ -2098,7 +2120,7 @@ window.mostrarPagina = function (paginaId) {
         catch(e){ return String(s).toLowerCase().replace(/\s+/g,' ').trim(); }
       };
 
-      // Try to populate Relat?rios release select on DOMContentLoaded as a safe fallback
+      // Try to populate Relatórios release select on DOMContentLoaded as a safe fallback
       document.addEventListener('DOMContentLoaded', async () => {
         const sel = document.getElementById('relatorio-release-select');
         if (!sel) return;
@@ -2125,7 +2147,7 @@ window.mostrarPagina = function (paginaId) {
             const opt = document.createElement('option'); opt.value = rel; opt.textContent = rel; sel.appendChild(opt);
           });
         } catch (e) {
-          window.showToast && window.showToast('Falha ao popular filtros de Relat?rios','warning');
+          window.showToast && window.showToast('Falha ao popular filtros de Relatórios','warning');
         }
       });
     })();
@@ -2137,7 +2159,7 @@ window.mostrarPagina = function (paginaId) {
       const tabelaCard = document.querySelector('#pagina-historico-liberacoes .bg-gray-900.p-6.rounded-xl.shadow-lg');
       if (!tabelaCard) return;
 
-      // Bot?es de exporta?o
+      // Botões de exportação
       const exportDiv = document.createElement('div');
       exportDiv.className = 'flex justify-end gap-2 mb-3';
       exportDiv.innerHTML = `
@@ -2150,12 +2172,12 @@ window.mostrarPagina = function (paginaId) {
     `;
       tabelaCard.insertBefore(exportDiv, tabelaCard.children[1]);
 
-      // Ranking de m?dulos
+      // Ranking de módulos
       if (!document.getElementById('ranking-modulos')) {
         const ranking = document.createElement('div');
         ranking.className = 'bg-gray-900 p-4 rounded-xl mt-4';
         ranking.innerHTML = `
-        <h3 class="text-sm font-bold mb-3 text-gray-300 uppercase">Ranking de M?dulos</h3>
+        <h3 class="text-sm font-bold mb-3 text-gray-300 uppercase">Ranking de Módulos</h3>
         <div id="ranking-modulos" class="space-y-2"></div>
       `;
 
@@ -2172,7 +2194,7 @@ window.mostrarPagina = function (paginaId) {
   </script>
 
   <script>
-    // Fun?es de exporta?o de PDF (append)
+    // Fun??es de exporta??o de PDF (append)
     // Loader utilities
     window.showLoader = function(message = 'Gerando PDF...') {
       const el = document.getElementById('pdfLoader');
@@ -2225,7 +2247,7 @@ window.mostrarPagina = function (paginaId) {
     };
     window.exportarProtocolosPDF = async function() {
       const canvas = document.getElementById('chartLiberacoes');
-      if (!canvas) return showToast('Gráfico "Protocolos por Release" n?o encontrado', 'warning');
+      if (!canvas) return showToast('Gráfico "Protocolos por Release" não encontrado', 'warning');
       showLoader('Gerando PDF: Protocolos por Release...');
       try {
         let useImage = false;
@@ -2249,13 +2271,13 @@ window.mostrarPagina = function (paginaId) {
           const imgProps = pdf.getImageProperties(imgData);
           const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
           pdf.setFontSize(14);
-          pdf.text('Relat?rio: Protocolos por Release', 40, 30);
+          pdf.text('Relatório: Protocolos por Release', 40, 30);
           pdf.addImage(imgData, 'PNG', 40, 50, pdfWidth - 80, pdfHeight);
         } else {
           // Fallback: text table of releases and counts
           const liberacoes = Array.isArray(window.liberacoesOriginais) ?window.liberacoesOriginais : [];
           pdf.setFontSize(12);
-          pdf.text('Relat?rio: Protocolos por Release (Texto)', 40, 30);
+          pdf.text('Relatório: Protocolos por Release (Texto)', 40, 30);
           pdf.setFontSize(10);
           const lineH = 14;
           let y = 60;
@@ -2284,7 +2306,7 @@ window.mostrarPagina = function (paginaId) {
 
     window.exportarTop5PDF = async function() {
       const canvas = document.getElementById('chartTop5');
-      if (!canvas) return showToast('Gráfico "Top 5 Releases" n?o encontrado', 'warning');
+      if (!canvas) return showToast('Gráfico "Top 5 Releases" não encontrado', 'warning');
       showLoader('Gerando PDF: Top 5 Releases...');
       try {
         let useImage = false;
@@ -2307,19 +2329,19 @@ window.mostrarPagina = function (paginaId) {
           const imgProps = pdf.getImageProperties(imgData);
           const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
           pdf.setFontSize(14);
-          pdf.text('Relat?rio: Top 5 Releases', 40, 30);
+          pdf.text('Relatório: Top 5 Releases', 40, 30);
           pdf.addImage(imgData, 'PNG', 40, 50, pdfWidth - 80, pdfHeight);
         } else {
           // Fallback: use chart data (labels + values)
           const chart = chartsInstance?.chartTop5;
           if (!chart) {
-            throw new Error('Dados do gráfico Top 5 n?o disponíveis para gerar PDF');
+            throw new Error('Dados do gráfico Top 5 não disponíveis para gerar PDF');
           }
           const labels = chart.data.labels || [];
           const data = chart.data.datasets?.[0]?.data || [];
 
           pdf.setFontSize(12);
-          pdf.text('Relat?rio: Top 5 Releases (Texto)', 40, 30);
+          pdf.text('Relatório: Top 5 Releases (Texto)', 40, 30);
           pdf.setFontSize(10);
           const lineH = 16;
           let y = 60;
@@ -2347,14 +2369,14 @@ window.mostrarPagina = function (paginaId) {
 
     window.exportarRankingPDF = async function() {
       const el = document.getElementById('ranking-modulos');
-      if (!el) return showToast('Ranking n?o encontrado', 'warning');
-      showLoader('Calculando p?ginas...');
+      if (!el) return showToast('Ranking não encontrado', 'warning');
+      showLoader('Calculando páginas...');
 
       const btn = document.querySelector('button[onclick="exportarRankingPDF()"]');
       if (btn) btn.disabled = true;
 
       try {
-        // Recria dados do ranking a partir dos dados filtrados (mesma l?gica de renderizarRankingModulos)
+        // Recria dados do ranking a partir dos dados filtrados (mesma lógica de renderizarRankingModulos)
         const liberacoes = (typeof obterLiberacoesFiltradasAtuais === 'function') ?obterLiberacoesFiltradasAtuais() : (window.liberacoesOriginais || []);
         const details = {};
         (liberacoes || []).forEach(rel => {
@@ -2391,7 +2413,7 @@ window.mostrarPagina = function (paginaId) {
         const fontSize = 10;
         const lineHeight = fontSize * 1.4;
 
-        // Colunas: Pos | M?dulo | PRTs | Releases
+        // Colunas: Pos | Módulo | PRTs | Releases
         const colPos = 30;
         const colPRTs = 50;
         const colReleases = 60;
@@ -2404,7 +2426,7 @@ window.mostrarPagina = function (paginaId) {
           return { ...r, moduloLines, height: h };
         });
 
-        // Calcula p?ginas (simula??o)
+        // Calcula páginas (simulação)
         const headerHeight = 30 + 18; // t?tulo + header
         const avail = pageH - marginTop - marginBottom - headerHeight;
         let pages = 1;
@@ -2413,13 +2435,13 @@ window.mostrarPagina = function (paginaId) {
           if (acc + r.height > avail) { pages++; acc = r.height; } else { acc += r.height; }
         });
 
-        // Renderiza por p?ginas
+        // Renderiza por páginas
         let currentPage = 1;
         let yStart = marginTop;
 
         function renderHeader(pageNum) {
           doc.setFontSize(12);
-          doc.text('Relat?rio: Ranking de M?dulos', marginLeft, yStart);
+          doc.text('Relatório: Ranking de Módulos', marginLeft, yStart);
           yStart += 18;
 
           doc.setFontSize(10);
@@ -2427,7 +2449,7 @@ window.mostrarPagina = function (paginaId) {
           let x = marginLeft;
           doc.text('Pos', x, headerY);
           x += colPos + gap;
-          doc.text('M?dulo', x, headerY);
+          doc.text('Módulo', x, headerY);
           x += colModulo + gap;
           doc.text('PRTs', x, headerY);
           x += colPRTs + gap;
@@ -2438,7 +2460,7 @@ window.mostrarPagina = function (paginaId) {
           doc.setLineWidth(0.5);
           doc.line(marginLeft, yStart - 8, pageW - marginRight, yStart - 8);
 
-          showLoader(`Gerando PDF: P?gina ${pageNum} / ${pages}`);
+          showLoader(`Gerando PDF: Página ${pageNum} / ${pages}`);
         }
 
         // Start first page
@@ -2449,7 +2471,7 @@ window.mostrarPagina = function (paginaId) {
           const r = processed[i];
           if (y + r.height > pageH - marginBottom) {
             doc.setFontSize(9);
-            doc.text(`P?gina ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
+            doc.text(`Página ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
             doc.addPage();
             currentPage++;
             y = marginTop;
@@ -2474,11 +2496,11 @@ window.mostrarPagina = function (paginaId) {
 
         // Footer
         doc.setFontSize(9);
-        doc.text(`P?gina ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
+        doc.text(`Página ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
 
         const filename = `ranking_modulos_${new Date().toISOString().slice(0,10)}.pdf`;
         doc.save(filename);
-        showToast(`PDF gerado com sucesso! (${pages} p?gina${pages>1?'s':''})`, 'success');
+        showToast(`PDF gerado com sucesso! (${pages} página${pages>1?'s':''})`, 'success');
       } catch (err) {
         console.error('Erro ao gerar PDF do ranking:', err);
         showToast('Erro ao gerar o PDF. Veja o console para detalhes.', 'error');
@@ -2488,13 +2510,13 @@ window.mostrarPagina = function (paginaId) {
       }
     }
 
-    // Popula selects da página Relat?rios com releases atuais (busca quando necessário)
+    // Popula selects da página Relatórios com releases atuais (busca quando necessário)
     window.populateRelatoriosFilters = async function() {
       const selRelease = document.getElementById('relatorio-release-select');
       if (!selRelease) return;
       selRelease.innerHTML = '<option value="todas">Todas</option>';
 
-      // Se n?o temos dados locais, tenta buscar pela API (sem re-render completo)
+      // Se não temos dados locais, tenta buscar pela API (sem re-render completo)
       if (!Array.isArray(window.liberacoesOriginais) || window.liberacoesOriginais.length === 0) {
         try {
           showLoader('Carregando releases...');
@@ -2528,7 +2550,7 @@ window.mostrarPagina = function (paginaId) {
       });
     };
 
-    // Auto-popula releases ao iniciar (n?o bloqueante)
+    // Auto-popula releases ao iniciar (não bloqueante)
     (async () => {
       try {
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
@@ -2568,21 +2590,21 @@ window.mostrarPagina = function (paginaId) {
       }
     }
 
-    // Exporta detalhes (Ticket, PRT, Descri??o, Tipo, Release) como CSV
+    // Exporta detalhes (Ticket, PRT, Descrição, Tipo, Release) como CSV
     window.exportarDetalhesCSV = async function() {
       const tipo = document.getElementById('relatorio-tipo-select')?.value || 'todos';
       const releaseSel = document.getElementById('relatorio-release-select')?.value || 'todas';
 
-      // Garante que temos protocolos carregados (para ticket/descri?o)
+      // Garante que temos protocolos carregados (para ticket/descrição)
       if (typeof carregarProtocolos === 'function') await carregarProtocolos();
 
       const rows = [];
       (window.liberacoesOriginais || []).forEach(rel => {
         if (releaseSel !== 'todas' && rel.release !== releaseSel) return;
         rel.protocolos.forEach(prt => {
-          // usa a fun?o p?blica para obter protocolo (vai ao cache interno)
+          // usa a fun??o p?blica para obter protocolo (vai ao cache interno)
           const pObj = (typeof obterProtocolo === 'function') ?(obterProtocolo(prt) || {}) : (window.protocolosCache?.[prt] || {});
-          const tipoLabel = (typeof getTipoLabel === 'function') ?getTipoLabel(pObj.tipo || '') : (pObj.tipo === '0' ?'Erro' : 'Sugestï¿½o');
+          const tipoLabel = (typeof getTipoLabel === 'function') ?getTipoLabel(pObj.tipo || '') : (pObj.tipo === '0' ?'Erro' : 'Sugestão');
 
           const normTipo = window.normalizeLabel(tipoLabel);
           if (tipo === 'erro' && normTipo !== 'erro') return;
@@ -2597,7 +2619,7 @@ window.mostrarPagina = function (paginaId) {
         return;
       }
 
-      let csv = 'Ticket;PRT;Descri??o;Tipo;Release\n';
+      let csv = 'Ticket;PRT;Descrição;Tipo;Release\n';
       rows.forEach(r => csv += `${r.map(c => '"'+String(c).replace(/"/g, '""')+'"').join(';')}\n`);
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
@@ -2620,7 +2642,7 @@ window.mostrarPagina = function (paginaId) {
         if (releaseSel !== 'todas' && rel.release !== releaseSel) return;
         rel.protocolos.forEach(prt => {
           const pObj = (typeof obterProtocolo === 'function') ?(obterProtocolo(prt) || {}) : (window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {});
-          const tipoLabel = (typeof getTipoLabel === 'function') ?getTipoLabel(pObj.tipo || '') : (pObj.tipo === '0' ?'Erro' : 'Sugestï¿½o');
+          const tipoLabel = (typeof getTipoLabel === 'function') ?getTipoLabel(pObj.tipo || '') : (pObj.tipo === '0' ?'Erro' : 'Sugestão');
 
           const normTipo = window.normalizeLabel(tipoLabel);
           if (tipo === 'erro' && normTipo !== 'erro') return;
@@ -2636,7 +2658,7 @@ window.mostrarPagina = function (paginaId) {
       }
 
       // Prepara PDF
-      showLoader('Calculando p?ginas...');
+      showLoader('Calculando páginas...');
       const btn = document.getElementById('btn-export-det');
       if (btn) btn.disabled = true;
 
@@ -2655,7 +2677,7 @@ window.mostrarPagina = function (paginaId) {
         const fontSize = 10;
         const lineHeight = fontSize * 1.4; // ~14
 
-        // Columns: Ticket | PRT | Descri??o | Tipo | Release
+        // Columns: Ticket | PRT | Descrição | Tipo | Release
         const colTicket = 60;
         const colPRT = 70;
         const colTipo = 60;
@@ -2670,7 +2692,7 @@ window.mostrarPagina = function (paginaId) {
           return { ...r, descLines, height: h };
         });
 
-        // Calcula total de p?ginas (simula??o)
+        // Calcula total de páginas (simulação)
         const headerHeight = 30 + 18; // t?tulo + header
         const avail = pageH - marginTop - marginBottom - headerHeight;
         let pages = 1;
@@ -2679,13 +2701,13 @@ window.mostrarPagina = function (paginaId) {
           if (acc + r.height > avail) { pages++; acc = r.height; } else { acc += r.height; }
         });
 
-        // Renderiza por p?ginas, atualiza loader com p?gina atual
+        // Renderiza por páginas, atualiza loader com página atual
         let currentPage = 1;
         let yStart = marginTop;
 
         function renderHeader(pageNum) {
           doc.setFontSize(12);
-          const title = `Relatï¿½rio de Detalhes - ${tipo === 'todos' ?'Todos' : (tipo === 'erro' ?'Erros' : 'Sugestï¿½es')} ${releaseSel !== 'todas' ?' - ' + releaseSel : ''}`;
+          const title = `Relatório de Detalhes - ${tipo === 'todos' ?'Todos' : (tipo === 'erro' ?'Erros' : 'Sugestões')} ${releaseSel !== 'todas' ?' - ' + releaseSel : ''}`;
           doc.text(title, marginLeft, yStart);
           yStart += 18;
 
@@ -2697,7 +2719,7 @@ window.mostrarPagina = function (paginaId) {
           x += colTicket + gap;
           doc.text('PRT', x, headerY);
           x += colPRT + gap;
-          doc.text('Descri??o', x, headerY);
+          doc.text('Descrição', x, headerY);
           x += descWidth + gap;
           doc.text('Tipo', x, headerY);
           x += colTipo + gap;
@@ -2708,7 +2730,7 @@ window.mostrarPagina = function (paginaId) {
           doc.setLineWidth(0.5);
           doc.line(marginLeft, yStart - 8, pageW - marginRight, yStart - 8);
 
-          showLoader(`Gerando PDF: P?gina ${pageNum} / ${pages}`);
+          showLoader(`Gerando PDF: Página ${pageNum} / ${pages}`);
         }
 
         // Start first page
@@ -2720,7 +2742,7 @@ window.mostrarPagina = function (paginaId) {
           if (y + r.height > pageH - marginBottom) {
             // footer page number
             doc.setFontSize(9);
-            doc.text(`P?gina ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
+            doc.text(`Página ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
             doc.addPage();
             currentPage++;
             y = marginTop;
@@ -2736,7 +2758,7 @@ window.mostrarPagina = function (paginaId) {
           x += colTicket + gap;
           doc.text(String(r.prt), x, y + lineHeight * 0.8);
           x += colPRT + gap;
-          // Descri??o (pode ter múltiplas linhas)
+          // Descrição (pode ter múltiplas linhas)
           doc.text(r.descLines, x, y + lineHeight * 0.8);
           // Tipo e Release (alinha no topo)
           const tipoX = marginLeft + colTicket + gap + colPRT + gap + descWidth + gap;
@@ -2749,11 +2771,11 @@ window.mostrarPagina = function (paginaId) {
 
         // final footer
         doc.setFontSize(9);
-        doc.text(`P?gina ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
+        doc.text(`Página ${currentPage} / ${pages}`, pageW - marginRight - 60, pageH - 20);
 
         const filename = `relatorio_detalhes_${new Date().toISOString().slice(0,10)}.pdf`;
         doc.save(filename);
-        showToast(`PDF gerado com sucesso! (${pages} p?gina${pages>1?'s':''})`, 'success');
+        showToast(`PDF gerado com sucesso! (${pages} página${pages>1?'s':''})`, 'success');
       } catch (err) {
         console.error('Erro ao gerar PDF de detalhes:', err);
         showToast('Erro ao gerar o PDF. Veja o console para detalhes.', 'error');
@@ -2781,7 +2803,7 @@ window.mostrarPagina = function (paginaId) {
       function makeWrapper(name) {
         if (typeof window[name] === 'function') return;
         const wrapperFn = function(...args) {
-          window.showToast && window.showToast(name + ' ainda n?o dispon?vel','warning');
+          window.showToast && window.showToast(name + ' ainda não disponível','warning');
           // Try to (re)load supporting data, then retry
           try {
             if (typeof carregarProtocolos === 'function') carregarProtocolos().catch(()=>{});
@@ -2794,8 +2816,8 @@ window.mostrarPagina = function (paginaId) {
               current(...args);
             } else {
               // Fallback UX
-              if (typeof showToast === 'function') showToast('Exporta??o n?o dispon?vel no momento. Recarregue a p?gina e tente novamente.', 'warning');
-              else console.warn('Exporta??o indispon?vel e showToast n?o definido.');
+              if (typeof showToast === 'function') showToast('Exportação não disponível no momento. Recarregue a página e tente novamente.', 'warning');
+              else console.warn('Exportação indisponível e showToast não definido.');
             }
           }, 800);
         };
@@ -2853,14 +2875,14 @@ window.mostrarPagina = function (paginaId) {
       };
 
       window.exportarRankingPDF = async function(){
-        window.showLoader && window.showLoader('Gerando PDF: Ranking de M?dulos...');
+        window.showLoader && window.showLoader('Gerando PDF: Ranking de Módulos...');
         try {
           if (typeof carregarProtocolos === 'function') await carregarProtocolos();
           const liberacoes = await ensureReleases(); const counts={};
           (liberacoes||[]).forEach(rel=>{ (rel.protocolos||[]).forEach(prt=>{ const mod = window.protocolosIndex?.[prt]?.modulo || window.protocolosCache?.[prt]?.modulo || 'Desconhecido'; counts[mod]=(counts[mod]||0)+1; }); });
           const rows = Object.entries(counts).sort((a,b)=>b[1]-a[1]); if (!rows.length){ window.showToast && window.showToast('Nenhum dado para exportar','warning'); return; }
           const { jsPDF } = window.jspdf; const doc = new jsPDF({unit:'pt',format:'a4'});
-          doc.setFontSize(12); doc.text('Ranking de M?dulos',40,40); doc.setFontSize(10);
+          doc.setFontSize(12); doc.text('Ranking de Módulos',40,40); doc.setFontSize(10);
           let y=70; const lineH=16, pageH=doc.internal.pageSize.getHeight(); rows.forEach((r,i)=>{ if (y>pageH-40){ doc.addPage(); y=40; } doc.text(`${i+1}. ${r[0]}`,40,y); doc.text(String(r[1]), doc.internal.pageSize.getWidth()-80, y); y+=lineH; });
           doc.save(`ranking_modulos_${new Date().toISOString().slice(0,10)}.pdf`);
           window.showToast && window.showToast('PDF gerado com sucesso!','success');
@@ -2886,7 +2908,7 @@ window.mostrarPagina = function (paginaId) {
               }
 
               const tipoRaw = (p && p.tipo !== undefined) ?p.tipo : (window.protocolosIndex?.[prt]?.tipo ?'');
-              const tipoLabel = (typeof getTipoLabel==='function')?getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugestï¿½o');
+              const tipoLabel = (typeof getTipoLabel==='function')?getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugestão');
               const normTipo = normalizeLabel(tipoLabel);
               if (tipo==='erro' && normTipo!=='erro') continue;
               if (tipo==='sugestao' && normTipo!=='sugestao') continue;
@@ -2900,7 +2922,7 @@ window.mostrarPagina = function (paginaId) {
 
           if (!rows.length){ window.showToast && window.showToast('Nenhum registro encontrado para os filtros selecionados','warning'); return; }
           // Add UTF-8 BOM so Excel opens it correctly
-          let csv = '\uFEFF' + 'Ticket;PRT;Descri??o;Tipo;Release\n';
+          let csv = '\uFEFF' + 'Ticket;PRT;Descrição;Tipo;Release\n';
           rows.forEach(r=> csv += r.map(c=> '"'+String(c).replace(/"/g,'""')+'"').join(';')+'\n');
           const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
           const link=document.createElement('a'); link.href = URL.createObjectURL(blob); link.setAttribute('download', `relatorio_detalhes_${new Date().toISOString().slice(0,10)}.csv`); link.click();
@@ -2927,7 +2949,7 @@ window.mostrarPagina = function (paginaId) {
               }
 
               const tipoRaw = (p && p.tipo !== undefined) ?p.tipo : (window.protocolosIndex?.[prt]?.tipo ?'');
-              const tipoLabel = (typeof getTipoLabel==='function')?getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugestï¿½o');
+              const tipoLabel = (typeof getTipoLabel==='function')?getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugestão');
               const normTipo = normalizeLabel(tipoLabel);
               if (tipo==='erro' && normTipo!=='erro') continue;
               if (tipo==='sugestao' && normTipo!=='sugestao') continue;
@@ -2961,7 +2983,7 @@ window.mostrarPagina = function (paginaId) {
             doc.setFont('helvetica','bold');
             doc.text('Ticket', xTicket, y);
             doc.text('PRT', xPRT, y);
-            doc.text('Descri??o', xDesc, y);
+            doc.text('Descrição', xDesc, y);
             doc.text('Tipo', xTipo, y);
             doc.text('Release', xRelease, y);
             y += lineH;
@@ -2970,12 +2992,12 @@ window.mostrarPagina = function (paginaId) {
             doc.setFont('helvetica','normal');
           };
 
-          drawHeader('Relat?rio de Detalhes');
+          drawHeader('Relatório de Detalhes');
 
           items.forEach(it=>{
             const descLines = doc.splitTextToSize(String(it.descricao||''), descWidth);
             const blockH = Math.max(lineH, (descLines.length||1) * lineH);
-            if (y + blockH > pageH - 40){ doc.addPage(); y = 60; drawHeader('Relat?rio de Detalhes (cont.)'); }
+            if (y + blockH > pageH - 40){ doc.addPage(); y = 60; drawHeader('Relatório de Detalhes (cont.)'); }
 
             doc.text(String(it.ticket), xTicket, y);
             doc.text(String(it.prt), xPRT, y);
@@ -3605,7 +3627,7 @@ window.mostrarPagina = function (paginaId) {
   window.startMotionLayer = carregarMotionERodar;
 
   // ==========================================
-  // INICIALIZA�!ÒO DO PAINEL DE METAS
+  // INICIALIZAÇÃO DO PAINEL DE METAS
   // ==========================================
   let __metasStarted = false;
   window.initMetasPage = function () {
@@ -3615,7 +3637,7 @@ window.mostrarPagina = function (paginaId) {
     if (typeof window.initMetaFlowUltra === 'function') {
       window.initMetaFlowUltra('#metas-app');
     } else {
-      console.warn('initMetaFlowUltra n?o encontrado');
+      console.warn('initMetaFlowUltra não encontrado');
     }
   };
 
@@ -3635,4 +3657,3 @@ window.mostrarPagina = function (paginaId) {
 </body>
 
 </html>
-

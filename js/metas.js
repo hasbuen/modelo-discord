@@ -909,8 +909,8 @@
           <div class="mfu-compactbar-left">
             <button class="mfu-tab ${state.currentView === "dashboard" ?"active" : ""}" data-action="view" data-view="dashboard">Dashboard</button>
             <button class="mfu-tab ${state.currentView === "kanban" ?"active" : ""}" data-action="view" data-view="kanban">Kanban</button>
-            <button class="mfu-tab ${state.currentView === "stats" ?"active" : ""}" data-action="view" data-view="stats">Estat?sticas</button>
-            <button class="mfu-tab ${state.currentView === "settings" ?"active" : ""}" data-action="view" data-view="settings">Configura??es</button>
+            <button class="mfu-tab ${state.currentView === "stats" ?"active" : ""}" data-action="view" data-view="stats">Estatísticas</button>
+            <button class="mfu-tab ${state.currentView === "settings" ?"active" : ""}" data-action="view" data-view="settings">Configurações</button>
           </div>
 
           <select class="mfu-theme-select" data-action="theme-select">
@@ -1127,13 +1127,13 @@
                             <div class="mfu-task-actions">
                               ${
                                 id !== "todo"
-                                  ?`<button class="mfu-btn" data-action="move-task" data-task-id="${task.id}" data-status="${id === "done" ?"inprogress" : "todo"}">�</button>`
+                                  ?`<button class="mfu-btn" data-action="move-task" data-task-id="${task.id}" data-status="${id === "done" ?"inprogress" : "todo"}">${id === "done" ? "Voltar" : "Retornar"}</button>`
                                   : ""
                               }
 
                               ${
                                 id !== "done"
-                                  ?`<button class="mfu-btn" data-action="move-task" data-task-id="${task.id}" data-status="${id === "todo" ?"inprogress" : "done"}">�</button>`
+                                  ?`<button class="mfu-btn" data-action="move-task" data-task-id="${task.id}" data-status="${id === "todo" ?"inprogress" : "done"}">${id === "todo" ? "Iniciar" : "Concluir"}</button>`
                                   : ""
                               }
 
@@ -1287,7 +1287,7 @@
                                 <span>📊 Hoje: <strong style="color:var(--text);">${todayValue}</strong></span>
                                 <span>📈 Total: <strong style="color:var(--text);">${totalValue}</strong></span>
                                 <span>📉 Média/dia: <strong style="color:var(--text);">${avgDaily}</strong></span>
-                                ${goal.endDate ?`<span>=� Fim: <strong style="color:var(--text);">${goal.endDate}</strong></span>` : ''}
+                                ${goal.endDate ?`<span>Fim: <strong style="color:var(--text);">${goal.endDate}</strong></span>` : ''}
                               </div>
                             </div>
                             <div style="display:flex;gap:10px;flex-wrap:wrap;">
@@ -1316,7 +1316,7 @@
             <h3 style="margin-top:0;">Tarefa concluída</h3>
             <p style="color:var(--muted);margin-bottom:18px;">
               Deseja adicionar +1 de progresso à meta
-              <strong style="color:var(--text);">${escapeHtml(state.pendingKanbanAction.goalName)}</strong>?
+              <strong style="color:var(--text);">${escapeHtml(state.pendingKanbanAction.goalName)}</strong>
             </p>
             <div style="display:flex;gap:12px;">
               <button class="mfu-btn mfu-btn-ghost" style="flex:1;" data-action="modal-ignore">Ignorar</button>

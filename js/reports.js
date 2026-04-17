@@ -61,7 +61,7 @@
       protocoloMap[item.prt] = {
         ...item,
         moduloNome: moduloMap[String(item.modulo)] || item.modulo || "Desconhecido",
-        tipoNome: String(item.tipo) === "0" ?"Erro" : "Sugest?o",
+        tipoNome: String(item.tipo) === "0" ?"Erro" : "Sugestão",
       };
     });
 
@@ -197,7 +197,7 @@
     const note = byId("reports-kpi-total-note");
     if (note) {
       note.textContent = rows.length
-        ?`?ltima carga: ${state.loadedAt?.toLocaleString("pt-BR") || "agora"}`
+        ?`Última carga: ${state.loadedAt?.toLocaleString("pt-BR") || "agora"}`
         : "Nenhum registro no recorte atual.";
     }
 
@@ -212,10 +212,10 @@
   function buildExecutiveNarrative(rows, topModule, topRelease) {
     const errors = rows.filter((row) => row.tipoRaw === "0").length;
     const suggestions = rows.length - errors;
-    const emphasis = errors >= suggestions ?"predom?nio de erros" : "predom?nio de sugest�es";
+    const emphasis = errors >= suggestions ?"predomínio de erros" : "predomínio de sugestões";
     return [
       `${rows.length} registros no recorte atual, com ${emphasis}.`,
-      topModule ?`M?dulo com maior press?o: ${topModule.label}.` : "Sem m?dulo dominante.",
+      topModule ?`Módulo com maior pressão: ${topModule.label}.` : "Sem módulo dominante.",
       topRelease ?`Release mais concentrado: ${topRelease.label}.` : "Sem release dominante.",
     ].join(" ");
   }
@@ -245,7 +245,7 @@
     target.innerHTML = `
       <article class="reports-summary-card">
         <h4>Maior concentração por módulo</h4>
-        <p>${escapeHtml(topModule?.label || "Sem dados")}\n${topModule?.count || 0} ocorr?ncias no recorte.</p>
+        <p>${escapeHtml(topModule?.label || "Sem dados")}\n${topModule?.count || 0} ocorrências no recorte.</p>
       </article>
       <article class="reports-summary-card">
         <h4>Release mais impactado</h4>
@@ -253,7 +253,7 @@
       </article>
       <article class="reports-summary-card">
         <h4>Descrição mais extensa</h4>
-        <p>${escapeHtml(longDesc?.prt || "--")} " ${escapeHtml(longDesc?.modulo || "Sem m?dulo")}\n${escapeHtml((longDesc?.descricao || "").slice(0, 180) || "Sem descri��o.")}</p>
+        <p>${escapeHtml(longDesc?.prt || "--")} " ${escapeHtml(longDesc?.modulo || "Sem módulo")}\n${escapeHtml((longDesc?.descricao || "").slice(0, 180) || "Sem descrição.")}</p>
       </article>
       <article class="reports-summary-card">
         <h4>Leitura gerencial</h4>
@@ -310,7 +310,7 @@
       <div class="reports-ranking-item">
         <div class="reports-ranking-copy">
           <strong>${index + 1}. ${escapeHtml(item.label)}</strong>
-          <span>${item.count} ${item.count === 1 ?singular : "ocorr?ncias"}</span>
+          <span>${item.count} ${item.count === 1 ?singular : "ocorrências"}</span>
         </div>
         <span class="reports-ranking-count">${item.count}</span>
       </div>
@@ -394,7 +394,7 @@
   async function exportExecutivePdf() {
     const rows = state.filteredRows;
     if (!rows.length) {
-      window.showToast?.("N?o h� dados para exportar no recorte atual.", "warning");
+      window.showToast?.("Não há dados para exportar no recorte atual.", "warning");
       return;
     }
 
@@ -480,7 +480,7 @@
   async function exportDetailsPdf() {
     const rows = state.filteredRows;
     if (!rows.length) {
-      window.showToast?.("N?o h� dados para exportar no recorte atual.", "warning");
+      window.showToast?.("Não há dados para exportar no recorte atual.", "warning");
       return;
     }
 
@@ -593,7 +593,7 @@
 
     byId("reports-export-details-csv-btn")?.addEventListener("click", () => {
       if (!state.filteredRows.length) {
-        window.showToast?.("N?o h� dados para exportar no recorte atual.", "warning");
+        window.showToast?.("Não há dados para exportar no recorte atual.", "warning");
         return;
       }
       exportRowsAsCsv(state.filteredRows, `relatorio_detalhado_${new Date().toISOString().slice(0, 10)}.csv`);
@@ -609,7 +609,7 @@
 
     byId("reports-export-matrix-btn")?.addEventListener("click", () => {
       if (!state.filteredRows.length) {
-        window.showToast?.("N?o h� dados para exportar no recorte atual.", "warning");
+        window.showToast?.("Não há dados para exportar no recorte atual.", "warning");
         return;
       }
       exportMatrixCsv(state.filteredRows);
@@ -647,14 +647,14 @@
 
   async function refreshReports() {
     try {
-      window.showLoader?.("Atualizando base de relat�rios...");
+      window.showLoader?.("Atualizando base de relatórios...");
       await loadRows();
       renderFilters();
       applyFilters();
-      window.showToast?.("Base de relat�rios atualizada.", "success");
+      window.showToast?.("Base de relatórios atualizada.", "success");
     } catch (error) {
       console.error(error);
-      window.showToast?.("Falha ao atualizar a base de relat�rios.", "error");
+      window.showToast?.("Falha ao atualizar a base de relatórios.", "error");
     } finally {
       window.hideLoader?.();
       if (window.lucide?.createIcons) window.lucide.createIcons();
