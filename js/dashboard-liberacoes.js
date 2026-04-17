@@ -315,7 +315,7 @@ function renderizarGraficoEvolucao(liberacoes) {
 /**
  * Renderiza todo o dashboard
  */
-function renderizarDashboard(liberacoes) {
+async function renderizarDashboard(liberacoes) {
 
   if (!liberacoes || liberacoes.length === 0) {
     return;
@@ -325,6 +325,10 @@ function renderizarDashboard(liberacoes) {
   renderizarTabelaLiberacoes(liberacoes);
 
   // Aguarda um tempo para garantir que Chart.js está disponível
+  if (typeof window.ensureChartJs === 'function') {
+    await window.ensureChartJs();
+  }
+
   setTimeout(() => {
     try {
       if (typeof Chart !== 'undefined') {
@@ -339,8 +343,8 @@ function renderizarDashboard(liberacoes) {
       }
 
       // Re-renderiza ícones Lucide
-      if (window.lucide && typeof lucide.createIcons === 'function') {
-        lucide.createIcons();
+      if (typeof window.requestLucideIcons === 'function') {
+        window.requestLucideIcons();
       }
 
       // Inicializa sistema de protocolos (cliques e modal)

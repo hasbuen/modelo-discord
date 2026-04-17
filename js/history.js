@@ -16,7 +16,7 @@ function loadChatHistory() {
   history.forEach(msg => addMessage(msg.sender, msg.text, msg.type));
 }
 
-function gerarDashboardLiberacoes() {
+async function gerarDashboardLiberacoes() {
   const linhas = document.querySelectorAll("#tabelaLiberados tr");
 
   const releases = [];
@@ -37,6 +37,12 @@ function gerarDashboardLiberacoes() {
   });
 
   if (releases.length === 0) return;
+
+  if (typeof window.ensureChartJs === "function") {
+    await window.ensureChartJs();
+  }
+
+  if (typeof Chart === "undefined") return;
 
   const media = (totalProtocolos / releases.length).toFixed(1);
 
