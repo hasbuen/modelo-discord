@@ -1036,6 +1036,10 @@
     if (!page) return;
 
     try {
+      if (typeof window.ensureChartJs === "function") {
+        await window.ensureChartJs();
+      }
+
       const [protocolIndex, releases] = await Promise.all([ensureProtocols(), ensureReleases()]);
       const dataset = buildDataset(protocolIndex, releases);
       const metrics = buildMetrics(protocolIndex, releases, dataset);

@@ -374,7 +374,10 @@
     );
   }
 
-  function ensurePdf() {
+  async function ensurePdf() {
+    if (!window.jspdf?.jsPDF && typeof window.ensureJsPdf === "function") {
+      await window.ensureJsPdf();
+    }
     if (!window.jspdf?.jsPDF) {
       throw new Error("jsPDF não disponível");
     }
@@ -388,14 +391,14 @@
     doc.text(`Página ${pageNumber}`, pageWidth - 82, pageHeight - 18);
   }
 
-  function exportExecutivePdf() {
+  async function exportExecutivePdf() {
     const rows = state.filteredRows;
     if (!rows.length) {
       window.showToast?.("N?o h� dados para exportar no recorte atual.", "warning");
       return;
     }
 
-    const jsPDF = ensurePdf();
+    const jsPDF = await ensurePdf();
     const doc = new jsPDF({ unit: "pt", format: "a4" });
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
@@ -474,14 +477,14 @@
     doc.save(`relatorio_executivo_${new Date().toISOString().slice(0, 10)}.pdf`);
   }
 
-  function exportDetailsPdf() {
+  async function exportDetailsPdf() {
     const rows = state.filteredRows;
     if (!rows.length) {
       window.showToast?.("N?o h� dados para exportar no recorte atual.", "warning");
       return;
     }
 
-    const jsPDF = ensurePdf();
+    const jsPDF = await ensurePdf();
     const doc = new jsPDF({ unit: "pt", format: "a4", orientation: "landscape" });
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
@@ -663,7 +666,7 @@
     exportRowsAsCsv(state.filteredRows, `relatorio_detalhado_${new Date().toISOString().slice(0, 10)}.csv`);
   window.exportarDetalhesPDF = exportDetailsPdf;
   window.exportarProtocolosPDF = exportExecutivePdf;
-  window.exportarTop5PDF = () => {
+  window.exportarTop5PDF = async () => {
     const topRows = aggregate(state.filteredRows, "release").slice(0, 5).map((item) => ({
       ticket: "--",
       prt: "--",
@@ -674,11 +677,11 @@
     }));
     const previous = state.filteredRows;
     state.filteredRows = topRows;
-    exportDetailsPdf();
+    await exportDetailsPdf();
     state.filteredRows = previous;
     renderWorkspace();
   };
-  window.exportarRankingPDF = () => {
+  window.exportarRankingPDF = async () => {
     const rankingRows = aggregate(state.filteredRows, "modulo").map((item) => ({
       ticket: "--",
       prt: "--",
@@ -689,7 +692,7 @@
     }));
     const previous = state.filteredRows;
     state.filteredRows = rankingRows;
-    exportDetailsPdf();
+    await exportDetailsPdf();
     state.filteredRows = previous;
     renderWorkspace();
   };
