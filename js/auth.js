@@ -225,6 +225,12 @@ async function validarSenha() {
       // Esconde a tela de login e mostra o app
       const authContainer = document.getElementById('auth-container');
       if (authContainer) authContainer.classList.add('hidden');
+      [
+        document.getElementById('desktop-header'),
+        document.getElementById('sidebar'),
+        document.getElementById('mobile-sidebar'),
+        document.getElementById('main-content')
+      ].filter(Boolean).forEach((el) => el.classList.remove('hidden'));
       
       // Limpa o input
       senhaInput.value = '';
@@ -271,7 +277,7 @@ function initAuth() {
 
   // Mostra tela de login
   if (authContainer) authContainer.classList.remove('hidden');
-  appContainers.forEach((el) => el.classList.remove('hidden'));
+  appContainers.forEach((el) => el.classList.add('hidden'));
   broadcastAuthState(false);
 
   // Adiciona listener de SUBMIT ao formulário

@@ -191,38 +191,6 @@
 
       document.addEventListener('DOMContentLoaded', () => {
         window.normalizeDynamicDomEncoding();
-        const observer = new MutationObserver((mutations) => {
-          mutations.forEach((mutation) => {
-            if (mutation.type === 'attributes' && mutation.target?.nodeType === Node.ELEMENT_NODE) {
-              if (nodeLooksSuspicious(mutation.target)) {
-                normalizeElementAttributes(mutation.target);
-              }
-              return;
-            }
-            if (mutation.type === 'characterData' && mutation.target?.nodeValue) {
-              if (suspiciousPattern.test(mutation.target.nodeValue)) {
-                mutation.target.nodeValue = normalizeUiText(mutation.target.nodeValue);
-              }
-              return;
-            }
-            mutation.addedNodes.forEach((node) => {
-              if (node.nodeType === Node.TEXT_NODE && node.nodeValue && suspiciousPattern.test(node.nodeValue)) {
-                node.nodeValue = normalizeUiText(node.nodeValue);
-              }
-              if (node.nodeType === Node.ELEMENT_NODE && nodeLooksSuspicious(node)) {
-                normalizeDomEncoding(node);
-              }
-            });
-          });
-        });
-
-        observer.observe(document.body, {
-          childList: true,
-          subtree: true,
-          characterData: true,
-          attributes: true,
-          attributeFilter: ['title', 'placeholder', 'aria-label', 'data-tooltip'],
-        });
       });
     })();
   </script>
@@ -2032,9 +2000,7 @@ window.mostrarPagina = function (paginaId) {
     }
 
     // Recria ícones
-    if (window.lucide && typeof window.lucide.createIcons === 'function') {
-      window.lucide.createIcons();
-    }
+    window.requestLucideIcons?.();
     if (typeof window.normalizeDynamicDomEncoding === 'function') {
       window.normalizeDynamicDomEncoding();
     }
@@ -2081,7 +2047,7 @@ window.mostrarPagina = function (paginaId) {
         localStorage.setItem('theme', next);
       }
       applyTheme(next);
-      if (window.lucide?.createIcons) window.lucide.createIcons();
+      window.requestLucideIcons?.();
     };
 
     window.__nextThemeOption = function () {
@@ -2107,9 +2073,9 @@ window.mostrarPagina = function (paginaId) {
       const temaSalvo = localStorage.getItem('theme') || 'system';
       alternarTema(temaSalvo);
 
-      // P?gina inicial
-      mostrarPagina('historico-liberacoes');
-      lucide.createIcons();
+      const autenticado = typeof window.hasActiveAuthSession === 'function' && window.hasActiveAuthSession();
+      mostrarPagina(autenticado ? 'historico-liberacoes' : 'home');
+      window.requestLucideIcons?.();
     });
   </script>
 
@@ -3606,23 +3572,13 @@ window.mostrarPagina = function (paginaId) {
     observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
   }
 
-  function observarDom() {
-    var observer = new MutationObserver(function () {
-      aplicarCamadaVisual();
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-  }
+  function observarDom() {}
 
   function iniciarCamada() {
     aplicarCamadaVisual();
     animarPaginaVisivel();
     observarPaginas();
     observarTema();
-    observarDom();
   }
 
   function carregarMotionERodar() {
