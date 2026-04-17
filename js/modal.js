@@ -10,7 +10,7 @@ export function exibirModal(mensagem, prt = "", tipo = "info") {
   };
 
   modalIcon.innerHTML = icons[tipo] || icons.info;
-  modalText.textContent = mensagem + (prt?.trim() ? `\n ${prt}` : "");
+  modalText.textContent = mensagem + (prt?.trim() ?`\n ${prt}` : "");
   modalText.style.whiteSpace = "pre-wrap";
   modal.classList.remove("hidden");
   lucide.createIcons();

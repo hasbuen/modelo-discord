@@ -40,6 +40,9 @@ test('assistant usa hold-to-talk no microfone em vez de clique toggle', () => {
   assert.match(assistantSource, /els\.audioBtn\?\.addEventListener\("pointerdown", handleAudioPressStart\)/);
   assert.match(assistantSource, /els\.audioBtn\?\.addEventListener\("pointerup", handleAudioPressEnd\)/);
   assert.match(assistantSource, /els\.audioBtn\?\.addEventListener\("pointercancel", handleAudioPressCancel\)/);
+  assert.match(assistantSource, /window\.addEventListener\("pointerup", handleGlobalAudioPointerEnd, true\)/);
+  assert.match(assistantSource, /state\.audioPressActive = true/);
+  assert.match(assistantSource, /if \(!state\.audioPressActive\) \{/);
   assert.match(assistantSource, /function handleAudioPressStart\(event\)/);
   assert.match(assistantSource, /function handleAudioPressEnd\(event\)/);
 });

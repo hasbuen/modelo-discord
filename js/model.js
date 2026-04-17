@@ -45,14 +45,14 @@ async function fetchAndIndexProtocols() {
     const res = await fetch(`${API_SERVER}/api/protocolos`);
     const data = await res.json();
 
-    protocolos = Array.isArray(data) ? data : (data?.data || []);
+    protocolos = Array.isArray(data) ?data : (data?.data || []);
     if (!protocolos.length) {
       statusEl.textContent = "⚠️ Nenhum protocolo encontrado.";
       return;
     }
 
     const docs = protocolos.map(p =>
-      protocoloFieldsToIndex.map(f => (p?.[f] || "")).filter(Boolean).join(" · ")
+      protocoloFieldsToIndex.map(f => (p?.[f] || "")).filter(Boolean).join(" � ")
     );
 
     const batchSize = 25;

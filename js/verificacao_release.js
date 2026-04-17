@@ -30,7 +30,7 @@ async function processarRTF(event) {
     const texto = e.target.result;
 
     const matchRelease = texto.match(/release[^0-9]*(\d{2}\/\d{2}\/\d{4})/i);
-    const releaseAtual = matchRelease ? matchRelease[1] : null;
+    const releaseAtual = matchRelease ?matchRelease[1] : null;
 
     const encontrados = [...new Set([...texto.matchAll(/Protocolo:\s*(\d+)/g)].map(m => m[1]))];
     
@@ -133,9 +133,9 @@ function renderizarLiberacoes(registros, releaseAtual) {
   const tbody = tabela.querySelector("tbody");
   registros.forEach(reg => {
     const isSugestao = reg.tipo === '1';
-    const tipoClass = isSugestao ? 'text-green-400' : 'text-red-400';
-    const tipoIcon = isSugestao ? 'Lightbulb' : 'shield-alert';
-    const tipoLabel = isSugestao ? 'Sugestão' : 'Erro';
+    const tipoClass = isSugestao ?'text-green-400' : 'text-red-400';
+    const tipoIcon = isSugestao ?'Lightbulb' : 'shield-alert';
+    const tipoLabel = isSugestao ?'Sugest?o' : 'Erro';
 
     const tr = document.createElement("tr");
     tr.className = "hover:bg-gray-800 transition duration-150";
@@ -153,7 +153,7 @@ function renderizarLiberacoes(registros, releaseAtual) {
           title="${(reg.descricao || '').replace(/"/g, '&quot;')}"
           onclick="mostrarDescricaoModal('#PRT${reg.protocolo}', '${(reg.descricao || '').replace(/'/g, "\\'")}')"
       >
-          ${reg.descricao ? reg.descricao.substring(0, 50) + '...' : 'Descrição indisponível'}
+          ${reg.descricao ?reg.descricao.substring(0, 50) + '...' : 'Descri��o indispon?vel'}
       </td>
     `;
     tbody.appendChild(tr);
@@ -250,9 +250,9 @@ async function carregarHistoricoLiberacoes() {
         } else {
           const isSugestao = registro.tipo === "1";
           const cor = isSugestao 
-            ? "bg-green-700 text-green-100"
+            ?"bg-green-700 text-green-100"
             : "bg-red-700 text-red-100";
-          const label = isSugestao ? "Sugestão" : "Erro";
+          const label = isSugestao ?"Sugest?o" : "Erro";
 
           const classes = cor.split(' ');
           badgeSpan.classList.add(...classes);

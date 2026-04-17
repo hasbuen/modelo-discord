@@ -6,7 +6,7 @@ function cosineSimilarity(a, b) {
     na += a[i] * a[i];
     nb += b[i] * b[i];
   }
-  return (na && nb) ? dot / (Math.sqrt(na) * Math.sqrt(nb)) : 0;
+  return (na && nb) ?dot / (Math.sqrt(na) * Math.sqrt(nb)) : 0;
 }
 
 function formatProtocols(matchedProtocols) {
@@ -15,8 +15,8 @@ function formatProtocols(matchedProtocols) {
   let html = "<b>🌐 Protocolos relacionados:</b><br><br><ul>";
   matchedProtocols.forEach(p => {
     const descricao = p.descricao || "(sem descrição)";
-    const prt = p.prt ? `(${p.prt})` : "";
-    const link = p.link ? `<a href="${p.link}" target="_blank">🔗 Acessar</a>` : "";
+    const prt = p.prt ?`(${p.prt})` : "";
+    const link = p.link ?`<a href="${p.link}" target="_blank">= Acessar</a>` : "";
     html += `<li><b>${descricao} ${prt}</b><br><small>${p.contexto || ""}</small><br>${link}</li>`;
   });
   html += "</ul>";

@@ -114,7 +114,7 @@ function renderTableView(mockData) {
     if (!tableBody) return;
 
     tableBody.innerHTML = mockData.map((service, index) => {
-        const rowClass = index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-900';
+        const rowClass = index % 2 === 0 ?'bg-gray-800' : 'bg-gray-900';
         return `
             <tr class="${rowClass} hover:bg-gray-700 transition-colors">
                 <td class="px-4 py-3 text-sm font-bold text-blue-400 sticky left-0 ${rowClass}">${service.uf}</td>
@@ -412,7 +412,7 @@ window.fetchStatus = async function () {
             recepcaoEvento: generateStatus(),
             statusServico: generateStatus(),
             tempoMedio: Math.floor(Math.random() * 3000) + 500,
-            nfce: Math.random() > 0.1 ? 'online' : 'offline',
+            nfce: Math.random() > 0.1 ?'online' : 'offline',
         };
     });
 
@@ -536,7 +536,7 @@ window.fetchStatusFavorito = function () {
 
     const favoritoData = {
         uf: ufFavorita,
-        nome: estadoInfo ? estadoInfo.nome : 'UF Desconhecida',
+        nome: estadoInfo ?estadoInfo.nome : 'UF Desconhecida',
         autorizacao: generateQuickStatus(),
         retAutorizacao: generateQuickStatus(),
         tempoMedio: Math.floor(Math.random() * 500) + 50,

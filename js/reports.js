@@ -22,7 +22,7 @@
   };
 
   const escapeHtml = (value) =>
-    String(value ?? "")
+    String(value || "")
       .replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
@@ -61,7 +61,7 @@
       protocoloMap[item.prt] = {
         ...item,
         moduloNome: moduloMap[String(item.modulo)] || item.modulo || "Desconhecido",
-        tipoNome: String(item.tipo) === "0" ? "Erro" : "Sugestão",
+        tipoNome: String(item.tipo) === "0" ?"Erro" : "Sugest?o",
       };
     });
 
@@ -121,7 +121,7 @@
 
     let rows = state.rows.filter((row) => {
       if (filters.tipo !== "todos") {
-        const wanted = filters.tipo === "erro" ? "erro" : "sugestao";
+        const wanted = filters.tipo === "erro" ?"erro" : "sugestao";
         if (normalize(row.tipo) !== wanted) return false;
       }
 
@@ -172,7 +172,7 @@
       option.textContent = release;
       releaseSelect.appendChild(option);
     });
-    releaseSelect.value = releases.includes(currentRelease) ? currentRelease : "todas";
+    releaseSelect.value = releases.includes(currentRelease) ?currentRelease : "todas";
 
     moduloSelect.innerHTML = '<option value="todos">Todos</option>';
     modulos.forEach((modulo) => {
@@ -181,7 +181,7 @@
       option.textContent = modulo;
       moduloSelect.appendChild(option);
     });
-    moduloSelect.value = modulos.includes(currentModulo) ? currentModulo : "todos";
+    moduloSelect.value = modulos.includes(currentModulo) ?currentModulo : "todos";
   }
 
   function renderKpis(rows) {
@@ -197,14 +197,14 @@
     const note = byId("reports-kpi-total-note");
     if (note) {
       note.textContent = rows.length
-        ? `Última carga: ${state.loadedAt?.toLocaleString("pt-BR") || "agora"}`
+        ?`?ltima carga: ${state.loadedAt?.toLocaleString("pt-BR") || "agora"}`
         : "Nenhum registro no recorte atual.";
     }
 
     const badge = byId("reports-sync-badge");
     if (badge) {
       badge.textContent = state.loadedAt
-        ? `Base atualizada em ${state.loadedAt.toLocaleTimeString("pt-BR")}`
+        ?`Base atualizada em ${state.loadedAt.toLocaleTimeString("pt-BR")}`
         : "Aguardando carga";
     }
   }
@@ -212,11 +212,11 @@
   function buildExecutiveNarrative(rows, topModule, topRelease) {
     const errors = rows.filter((row) => row.tipoRaw === "0").length;
     const suggestions = rows.length - errors;
-    const emphasis = errors >= suggestions ? "predomínio de erros" : "predomínio de sugestões";
+    const emphasis = errors >= suggestions ?"predom?nio de erros" : "predom?nio de sugest�es";
     return [
       `${rows.length} registros no recorte atual, com ${emphasis}.`,
-      topModule ? `Módulo com maior pressão: ${topModule.label}.` : "Sem módulo dominante.",
-      topRelease ? `Release mais concentrado: ${topRelease.label}.` : "Sem release dominante.",
+      topModule ?`M?dulo com maior press?o: ${topModule.label}.` : "Sem m?dulo dominante.",
+      topRelease ?`Release mais concentrado: ${topRelease.label}.` : "Sem release dominante.",
     ].join(" ");
   }
 
@@ -239,13 +239,13 @@
     const topModule = byModule[0];
     const topRelease = byRelease[0];
     const longDesc = rows.reduce((acc, row) => {
-      return (row.descricao || "").length > (acc.descricao || "").length ? row : acc;
+      return (row.descricao || "").length > (acc.descricao || "").length ?row : acc;
     }, rows[0]);
 
     target.innerHTML = `
       <article class="reports-summary-card">
         <h4>Maior concentração por módulo</h4>
-        <p>${escapeHtml(topModule?.label || "Sem dados")}\n${topModule?.count || 0} ocorrências no recorte.</p>
+        <p>${escapeHtml(topModule?.label || "Sem dados")}\n${topModule?.count || 0} ocorr?ncias no recorte.</p>
       </article>
       <article class="reports-summary-card">
         <h4>Release mais impactado</h4>
@@ -253,7 +253,7 @@
       </article>
       <article class="reports-summary-card">
         <h4>Descrição mais extensa</h4>
-        <p>${escapeHtml(longDesc?.prt || "--")} • ${escapeHtml(longDesc?.modulo || "Sem módulo")}\n${escapeHtml((longDesc?.descricao || "").slice(0, 180) || "Sem descrição.")}</p>
+        <p>${escapeHtml(longDesc?.prt || "--")} " ${escapeHtml(longDesc?.modulo || "Sem m?dulo")}\n${escapeHtml((longDesc?.descricao || "").slice(0, 180) || "Sem descri��o.")}</p>
       </article>
       <article class="reports-summary-card">
         <h4>Leitura gerencial</h4>
@@ -267,7 +267,7 @@
     const count = byId("reports-preview-count");
     if (!body || !count) return;
 
-    count.textContent = `${rows.length} ${rows.length === 1 ? "linha" : "linhas"}`;
+    count.textContent = `${rows.length} ${rows.length === 1 ?"linha" : "linhas"}`;
 
     if (!rows.length) {
       body.innerHTML = `
@@ -283,7 +283,7 @@
         <td class="reports-cell-ticket">${escapeHtml(row.ticket || "--")}</td>
         <td class="reports-cell-prt">${escapeHtml(row.prt)}</td>
         <td class="reports-cell-tipo">
-          <span class="reports-pill ${row.tipoRaw === "0" ? "reports-pill-error" : "reports-pill-suggestion"}">
+          <span class="reports-pill ${row.tipoRaw === "0" ?"reports-pill-error" : "reports-pill-suggestion"}">
             ${escapeHtml(row.tipo)}
           </span>
         </td>
@@ -310,7 +310,7 @@
       <div class="reports-ranking-item">
         <div class="reports-ranking-copy">
           <strong>${index + 1}. ${escapeHtml(item.label)}</strong>
-          <span>${item.count} ${item.count === 1 ? singular : "ocorrências"}</span>
+          <span>${item.count} ${item.count === 1 ?singular : "ocorr?ncias"}</span>
         </div>
         <span class="reports-ranking-count">${item.count}</span>
       </div>
@@ -340,7 +340,7 @@
       "\uFEFF" + header.join(";"),
       ...rows.map((row) =>
         [row.ticket, row.prt, row.tipo, row.modulo, row.release, row.descricao]
-          .map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`)
+      .map((value) => `"${String(value || "").replace(/"/g, '""')}"`)
           .join(";")
       ),
     ].join("\n");
@@ -391,7 +391,7 @@
   function exportExecutivePdf() {
     const rows = state.filteredRows;
     if (!rows.length) {
-      window.showToast?.("Não há dados para exportar no recorte atual.", "warning");
+      window.showToast?.("N?o h� dados para exportar no recorte atual.", "warning");
       return;
     }
 
@@ -477,7 +477,7 @@
   function exportDetailsPdf() {
     const rows = state.filteredRows;
     if (!rows.length) {
-      window.showToast?.("Não há dados para exportar no recorte atual.", "warning");
+      window.showToast?.("N?o h� dados para exportar no recorte atual.", "warning");
       return;
     }
 
@@ -590,7 +590,7 @@
 
     byId("reports-export-details-csv-btn")?.addEventListener("click", () => {
       if (!state.filteredRows.length) {
-        window.showToast?.("Não há dados para exportar no recorte atual.", "warning");
+        window.showToast?.("N?o h� dados para exportar no recorte atual.", "warning");
         return;
       }
       exportRowsAsCsv(state.filteredRows, `relatorio_detalhado_${new Date().toISOString().slice(0, 10)}.csv`);
@@ -606,7 +606,7 @@
 
     byId("reports-export-matrix-btn")?.addEventListener("click", () => {
       if (!state.filteredRows.length) {
-        window.showToast?.("Não há dados para exportar no recorte atual.", "warning");
+        window.showToast?.("N?o h� dados para exportar no recorte atual.", "warning");
         return;
       }
       exportMatrixCsv(state.filteredRows);
@@ -644,14 +644,14 @@
 
   async function refreshReports() {
     try {
-      window.showLoader?.("Atualizando base de relatórios...");
+      window.showLoader?.("Atualizando base de relat�rios...");
       await loadRows();
       renderFilters();
       applyFilters();
-      window.showToast?.("Base de relatórios atualizada.", "success");
+      window.showToast?.("Base de relat�rios atualizada.", "success");
     } catch (error) {
       console.error(error);
-      window.showToast?.("Falha ao atualizar a base de relatórios.", "error");
+      window.showToast?.("Falha ao atualizar a base de relat�rios.", "error");
     } finally {
       window.hideLoader?.();
       if (window.lucide?.createIcons) window.lucide.createIcons();

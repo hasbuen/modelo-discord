@@ -35,6 +35,7 @@
     dragging: null,
     suppressToggleClick: false,
     recordingPointerId: null,
+    audioPressActive: false,
     resizing: false,
   };
 
@@ -136,6 +137,8 @@
     els.audioBtn?.addEventListener("lostpointercapture", handleAudioPressCancel);
     els.audioBtn?.addEventListener("keydown", handleAudioKeyDown);
     els.audioBtn?.addEventListener("keyup", handleAudioKeyUp);
+    window.addEventListener("pointerup", handleGlobalAudioPointerEnd, true);
+    window.addEventListener("pointercancel", handleGlobalAudioPointerCancel, true);
 
     els.suggestions.forEach((button) => {
       button.addEventListener("click", async () => {
@@ -155,7 +158,7 @@
   function restoreState() {
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-      state.messages = Array.isArray(parsed.messages) ? parsed.messages.slice(-20) : [];
+      state.messages = Array.isArray(parsed.messages) ?parsed.messages.slice(-20) : [];
     } catch (_error) {
       state.messages = [];
     }
@@ -173,10 +176,10 @@
   function restoreLayoutState() {
     try {
       const parsed = JSON.parse(localStorage.getItem(LAYOUT_STORAGE_KEY) || "{}");
-      state.panelWidth = Number.isFinite(parsed.panelWidth) ? parsed.panelWidth : null;
-      state.panelHeight = Number.isFinite(parsed.panelHeight) ? parsed.panelHeight : null;
-      state.widgetX = Number.isFinite(parsed.widgetX) ? parsed.widgetX : null;
-      state.widgetY = Number.isFinite(parsed.widgetY) ? parsed.widgetY : null;
+      state.panelWidth = Number.isFinite(parsed.panelWidth) ?parsed.panelWidth : null;
+      state.panelHeight = Number.isFinite(parsed.panelHeight) ?parsed.panelHeight : null;
+      state.widgetX = Number.isFinite(parsed.widgetX) ?parsed.widgetX : null;
+      state.widgetY = Number.isFinite(parsed.widgetY) ?parsed.widgetY : null;
     } catch (_error) {
       state.panelWidth = null;
       state.panelHeight = null;
@@ -297,7 +300,7 @@
     if (els.sendBtn) {
       els.sendBtn.disabled = sending;
       const label = els.sendBtn.querySelector("span");
-      if (label) label.textContent = sending ? "Consultando..." : "Perguntar";
+      if (label) label.textContent = sending ?"Consultando..." : "Perguntar";
     }
 
     if (els.input) {
@@ -317,7 +320,7 @@
       return;
     }
 
-    state.open = typeof forceState === "boolean" ? forceState : !state.open;
+    state.open = typeof forceState === "boolean" ?forceState : !state.open;
 
     applyPanelVisibility(state.open);
 
@@ -349,7 +352,7 @@
     els.panel.classList.toggle("hidden", !isOpen);
     els.panel.hidden = !isOpen;
     els.panel.setAttribute("aria-hidden", String(!isOpen));
-    els.panel.style.display = isOpen ? "grid" : "none";
+    els.panel.style.display = isOpen ?"grid" : "none";
     applyPanelLayout();
     requestAnimationFrame(applyWidgetPosition);
   }
@@ -486,7 +489,7 @@
   function startWidgetDrag(event) {
     if (!els.widget || !state.authenticated || event.button !== 0) return;
 
-    const target = event.target instanceof Element ? event.target : null;
+    const target = event.target instanceof Element ?event.target : null;
     if (
       event.currentTarget === els.header &&
       target?.closest("button, input, textarea, a, [role='button']")
@@ -548,7 +551,7 @@
   function renderMessageContent(message) {
     const content = String(message?.content || "");
     const normalizedContent = isZnunyAuthFailureMessage(content)
-      ? content.replace("/znuny/index.pl", "/portal/index.html")
+      ?content.replace("/znuny/index.pl", "/portal/index.html")
       : content;
     const formattedContent = escapeHtml(normalizedContent).replace(/\n/g, "<br>");
 
@@ -582,12 +585,16 @@
     }
 
     event.preventDefault();
+    state.audioPressActive = true;
     state.recordingPointerId = event.pointerId;
     els.audioBtn?.setPointerCapture?.(event.pointerId);
+    updateAudioUi();
     await startRecording();
   }
 
   function handleAudioPressEnd(event) {
+    state.audioPressActive = false;
+    updateAudioUi();
     if (!state.recording) return;
     if (state.recordingPointerId !== null && event.pointerId !== state.recordingPointerId) return;
 
@@ -597,6 +604,8 @@
   }
 
   function handleAudioPressCancel(event) {
+    state.audioPressActive = false;
+    updateAudioUi();
     if (state.recordingPointerId !== null && event?.pointerId !== undefined && event.pointerId !== state.recordingPointerId) {
       return;
     }
@@ -622,6 +631,16 @@
     handleAudioPressEnd({ pointerId: -1, preventDefault() {} });
   }
 
+  function handleGlobalAudioPointerEnd(event) {
+    if (!state.audioPressActive || state.recordingPointerId === null) return;
+    handleAudioPressEnd(event);
+  }
+
+  function handleGlobalAudioPointerCancel(event) {
+    if (!state.audioPressActive || state.recordingPointerId === null) return;
+    handleAudioPressCancel(event);
+  }
+
   function releaseAudioPointer(pointerId) {
     if (pointerId !== undefined && pointerId !== null) {
       try {
@@ -642,7 +661,7 @@
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mimeType = pickSupportedMimeType();
       const recorder = mimeType
-        ? new MediaRecorder(stream, { mimeType })
+        ?new MediaRecorder(stream, { mimeType })
         : new MediaRecorder(stream);
 
       state.recording = true;
@@ -683,6 +702,10 @@
       updateRecordingTimer();
       updateAudioUi();
       updateStatusBadge();
+      if (!state.audioPressActive) {
+        releaseAudioPointer(state.recordingPointerId);
+        stopRecording();
+      }
       notify("Gravação iniciada.", "info");
     } catch (_error) {
       notify("Não foi possível iniciar a gravação.", "error");
@@ -708,7 +731,7 @@
         throw new Error("API base nao configurada.");
       }
 
-      const extension = audioBlob.type.includes("ogg") ? "ogg" : "webm";
+      const extension = audioBlob.type.includes("ogg") ?"ogg" : "webm";
       const file = new File([audioBlob], `cordia-audio-${Date.now()}.${extension}`, {
         type: audioBlob.type || "audio/webm",
       });
@@ -836,20 +859,21 @@
   function updateAudioUi() {
     if (els.audioBtn) {
       els.audioBtn.classList.toggle("recording", state.recording);
+      els.audioBtn.setAttribute("data-pressing", state.audioPressActive ?"true" : "false");
       els.audioBtn.disabled = state.sending || state.transcribing;
       els.audioBtn.title = state.recording
-        ? "Parar gravação"
+        ?"Parar grava??o"
         : state.transcribing
-          ? "Transcrevendo áudio"
+          ?"Transcrevendo ?udio"
           : "Gravar áudio";
       els.audioBtn.setAttribute("aria-label", els.audioBtn.title);
     }
 
     if (els.audioLabel) {
       els.audioLabel.textContent = state.recording
-        ? "Parar"
+        ?"Parar"
         : state.transcribing
-          ? "Transcrevendo..."
+          ?"Transcrevendo..."
           : "Áudio";
     }
 
@@ -922,7 +946,7 @@
 
   document.addEventListener("click", (event) => {
     const trigger = event.target instanceof Element
-      ? event.target.closest("[data-assistant-open-znuny-portal='true']")
+      ?event.target.closest("[data-assistant-open-znuny-portal='true']")
       : null;
     if (!trigger) return;
 

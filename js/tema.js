@@ -7,7 +7,7 @@ export function alternarTema(tema) {
     localStorage.removeItem('theme');
     html.removeAttribute('data-theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const botaoPreferido = document.getElementById(prefersDark ? 'tema-escuro' : 'tema-claro');
+    const botaoPreferido = document.getElementById(prefersDark ?'tema-escuro' : 'tema-claro');
     if (botaoPreferido) botaoPreferido.classList.add('active');
   } else {
     localStorage.setItem('theme', tema);

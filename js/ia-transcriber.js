@@ -2598,7 +2598,7 @@
       if (!active) return;
 
       const payload = {
-        contato: active.customName ? `${active.customName} (${active.phone})` : `(${active.phone})`,
+        contato: active.customName ?`${active.customName} (${active.phone})` : `(${active.phone})`,
         relatorio: buildHtml(active),
         assunto: active.resumo || "Solicitacao de Suporte",
       };
@@ -2798,7 +2798,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
       state.tickets = Array.isArray(parsed.tickets)
-        ? parsed.tickets.map((ticket) => ({
+        ?parsed.tickets.map((ticket) => ({
             ...ticket,
             audioUrl: "",
             blobUrl: "",
@@ -2886,9 +2886,9 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     els.ticketList.innerHTML = filtered
       .map((ticket) => {
         const title = escapeHtml(ticket.customName || ticket.phone || "Sem nome");
-        const activeClass = ticket.id === state.activeId ? "active" : "";
+        const activeClass = ticket.id === state.activeId ?"active" : "";
         const statusIcon = ticket.isRegistered
-          ? '<i data-lucide="check-circle-2" class="w-4 h-4 text-green-400"></i>'
+          ?'<i data-lucide="check-circle-2" class="w-4 h-4 text-green-400"></i>'
           : '<i data-lucide="ticket" class="w-4 h-4 text-sky-400"></i>';
 
         return `
@@ -2913,7 +2913,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
           </div>
           ${
             state.editingTicketId === ticket.id
-              ? `
+              ?`
             <div style="margin-top:12px">
               <input class="ia-ticket-input" data-ticket-edit-input="${ticket.id}" value="${escapeAttribute(
                   ticket.customName || ticket.phone || ""
@@ -3056,13 +3056,13 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     const workspace = els.page?.querySelector(".ia-workspace");
 
     workspace?.classList.toggle("is-uploading", state.uploading);
-    els.page?.setAttribute("aria-busy", state.uploading ? "true" : "false");
+    els.page?.setAttribute("aria-busy", state.uploading ?"true" : "false");
     els.processingOverlay?.classList.toggle("hidden", !state.uploading);
-    els.processingOverlay?.setAttribute("aria-hidden", state.uploading ? "false" : "true");
+    els.processingOverlay?.setAttribute("aria-hidden", state.uploading ?"false" : "true");
 
     if (els.processingMessage) {
       els.processingMessage.textContent = state.uploading
-        ? "Aguarde enquanto o audio e processado, a analise e consolidada e o relatorio final e montado."
+        ?"Aguarde enquanto o audio e processado, a analise e consolidada e o relatorio final e montado."
         : "Aguarde enquanto o audio, o resumo e o relatorio sao preparados.";
     }
 
@@ -3084,8 +3084,8 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     els.content.classList.remove("hidden");
     els.activeTitle.textContent = active.customName || active.phone || "Ticket";
     els.activeDate.textContent = active.createdAt || "";
-    els.toggleRegisteredBtn.querySelector("span").textContent = active.isRegistered ? "Registrado" : "Marcar Registro";
-    els.uploadAudioBtn.querySelector("span").textContent = state.uploading ? "Processando..." : "Transcrição";
+    els.toggleRegisteredBtn.querySelector("span").textContent = active.isRegistered ?"Registrado" : "Marcar Registro";
+    els.uploadAudioBtn.querySelector("span").textContent = state.uploading ?"Processando..." : "Transcri??o";
 
     renderImageViewer(active);
     renderReport(active);
@@ -3093,7 +3093,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
   }
 
   function renderImageViewer(active) {
-    const images = Array.isArray(active?.images) ? active.images : [];
+    const images = Array.isArray(active?.images) ?active.images : [];
     if (!images.length) {
       els.imageEmpty.classList.remove("hidden");
       els.imageStage.classList.add("hidden");
@@ -3230,7 +3230,7 @@ function handleImageEditorTextWheel(event) {
 
   event.preventDefault();
 
-  const delta = event.deltaY < 0 ? 2 : -2;
+  const delta = event.deltaY < 0 ?2 : -2;
   state.imageEditorFontSize = Math.max(12, Math.min(120, (state.imageEditorFontSize || 28) + delta));
   els.imageEditorFloatingText.style.fontSize = `${state.imageEditorFontSize}px`;
 }
@@ -3265,7 +3265,7 @@ function handleImageEditorTextWheel(event) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-    const shapes = previewShape ? [...state.imageEditorHistory, previewShape] : state.imageEditorHistory;
+    const shapes = previewShape ?[...state.imageEditorHistory, previewShape] : state.imageEditorHistory;
     shapes.forEach((shape) => drawImageEditorShape(ctx, shape));
   }
 
@@ -3428,7 +3428,7 @@ function endImageEditorDraw() {
 
 
   function renderReport(active) {
-    const text = state.editingReport ? state.reportDraft : buildSingleReportText(active);
+    const text = state.editingReport ?state.reportDraft : buildSingleReportText(active);
 
     if (state.editingReport) {
       els.reportView.classList.add("hidden");
@@ -3574,7 +3574,7 @@ function renderAudio(active) {
     const data = await parseJsonSafe(response);
 
     if (!response.ok || !data?.sucesso) {
-      throw createHttpError(data?.erro || `Falha ao transcrever o áudio. Status ${response.status}`, response.status);
+      throw createHttpError(data?.erro || `Falha ao transcrever o ?udio. Status ${response.status}`, response.status);
     }
 
     return data;
@@ -3597,7 +3597,7 @@ function renderAudio(active) {
     const data = await parseJsonSafe(response);
 
     if (!response.ok || !data?.sucesso) {
-      throw createHttpError(data?.erro || `Falha ao transcrever o áudio armazenado. Status ${response.status}`, response.status);
+      throw createHttpError(data?.erro || `Falha ao transcrever o ?udio armazenado. Status ${response.status}`, response.status);
     }
 
     return data;
@@ -3647,8 +3647,8 @@ function renderAudio(active) {
     const solutionMatch = normalized.match(/ENCAMINHAMENTO\s*\/\s*SOLUCAO\s*:\s*([\s\S]*)/i);
 
     return {
-      analysis: problemMatch ? problemMatch[1].trim() : normalized.trim(),
-      solucao: solutionMatch ? solutionMatch[1].trim() : "",
+      analysis: problemMatch ?problemMatch[1].trim() : normalized.trim(),
+      solucao: solutionMatch ?solutionMatch[1].trim() : "",
     };
   }
 
@@ -3928,7 +3928,7 @@ els.audioPlayer.load();
 
   function buildHtml(ticket) {
     const phone = ticket.phone || "telefone";
-    const contact = ticket.customName ? `${ticket.customName} (${phone})` : `(${phone})`;
+    const contact = ticket.customName ?`${ticket.customName} (${phone})` : `(${phone})`;
 
     return [
       '<span style="color:#f39c12"><strong>PROBLEMA / DUVIDA:</strong></span><br />',
@@ -4061,7 +4061,7 @@ els.audioPlayer.load();
     if (!motion) return;
 
     const { animate } = motion;
-    const stage = els.imageStage?.classList.contains("hidden") ? els.imageEmpty : els.imageStage;
+    const stage = els.imageStage?.classList.contains("hidden") ?els.imageEmpty : els.imageStage;
 
     if (!stage) return;
 
@@ -4084,7 +4084,7 @@ els.audioPlayer.load();
       els.audioCard,
       {
         boxShadow: isPlaying
-          ? [
+          ?[
               "0 12px 36px rgba(18,189,223,.08)",
               "0 18px 42px rgba(18,189,223,.18)",
               "0 12px 36px rgba(18,189,223,.10)"
@@ -4101,9 +4101,9 @@ els.audioPlayer.load();
       animate(
         icon,
         isPlaying
-          ? { scale: [1, 1.06, 1], rotate: [0, -2, 2, 0] }
+          ?{ scale: [1, 1.06, 1], rotate: [0, -2, 2, 0] }
           : { scale: [1.02, 1], rotate: [0, 0] },
-        { duration: isPlaying ? 1.2 : 0.3, easing: "ease-in-out" }
+        { duration: isPlaying ?1.2 : 0.3, easing: "ease-in-out" }
       );
     }
 
@@ -4134,7 +4134,7 @@ function syncAudioUi() {
 
   const currentTime = Number(els.audioPlayer.currentTime || 0);
   const duration = Number(els.audioPlayer.duration || 0);
-  const progress = duration ? (currentTime / duration) * 100 : 0;
+  const progress = duration ?(currentTime / duration) * 100 : 0;
   const muted = els.audioPlayer.muted || els.audioPlayer.volume === 0;
 
   if (els.audioCurrentTime) {
@@ -4154,7 +4154,7 @@ function syncAudioUi() {
   }
 
   if (els.audioMuteBtn) {
-    els.audioMuteBtn.textContent = muted ? "🔇" : "🔊";
+    els.audioMuteBtn.textContent = muted ? "Sem som" : "Com som";
   }
 
   if (els.audioPlayIconPlay && els.audioPlayIconPause) {
@@ -4172,7 +4172,7 @@ function formatAudioTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+  return `${mins}:${secs < 10 ?"0" : ""}${secs}`;
 }
 
   document.addEventListener("DOMContentLoaded", init);

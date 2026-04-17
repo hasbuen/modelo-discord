@@ -72,7 +72,7 @@ function processarArquivoRTF(event) {
 function atualizarCards(liberacoes) {
   const totalReleases = liberacoes.length + " RLS";
   const totalProtocolos = liberacoes.reduce((sum, item) => sum + item.protocolos.length, 0) + " PRT";
-  const ultimaLiberacao = liberacoes.length > 0 ? liberacoes[0].release : '—';
+  const ultimaLiberacao = liberacoes.length > 0 ?liberacoes[0].release : '';
 
   const cardReleases = document.getElementById('card-releases');
   const cardProtocolos = document.getElementById('card-protocolos');
@@ -330,7 +330,7 @@ function renderizarDashboard(liberacoes) {
       if (typeof Chart !== 'undefined') {
         renderizarGraficoLiberacoes(liberacoes);
         // Tendência: mostra a tendência do módulo selecionado ou do módulo mais crítico por padrão
-        const defaultModulo = (moduloSelecionado && moduloSelecionado !== 'TODOS') ? moduloSelecionado : getTopModule(liberacoes);
+        const defaultModulo = (moduloSelecionado && moduloSelecionado !== 'TODOS') ?moduloSelecionado : getTopModule(liberacoes);
         renderizarGraficoTrendModulo(liberacoes, defaultModulo);
         renderizarGraficoTop5(liberacoes);
         renderizarGraficoEvolucao(liberacoes);
@@ -466,7 +466,7 @@ window.atualizarRankingModulos = function(liberacoes) {
   liberacoes.forEach(lib => {
     lib.protocolos.forEach(prt => {
       const info = protocolosIndex[prt];
-      const modulo = info ? info.modulo : 'OUTROS';
+      const modulo = info ?info.modulo : 'OUTROS';
       contagem[modulo] = (contagem[modulo] || 0) + 1;
     });
   });
@@ -509,7 +509,7 @@ function getTopModule(liberacoes) {
     });
   });
   const ordenado = Object.entries(contagem).sort((a, b) => b[1] - a[1]);
-  return ordenado.length ? ordenado[0][0] : null;
+  return ordenado.length ?ordenado[0][0] : null;
 }
 
 function renderizarGraficoTrendModulo(liberacoes, modulo) {
@@ -613,13 +613,13 @@ function renderizarRankingModulos() {
     const tooltip = `${total} PRTs em ${info.releases.size} releases`;
 
     return `
-      <div class="flex justify-between items-center text-sm ${isTop ? 'bg-gray-800 px-2 py-1 rounded-lg' : 'border-b border-gray-700 pb-1'}" title="${tooltip}">
+      <div class="flex justify-between items-center text-sm ${isTop ?'bg-gray-800 px-2 py-1 rounded-lg' : 'border-b border-gray-700 pb-1'}" title="${tooltip}">
         <div class="flex items-center gap-2">
           <button onclick="selecionarModulo('${safeLabel}')" class="text-gray-300 hover:underline text-left">${i + 1}. ${mod}</button>
-          ${isTop ? `<button title="Alta ocorrência" onclick="selecionarModulo('${safeLabel}')" class="text-red-400"><i data-lucide="alert-triangle" class="w-4 h-4"></i></button>` : ''}
+          ${isTop ?`<button title="Alta ocorr?ncia" onclick="selecionarModulo('${safeLabel}')" class="text-red-400"><i data-lucide="alert-triangle" class="w-4 h-4"></i></button>` : ''}
         </div>
         <div class="flex items-center gap-2">
-          <span class="font-bold ${isTop ? 'text-red-400' : 'text-blue-400'}">${total}</span>
+          <span class="font-bold ${isTop ?'text-red-400' : 'text-blue-400'}">${total}</span>
           <button title="Abrir lista filtrada" onclick="selecionarModulo('${safeLabel}')" class="text-sm text-gray-400 hover:text-gray-200">↪</button>
         </div>
       </div>
@@ -642,7 +642,7 @@ renderizarDashboard = function (liberacoes) {
     // Atualiza o nome exibido na seção de tendência
     const trendNameEl = document.getElementById('trend-modulo-name');
     if (trendNameEl) {
-      const showModulo = (moduloSelecionado && moduloSelecionado !== 'TODOS') ? moduloSelecionado : getTopModule(liberacoes) || '—';
+      const showModulo = (moduloSelecionado && moduloSelecionado !== 'TODOS') ?moduloSelecionado : getTopModule(liberacoes) || '';
       trendNameEl.textContent = showModulo;
     }
   }, 200);

@@ -34,7 +34,7 @@
     function loadState() {
       try {
         const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-        instance.messages = Array.isArray(parsed.messages) ? parsed.messages.slice(-10) : [];
+        instance.messages = Array.isArray(parsed.messages) ?parsed.messages.slice(-10) : [];
         instance.collapsed = parsed.collapsed || false;
       } catch (_) {
         instance.messages = [];
@@ -71,7 +71,7 @@
     function renderMessageContent(message) {
       const content = String(message?.content || "");
       const normalizedContent = isZnunyAuthFailureMessage(content)
-        ? content.replace("/znuny/index.pl", "/portal/index.html")
+        ?content.replace("/znuny/index.pl", "/portal/index.html")
         : content;
       const formatted = formatMessage(normalizedContent);
 
@@ -126,11 +126,11 @@
 
       messagesContainer.innerHTML = instance.messages
         .map(function (message, index) {
-          const label = message.role === "user" ? "Você" : "CordIA";
+          const label = message.role === "user" ?"Voc?" : "CordIA";
           const isUser = message.role === "user";
 
           return `
-            <div class="embed-chat-message ${isUser ? "user" : "assistant"}">
+            <div class="embed-chat-message ${isUser ?"user" : "assistant"}">
               <div class="embed-chat-message-role">${label}</div>
               <div class="embed-chat-message-content">${renderMessageContent(message)}</div>
             </div>
@@ -154,7 +154,7 @@
 
       if (toggleIcon) {
         toggleIcon.innerHTML = instance.collapsed
-          ? '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>'
+          ?'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>'
           : '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
       }
 
@@ -179,7 +179,7 @@
 
       const apiBaseUrl = getApiBaseUrlSafe();
       if (!apiBaseUrl) {
-        showToast?.("API base não configurada.", "error");
+        showToast?.("API base n?o configurada.", "error");
         return;
       }
 
@@ -595,7 +595,7 @@
       injectStyles();
 
       container.innerHTML = `
-        <div class="embed-chat-panel ${instance.collapsed ? "is-collapsed" : ""}">
+        <div class="embed-chat-panel ${instance.collapsed ?"is-collapsed" : ""}">
           <div class="embed-chat-header" data-embed-toggle>
             <div class="embed-chat-header-left">
               <div class="embed-chat-header-icon">
@@ -609,7 +609,7 @@
             <button type="button" class="embed-chat-toggle-btn" data-embed-toggle>
               <span class="embed-chat-toggle-icon">
                 ${instance.collapsed
-                  ? '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>'
+                  ?'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>'
                   : '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>'}
               </span>
             </button>
@@ -658,7 +658,7 @@
 
       container.addEventListener("click", (event) => {
         const trigger = event.target instanceof Element
-          ? event.target.closest("[data-embed-open-znuny-portal='true']")
+          ?event.target.closest("[data-embed-open-znuny-portal='true']")
           : null;
         if (!trigger) return;
 

@@ -31,6 +31,8 @@ test('workspace KPI moderno volta a renderizar a tabela consolidada', () => {
   assert.match(kpiSource, /renderizarTabelaLiberacoes\(filteredRows\)/);
   assert.match(legacyDashboardSource, /className = 'kpi-release-row'/);
   assert.match(legacyDashboardSource, /window\.renderizarTabelaLiberacoes = renderizarTabelaLiberacoes/);
+  assert.match(indexSource, /if \(paginaId === 'historico-liberacoes'\) \{/);
+  assert.match(indexSource, /window\.renderKpiWorkspace\(\)/);
 });
 
 test('modal de storage usa barras visuais para apresentar volume do Supabase', () => {

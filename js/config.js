@@ -10,7 +10,7 @@ const intents = {
 };
 
 const responses = {
-  greeting: "Olá! Como posso te ajudar hoje?",
+  greeting: "Ol?! Como posso te ajudar hoje?",
   farewell: "Até mais! Fico à disposição.",
   security: "Os protocolos de segurança envolvem criptografia, controle de acesso e auditoria.",
   billing: "O módulo de faturamento permite gerar cobranças, notas fiscais e relatórios financeiros.",
