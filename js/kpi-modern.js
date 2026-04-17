@@ -534,9 +534,7 @@
             <h3 id="kpi-insight-modal-title" class="kpi-insight-title">KPI</h3>
             <p id="kpi-insight-modal-subtitle" class="kpi-insight-subtitle">Aguarde...</p>
           </div>
-          <button type="button" id="kpi-insight-close-btn" class="kpi-insight-close" data-kpi-close="true" aria-label="Fechar modal">
-            <span aria-hidden="true">&times;</span>
-          </button>
+          <span class="kpi-insight-dismiss-chip">Clique fora para fechar</span>
         </div>
         <div id="kpi-insight-modal-body" class="kpi-insight-body"></div>
       </div>
@@ -544,19 +542,6 @@
 
     document.body.appendChild(overlay);
     const modal = overlay.querySelector(".kpi-insight-modal");
-    const closeButton = overlay.querySelector("#kpi-insight-close-btn");
-    if (closeButton) {
-      closeButton.setAttribute("onclick", "window.closeKpiInsightModal && window.closeKpiInsightModal()");
-      closeButton.onclick = closeInsightModal;
-      const closeModal = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-        closeInsightModal();
-      };
-      closeButton.addEventListener("click", closeModal);
-      closeButton.addEventListener("pointerup", closeModal);
-    }
 
     modal?.addEventListener("click", (event) => {
       event.stopPropagation();
@@ -568,18 +553,11 @@
         return;
       }
 
-      if (event.target.closest(".kpi-insight-close") || event.target.closest("[data-kpi-close='true']")) {
-        closeInsightModal();
-        return;
-      }
-
       const paginationButton = event.target.closest("[data-kpi-page-action]");
       if (paginationButton) {
         renderInsightModalPage(Number(paginationButton.getAttribute("data-kpi-page")));
       }
     });
-
-    overlay.querySelector("#kpi-insight-close-btn")?.addEventListener("click", closeInsightModal);
 
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") closeInsightModal();
@@ -601,21 +579,101 @@
     byId("kpi-insight-modal-eyebrow").textContent = normalizeText(eyebrow);
     byId("kpi-insight-modal-title").textContent = normalizeText(title);
     byId("kpi-insight-modal-subtitle").textContent = normalizeText(subtitle);
+    overlay.classList.remove("hidden", "is-closing");
+    overlay.classList.add("is-opening");
     overlay.classList.remove("hidden");
     overlay.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
     renderInsightModalPage(1);
+    queueInsightAnimation("open", overlay);
   }
 
   function closeInsightModal() {
-    byId("kpi-insight-modal-overlay")?.classList.add("hidden");
-    byId("kpi-insight-modal-overlay")?.setAttribute("aria-hidden", "true");
+    const overlay = byId("kpi-insight-modal-overlay");
+    if (!overlay || overlay.classList.contains("hidden") || overlay.dataset.closing === "true") return;
+
+    overlay.dataset.closing = "true";
+    overlay.classList.remove("is-opening");
+    overlay.classList.add("is-closing");
+    overlay.setAttribute("aria-hidden", "true");
     document.body.classList.remove("modal-open");
-    window.__kpiCurrentModalConfig = null;
-    window.__kpiCurrentModalPage = 1;
+    queueInsightAnimation("close", overlay).finally(() => {
+      overlay.classList.add("hidden");
+      overlay.classList.remove("is-closing");
+      overlay.dataset.closing = "false";
+      window.__kpiCurrentModalConfig = null;
+      window.__kpiCurrentModalPage = 1;
+    });
   }
 
   window.closeKpiInsightModal = closeInsightModal;
+
+  let insightMotionPromise = null;
+
+  function loadInsightMotion() {
+    if (insightMotionPromise) return insightMotionPromise;
+    insightMotionPromise = import("https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm")
+      .catch(() => null);
+    return insightMotionPromise;
+  }
+
+  function runInsightFallbackAnimation(type, overlay, modal) {
+    if (!overlay || !modal) return Promise.resolve();
+
+    const overlayKeyframes = type === "open"
+      ? [{ opacity: 0 }, { opacity: 1 }]
+      : [{ opacity: 1 }, { opacity: 0 }];
+    const modalKeyframes = type === "open"
+      ? [
+        { opacity: 0, transform: "translateY(22px) scale(0.97)" },
+        { opacity: 1, transform: "translateY(0) scale(1)" },
+      ]
+      : [
+        { opacity: 1, transform: "translateY(0) scale(1)" },
+        { opacity: 0, transform: "translateY(18px) scale(0.985)" },
+      ];
+
+    const overlayAnimation = overlay.animate(overlayKeyframes, {
+      duration: type === "open" ? 180 : 150,
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+      fill: "forwards",
+    });
+    const modalAnimation = modal.animate(modalKeyframes, {
+      duration: type === "open" ? 240 : 180,
+      easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+      fill: "forwards",
+    });
+
+    return Promise.allSettled([overlayAnimation.finished, modalAnimation.finished]);
+  }
+
+  async function queueInsightAnimation(type, overlay) {
+    const modal = overlay?.querySelector(".kpi-insight-modal");
+    if (!overlay || !modal) return;
+
+    const motion = await loadInsightMotion();
+    if (!motion?.animate) {
+      return runInsightFallbackAnimation(type, overlay, modal);
+    }
+
+    const overlayAnimation = motion.animate(
+      overlay,
+      { opacity: type === "open" ? [0, 1] : [1, 0] },
+      { duration: type === "open" ? 0.18 : 0.14, easing: [0.22, 1, 0.36, 1] }
+    );
+    const modalAnimation = motion.animate(
+      modal,
+      type === "open"
+        ? { opacity: [0, 1], y: [20, 0], scale: [0.975, 1] }
+        : { opacity: [1, 0], y: [0, 18], scale: [1, 0.985] },
+      { duration: type === "open" ? 0.24 : 0.18, easing: [0.22, 1, 0.36, 1] }
+    );
+
+    return Promise.allSettled([
+      overlayAnimation?.finished,
+      modalAnimation?.finished,
+    ]);
+  }
 
   function normalizeInsightNode(root) {
     if (!root || typeof window.normalizeUiText !== "function") return;

@@ -67,11 +67,12 @@ test('cards do KPI expõem atalhos acionáveis com modal detalhado', () => {
   assert.match(styleSource, /\.kpi-insight-modal \{/);
 });
 
-test('modal KPI fecha por delegação e pagina tabelas em blocos de 6 registros', () => {
-  assert.match(kpiSource, /event\.target\.closest\("\.kpi-insight-close"\)/);
-  assert.match(kpiSource, /overlay\.querySelector\("#kpi-insight-close-btn"\)\?\.addEventListener\("click", closeInsightModal\)/);
-  assert.match(kpiSource, /closeButton\.setAttribute\("onclick", "window\.closeKpiInsightModal && window\.closeKpiInsightModal\(\)"\)/);
-  assert.match(kpiSource, /closeButton\.onclick = closeInsightModal/);
+test('modal KPI fecha por clique fora e pagina tabelas em blocos de 6 registros', () => {
+  assert.match(kpiSource, /if \(event\.target === overlay\) \{/);
+  assert.doesNotMatch(kpiSource, /kpi-insight-close-btn/);
+  assert.match(kpiSource, /queueInsightAnimation\("close", overlay\)/);
+  assert.match(kpiSource, /loadInsightMotion\(\)/);
+  assert.match(kpiSource, /Clique fora para fechar/);
   assert.match(kpiSource, /window\.closeKpiInsightModal = closeInsightModal/);
   assert.match(kpiSource, /typeof renderBody === "function"/);
   assert.match(kpiSource, /data-kpi-page-action="prev"/);
@@ -79,8 +80,8 @@ test('modal KPI fecha por delegação e pagina tabelas em blocos de 6 registros'
   assert.match(styleSource, /\.kpi-insight-modal-head \{/);
   assert.match(styleSource, /position: sticky;/);
   assert.match(styleSource, /\.kpi-insight-pagination \{/);
-  assert.match(styleSource, /\.kpi-insight-close \{/);
-  assert.match(styleSource, /pointer-events: auto;/);
+  assert.match(styleSource, /\.kpi-insight-dismiss-chip \{/);
+  assert.match(styleSource, /\.kpi-insight-overlay\.is-opening,/);
   assert.match(styleSource, /\.kpi-insight-modal-head::after \{/);
   assert.match(styleSource, /pointer-events: none;/);
 });
