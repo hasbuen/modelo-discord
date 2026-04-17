@@ -582,6 +582,7 @@
     overlay.classList.remove("hidden", "is-closing");
     overlay.classList.add("is-opening");
     overlay.classList.remove("hidden");
+    overlay.style.pointerEvents = "auto";
     overlay.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
     renderInsightModalPage(1);
@@ -595,14 +596,24 @@
     overlay.dataset.closing = "true";
     overlay.classList.remove("is-opening");
     overlay.classList.add("is-closing");
+    overlay.style.pointerEvents = "none";
     overlay.setAttribute("aria-hidden", "true");
     document.body.classList.remove("modal-open");
-    queueInsightAnimation("close", overlay).finally(() => {
+
+    const finalizeClose = () => {
+      if (!document.body.contains(overlay)) return;
       overlay.classList.add("hidden");
       overlay.classList.remove("is-closing");
       overlay.dataset.closing = "false";
+      overlay.style.pointerEvents = "";
       window.__kpiCurrentModalConfig = null;
       window.__kpiCurrentModalPage = 1;
+    };
+
+    const fallbackTimer = window.setTimeout(finalizeClose, 260);
+    queueInsightAnimation("close", overlay).finally(() => {
+      window.clearTimeout(fallbackTimer);
+      finalizeClose();
     });
   }
 
