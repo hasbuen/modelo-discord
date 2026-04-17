@@ -227,6 +227,7 @@ async function validarSenha() {
       if (authContainer) authContainer.classList.add('hidden');
       [
         document.getElementById('desktop-header'),
+        document.getElementById('mobile-header'),
         document.getElementById('sidebar'),
         document.getElementById('mobile-sidebar'),
         document.getElementById('main-content')
@@ -260,6 +261,7 @@ function initAuth() {
   const authContainer = document.getElementById('auth-container');
   const appContainers = [
     document.getElementById('desktop-header'),
+    document.getElementById('mobile-header'),
     document.getElementById('sidebar'),
     document.getElementById('mobile-sidebar'),
     document.getElementById('main-content')
