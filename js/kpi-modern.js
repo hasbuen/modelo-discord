@@ -720,6 +720,28 @@
     `;
   }
 
+  function buildInsightLoadingSplash(title, description) {
+    return `
+      <section class="kpi-insight-loading">
+        <div class="kpi-insight-loading-orbit" aria-hidden="true">
+          <span class="kpi-insight-loading-ring kpi-insight-loading-ring-outer"></span>
+          <span class="kpi-insight-loading-ring kpi-insight-loading-ring-middle"></span>
+          <span class="kpi-insight-loading-ring kpi-insight-loading-ring-inner"></span>
+          <span class="kpi-insight-loading-core"></span>
+        </div>
+        <div class="kpi-insight-loading-copy">
+          <strong>${escapeHtml(title)}</strong>
+          <p>${escapeHtml(description)}</p>
+        </div>
+        <div class="kpi-insight-loading-grid" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </section>
+    `;
+  }
+
   function buildTable(headers, rows, options = {}) {
     const pageSize = options.pageSize || 6;
     const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
@@ -1045,7 +1067,24 @@
 
     try {
       if (action === "storage") {
+        const requestId = String(Date.now());
+        window.__kpiPendingStorageRequest = requestId;
+        openInsightModal({
+          eyebrow: "Base monitorada",
+          title: "Panorama do workspace",
+          subtitle: "Preparando leitura consolidada da base.",
+          renderBody: () => buildInsightLoadingSplash(
+            "Sincronizando dados do workspace",
+            "Estamos consolidando volume, distribuição e capacidade operacional para abrir o painel completo."
+          ),
+        });
         const insights = await fetchKpiInsights();
+        if (
+          window.__kpiPendingStorageRequest !== requestId ||
+          byId("kpi-insight-modal-overlay")?.classList.contains("hidden")
+        ) {
+          return;
+        }
         buildStorageModal(insights, state);
         return;
       }
@@ -1080,6 +1119,10 @@
         subtitle: "Tente novamente em instantes.",
         renderBody: () => `<div class="kpi-insight-empty">${escapeHtml(error.message || "Erro inesperado.")}</div>`,
       });
+    } finally {
+      if (action === "storage") {
+        window.__kpiPendingStorageRequest = null;
+      }
     }
   }
 
