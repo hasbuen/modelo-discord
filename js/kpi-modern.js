@@ -167,8 +167,8 @@
 
   function updateHero(metrics) {
     setText("kpi-sync-badge", metrics.lastSyncLabel);
-    setText("kpi-highlight-module", `M?dulo foco: ${metrics.topModule?.label || "--"}`);
-    setText("kpi-highlight-release", `Release l?der: ${metrics.topRelease?.label || "--"}`);
+    setText("kpi-highlight-module", `Módulo foco: ${metrics.topModule?.label || "--"}`);
+    setText("kpi-highlight-release", `Release líder: ${metrics.topRelease?.label || "--"}`);
   }
 
   function updateCards(metrics) {
@@ -191,7 +191,7 @@
     setText("kpi-note-sugestoes", `${metrics.suggestions} itens classificados como sugestão na base atual.`);
     setText("kpi-note-releases", `${metrics.releaseCount} datas de release com PRTs associados.`);
     setText("kpi-note-protocolos", `${metrics.releasedProtocols} PRTs únicos em releases, cobrindo ${formatPercent(metrics.coverageRate)} da base.`);
-    setText("kpi-note-ultima", metrics.latestRelease ?`Release mais recente detectada: ${metrics.latestRelease}.` : "Nenhuma release dispon?vel.");
+    setText("kpi-note-ultima", metrics.latestRelease ?`Release mais recente detectada: ${metrics.latestRelease}.` : "Nenhuma release disponível.");
   }
 
   function updateExecutiveSummary(metrics) {
@@ -200,7 +200,7 @@
 
     const lines = [
       `${metrics.totalRecords} protocolos catalogados, com ${metrics.releasedProtocols} PRTs efetivamente presentes nas releases publicadas.`,
-      `${metrics.topRelease?.label || "Sem release l?der"} concentra ${metrics.topRelease?.count || 0} protocolos, enquanto ${metrics.topModule?.label || "sem m?dulo dominante"} lidera a incid?ncia por m?dulo.`,
+      `${metrics.topRelease?.label || "Sem release líder"} concentra ${metrics.topRelease?.count || 0} protocolos, enquanto ${metrics.topModule?.label || "sem módulo dominante"} lidera a incidência por módulo.`,
       `A base atual mostra ${metrics.errors} erros e ${metrics.suggestions} sugestões, com taxa de cobertura de ${formatPercent(metrics.coverageRate)} sobre os protocolos conhecidos.`,
     ];
 
@@ -391,7 +391,7 @@
       data: {
         labels: metrics.releasesAsc.map((item) => item.release),
         datasets: [{
-          label: selectedModule ?`Tend?ncia de ${selectedModule}` : "Tend?ncia",
+          label: selectedModule ?`Tendência de ${selectedModule}` : "Tendência",
           data: series,
           borderColor: "#34d399",
           backgroundColor: "rgba(52, 211, 153, 0.12)",
@@ -534,7 +534,9 @@
             <h3 id="kpi-insight-modal-title" class="kpi-insight-title">KPI</h3>
             <p id="kpi-insight-modal-subtitle" class="kpi-insight-subtitle">Aguarde...</p>
           </div>
-          <button type="button" id="kpi-insight-close-btn" class="kpi-insight-close" data-kpi-close="true" aria-label="Fechar modal">×</button>
+          <button type="button" id="kpi-insight-close-btn" class="kpi-insight-close" data-kpi-close="true" aria-label="Fechar modal">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
         <div id="kpi-insight-modal-body" class="kpi-insight-body"></div>
       </div>
@@ -546,11 +548,14 @@
     if (closeButton) {
       closeButton.setAttribute("onclick", "window.closeKpiInsightModal && window.closeKpiInsightModal()");
       closeButton.onclick = closeInsightModal;
-      closeButton.addEventListener("pointerdown", (event) => {
+      const closeModal = (event) => {
         event.preventDefault();
         event.stopPropagation();
+        event.stopImmediatePropagation();
         closeInsightModal();
-      });
+      };
+      closeButton.addEventListener("click", closeModal);
+      closeButton.addEventListener("pointerup", closeModal);
     }
 
     modal?.addEventListener("click", (event) => {
@@ -585,14 +590,17 @@
 
   function openInsightModal({ eyebrow, title, subtitle, body, renderBody }) {
     const overlay = ensureModalShell();
+    const normalizeText = typeof window.normalizeUiText === "function"
+      ? window.normalizeUiText
+      : (value) => value;
     const resolvedRenderBody =
       typeof renderBody === "function"
-        ?renderBody
+        ? renderBody
         : () => body || '<div class="kpi-insight-empty">Sem conteúdo para exibir.</div>';
     window.__kpiCurrentModalConfig = { eyebrow, title, subtitle, renderBody: resolvedRenderBody };
-    byId("kpi-insight-modal-eyebrow").textContent = eyebrow;
-    byId("kpi-insight-modal-title").textContent = title;
-    byId("kpi-insight-modal-subtitle").textContent = subtitle;
+    byId("kpi-insight-modal-eyebrow").textContent = normalizeText(eyebrow);
+    byId("kpi-insight-modal-title").textContent = normalizeText(title);
+    byId("kpi-insight-modal-subtitle").textContent = normalizeText(subtitle);
     overlay.classList.remove("hidden");
     overlay.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
@@ -609,12 +617,24 @@
 
   window.closeKpiInsightModal = closeInsightModal;
 
+  function normalizeInsightNode(root) {
+    if (!root || typeof window.normalizeUiText !== "function") return;
+
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    let current;
+    while ((current = walker.nextNode())) {
+      current.nodeValue = window.normalizeUiText(current.nodeValue);
+    }
+  }
+
   function renderInsightModalPage(page) {
     const config = window.__kpiCurrentModalConfig;
     if (!config) return;
 
     window.__kpiCurrentModalPage = Math.max(1, Number(page) || 1);
-    byId("kpi-insight-modal-body").innerHTML = config.renderBody(window.__kpiCurrentModalPage);
+    const modalBody = byId("kpi-insight-modal-body");
+    modalBody.innerHTML = config.renderBody(window.__kpiCurrentModalPage);
+    normalizeInsightNode(modalBody);
   }
 
   function buildMetricCards(cards) {
@@ -659,44 +679,17 @@
       <div class="kpi-insight-pagination">
         <span class="kpi-insight-pagination-note">Página ${currentPage} de ${totalPages} · ${formatCount(rows.length)} registros</span>
         <div class="kpi-insight-pagination-actions">
-          <button type="button" class="kpi-insight-page-btn" data-kpi-page-action="prev" data-kpi-page="${Math.max(1, currentPage - 1)}" ${currentPage === 1 ?"disabled" : ""}>Anterior</button>
-          <button type="button" class="kpi-insight-page-btn" data-kpi-page-action="next" data-kpi-page="${Math.min(totalPages, currentPage + 1)}" ${currentPage === totalPages ?"disabled" : ""}>Pr?xima</button>
+          <button type="button" class="kpi-insight-page-btn" data-kpi-page-action="prev" data-kpi-page="${Math.max(1, currentPage - 1)}" ${currentPage === 1 ? "disabled" : ""}>Anterior</button>
+          <button type="button" class="kpi-insight-page-btn" data-kpi-page-action="next" data-kpi-page="${Math.min(totalPages, currentPage + 1)}" ${currentPage === totalPages ? "disabled" : ""}>Próxima</button>
         </div>
       </div>
     `;
   }
 
   function buildStatusPill(active, positiveLabel, neutralLabel) {
-    const label = active ?positiveLabel : neutralLabel;
-    const variant = active ?"success" : "neutral";
+    const label = active ? positiveLabel : neutralLabel;
+    const variant = active ? "success" : "neutral";
     return `<span class="kpi-insight-pill kpi-insight-pill-${variant}">${escapeHtml(label)}</span>`;
-  }
-
-  function buildStorageModal(insights, state) {
-    const storage = insights?.storage || {};
-    const sourceLabel = storage.source === "supabase-management"
-      ?"Supabase Management API"
-      : "Monitoramento do workspace";
-    const cards = [
-      { label: "Espaço monitorado", value: formatBytes(storage.totalBytes), note: "Faixa usada para acompanhamento do workspace." },
-      { label: "Espaço em uso", value: formatBytes(storage.usedBytes), note: `${storage.usagePercent || 0}% ocupado no recorte atual.` },
-      { label: "Espaço livre", value: formatBytes(storage.freeBytes), note: "Margem disponível antes do próximo patamar." },
-    ];
-    const rows = Object.entries(storage.tables || {}).map(([table, details]) => ([
-      escapeHtml(table),
-      escapeHtml(formatCount(details.rows)),
-      escapeHtml(formatBytes(details.usedBytes)),
-    ]));
-
-    openInsightModal({
-      eyebrow: "Base monitorada",
-      title: "Panorama do workspace",
-      subtitle: `Leitura consolidada com ${formatCount(state.metrics.totalRecords)} protocolos acompanhados no Supabase.`,
-      renderBody: (page) => `
-        ${buildMetricCards(cards)}
-        ${buildTable(["Tabela", "Linhas", "Espaço estimado"], rows)}
-      `,
-    });
   }
 
   function clampPercent(value) {
@@ -742,7 +735,7 @@
     const freeBytes = Math.max(Number(storage.freeBytes) || 0, 0);
     const usagePercent = clampPercent(Number(storage.usagePercent) || ((usedBytes / totalBytes) * 100));
     const sourceLabel = storage.source === "supabase-management"
-      ?"Supabase Management API"
+      ? "Supabase Management API"
       : "Monitoramento do workspace";
     const tableEntries = Object.entries(storage.tables || {});
     const largestTableBytes = Math.max(1, ...tableEntries.map(([, details]) => Number(details?.usedBytes) || 0));
@@ -754,7 +747,7 @@
       const tableBytes = Number(details?.usedBytes) || 0;
       const tablePercent = (tableBytes / totalBytes) * 100;
       const relativePercent = (tableBytes / largestTableBytes) * 100;
-      const tone = index % 3 === 1 ?"blue" : index % 3 === 2 ?"violet" : "cyan";
+      const tone = index % 3 === 1 ? "blue" : index % 3 === 2 ? "violet" : "cyan";
       return [
         `<div class="kpi-storage-table-name"><strong>${escapeHtml(table)}</strong><small>${escapeHtml(formatCount(details.rows))} linhas monitoradas</small></div>`,
         `
@@ -820,11 +813,13 @@
             </div>
           </article>
           <article class="kpi-storage-sidecard">
-            <span>Distribui??o visível</span>
-            <strong>${escapeHtml(formatCount(tableEntries.length))} fontes</strong>
-            <small>Recorte somado do workspace para leitura r?pida do banco.</small>
+            <div class="kpi-storage-sidecard-accent">
+              <span>Workspace operacional</span>
+              <strong>${escapeHtml(formatCount(tableEntries.length))} origens monitoradas</strong>
+              <small>Leitura consolidada do ambiente para visão rápida do banco produtivo.</small>
+            </div>
             <div class="kpi-storage-share-stack">
-              ${buildStorageShareRow("Uso em ocupação", formatBytes(usedBytes), usagePercent, "cyan")}
+              ${buildStorageShareRow("Espaço em ocupação", formatBytes(usedBytes), usagePercent, "cyan")}
               ${buildStorageShareRow("Margem livre", formatBytes(freeBytes), 100 - usagePercent, "violet")}
             </div>
           </article>
@@ -941,7 +936,7 @@
         ${buildMetricCards([
           { label: "PRTs liberados", value: formatCount(state.metrics.releasedProtocols), note: "Únicos nas releases publicadas." },
           { label: "Cobertura", value: formatPercent(state.metrics.coverageRate), note: "Participação sobre a base total." },
-          { label: "M?dulo foco", value: state.metrics.topModule?.label || "--", note: "Maior incid?ncia no recorte." },
+          { label: "Módulo foco", value: state.metrics.topModule?.label || "--", note: "Maior incidência no recorte." },
         ])}
         ${buildTable(["PRT", "Release", "Módulo", "Ticket"], rows)}
       `,
@@ -962,13 +957,13 @@
 
     openInsightModal({
       eyebrow: "Última janela liberada",
-      title: latest?.release || "Sem release dispon?vel",
+      title: latest?.release || "Sem release disponível",
       subtitle: "Detalhe da release mais recente para conferência rápida dos protocolos envolvidos.",
       renderBody: (page) => `
         ${buildMetricCards([
-          { label: "Release", value: latest?.release || "--", note: "Janela de maior rec�ncia detectada." },
+          { label: "Release", value: latest?.release || "--", note: "Janela de maior recência detectada." },
           { label: "PRTs na janela", value: formatCount(latest?.protocolos?.length || 0), note: "Itens confirmados nesta release." },
-          { label: "M?dulos", value: formatCount(new Set((latest?.protocolos || []).map((prt) => state.protocolIndex[prt]?.modulo).filter(Boolean)).size), note: "?reas impactadas na janela." },
+          { label: "Módulos", value: formatCount(new Set((latest?.protocolos || []).map((prt) => state.protocolIndex[prt]?.modulo).filter(Boolean)).size), note: "Áreas impactadas na janela." },
         ])}
         ${buildTable(["PRT", "Módulo", "Status", "Ticket"], rows)}
       `,
