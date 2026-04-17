@@ -479,8 +479,8 @@
       </div>
     </aside>
 
-    <header
-      class="w-full md:hidden fixed top-0 left-0 right-0 z-40 bg-gray-900 border-b border-gray-700 h-16 flex items-center justify-between px-4">
+    <header id="mobile-header"
+      class="hidden w-full md:hidden fixed top-0 left-0 right-0 z-40 bg-gray-900 border-b border-gray-700 h-16 items-center justify-between px-4">
       <div class="flex items-center gap-3">
         <button id="btn-mobile-menu" class="p-2 -ml-2 rounded-md hover:bg-gray-800">
           <i data-lucide="menu" class="w-6 h-6"></i>
@@ -559,7 +559,7 @@
       </div>
     </aside>
 
-    <main id="main-content" class="flex-1 min-h-screen pt-20 md:pt-20 md:pl-56 transition-all duration-300">
+    <main id="main-content" class="hidden flex-1 min-h-screen pt-20 md:pt-20 md:pl-56 transition-all duration-300">
 
       <div class="max-w-7xl mx-auto p-6 space-y-6">
 
@@ -3582,12 +3582,18 @@ window.mostrarPagina = function (paginaId) {
   }
 
   function carregarMotionERodar() {
+    if (window.__motionLayerStarted) return;
+    if (typeof window.hasActiveAuthSession === 'function' && !window.hasActiveAuthSession()) {
+      return;
+    }
+    window.__motionLayerStarted = true;
     import('https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm')
       .then(function (motion) {
         animateRef = motion && motion.animate ?motion.animate : null;
         staggerRef = motion && motion.stagger ?motion.stagger : null;
       })
       .catch(function () {
+        window.__motionLayerStarted = false;
         animateRef = null;
         staggerRef = null;
       })
@@ -3595,6 +3601,8 @@ window.mostrarPagina = function (paginaId) {
         iniciarCamada();
       });
   }
+
+  window.startMotionLayer = carregarMotionERodar;
 
   // ==========================================
   // INICIALIZA�!ÒO DO PAINEL DE METAS
@@ -3616,6 +3624,12 @@ window.mostrarPagina = function (paginaId) {
   } else {
     carregarMotionERodar();
   }
+
+  window.addEventListener('protocord:auth-changed', function (event) {
+    if (event?.detail?.authenticated) {
+      carregarMotionERodar();
+    }
+  });
 })();
 </script>
 </body>
