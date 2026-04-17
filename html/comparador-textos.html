@@ -384,8 +384,8 @@
 
   // LCS-based diff
   function diffLines(a, b) {
-    const linesA = a === '' ? [] : a.split('\n');
-    const linesB = b === '' ? [] : b.split('\n');
+    const linesA = a === '' ?[] : a.split('\n');
+    const linesB = b === '' ?[] : b.split('\n');
     return computeDiff(linesA, linesB);
   }
 
@@ -406,7 +406,7 @@
     for (let i = m-1; i >= 0; i--)
       for (let j = n-1; j >= 0; j--)
         dp[i][j] = seqA[i] === seqB[j]
-          ? dp[i+1][j+1] + 1
+          ?dp[i+1][j+1] + 1
           : Math.max(dp[i+1][j], dp[i][j+1]);
 
     const ops = [];
@@ -466,8 +466,8 @@
   }
 
   function renderSplitDiff(t1, t2, view) {
-    const linesA = t1 === '' ? [] : t1.split('\n');
-    const linesB = t2 === '' ? [] : t2.split('\n');
+    const linesA = t1 === '' ?[] : t1.split('\n');
+    const linesB = t2 === '' ?[] : t2.split('\n');
     const ops = computeDiff(linesA, linesB);
 
     let leftLines = [], rightLines = [];
@@ -520,8 +520,8 @@
 
   function showStats(adds, dels) {
     document.getElementById('stats').innerHTML = `
-      <div class="stat adds"><span>+${adds}</span> adicionado${adds !== 1 ? 's' : ''}</div>
-      <div class="stat dels"><span>-${dels}</span> removido${dels !== 1 ? 's' : ''}</div>`;
+      <div class="stat adds"><span>+${adds}</span> adicionado${adds !== 1 ?'s' : ''}</div>
+      <div class="stat dels"><span>-${dels}</span> removido${dels !== 1 ?'s' : ''}</div>`;
   }
 
   // Example

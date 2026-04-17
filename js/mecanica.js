@@ -97,7 +97,7 @@ function alternarTema(tema) {
     localStorage.removeItem('theme');
     html.removeAttribute('data-theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const botaoPreferido = document.getElementById(prefersDark ? 'tema-escuro' : 'tema-claro');
+    const botaoPreferido = document.getElementById(prefersDark ?'tema-escuro' : 'tema-claro');
     if (botaoPreferido) {
       botaoPreferido.classList.add('active');
     }
@@ -152,7 +152,7 @@ function exibirModal(mensagem, prt = "", tipo = "info") {
   };
 
   modalIcon.innerHTML = icons[tipo] || icons.info;
-  modalText.textContent = mensagem + (prt?.trim() ? `\n ${prt}` : "");
+  modalText.textContent = mensagem + (prt?.trim() ?`\n ${prt}` : "");
   modalText.style.whiteSpace = "pre-wrap";
   modal.classList.remove("hidden");
   lucide.createIcons();
@@ -185,7 +185,7 @@ async function carregarRegistrosProtocolos() {
 // Form
 function gerarTexto() {
   const tipoElement = document.getElementById('tipo').value.trim();
-  const tipo = tipoElement === "erro" ? '0' : '1';
+  const tipo = tipoElement === "erro" ?'0' : '1';
 
   const moduloId = document.getElementById('modulo').value;
   const prt = document.getElementById('prt');
@@ -257,7 +257,7 @@ async function salvarRegistro() {
   const registros = await carregarRegistrosProtocolos();
   if (registros.some(r => r.prt === prt)) return exibirModal("Já gravado!", prt, "info");
 
-  const registro = { tipo: tipo === "erro" ? 0 : 1, prt, ticket, descricao, paliativo, link, modulo };
+  const registro = { tipo: tipo === "erro" ?0 : 1, prt, ticket, descricao, paliativo, link, modulo };
 
   try {
     await fetch(window.getProtocordApiUrl('/protocolos'), {
@@ -300,7 +300,7 @@ async function popularModulosSelect(modulosCarregados) {
   const select = document.getElementById('modulo');
   if (!select) return;
 
-  const modulos = Array.isArray(modulosCarregados) ? modulosCarregados : await carregarModulos();
+  const modulos = Array.isArray(modulosCarregados) ?modulosCarregados : await carregarModulos();
 
   if (modulos.length === 0) {
     select.innerHTML = '<option value="">Erro ao carregar módulos</option>';
@@ -338,7 +338,7 @@ function filtrarTabela() {
     PAGINACAO_CONFIG.registrosFiltrados = PAGINACAO_CONFIG.registrosOriginais.filter(reg => {
       const ticket = String(reg.ticket || '').toLowerCase();
       const prt = String(reg.prt || '').toLowerCase();
-      const tipo = reg.tipo === '1' ? 'sugestão' : 'erro';
+      const tipo = reg.tipo === '1' ?'sugest?o' : 'erro';
       const descricao = String(reg.descricao || '').toLowerCase();
       
       return ticket.includes(termoBusca) || 
@@ -370,12 +370,12 @@ function ordenarTabela(idx) {
     let vb = String(b[campo] || '').trim().toLowerCase();
     
     if (campo === 'tipo') {
-      va = va === '1' ? 'sugestão' : 'erro';
-      vb = vb === '1' ? 'sugestão' : 'erro';
+      va = va === '1' ?'sugest?o' : 'erro';
+      vb = vb === '1' ?'sugest?o' : 'erro';
     }
     
     return PAGINACAO_CONFIG.ordemAscendente 
-      ? va.localeCompare(vb) 
+      ?va.localeCompare(vb) 
       : vb.localeCompare(va);
   });
   
@@ -423,7 +423,7 @@ function renderizarPaginaAtual() {
     tr.className = "hover:bg-gray-800";
     
     const badgeHTML = reg.tipo === '1'
-      ? '<span class="px-3 py-1 text-xs font-bold rounded-full bg-green-700 text-green-100">Sugestão</span>'
+      ?'<span class="px-3 py-1 text-xs font-bold rounded-full bg-green-700 text-green-100">Sugest?o</span>'
       : '<span class="px-3 py-1 text-xs font-bold rounded-full bg-red-700 text-red-100">Erro</span>';
     
     const descricaoEsc = escHTML(reg.descricao || "");
@@ -439,7 +439,7 @@ function renderizarPaginaAtual() {
       <td class="py-2 px-3 align-top legacy-type-cell">${badgeHTML}</td>
       <td class="py-2 px-3 align-top">
         <div class="tooltip-container relative">
-          <span class="desc-clamp">${escHTML((reg.descricao || '').slice(0, 300))}${(reg.descricao && reg.descricao.length > 300 ? ' ...' : '')}</span>
+          <span class="desc-clamp">${escHTML((reg.descricao || '').slice(0, 300))}${(reg.descricao && reg.descricao.length > 300 ?' ...' : '')}</span>
           <div class="tooltip-text">${descricaoTooltip}</div>
         </div>
       </td>
@@ -460,7 +460,7 @@ function renderizarPaginaAtual() {
     const badgeTipo = tr.querySelector('.legacy-type-cell span');
     if (badgeTipo) {
       badgeTipo.className = reg.tipo === '1'
-        ? 'legacy-type-badge legacy-type-badge-success'
+        ?'legacy-type-badge legacy-type-badge-success'
         : 'legacy-type-badge legacy-type-badge-error';
     }
     
@@ -551,7 +551,7 @@ function atualizarControlesPaginacao(totalRegistros, totalPaginas, inicio, fim) 
       border:1px solid rgba(113,136,185,0.16);font-weight:700;font-size:.88rem;
       transition:all 0.18s ease;cursor:pointer;
       ${i === paginaAtual 
-        ? 'background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(59,130,246,0.3);' 
+        ?'background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(59,130,246,0.3);' 
         : 'background:rgba(255,255,255,0.04);color:var(--text,#f1f5f9);'}
     `;
     numerosContainer.appendChild(btn);
@@ -723,13 +723,13 @@ function copiarLinhaSafe(botao, reg) {
   const paliativo = objetoJson.paliativo ?? objetoJson.Paliativo ?? "";
 
   let texto = "";
-  if (tipo == '1' || String(tipo).toLowerCase() === 'sugestão' || String(tipo).toLowerCase() === 'sugestao') {
+  if (tipo == '1' || String(tipo).toLowerCase() === 'sugest?o' || String(tipo).toLowerCase() === 'sugestao') {
     texto = `**\`\`\`diff
-+ Protocolo [SUGESTÃO]:
++ Protocolo [SUGEST?O]:
 + PRT: ${prt}
 + Ticket: ${ticket}
 \`\`\`**
-- **Descrição resumida:**
+- **Descri??o resumida:**
 ${descricao}
 
 - **Paliativo:**
@@ -741,7 +741,7 @@ ${paliativo}
 - PRT: ${prt}
 - Ticket: ${ticket}
 \`\`\`**
-- **Descrição resumida:**
+- **Descri??o resumida:**
 ${descricao}
 
 - **Paliativo:**
@@ -760,7 +760,6 @@ ${paliativo}
     })
     .catch(() => exibirModal("Erro ao copiar o paliativo.", "", "erro"));
 }
-
 async function abrirModalExclusao(id, ticket) {
   const modal = document.getElementById("confirmModal");
   const confirmBtn = document.getElementById("confirmBtn");
@@ -825,7 +824,7 @@ function montarGraficoModulos(registros, modulos) {
 
   Object.keys(contagem).forEach(id => {
     const modulo = modulos.find(m => String(m.id) === id);
-    const nome = modulo ? modulo.modulo : "Desconhecido";
+    const nome = modulo ?modulo.modulo : "Desconhecido";
     labels.push(nome);
     valores.push(contagem[id]);
   });
@@ -891,7 +890,7 @@ function criarLegendaModulos(chart) {
 
   const labels = chart.data.labels || [];
   const backgroundColors = chart.data.datasets && chart.data.datasets[0]
-    ? chart.data.datasets[0].backgroundColor
+    ?chart.data.datasets[0].backgroundColor
     : [];
 
   if (labels.length === 0) {
@@ -1065,7 +1064,7 @@ function exibirMensagem(remetente, texto) {
   const msg = document.createElement("div");
 
   msg.className = remetente === "user"
-    ? "bg-blue-600 text-white px-3 py-2 rounded-lg self-end max-w-3xl ml-auto"
+    ?"bg-blue-600 text-white px-3 py-2 rounded-lg self-end max-w-3xl ml-auto"
     : "bg-gray-700 text-white px-3 py-2 rounded-lg self-start max-w-3xl";
 
   if (remetente === "bot") {
@@ -1121,13 +1120,13 @@ function carregarTemplateProtocolo(tipo) {
 
   2.1 Testes realizados:
 
-  2.2 Testes com versões anteriores. O erro já ocorria?
+  2.2 Testes com vers�es anteriores. O erro j� ocorria?
 
   2.3 Se o erro não ocorria em versões anteriores,
       informe a versão utilizada para testes.
 
-3 - QUANDO O ERRO COMEÇOU A ACONTECER?
-    COMO O CLIENTE CONSEGUIA EFETUAR A OPERAÇÃO ANTES?
+3 - QUANDO O ERRO COME�OU A ACONTECER?
+    COMO O CLIENTE CONSEGUIA EFETUAR A OPERA��O ANTES?
 
 4 - SOLUÇÃO PALIATIVA (Se houver, descrever em detalhes):
 

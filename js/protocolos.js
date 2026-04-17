@@ -72,7 +72,7 @@ function renderizarFiltroModulos() {
       <button
         onclick="selecionarModulo('${safeLabel}')"
         class="px-3 py-1.5 rounded-full text-xs font-semibold transition ${
-          ativo ? "bg-blue-600 text-white shadow" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+          ativo ?"bg-blue-600 text-white shadow" : "bg-gray-800 text-gray-300 hover:bg-gray-700"
         }">
         ${label}
       </button>
@@ -122,11 +122,11 @@ function obterProtocolo(prt) {
 }
 
 function getTipoLabel(tipo) {
-  return String(tipo) === "0" ? "Erro" : "Sugestão";
+  return String(tipo) === "0" ?"Erro" : "Sugest?o";
 }
 
 function getCorTipo(tipo) {
-  return String(tipo) === "0" ? "red" : "green";
+  return String(tipo) === "0" ?"red" : "green";
 }
 
 function criarBadgeProtocolo(prt) {
@@ -136,7 +136,7 @@ function criarBadgeProtocolo(prt) {
   const corTipo = getCorTipo(tipo);
   const classesCor =
     corTipo === "red"
-      ? "bg-red-700 text-red-100 hover:bg-red-600"
+      ?"bg-red-700 text-red-100 hover:bg-red-600"
       : "bg-green-700 text-green-100 hover:bg-green-600";
 
   return `
@@ -156,20 +156,20 @@ function abrirModalProtocolo(prt) {
 
   const tipo = getTipoLabel(protocolo.tipo);
   const corTipo = getCorTipo(protocolo.tipo);
-  const classesCor = corTipo === "red" ? "red" : "green";
+  const classesCor = corTipo === "red" ?"red" : "green";
   const bodyBg = window.getComputedStyle(document.body).backgroundColor;
   const isDarkMode =
     !bodyBg.includes("rgb(255") && !bodyBg.includes("rgb(254") && !bodyBg.includes("rgb(245");
 
-  const bgModal = isDarkMode ? "bg-gray-900 border-gray-700" : "bg-white border-gray-300";
-  const bgHeader = isDarkMode ? "bg-gray-800 border-gray-700" : "bg-gray-100 border-gray-300";
-  const textPrimario = isDarkMode ? "text-white" : "text-gray-900";
-  const textSecundario = isDarkMode ? "text-gray-400" : "text-gray-600";
-  const textTerciario = isDarkMode ? "text-gray-300" : "text-gray-700";
+  const bgModal = isDarkMode ?"bg-gray-900 border-gray-700" : "bg-white border-gray-300";
+  const bgHeader = isDarkMode ?"bg-gray-800 border-gray-700" : "bg-gray-100 border-gray-300";
+  const textPrimario = isDarkMode ?"text-white" : "text-gray-900";
+  const textSecundario = isDarkMode ?"text-gray-400" : "text-gray-600";
+  const textTerciario = isDarkMode ?"text-gray-300" : "text-gray-700";
   const btnSecundario = isDarkMode
-    ? "bg-gray-700 hover:bg-gray-600 text-white"
+    ?"bg-gray-700 hover:bg-gray-600 text-white"
     : "bg-gray-300 hover:bg-gray-400 text-gray-900";
-  const hoverIcon = isDarkMode ? "hover:text-white" : "hover:text-gray-900";
+  const hoverIcon = isDarkMode ?"hover:text-white" : "hover:text-gray-900";
 
   const modalHTML = `
     <div id="modal-protocolo-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center">
@@ -194,7 +194,7 @@ function abrirModalProtocolo(prt) {
           <div class="flex items-center gap-2">
             <span class="${textTerciario} text-sm font-semibold">Tipo:</span>
             <span class="inline-block px-3 py-1 text-sm rounded font-semibold ${
-              classesCor === "red" ? "bg-red-900 text-red-100" : "bg-green-900 text-green-100"
+              classesCor === "red" ?"bg-red-900 text-red-100" : "bg-green-900 text-green-100"
             }">
               ${tipo}
             </span>
@@ -216,7 +216,7 @@ function abrirModalProtocolo(prt) {
 
           ${
             protocolo.link
-              ? `
+              ?`
             <div>
               <h3 class="${textTerciario} text-sm font-semibold mb-2">Referência:</h3>
               <a
@@ -242,7 +242,7 @@ function abrirModalProtocolo(prt) {
           </button>
           ${
             protocolo.link
-              ? `
+              ?`
             <a
               href="${protocolo.link}"
               target="_blank"
@@ -294,7 +294,7 @@ function criarBadgeProtocolo(prt) {
   const protocolo = obterProtocolo(prt);
   const tipo = protocolo?.tipo || "1";
   const tipoLabel = getTipoLabel(tipo);
-  const variant = String(tipo) === "0" ? "error" : "success";
+  const variant = String(tipo) === "0" ?"error" : "success";
 
   return `
     <button
@@ -314,8 +314,8 @@ function abrirModalProtocolo(prt) {
   if (!protocolo) return;
 
   const tipo = getTipoLabel(protocolo.tipo);
-  const variant = String(protocolo.tipo) === "0" ? "error" : "success";
-  const modulo = protocolo.modulo || window.protocolosIndex?.[prt]?.modulo || "Módulo não informado";
+  const variant = String(protocolo.tipo) === "0" ?"error" : "success";
+  const modulo = protocolo.modulo || window.protocolosIndex?.[prt]?.modulo || "M?dulo n?o informado";
   const ticket = protocolo.ticket || "Sem ticket vinculado";
   const descricao = protocolo.descricao || "Sem descrição operacional registrada.";
   const paliativo = protocolo.paliativo || "Nenhum paliativo informado até o momento.";
@@ -358,7 +358,7 @@ function abrirModalProtocolo(prt) {
 
         ${
           protocolo.link
-            ? `
+            ?`
           <div class="protocol-modal-link-wrap">
             <a
               href="${protocolo.link}"
@@ -383,7 +383,7 @@ function abrirModalProtocolo(prt) {
           </button>
           ${
             protocolo.link
-              ? `
+              ?`
             <a
               href="${protocolo.link}"
               target="_blank"

@@ -37,7 +37,7 @@ export function exibirMensagem(remetente, texto) {
   const msg = document.createElement("div");
 
   msg.className = remetente === "user"
-    ? "bg-blue-600 text-white px-3 py-2 rounded-lg self-end max-w-3xl ml-auto"
+    ?"bg-blue-600 text-white px-3 py-2 rounded-lg self-end max-w-3xl ml-auto"
     : "bg-gray-700 text-white px-3 py-2 rounded-lg self-start max-w-3xl";
 
   if (remetente === "bot") {

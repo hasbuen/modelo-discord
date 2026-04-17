@@ -4,14 +4,14 @@
   function normalizeApiBaseUrl(value) {
     const fallback = DEFAULT_API_BASE_URL;
     const normalized = String(value || fallback).trim();
-    return normalized ? normalized.replace(/\/+$/, "") : fallback;
+    return normalized ?normalized.replace(/\/+$/, "") : fallback;
   }
 
   function toApiUrl(path) {
     const baseUrl = window.PROTOCORD_API_BASE_URL || DEFAULT_API_BASE_URL;
     if (!path) return baseUrl;
     if (/^https?:\/\//i.test(path)) return path;
-    const normalizedPath = String(path).startsWith("/") ? path : `/${path}`;
+    const normalizedPath = String(path).startsWith("/") ?path : `/${path}`;
     return `${baseUrl}${normalizedPath}`;
   }
 

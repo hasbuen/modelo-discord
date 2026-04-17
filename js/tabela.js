@@ -18,7 +18,7 @@ export function filtrarTabela() {
     // Verifica se alguma célula (td) da linha contém o texto de busca
     tr.style.display = [...tr.children].some(td =>
       td.textContent.toLowerCase().includes(f)
-    ) ? "" : "none";
+    ) ?"" : "none";
   });
 }
 
@@ -40,7 +40,7 @@ export function ordenarTabela(idx) {
     let vb = b.children[idx].textContent.trim().toLowerCase();
     
     // Comparação de string usando localeCompare
-    return ordemAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+    return ordemAsc ?va.localeCompare(vb) : vb.localeCompare(va);
   });
   
   // Reinsere as linhas ordenadas no tbody

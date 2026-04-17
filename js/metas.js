@@ -75,7 +75,7 @@
 
     const mount =
       typeof mountSelector === "string"
-        ? document.querySelector(mountSelector)
+        ?document.querySelector(mountSelector)
         : mountSelector;
 
     if (!mount) throw new Error("Container do MetaFlow não encontrado.");
@@ -188,7 +188,7 @@
     }
 
     function escapeHtml(value) {
-      return String(value ?? "")
+    return String(value || "")
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -210,7 +210,7 @@
         if (dateStr < goal.startDate) break;
 
         const entry = state.entries.find((en) => en.id === `${goal.id}_${dateStr}`);
-        const value = entry ? Number(entry.value || 0) : 0;
+        const value = entry ?Number(entry.value || 0) : 0;
 
         if (value >= Number(goal.min)) {
           streak++;
@@ -907,17 +907,17 @@
       return `
         <div class="mfu-compactbar">
           <div class="mfu-compactbar-left">
-            <button class="mfu-tab ${state.currentView === "dashboard" ? "active" : ""}" data-action="view" data-view="dashboard">Dashboard</button>
-            <button class="mfu-tab ${state.currentView === "kanban" ? "active" : ""}" data-action="view" data-view="kanban">Kanban</button>
-            <button class="mfu-tab ${state.currentView === "stats" ? "active" : ""}" data-action="view" data-view="stats">Estatísticas</button>
-            <button class="mfu-tab ${state.currentView === "settings" ? "active" : ""}" data-action="view" data-view="settings">Configurações</button>
+            <button class="mfu-tab ${state.currentView === "dashboard" ?"active" : ""}" data-action="view" data-view="dashboard">Dashboard</button>
+            <button class="mfu-tab ${state.currentView === "kanban" ?"active" : ""}" data-action="view" data-view="kanban">Kanban</button>
+            <button class="mfu-tab ${state.currentView === "stats" ?"active" : ""}" data-action="view" data-view="stats">Estat?sticas</button>
+            <button class="mfu-tab ${state.currentView === "settings" ?"active" : ""}" data-action="view" data-view="settings">Configura??es</button>
           </div>
 
           <select class="mfu-theme-select" data-action="theme-select">
             ${Object.values(THEMES)
               .map(
                 (item) => `
-                  <option value="${item.id}" ${item.id === state.themeId ? "selected" : ""}>${escapeHtml(item.name)}</option>
+                  <option value="${item.id}" ${item.id === state.themeId ?"selected" : ""}>${escapeHtml(item.name)}</option>
                 `
               )
               .join("")}
@@ -1007,7 +1007,7 @@
           ${state.goals
             .map((goal) => {
               const entry = entryFor(goal.id, today);
-              const value = entry ? Number(entry.value || 0) : 0;
+              const value = entry ?Number(entry.value || 0) : 0;
               const statusKey = calculateStatus(value, Number(goal.min), Number(goal.tol), Number(goal.ceiling));
               const status = STATUS_COLORS[statusKey];
               const streak = streakForGoal(goal);
@@ -1015,7 +1015,7 @@
               const minPercent = Math.min(100, (Number(goal.min || 0) / Number(goal.ceiling || 1)) * 100);
               const tolPercent = Math.min(100, (Number(goal.tol || 0) / Number(goal.ceiling || 1)) * 100);
               const remaining = Math.max(0, Number(goal.ceiling) - value);
-              const todayProgress = progress > 0 ? `${progress.toFixed(0)}%` : "0%";
+              const todayProgress = progress > 0 ?`${progress.toFixed(0)}%` : "0%";
               const daysUntilEnd = calculateDaysRemaining(goal);
 
               return `
@@ -1030,7 +1030,7 @@
                           ${status.label}
                         </span>
                         <span class="mfu-badge" style="background:rgba(255,255,255,.05);color:var(--muted);">
-                          🔥 ${streak} dia${streak !== 1 ? 's' : ''}
+                          =% ${streak} dia${streak !== 1 ?'s' : ''}
                         </span>
                       </div>
                     </div>
@@ -1066,7 +1066,7 @@
                       <small style="color:var(--muted);font-size:.75rem;display:block;margin-bottom:4px;">Período</small>
                       <strong style="font-size:.95rem;">${goal.startTime || '--'} - ${goal.endTime || '--'}</strong>
                     </div>
-                    ${daysUntilEnd > 0 ? `
+                    ${daysUntilEnd > 0 ?`
                     <div style="flex:1;min-width:100px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--border);text-align:center;">
                       <small style="color:var(--muted);font-size:.75rem;display:block;margin-bottom:4px;">Dias restantes</small>
                       <strong style="font-size:1.1rem;">${daysUntilEnd}</strong>
@@ -1111,7 +1111,7 @@
             <div class="mfu-col-list">
               ${
                 items.length
-                  ? items
+                  ?items
                       .map((task) => {
                         const linkedGoal = state.goals.find((g) => g.id === task.goalId);
 
@@ -1120,20 +1120,20 @@
                             <p>${escapeHtml(task.text)}</p>
                             ${
                               linkedGoal
-                                ? `<small>Meta vinculada: ${escapeHtml(linkedGoal.name)}</small>`
+                                ?`<small>Meta vinculada: ${escapeHtml(linkedGoal.name)}</small>`
                                 : `<small>Sem meta vinculada</small>`
                             }
 
                             <div class="mfu-task-actions">
                               ${
                                 id !== "todo"
-                                  ? `<button class="mfu-btn" data-action="move-task" data-task-id="${task.id}" data-status="${id === "done" ? "inprogress" : "todo"}">←</button>`
+                                  ?`<button class="mfu-btn" data-action="move-task" data-task-id="${task.id}" data-status="${id === "done" ?"inprogress" : "todo"}">�</button>`
                                   : ""
                               }
 
                               ${
                                 id !== "done"
-                                  ? `<button class="mfu-btn" data-action="move-task" data-task-id="${task.id}" data-status="${id === "todo" ? "inprogress" : "done"}">→</button>`
+                                  ?`<button class="mfu-btn" data-action="move-task" data-task-id="${task.id}" data-status="${id === "todo" ?"inprogress" : "done"}">�</button>`
                                   : ""
                               }
 
@@ -1226,7 +1226,7 @@
             <div class="mfu-history-list">
               ${
                 topGoals.length
-                  ? topGoals
+                  ?topGoals
                       .map(
                         (goal, index) => `
                           <div class="mfu-item-row">
@@ -1261,17 +1261,17 @@
           <div class="mfu-settings-list">
             ${
               state.goals.length
-                ? state.goals
+                ?state.goals
                     .map(
                       (goal) => {
                         const today = getTodayStr();
                         const todayEntry = entryFor(goal.id, today);
-                        const todayValue = todayEntry ? Number(todayEntry.value || 0) : 0;
+                        const todayValue = todayEntry ?Number(todayEntry.value || 0) : 0;
                         const statusKey = calculateStatus(todayValue, Number(goal.min), Number(goal.tol), Number(goal.ceiling));
                         const status = STATUS_COLORS[statusKey];
                         const totalEntries = state.entries.filter(e => e.goalId === goal.id);
                         const totalValue = totalEntries.reduce((sum, e) => sum + Number(e.value || 0), 0);
-                        const avgDaily = totalEntries.length > 0 ? (totalValue / totalEntries.length).toFixed(1) : 0;
+                        const avgDaily = totalEntries.length > 0 ?(totalValue / totalEntries.length).toFixed(1) : 0;
 
                         return `
                           <div class="mfu-item-row">
@@ -1287,7 +1287,7 @@
                                 <span>📊 Hoje: <strong style="color:var(--text);">${todayValue}</strong></span>
                                 <span>📈 Total: <strong style="color:var(--text);">${totalValue}</strong></span>
                                 <span>📉 Média/dia: <strong style="color:var(--text);">${avgDaily}</strong></span>
-                                ${goal.endDate ? `<span>📅 Fim: <strong style="color:var(--text);">${goal.endDate}</strong></span>` : ''}
+                                ${goal.endDate ?`<span>=� Fim: <strong style="color:var(--text);">${goal.endDate}</strong></span>` : ''}
                               </div>
                             </div>
                             <div style="display:flex;gap:10px;flex-wrap:wrap;">
@@ -1346,7 +1346,7 @@
 
       root.innerHTML = `
         <div class="mfu-shell">
-          ${state.goals.length ? renderCompactBar() : ""}
+          ${state.goals.length ?renderCompactBar() : ""}
           ${renderCurrentView()}
         </div>
         ${renderModal()}
@@ -1468,7 +1468,7 @@
         state.themeId = savedTheme.value;
       }
 
-      state.currentView = state.goals.length ? "dashboard" : "onboarding";
+      state.currentView = state.goals.length ?"dashboard" : "onboarding";
       render();
     }
 

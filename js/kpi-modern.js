@@ -29,11 +29,16 @@
 
   function setText(id, value) {
     const el = byId(id);
-    if (el) el.textContent = value;
+    if (el) {
+      const nextValue = typeof window.normalizeUiText === "function"
+        ? window.normalizeUiText(value)
+        : value;
+      el.textContent = nextValue;
+    }
   }
 
   function escapeHtml(value) {
-    return String(value ?? "")
+    return String(value || "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -162,8 +167,8 @@
 
   function updateHero(metrics) {
     setText("kpi-sync-badge", metrics.lastSyncLabel);
-    setText("kpi-highlight-module", `Módulo foco: ${metrics.topModule?.label || "--"}`);
-    setText("kpi-highlight-release", `Release líder: ${metrics.topRelease?.label || "--"}`);
+    setText("kpi-highlight-module", `M?dulo foco: ${metrics.topModule?.label || "--"}`);
+    setText("kpi-highlight-release", `Release l?der: ${metrics.topRelease?.label || "--"}`);
   }
 
   function updateCards(metrics) {
@@ -179,14 +184,14 @@
     setText("kpi-delta-sugestoes", formatPercent(metrics.suggestionRate));
     setText("kpi-delta-releases", `${metrics.avgPerRelease.toFixed(1).replace(".", ",")} por release`);
     setText("kpi-delta-protocolos", formatPercent(metrics.coverageRate));
-    setText("kpi-delta-ultima", metrics.latestRelease ? "Mais recente" : "Sem data");
+    setText("kpi-delta-ultima", metrics.latestRelease ?"Mais recente" : "Sem data");
 
     setText("kpi-note-total", "Protocolos consolidados no Supabase.");
     setText("kpi-note-erros", `${metrics.errors} itens classificados como erro na base atual.`);
     setText("kpi-note-sugestoes", `${metrics.suggestions} itens classificados como sugestão na base atual.`);
     setText("kpi-note-releases", `${metrics.releaseCount} datas de release com PRTs associados.`);
     setText("kpi-note-protocolos", `${metrics.releasedProtocols} PRTs únicos em releases, cobrindo ${formatPercent(metrics.coverageRate)} da base.`);
-    setText("kpi-note-ultima", metrics.latestRelease ? `Release mais recente detectada: ${metrics.latestRelease}.` : "Nenhuma release disponível.");
+    setText("kpi-note-ultima", metrics.latestRelease ?`Release mais recente detectada: ${metrics.latestRelease}.` : "Nenhuma release dispon?vel.");
   }
 
   function updateExecutiveSummary(metrics) {
@@ -195,7 +200,7 @@
 
     const lines = [
       `${metrics.totalRecords} protocolos catalogados, com ${metrics.releasedProtocols} PRTs efetivamente presentes nas releases publicadas.`,
-      `${metrics.topRelease?.label || "Sem release líder"} concentra ${metrics.topRelease?.count || 0} protocolos, enquanto ${metrics.topModule?.label || "sem módulo dominante"} lidera a incidência por módulo.`,
+      `${metrics.topRelease?.label || "Sem release l?der"} concentra ${metrics.topRelease?.count || 0} protocolos, enquanto ${metrics.topModule?.label || "sem m?dulo dominante"} lidera a incid?ncia por m?dulo.`,
       `A base atual mostra ${metrics.errors} erros e ${metrics.suggestions} sugestões, com taxa de cobertura de ${formatPercent(metrics.coverageRate)} sobre os protocolos conhecidos.`,
     ];
 
@@ -372,7 +377,7 @@
     destroyChart("chartTrendModulo");
 
     const selectedModule = window.moduloSelecionado && window.moduloSelecionado !== "TODOS"
-      ? window.moduloSelecionado
+      ?window.moduloSelecionado
       : metrics.topModule?.label;
 
     const series = metrics.releasesAsc.map((release) =>
@@ -386,7 +391,7 @@
       data: {
         labels: metrics.releasesAsc.map((item) => item.release),
         datasets: [{
-          label: selectedModule ? `Tendência de ${selectedModule}` : "Tendência",
+          label: selectedModule ?`Tend?ncia de ${selectedModule}` : "Tend?ncia",
           data: series,
           borderColor: "#34d399",
           backgroundColor: "rgba(52, 211, 153, 0.12)",
@@ -457,10 +462,10 @@
     const releasedProtocols = dataset.releasedSet.size;
     const releaseCount = releases.length;
     const latestRelease = releases[0]?.release || "";
-    const errorRate = totalRecords ? (errors / totalRecords) * 100 : 0;
-    const suggestionRate = totalRecords ? (suggestions / totalRecords) * 100 : 0;
-    const coverageRate = totalRecords ? (releasedProtocols / totalRecords) * 100 : 0;
-    const avgPerRelease = releaseCount ? releasedProtocols / releaseCount : 0;
+    const errorRate = totalRecords ?(errors / totalRecords) * 100 : 0;
+    const suggestionRate = totalRecords ?(suggestions / totalRecords) * 100 : 0;
+    const coverageRate = totalRecords ?(releasedProtocols / totalRecords) * 100 : 0;
+    const avgPerRelease = releaseCount ?releasedProtocols / releaseCount : 0;
     const topRelease = countBy(dataset.releasedDetails, (item) => item.release).sort((a, b) => b.count - a.count)[0] || null;
     const moduleRanking = countBy(dataset.releasedDetails, (item) => item.modulo).sort((a, b) => b.count - a.count);
     const topModule = moduleRanking[0] || null;
@@ -520,6 +525,7 @@
     overlay = document.createElement("div");
     overlay.id = "kpi-insight-modal-overlay";
     overlay.className = "kpi-insight-overlay hidden";
+    overlay.setAttribute("aria-hidden", "true");
     overlay.innerHTML = `
       <div class="kpi-insight-modal" role="dialog" aria-modal="true" aria-labelledby="kpi-insight-modal-title">
         <div class="kpi-insight-modal-head">
@@ -535,11 +541,21 @@
     `;
 
     document.body.appendChild(overlay);
+    const modal = overlay.querySelector(".kpi-insight-modal");
     const closeButton = overlay.querySelector("#kpi-insight-close-btn");
     if (closeButton) {
       closeButton.setAttribute("onclick", "window.closeKpiInsightModal && window.closeKpiInsightModal()");
       closeButton.onclick = closeInsightModal;
+      closeButton.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        closeInsightModal();
+      });
     }
+
+    modal?.addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
 
     overlay.addEventListener("click", (event) => {
       if (event.target === overlay) {
@@ -571,19 +587,21 @@
     const overlay = ensureModalShell();
     const resolvedRenderBody =
       typeof renderBody === "function"
-        ? renderBody
+        ?renderBody
         : () => body || '<div class="kpi-insight-empty">Sem conteúdo para exibir.</div>';
     window.__kpiCurrentModalConfig = { eyebrow, title, subtitle, renderBody: resolvedRenderBody };
     byId("kpi-insight-modal-eyebrow").textContent = eyebrow;
     byId("kpi-insight-modal-title").textContent = title;
     byId("kpi-insight-modal-subtitle").textContent = subtitle;
     overlay.classList.remove("hidden");
+    overlay.setAttribute("aria-hidden", "false");
     document.body.classList.add("modal-open");
     renderInsightModalPage(1);
   }
 
   function closeInsightModal() {
     byId("kpi-insight-modal-overlay")?.classList.add("hidden");
+    byId("kpi-insight-modal-overlay")?.setAttribute("aria-hidden", "true");
     document.body.classList.remove("modal-open");
     window.__kpiCurrentModalConfig = null;
     window.__kpiCurrentModalPage = 1;
@@ -641,23 +659,23 @@
       <div class="kpi-insight-pagination">
         <span class="kpi-insight-pagination-note">Página ${currentPage} de ${totalPages} · ${formatCount(rows.length)} registros</span>
         <div class="kpi-insight-pagination-actions">
-          <button type="button" class="kpi-insight-page-btn" data-kpi-page-action="prev" data-kpi-page="${Math.max(1, currentPage - 1)}" ${currentPage === 1 ? "disabled" : ""}>Anterior</button>
-          <button type="button" class="kpi-insight-page-btn" data-kpi-page-action="next" data-kpi-page="${Math.min(totalPages, currentPage + 1)}" ${currentPage === totalPages ? "disabled" : ""}>Próxima</button>
+          <button type="button" class="kpi-insight-page-btn" data-kpi-page-action="prev" data-kpi-page="${Math.max(1, currentPage - 1)}" ${currentPage === 1 ?"disabled" : ""}>Anterior</button>
+          <button type="button" class="kpi-insight-page-btn" data-kpi-page-action="next" data-kpi-page="${Math.min(totalPages, currentPage + 1)}" ${currentPage === totalPages ?"disabled" : ""}>Pr?xima</button>
         </div>
       </div>
     `;
   }
 
   function buildStatusPill(active, positiveLabel, neutralLabel) {
-    const label = active ? positiveLabel : neutralLabel;
-    const variant = active ? "success" : "neutral";
+    const label = active ?positiveLabel : neutralLabel;
+    const variant = active ?"success" : "neutral";
     return `<span class="kpi-insight-pill kpi-insight-pill-${variant}">${escapeHtml(label)}</span>`;
   }
 
   function buildStorageModal(insights, state) {
     const storage = insights?.storage || {};
     const sourceLabel = storage.source === "supabase-management"
-      ? "Supabase Management API"
+      ?"Supabase Management API"
       : "Monitoramento do workspace";
     const cards = [
       { label: "Espaço monitorado", value: formatBytes(storage.totalBytes), note: "Faixa usada para acompanhamento do workspace." },
@@ -724,15 +742,19 @@
     const freeBytes = Math.max(Number(storage.freeBytes) || 0, 0);
     const usagePercent = clampPercent(Number(storage.usagePercent) || ((usedBytes / totalBytes) * 100));
     const sourceLabel = storage.source === "supabase-management"
-      ? "Supabase Management API"
+      ?"Supabase Management API"
       : "Monitoramento do workspace";
     const tableEntries = Object.entries(storage.tables || {});
     const largestTableBytes = Math.max(1, ...tableEntries.map(([, details]) => Number(details?.usedBytes) || 0));
+    const storageLegend = [
+      { label: "Usado", value: formatBytes(usedBytes), percent: usagePercent, tone: "cyan" },
+      { label: "Livre", value: formatBytes(freeBytes), percent: 100 - usagePercent, tone: "violet" },
+    ];
     const rows = tableEntries.map(([table, details], index) => {
       const tableBytes = Number(details?.usedBytes) || 0;
       const tablePercent = (tableBytes / totalBytes) * 100;
       const relativePercent = (tableBytes / largestTableBytes) * 100;
-      const tone = index % 3 === 1 ? "blue" : index % 3 === 2 ? "violet" : "cyan";
+      const tone = index % 3 === 1 ?"blue" : index % 3 === 2 ?"violet" : "cyan";
       return [
         `<div class="kpi-storage-table-name"><strong>${escapeHtml(table)}</strong><small>${escapeHtml(formatCount(details.rows))} linhas monitoradas</small></div>`,
         `
@@ -770,26 +792,47 @@
               <div class="kpi-storage-hero-track">
                 <div class="kpi-storage-hero-fill" style="width:${usagePercent}%"></div>
               </div>
+              <div class="kpi-storage-volume-shell" aria-hidden="true">
+                <div class="kpi-storage-volume-bar">
+                  <div class="kpi-storage-volume-segment kpi-storage-volume-segment-used" style="width:${usagePercent}%"></div>
+                  <div class="kpi-storage-volume-segment kpi-storage-volume-segment-free" style="width:${100 - usagePercent}%"></div>
+                </div>
+                <div class="kpi-storage-volume-scale">
+                  <span>0</span>
+                  <span>${escapeHtml(formatBytes(totalBytes))}</span>
+                </div>
+              </div>
               <div class="kpi-storage-hero-foot">
                 <span>${escapeHtml(formatBytes(usedBytes))} utilizados</span>
                 <span>${escapeHtml(formatBytes(freeBytes))} livres</span>
               </div>
             </div>
+            <div class="kpi-storage-volume-legend">
+              ${storageLegend.map((item) => `
+                <article class="kpi-storage-volume-legend-item">
+                  <span class="kpi-storage-volume-dot kpi-storage-volume-dot-${item.tone}"></span>
+                  <div>
+                    <strong>${escapeHtml(item.label)}</strong>
+                    <small>${escapeHtml(item.value)} · ${escapeHtml(formatPercent(item.percent))}</small>
+                  </div>
+                </article>
+              `).join("")}
+            </div>
           </article>
           <article class="kpi-storage-sidecard">
-            <span>DistribuiÃ§Ã£o visÃ­vel</span>
+            <span>Distribui??o visível</span>
             <strong>${escapeHtml(formatCount(tableEntries.length))} fontes</strong>
-            <small>Recorte somado do workspace para leitura rÃ¡pida do banco.</small>
+            <small>Recorte somado do workspace para leitura r?pida do banco.</small>
             <div class="kpi-storage-share-stack">
-              ${buildStorageShareRow("Uso em ocupaÃ§Ã£o", formatBytes(usedBytes), usagePercent, "cyan")}
+              ${buildStorageShareRow("Uso em ocupação", formatBytes(usedBytes), usagePercent, "cyan")}
               ${buildStorageShareRow("Margem livre", formatBytes(freeBytes), 100 - usagePercent, "violet")}
             </div>
           </article>
         </section>
         <section class="kpi-storage-progress-grid">
-          ${buildStorageProgress("EspaÃ§o monitorado", formatBytes(totalBytes), "Faixa total considerada neste painel.", 100, "blue")}
-          ${buildStorageProgress("EspaÃ§o em uso", formatBytes(usedBytes), `${formatPercent(usagePercent)} ocupado no recorte atual.`, usagePercent, "cyan")}
-          ${buildStorageProgress("EspaÃ§o livre", formatBytes(freeBytes), "Saldo operacional restante no teto acompanhado.", 100 - usagePercent, "violet")}
+          ${buildStorageProgress("Espaço monitorado", formatBytes(totalBytes), "Faixa total considerada neste painel.", 100, "blue")}
+          ${buildStorageProgress("Espaço em uso", formatBytes(usedBytes), `${formatPercent(usagePercent)} ocupado no recorte atual.`, usagePercent, "cyan")}
+          ${buildStorageProgress("Espaço livre", formatBytes(freeBytes), "Saldo operacional restante no teto acompanhado.", 100 - usagePercent, "violet")}
         </section>
         ${buildTable(["Origem monitorada", "Volume estimado", "Linhas"], rows, { page })}
       `,
@@ -898,7 +941,7 @@
         ${buildMetricCards([
           { label: "PRTs liberados", value: formatCount(state.metrics.releasedProtocols), note: "Únicos nas releases publicadas." },
           { label: "Cobertura", value: formatPercent(state.metrics.coverageRate), note: "Participação sobre a base total." },
-          { label: "Módulo foco", value: state.metrics.topModule?.label || "--", note: "Maior incidência no recorte." },
+          { label: "M?dulo foco", value: state.metrics.topModule?.label || "--", note: "Maior incid?ncia no recorte." },
         ])}
         ${buildTable(["PRT", "Release", "Módulo", "Ticket"], rows)}
       `,
@@ -919,13 +962,13 @@
 
     openInsightModal({
       eyebrow: "Última janela liberada",
-      title: latest?.release || "Sem release disponível",
+      title: latest?.release || "Sem release dispon?vel",
       subtitle: "Detalhe da release mais recente para conferência rápida dos protocolos envolvidos.",
       renderBody: (page) => `
         ${buildMetricCards([
-          { label: "Release", value: latest?.release || "--", note: "Janela de maior recência detectada." },
+          { label: "Release", value: latest?.release || "--", note: "Janela de maior rec�ncia detectada." },
           { label: "PRTs na janela", value: formatCount(latest?.protocolos?.length || 0), note: "Itens confirmados nesta release." },
-          { label: "Módulos", value: formatCount(new Set((latest?.protocolos || []).map((prt) => state.protocolIndex[prt]?.modulo).filter(Boolean)).size), note: "Áreas impactadas na janela." },
+          { label: "M?dulos", value: formatCount(new Set((latest?.protocolos || []).map((prt) => state.protocolIndex[prt]?.modulo).filter(Boolean)).size), note: "?reas impactadas na janela." },
         ])}
         ${buildTable(["PRT", "Módulo", "Status", "Ticket"], rows)}
       `,
@@ -1009,7 +1052,7 @@
       renderRanking(metrics);
       if (typeof window.renderizarTabelaLiberacoes === "function") {
         const filteredRows = typeof window.obterLiberacoesFiltradasAtuais === "function"
-          ? window.obterLiberacoesFiltradasAtuais()
+          ?window.obterLiberacoesFiltradasAtuais()
           : releases;
         window.renderizarTabelaLiberacoes(filteredRows);
       }

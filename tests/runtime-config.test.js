@@ -13,7 +13,7 @@ function createStorage(initial = {}) {
   const data = new Map(Object.entries(initial));
   return {
     getItem(key) {
-      return data.has(key) ? data.get(key) : null;
+      return data.has(key) ?data.get(key) : null;
     },
     setItem(key, value) {
       data.set(key, String(value));

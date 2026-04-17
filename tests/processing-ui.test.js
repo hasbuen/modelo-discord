@@ -12,7 +12,7 @@ test('transcritor renderiza overlay de processamento bloqueante e sincroniza com
   assert.match(transcriberSource, /id="ia-processing-overlay"/);
   assert.match(transcriberSource, /id="ia-processing-message"/);
   assert.match(transcriberSource, /els\.processingOverlay\?\.classList\.toggle\("hidden", !state\.uploading\)/);
-  assert.match(transcriberSource, /els\.page\?\.setAttribute\("aria-busy", state\.uploading \? "true" : "false"\)/);
+  assert.match(transcriberSource, /els\.page\?\.setAttribute\("aria-busy", state\.uploading \?"true" : "false"\)/);
 });
 
 test('transcritor bloqueia criacao de ticket enquanto upload esta ativo', () => {
