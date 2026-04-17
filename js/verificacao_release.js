@@ -135,7 +135,7 @@ function renderizarLiberacoes(registros, releaseAtual) {
     const isSugestao = reg.tipo === '1';
     const tipoClass = isSugestao ?'text-green-400' : 'text-red-400';
     const tipoIcon = isSugestao ?'Lightbulb' : 'shield-alert';
-    const tipoLabel = isSugestao ?'Sugest?o' : 'Erro';
+    const tipoLabel = isSugestao ?'Sugestão' : 'Erro';
 
     const tr = document.createElement("tr");
     tr.className = "hover:bg-gray-800 transition duration-150";
@@ -153,7 +153,7 @@ function renderizarLiberacoes(registros, releaseAtual) {
           title="${(reg.descricao || '').replace(/"/g, '&quot;')}"
           onclick="mostrarDescricaoModal('#PRT${reg.protocolo}', '${(reg.descricao || '').replace(/'/g, "\\'")}')"
       >
-          ${reg.descricao ?reg.descricao.substring(0, 50) + '...' : 'Descri��o indispon?vel'}
+          ${reg.descricao ?reg.descricao.substring(0, 50) + '...' : 'Descrição indisponível'}
       </td>
     `;
     tbody.appendChild(tr);
@@ -252,7 +252,7 @@ async function carregarHistoricoLiberacoes() {
           const cor = isSugestao 
             ?"bg-green-700 text-green-100"
             : "bg-red-700 text-red-100";
-          const label = isSugestao ?"Sugest?o" : "Erro";
+          const label = isSugestao ?"Sugestão" : "Erro";
 
           const classes = cor.split(' ');
           badgeSpan.classList.add(...classes);

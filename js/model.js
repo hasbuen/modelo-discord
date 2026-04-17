@@ -52,7 +52,7 @@ async function fetchAndIndexProtocols() {
     }
 
     const docs = protocolos.map(p =>
-      protocoloFieldsToIndex.map(f => (p?.[f] || "")).filter(Boolean).join(" � ")
+      protocoloFieldsToIndex.map(f => (p?.[f] || "")).filter(Boolean).join(" • ")
     );
 
     const batchSize = 25;

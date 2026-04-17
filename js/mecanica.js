@@ -338,7 +338,7 @@ function filtrarTabela() {
     PAGINACAO_CONFIG.registrosFiltrados = PAGINACAO_CONFIG.registrosOriginais.filter(reg => {
       const ticket = String(reg.ticket || '').toLowerCase();
       const prt = String(reg.prt || '').toLowerCase();
-      const tipo = reg.tipo === '1' ?'sugest?o' : 'erro';
+      const tipo = reg.tipo === '1' ?'sugestão' : 'erro';
       const descricao = String(reg.descricao || '').toLowerCase();
       
       return ticket.includes(termoBusca) || 
@@ -370,8 +370,8 @@ function ordenarTabela(idx) {
     let vb = String(b[campo] || '').trim().toLowerCase();
     
     if (campo === 'tipo') {
-      va = va === '1' ?'sugest?o' : 'erro';
-      vb = vb === '1' ?'sugest?o' : 'erro';
+      va = va === '1' ?'sugestão' : 'erro';
+      vb = vb === '1' ?'sugestão' : 'erro';
     }
     
     return PAGINACAO_CONFIG.ordemAscendente 
@@ -423,7 +423,7 @@ function renderizarPaginaAtual() {
     tr.className = "hover:bg-gray-800";
     
     const badgeHTML = reg.tipo === '1'
-      ?'<span class="px-3 py-1 text-xs font-bold rounded-full bg-green-700 text-green-100">Sugest?o</span>'
+      ?'<span class="px-3 py-1 text-xs font-bold rounded-full bg-green-700 text-green-100">Sugestão</span>'
       : '<span class="px-3 py-1 text-xs font-bold rounded-full bg-red-700 text-red-100">Erro</span>';
     
     const descricaoEsc = escHTML(reg.descricao || "");
@@ -723,13 +723,13 @@ function copiarLinhaSafe(botao, reg) {
   const paliativo = objetoJson.paliativo ?? objetoJson.Paliativo ?? "";
 
   let texto = "";
-  if (tipo == '1' || String(tipo).toLowerCase() === 'sugest?o' || String(tipo).toLowerCase() === 'sugestao') {
+  if (tipo == '1' || String(tipo).toLowerCase() === 'sugestão' || String(tipo).toLowerCase() === 'sugestao') {
     texto = `**\`\`\`diff
-+ Protocolo [SUGEST?O]:
++ Protocolo [SUGESTÃO]:
 + PRT: ${prt}
 + Ticket: ${ticket}
 \`\`\`**
-- **Descri??o resumida:**
+- **Descrição resumida:**
 ${descricao}
 
 - **Paliativo:**
@@ -741,7 +741,7 @@ ${paliativo}
 - PRT: ${prt}
 - Ticket: ${ticket}
 \`\`\`**
-- **Descri??o resumida:**
+- **Descrição resumida:**
 ${descricao}
 
 - **Paliativo:**
@@ -1120,13 +1120,13 @@ function carregarTemplateProtocolo(tipo) {
 
   2.1 Testes realizados:
 
-  2.2 Testes com vers�es anteriores. O erro j� ocorria?
+  2.2 Testes com versões anteriores. O erro já ocorria?
 
   2.3 Se o erro não ocorria em versões anteriores,
       informe a versão utilizada para testes.
 
-3 - QUANDO O ERRO COME�OU A ACONTECER?
-    COMO O CLIENTE CONSEGUIA EFETUAR A OPERA��O ANTES?
+3 - QUANDO O ERRO COMEÇOU A ACONTECER?
+    COMO O CLIENTE CONSEGUIA EFETUAR A OPERAÇÃO ANTES?
 
 4 - SOLUÇÃO PALIATIVA (Se houver, descrever em detalhes):
 
@@ -1177,7 +1177,7 @@ window.initWorkspaceRegistroPage = async function initWorkspaceRegistroPage() {
     await inicializarWorkspaceRegistro();
   } catch (err) {
     window.__workspaceRegistroInitialized = false;
-    console.error("Erro ao inicializar a p?gina:", err);
+    console.error("Erro ao inicializar a página:", err);
   }
 };
 

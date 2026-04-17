@@ -126,7 +126,7 @@
 
       messagesContainer.innerHTML = instance.messages
         .map(function (message, index) {
-          const label = message.role === "user" ?"Voc?" : "CordIA";
+          const label = message.role === "user" ?"Você" : "CordIA";
           const isUser = message.role === "user";
 
           return `
@@ -179,7 +179,7 @@
 
       const apiBaseUrl = getApiBaseUrlSafe();
       if (!apiBaseUrl) {
-        showToast?.("API base n?o configurada.", "error");
+        showToast?.("API base não configurada.", "error");
         return;
       }
 

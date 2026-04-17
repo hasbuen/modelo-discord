@@ -3085,7 +3085,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     els.activeTitle.textContent = active.customName || active.phone || "Ticket";
     els.activeDate.textContent = active.createdAt || "";
     els.toggleRegisteredBtn.querySelector("span").textContent = active.isRegistered ?"Registrado" : "Marcar Registro";
-    els.uploadAudioBtn.querySelector("span").textContent = state.uploading ?"Processando..." : "Transcri??o";
+    els.uploadAudioBtn.querySelector("span").textContent = state.uploading ?"Processando..." : "Transcrição";
 
     renderImageViewer(active);
     renderReport(active);
