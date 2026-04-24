@@ -63,7 +63,7 @@
       }
 
       #pagina-ia {
-        --ia-bg: #07111f;
+        --ia-bg: transparent;
         --ia-bg-soft: rgba(8, 17, 34, .78);
         --ia-bg-elev: rgba(7, 17, 33, .92);
         --ia-panel: rgba(7, 17, 33, .74);
