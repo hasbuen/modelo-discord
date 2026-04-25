@@ -2,7 +2,7 @@
    VARIÁVEIS DE TEMA
    ========================================================= */
 :root {
-  /* Tema Escuro (Padr?o) */
+  /* Tema Escuro (Padrão) */
   --bg-main: #08111f;        /* Fundo principal */
   --bg-card: #0f1b2d;        /* Cards e Sidebar */
   --bg-header: rgba(9, 18, 31, 0.92);      /* Header Superior */
