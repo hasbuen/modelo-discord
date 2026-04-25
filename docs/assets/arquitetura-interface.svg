@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="520" viewBox="0 0 1120 520" role="img" aria-label="Arquitetura do frontend ProtoCord">
+  <rect width="1120" height="520" fill="#f8fafc"/>
+  <text x="56" y="58" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#0f172a">Interface Web ProtoCord</text>
+  <text x="56" y="88" font-family="Arial, sans-serif" font-size="15" fill="#475569">Camadas principais da interface web e integracoes consumidas</text>
+  <g fill="#ffffff" stroke="#cbd5e1" stroke-width="2">
+    <rect x="56" y="130" width="240" height="250" rx="10"/>
+    <rect x="336" y="130" width="240" height="250" rx="10"/>
+    <rect x="616" y="130" width="240" height="250" rx="10"/>
+    <rect x="896" y="130" width="168" height="250" rx="10"/>
+  </g>
+  <g font-family="Arial, sans-serif">
+    <text x="88" y="174" font-size="20" font-weight="700" fill="#1e293b">UI</text>
+    <text x="88" y="210" font-size="15" fill="#475569">index.html</text>
+    <text x="88" y="236" font-size="15" fill="#475569">style.css</text>
+    <text x="88" y="262" font-size="15" fill="#475569">modais, tabelas, dashboards</text>
+    <text x="368" y="174" font-size="20" font-weight="700" fill="#1e293b">Servicos JS</text>
+    <text x="368" y="210" font-size="15" fill="#475569">auth.js</text>
+    <text x="368" y="236" font-size="15" fill="#475569">mecanica.js</text>
+    <text x="368" y="262" font-size="15" fill="#475569">ia-transcriber.js</text>
+    <text x="368" y="288" font-size="15" fill="#475569">kpi-modern.js</text>
+    <text x="648" y="174" font-size="20" font-weight="700" fill="#1e293b">Configuração da API</text>
+    <text x="648" y="210" font-size="15" fill="#475569">runtime-config.js</text>
+    <text x="648" y="236" font-size="15" fill="#475569">getProtocordApiUrl()</text>
+    <text x="648" y="262" font-size="15" fill="#475569">localStorage override</text>
+    <text x="928" y="174" font-size="20" font-weight="700" fill="#1e293b">Servidor</text>
+    <text x="928" y="210" font-size="15" fill="#475569">Vercel API</text>
+    <text x="928" y="236" font-size="15" fill="#475569">Supabase</text>
+    <text x="928" y="262" font-size="15" fill="#475569">Groq/xAI</text>
+    <text x="928" y="288" font-size="15" fill="#475569">Znuny</text>
+  </g>
+  <g stroke="#2563eb" stroke-width="3" fill="none" marker-end="url(#arrow)">
+    <path d="M296 255 H336"/>
+    <path d="M576 255 H616"/>
+    <path d="M856 255 H896"/>
+  </g>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+  <rect x="56" y="420" width="1008" height="52" rx="8" fill="#e0f2fe" stroke="#7dd3fc"/>
+  <text x="84" y="452" font-family="Arial, sans-serif" font-size="16" fill="#075985">A interface nunca chama URLs fixas diretamente quando existe helper central: use window.getProtocordApiUrl("/rota").</text>
+</svg>

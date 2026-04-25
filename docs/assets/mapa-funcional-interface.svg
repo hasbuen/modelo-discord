@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="560" viewBox="0 0 1120 560" role="img" aria-label="Mapa funcional da interface ProtoCord">
+  <rect width="1120" height="560" fill="#ffffff"/>
+  <text x="56" y="58" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#111827">Mapa funcional</text>
+  <g font-family="Arial, sans-serif" font-size="16" fill="#111827">
+    <rect x="456" y="110" width="210" height="70" rx="12" fill="#111827"/>
+    <text x="511" y="153" fill="#ffffff" font-size="22" font-weight="700">ProtoCord</text>
+    <g fill="#f8fafc" stroke="#d1d5db" stroke-width="2">
+      <rect x="70" y="250" width="180" height="90" rx="10"/>
+      <rect x="275" y="250" width="180" height="90" rx="10"/>
+      <rect x="480" y="250" width="180" height="90" rx="10"/>
+      <rect x="685" y="250" width="180" height="90" rx="10"/>
+      <rect x="890" y="250" width="180" height="90" rx="10"/>
+      <rect x="275" y="405" width="180" height="90" rx="10"/>
+      <rect x="480" y="405" width="180" height="90" rx="10"/>
+      <rect x="685" y="405" width="180" height="90" rx="10"/>
+    </g>
+    <text x="108" y="287" font-weight="700">Protocolos</text>
+    <text x="96" y="315" fill="#4b5563">cadastro e historico</text>
+    <text x="321" y="287" font-weight="700">Releases</text>
+    <text x="304" y="315" fill="#4b5563">RTF e liberacoes</text>
+    <text x="531" y="287" font-weight="700">KPIs</text>
+    <text x="507" y="315" fill="#4b5563">indicadores e insights</text>
+    <text x="735" y="287" font-weight="700">Audio</text>
+    <text x="711" y="315" fill="#4b5563">gravacao e transcricao</text>
+    <text x="942" y="287" font-weight="700">IA</text>
+    <text x="915" y="315" fill="#4b5563">assistente contextual</text>
+    <text x="320" y="442" font-weight="700">SEFAZ</text>
+    <text x="295" y="470" fill="#4b5563">monitoramento visual</text>
+    <text x="527" y="442" font-weight="700">Relatorios</text>
+    <text x="513" y="470" fill="#4b5563">exportacoes e analises</text>
+    <text x="721" y="442" font-weight="700">Comparador</text>
+    <text x="714" y="470" fill="#4b5563">apoio textual</text>
+  </g>
+  <g stroke="#64748b" stroke-width="2" fill="none">
+    <path d="M561 180 V220 H160 V250"/>
+    <path d="M561 180 V220 H365 V250"/>
+    <path d="M561 180 V250"/>
+    <path d="M561 220 H775 V250"/>
+    <path d="M561 220 H980 V250"/>
+    <path d="M561 180 V380 H365 V405"/>
+    <path d="M561 380 V405"/>
+    <path d="M561 380 H775 V405"/>
+  </g>
+</svg>

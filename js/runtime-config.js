@@ -1,4 +1,6 @@
 (function () {
+  // Ponto unico de resolucao da API: permite trocar backend por configuracao
+  // injetada ou localStorage sem editar os modulos da interface.
   const DEFAULT_API_BASE_URL = "https://modelo-discord-server.vercel.app/api";
 
   function normalizeApiBaseUrl(value) {
