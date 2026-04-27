@@ -161,11 +161,19 @@ function hasActiveAuthSession() {
     return false;
   }
 
+  if (!isSignedSessionToken(token)) {
+    return false;
+  }
+
   const agora = new Date();
   const loginTime = new Date(tempo);
   const diffMs = agora - loginTime;
   const diffHoras = diffMs / (1000 * 60 * 60);
   return diffHoras < 24;
+}
+
+function isSignedSessionToken(token) {
+  return /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(String(token || ''));
 }
 
 function getAuthToken() {
@@ -220,9 +228,9 @@ async function validarSenha() {
 
     const resultado = await response.json(); 
 
-    if (resultado === true || resultado?.authenticated === true) {
+    if ((resultado === true || resultado?.authenticated === true) && isSignedSessionToken(resultado?.token)) {
       // Autenticação bem-sucedida
-      localStorage.setItem('authToken', resultado?.token || ('authenticated-' + Date.now()));
+      localStorage.setItem('authToken', resultado.token);
       localStorage.setItem('authTime', new Date().toISOString());
       
       // Esconde a tela de login e mostra o app
@@ -241,7 +249,7 @@ async function validarSenha() {
       broadcastAuthState(true);
     } else {
       // Autenticação falhou
-      msgErro.textContent = 'Senha incorreta. Tente novamente.';
+      msgErro.textContent = 'Sessão não validada pelo servidor. Tente novamente.';
       msgErro.classList.remove('hidden');
       broadcastAuthState(false);
     }

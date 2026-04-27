@@ -48,6 +48,14 @@
     return token ? { Authorization: `Bearer ${token}`, "X-ProtoCord-Session": token } : {};
   };
 
+  function clearInvalidSession() {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("authTime");
+    window.dispatchEvent(new CustomEvent("protocord:auth-changed", {
+      detail: { authenticated: false },
+    }));
+  }
+
   const nativeFetch = window.fetch.bind(window);
   window.fetch = function protocordSecureFetch(input, init = {}) {
     const url = typeof input === "string" ? input : input?.url;
@@ -61,6 +69,12 @@
       if (value && !headers.has(key)) headers.set(key, value);
     });
 
-    return nativeFetch(input, { ...init, headers });
+    return nativeFetch(input, { ...init, headers }).then((response) => {
+      const isAuthRequest = typeof url === "string" && url.includes("/autenticacao");
+      if (response?.status === 401 && !isAuthRequest) {
+        clearInvalidSession();
+      }
+      return response;
+    });
   };
 })();

@@ -18,6 +18,9 @@ function createStorage(initial = {}) {
     setItem(key, value) {
       data.set(key, String(value));
     },
+    removeItem(key) {
+      data.delete(key);
+    },
   };
 }
 
@@ -83,4 +86,38 @@ test('runtime-config anexa token somente em chamadas para a API configurada', as
   await sandbox.window.fetch('https://api.exemplo.com/api/protocolos');
 
   assert.equal(new Headers(capturedHeaders).get('authorization'), 'Bearer session-token');
+});
+
+test('runtime-config limpa sessao local quando API autenticada responde 401', async () => {
+  const storage = createStorage({
+    authToken: 'payload.signature',
+    authTime: '2026-04-27T10:00:00.000Z',
+  });
+  let authEvent;
+  const sandbox = {
+    window: {
+      PROTOCORD_RUNTIME_CONFIG: { API_BASE_URL: 'https://api.exemplo.com/api' },
+      getProtocordAuthToken: () => storage.getItem('authToken'),
+      addEventListener() {},
+      dispatchEvent(event) {
+        authEvent = event;
+      },
+      fetch() {
+        return Promise.resolve({ ok: false, status: 401 });
+      },
+    },
+    localStorage: storage,
+    CustomEvent,
+    Headers,
+  };
+  sandbox.window.localStorage = sandbox.localStorage;
+  sandbox.window.fetch = sandbox.window.fetch.bind(sandbox.window);
+
+  vm.runInNewContext(runtimeConfigSource, sandbox);
+  await sandbox.window.fetch('https://api.exemplo.com/api/protocolos');
+
+  assert.equal(storage.getItem('authToken'), null);
+  assert.equal(storage.getItem('authTime'), null);
+  assert.equal(authEvent.type, 'protocord:auth-changed');
+  assert.equal(authEvent.detail.authenticated, false);
 });

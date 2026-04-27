@@ -23,6 +23,9 @@ test('auth dispara evento quando estado de autenticacao muda', () => {
   assert.match(authSource, /window\.hasActiveAuthSession = hasActiveAuthSession/);
   assert.match(authSource, /window\.getProtocordAuthToken = getAuthToken/);
   assert.match(authSource, /method: 'POST'/);
+  assert.match(authSource, /function isSignedSessionToken\(token\)/);
+  assert.match(authSource, /isSignedSessionToken\(token\)/);
+  assert.doesNotMatch(authSource, /authenticated-' \+ Date\.now\(\)/);
   assert.doesNotMatch(authSource, /autenticacao\?pass=/);
 });
 
