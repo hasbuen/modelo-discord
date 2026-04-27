@@ -68,6 +68,8 @@ test('badges e modal de protocolo usam a nova camada visual operacional', () => 
   assert.match(protocolosSource, /kpi-protocol-badge-muted/);
   assert.match(protocolosSource, /const indexed = window\.protocolosIndex\?\.\[prt\]/);
   assert.match(protocolosSource, /return \{\s*prt,/);
+  assert.match(protocolosSource, /modulo: String\(moduloMap\[moduloId\] \|\| item\.modulo \|\| "Desconhecido"\)/);
+  assert.match(protocolosSource, /String\(a\)\.localeCompare\(String\(b\), "pt-BR"\)/);
   assert.match(protocolosSource, /id="modal-protocolo-overlay" class="protocol-modal-overlay"/);
   assert.match(protocolosSource, /class="protocol-modal-body"/);
   assert.match(protocolosSource, /window\.__protocolosClicksInitialized/);

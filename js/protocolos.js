@@ -50,7 +50,7 @@ async function criarIndiceProtocolos(protocolos) {
   protocolos.forEach((item) => {
     const moduloId = String(item.modulo || "");
     window.protocolosIndex[item.prt] = {
-      modulo: moduloMap[moduloId] || item.modulo || "Desconhecido",
+      modulo: String(moduloMap[moduloId] || item.modulo || "Desconhecido"),
       tipo: item.tipo,
       descricao: item.descricao,
       ticket: item.ticket || "",
@@ -64,7 +64,7 @@ function renderizarFiltroModulos() {
   if (!container || !window.protocolosIndex) return;
 
   container.innerHTML = "";
-  const modulos = new Set(Object.values(window.protocolosIndex).map((item) => item.modulo));
+  const modulos = new Set(Object.values(window.protocolosIndex).map((item) => String(item.modulo || "Desconhecido")));
 
   const criarChip = (label, ativo) => {
     const safeLabel = String(label).replace(/'/g, "\\'");
@@ -80,7 +80,7 @@ function renderizarFiltroModulos() {
   };
 
   container.innerHTML += criarChip("TODOS", window.moduloSelecionado === "TODOS");
-  [...modulos].sort((a, b) => a.localeCompare(b, "pt-BR")).forEach((modulo) => {
+  [...modulos].sort((a, b) => String(a).localeCompare(String(b), "pt-BR")).forEach((modulo) => {
     container.innerHTML += criarChip(modulo, window.moduloSelecionado === modulo);
   });
 }

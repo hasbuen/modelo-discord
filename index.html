@@ -2384,7 +2384,7 @@ window.mostrarPagina = function (paginaId) {
               y = 40;
             }
             pdf.text(`${i+1}. ${labels[i]}`, 40, y);
-            pdf.text(String(data[i] ?''), pdfWidth - 80, y);
+            pdf.text(String(data[i] ?? ''), pdfWidth - 80, y);
             y += lineH;
           }
         }
@@ -2940,7 +2940,7 @@ window.mostrarPagina = function (paginaId) {
                 p = window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {};
               }
 
-              const tipoRaw = (p && p.tipo !== undefined) ?p.tipo : (window.protocolosIndex?.[prt]?.tipo ?'');
+              const tipoRaw = (p && p.tipo !== undefined) ? p.tipo : (window.protocolosIndex?.[prt]?.tipo || '');
               const tipoLabel = (typeof getTipoLabel==='function')?getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugestão');
               const normTipo = normalizeLabel(tipoLabel);
               if (tipo==='erro' && normTipo!=='erro') continue;
@@ -2981,7 +2981,7 @@ window.mostrarPagina = function (paginaId) {
                 p = window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {};
               }
 
-              const tipoRaw = (p && p.tipo !== undefined) ?p.tipo : (window.protocolosIndex?.[prt]?.tipo ?'');
+              const tipoRaw = (p && p.tipo !== undefined) ? p.tipo : (window.protocolosIndex?.[prt]?.tipo || '');
               const tipoLabel = (typeof getTipoLabel==='function')?getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugestão');
               const normTipo = normalizeLabel(tipoLabel);
               if (tipo==='erro' && normTipo!=='erro') continue;
