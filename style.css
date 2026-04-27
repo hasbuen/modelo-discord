@@ -4877,3 +4877,111 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
 
 
 
+.docs-easter-target {
+  cursor: context-menu;
+  user-select: none;
+}
+
+.docs-easter-menu {
+  position: fixed;
+  top: 72px;
+  right: 22px;
+  z-index: 80;
+  width: min(320px, calc(100vw - 28px));
+  padding: 14px;
+  border: 1px solid rgba(96, 165, 250, 0.28);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(56, 189, 248, 0.20), transparent 32%),
+    linear-gradient(145deg, rgba(9, 18, 34, 0.98), rgba(14, 27, 48, 0.96));
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  color: #e5edf8;
+  backdrop-filter: blur(18px);
+  transform-origin: top right;
+  animation: docsEasterIn 180ms ease-out;
+}
+
+.docs-easter-menu.hidden {
+  display: none;
+}
+
+.docs-easter-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.docs-easter-menu-header span {
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.docs-easter-menu-header button {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.72);
+  color: #cbd5e1;
+}
+
+.docs-easter-menu p {
+  margin: 0 0 12px;
+  color: #9fb0c7;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.docs-easter-menu a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 10px 11px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 12px;
+  color: #e5edf8;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  background: rgba(15, 23, 42, 0.54);
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.docs-easter-menu a + a {
+  margin-top: 8px;
+}
+
+.docs-easter-menu a:hover,
+.docs-easter-menu a:focus-visible {
+  border-color: rgba(96, 165, 250, 0.72);
+  background: rgba(37, 99, 235, 0.22);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+@keyframes docsEasterIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 767px) {
+  .docs-easter-menu {
+    top: 74px;
+    left: 14px;
+    right: 14px;
+    width: auto;
+    transform-origin: top left;
+  }
+}

@@ -376,14 +376,14 @@
 
     <header id="desktop-header"
       class="hidden md:flex items-center justify-between fixed top-0 right-0 z-20 px-6 py-3 h-16 w-auto left-56">
-      <div class="flex items-center gap-3">
+      <div id="docs-easter-brand" class="flex items-center gap-3 docs-easter-target" title="Documentação">
         <div class="bg-blue-600 p-1.5 rounded-lg">
           <i data-lucide="bandage" class="w-5 h-5 text-white"></i>
         </div>
         <h1 class="text-xl font-bold tracking-tight">ProtoCord</h1>
       </div>
       <div class="flex items-center gap-4">
-        <span class="text-sm text-gray-400">v2.0</span>
+        <span id="docs-easter-version" class="text-sm text-gray-400 docs-easter-target">v2.0</span>
       </div>
     </header>
 
@@ -491,7 +491,7 @@
         <button id="btn-mobile-menu" class="p-2 -ml-2 rounded-md hover:bg-gray-800">
           <i data-lucide="menu" class="w-6 h-6"></i>
         </button>
-        <span class="font-bold text-lg">ProtoCord</span>
+        <span id="docs-easter-mobile" class="font-bold text-lg docs-easter-target">ProtoCord</span>
       </div>
       <button id="btn-mobile-theme" class="mobile-theme-chip" onclick="alternarTema(window.__nextThemeOption ?window.__nextThemeOption() : 'dark')">
         <i data-lucide="sun-moon" class="w-4 h-4"></i>
@@ -500,6 +500,31 @@
     </header>
 
     <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
+    <div id="docs-easter-menu" class="docs-easter-menu hidden" role="menu" aria-hidden="true">
+      <div class="docs-easter-menu-header">
+        <span>Central oculta</span>
+        <button type="button" id="docs-easter-close" aria-label="Fechar documentação">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <p>Atalhos rápidos para documentação e mapa do projeto.</p>
+      <a href="docs/manual-usuario/MANUAL_USUARIO_PROTOCORD.pdf" target="_blank" rel="noreferrer" role="menuitem">
+        <i data-lucide="book-open" class="w-4 h-4"></i>
+        Manual do usuário
+      </a>
+      <a href="docs/manual-transcrever-cordia/MANUAL_TRANSCREVER_CORDIA.pdf" target="_blank" rel="noreferrer" role="menuitem">
+        <i data-lucide="mic-2" class="w-4 h-4"></i>
+        Manual Transcrever e CordIA
+      </a>
+      <a href="docs/code-map/CODE_MINDMAP_PROTOCORD.html" target="_blank" rel="noreferrer" role="menuitem">
+        <i data-lucide="network" class="w-4 h-4"></i>
+        Mindmap 3D local
+      </a>
+      <a href="https://modelo-discord-server.vercel.app/api/mindmap" target="_blank" rel="noreferrer" role="menuitem">
+        <i data-lucide="server" class="w-4 h-4"></i>
+        Mindmap no servidor
+      </a>
+    </div>
     <aside id="mobile-sidebar"
       class="fixed inset-y-0 left-0 w-64 bg-gray-900 border-r border-gray-700 z-50 transform -translate-x-full transition-transform duration-300 md:hidden p-4">
       <div class="flex items-center justify-between mb-6">
@@ -3686,6 +3711,92 @@ window.mostrarPagina = function (paginaId) {
     }
   });
 })();
+</script>
+<script>
+  (function () {
+    function initDocsEasterMenu() {
+      const menu = document.getElementById('docs-easter-menu');
+      if (!menu || menu.dataset.bound === '1') return;
+      menu.dataset.bound = '1';
+
+      const targets = [
+        document.getElementById('docs-easter-brand'),
+        document.getElementById('docs-easter-version'),
+        document.getElementById('docs-easter-mobile')
+      ].filter(Boolean);
+      const closeButton = document.getElementById('docs-easter-close');
+      let touchTimer = null;
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function openMenu(x, y) {
+        menu.classList.remove('hidden');
+        menu.setAttribute('aria-hidden', 'false');
+        window.requestLucideIcons?.();
+
+        const rect = menu.getBoundingClientRect();
+        const nextLeft = clamp(x, 12, window.innerWidth - rect.width - 12);
+        const nextTop = clamp(y, 72, window.innerHeight - rect.height - 12);
+
+        menu.style.left = `${nextLeft}px`;
+        menu.style.top = `${nextTop}px`;
+        menu.style.right = 'auto';
+
+        menu.querySelector('a')?.focus({ preventScroll: true });
+      }
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        menu.setAttribute('aria-hidden', 'true');
+      }
+
+      targets.forEach((target) => {
+        target.addEventListener('contextmenu', (event) => {
+          event.preventDefault();
+          openMenu(event.clientX, event.clientY);
+        });
+
+        target.addEventListener('click', (event) => {
+          if (window.matchMedia('(max-width: 767px)').matches) {
+            openMenu(event.clientX || 18, 74);
+          }
+        });
+
+        target.addEventListener('touchstart', (event) => {
+          const touch = event.touches?.[0];
+          window.clearTimeout(touchTimer);
+          touchTimer = window.setTimeout(() => {
+            openMenu(touch?.clientX || 18, touch?.clientY || 74);
+          }, 520);
+        }, { passive: true });
+
+        target.addEventListener('touchend', () => window.clearTimeout(touchTimer));
+        target.addEventListener('touchcancel', () => window.clearTimeout(touchTimer));
+      });
+
+      closeButton?.addEventListener('click', closeMenu);
+      document.addEventListener('click', (event) => {
+        if (menu.classList.contains('hidden')) return;
+        if (menu.contains(event.target) || targets.some((target) => target.contains(event.target))) return;
+        closeMenu();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeMenu();
+        if (event.altKey && event.key.toLowerCase() === 'd') {
+          event.preventDefault();
+          openMenu(window.innerWidth - 340, 76);
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDocsEasterMenu);
+    } else {
+      initDocsEasterMenu();
+    }
+  })();
 </script>
 </body>
 
