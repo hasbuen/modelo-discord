@@ -4937,10 +4937,12 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
   line-height: 1.45;
 }
 
-.docs-easter-menu a {
+.docs-easter-menu a,
+.docs-easter-menu .docs-easter-links button {
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
   min-height: 42px;
   padding: 10px 11px;
   border: 1px solid rgba(148, 163, 184, 0.14);
@@ -4951,9 +4953,11 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
   font-weight: 700;
   background: rgba(15, 23, 42, 0.54);
   transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+  cursor: pointer;
 }
 
-.docs-easter-menu a + a {
+.docs-easter-menu a + a,
+.docs-easter-menu .docs-easter-links button + button {
   margin-top: 8px;
 }
 
@@ -5012,7 +5016,9 @@ tbody tr:hover { background-color: var(--sidebar-hover); }
 }
 
 .docs-easter-menu a:hover,
-.docs-easter-menu a:focus-visible {
+.docs-easter-menu a:focus-visible,
+.docs-easter-menu .docs-easter-links button:hover,
+.docs-easter-menu .docs-easter-links button:focus-visible {
   border-color: rgba(96, 165, 250, 0.72);
   background: rgba(37, 99, 235, 0.22);
   transform: translateY(-1px);

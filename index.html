@@ -519,18 +519,18 @@
         <small id="docs-easter-error" class="hidden">Senha não validada.</small>
       </form>
       <div id="docs-easter-links" class="docs-easter-links hidden">
-        <a href="docs/manual-usuario/MANUAL_USUARIO_PROTOCORD.pdf" target="_blank" rel="noreferrer" role="menuitem">
+        <button type="button" data-doc-key="manual-usuario" role="menuitem">
           <i data-lucide="book-open" class="w-4 h-4"></i>
           Manual do usuário
-        </a>
-        <a href="docs/manual-transcrever-cordia/MANUAL_TRANSCREVER_CORDIA.pdf" target="_blank" rel="noreferrer" role="menuitem">
+        </button>
+        <button type="button" data-doc-key="manual-transcrever-cordia" role="menuitem">
           <i data-lucide="mic-2" class="w-4 h-4"></i>
           Manual Transcrever e CordIA
-        </a>
-        <a href="docs/code-map/CODE_MINDMAP_PROTOCORD.html" target="_blank" rel="noreferrer" role="menuitem">
+        </button>
+        <button type="button" data-doc-key="mind-map" role="menuitem">
           <i data-lucide="network" class="w-4 h-4"></i>
           Mind Map
-        </a>
+        </button>
       </div>
     </div>
     <aside id="mobile-sidebar"
@@ -3769,7 +3769,8 @@ window.mostrarPagina = function (paginaId) {
 
       function hasDocsSession() {
         const time = Number(sessionStorage.getItem('PROTOCORD_DOCS_AUTH_TIME') || 0);
-        return time && Date.now() - time < 15 * 60 * 1000;
+        const token = sessionStorage.getItem('PROTOCORD_DOCS_AUTH_TOKEN');
+        return Boolean(token && time && Date.now() - time < 15 * 60 * 1000);
       }
 
       function renderAuthState() {
@@ -3819,6 +3820,7 @@ window.mostrarPagina = function (paginaId) {
           const result = await response.json();
           if ((result === true || result?.authenticated === true) && result?.token) {
             sessionStorage.setItem('PROTOCORD_DOCS_AUTH_TIME', String(Date.now()));
+            sessionStorage.setItem('PROTOCORD_DOCS_AUTH_TOKEN', result.token);
             passwordInput.value = '';
             renderAuthState();
             window.requestLucideIcons?.();
@@ -3827,6 +3829,35 @@ window.mostrarPagina = function (paginaId) {
           authError?.classList.remove('hidden');
         } catch (_error) {
           authError?.classList.remove('hidden');
+        }
+      });
+      links?.addEventListener('click', async (event) => {
+        const button = event.target.closest('[data-doc-key]');
+        if (!button) return;
+        const token = sessionStorage.getItem('PROTOCORD_DOCS_AUTH_TOKEN');
+        const docKey = button.dataset.docKey;
+        if (!token || !docKey) {
+          renderAuthState();
+          return;
+        }
+
+        button.disabled = true;
+        try {
+          const response = await fetch(window.getProtocordApiUrl(`/autenticacao?doc=${encodeURIComponent(docKey)}`), {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!response.ok) throw new Error('Documento não autorizado');
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          window.open(url, '_blank', 'noopener,noreferrer');
+          window.setTimeout(() => URL.revokeObjectURL(url), 60 * 1000);
+        } catch (_error) {
+          sessionStorage.removeItem('PROTOCORD_DOCS_AUTH_TOKEN');
+          sessionStorage.removeItem('PROTOCORD_DOCS_AUTH_TIME');
+          authError?.classList.remove('hidden');
+          renderAuthState();
+        } finally {
+          button.disabled = false;
         }
       });
       document.addEventListener('click', (event) => {
