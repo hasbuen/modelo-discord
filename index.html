@@ -507,19 +507,31 @@
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
-      <p>Atalhos rápidos para documentação e mapa do projeto.</p>
-      <a href="docs/manual-usuario/MANUAL_USUARIO_PROTOCORD.pdf" target="_blank" rel="noreferrer" role="menuitem">
-        <i data-lucide="book-open" class="w-4 h-4"></i>
-        Manual do usuário
-      </a>
-      <a href="docs/manual-transcrever-cordia/MANUAL_TRANSCREVER_CORDIA.pdf" target="_blank" rel="noreferrer" role="menuitem">
-        <i data-lucide="mic-2" class="w-4 h-4"></i>
-        Manual Transcrever e CordIA
-      </a>
-      <a href="docs/code-map/CODE_MINDMAP_PROTOCORD.html" target="_blank" rel="noreferrer" role="menuitem">
-        <i data-lucide="network" class="w-4 h-4"></i>
-        Mind Map
-      </a>
+      <p>Área restrita para documentação e mapa do projeto.</p>
+      <form id="docs-easter-auth" class="docs-easter-auth" autocomplete="off">
+        <label for="docs-easter-password">Senha</label>
+        <div class="docs-easter-auth-row">
+          <input id="docs-easter-password" type="password" autocomplete="current-password" placeholder="Digite sua senha" />
+          <button type="submit" aria-label="Acessar documentação">
+            <i data-lucide="log-in" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <small id="docs-easter-error" class="hidden">Senha não validada.</small>
+      </form>
+      <div id="docs-easter-links" class="docs-easter-links hidden">
+        <a href="docs/manual-usuario/MANUAL_USUARIO_PROTOCORD.pdf" target="_blank" rel="noreferrer" role="menuitem">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+          Manual do usuário
+        </a>
+        <a href="docs/manual-transcrever-cordia/MANUAL_TRANSCREVER_CORDIA.pdf" target="_blank" rel="noreferrer" role="menuitem">
+          <i data-lucide="mic-2" class="w-4 h-4"></i>
+          Manual Transcrever e CordIA
+        </a>
+        <a href="docs/code-map/CODE_MINDMAP_PROTOCORD.html" target="_blank" rel="noreferrer" role="menuitem">
+          <i data-lucide="network" class="w-4 h-4"></i>
+          Mind Map
+        </a>
+      </div>
     </div>
     <aside id="mobile-sidebar"
       class="fixed inset-y-0 left-0 w-64 bg-gray-900 border-r border-gray-700 z-50 transform -translate-x-full transition-transform duration-300 md:hidden p-4">
@@ -3721,6 +3733,10 @@ window.mostrarPagina = function (paginaId) {
         document.getElementById('docs-easter-mobile')
       ].filter(Boolean);
       const closeButton = document.getElementById('docs-easter-close');
+      const authForm = document.getElementById('docs-easter-auth');
+      const passwordInput = document.getElementById('docs-easter-password');
+      const authError = document.getElementById('docs-easter-error');
+      const links = document.getElementById('docs-easter-links');
       let touchTimer = null;
 
       function clamp(value, min, max) {
@@ -3728,6 +3744,7 @@ window.mostrarPagina = function (paginaId) {
       }
 
       function openMenu(x, y) {
+        renderAuthState();
         menu.classList.remove('hidden');
         menu.setAttribute('aria-hidden', 'false');
         window.requestLucideIcons?.();
@@ -3740,12 +3757,26 @@ window.mostrarPagina = function (paginaId) {
         menu.style.top = `${nextTop}px`;
         menu.style.right = 'auto';
 
-        menu.querySelector('a')?.focus({ preventScroll: true });
+        (links?.classList.contains('hidden') ? passwordInput : menu.querySelector('a'))?.focus({ preventScroll: true });
       }
 
       function closeMenu() {
         menu.classList.add('hidden');
         menu.setAttribute('aria-hidden', 'true');
+        if (passwordInput) passwordInput.value = '';
+        authError?.classList.add('hidden');
+      }
+
+      function hasDocsSession() {
+        const time = Number(sessionStorage.getItem('PROTOCORD_DOCS_AUTH_TIME') || 0);
+        return time && Date.now() - time < 15 * 60 * 1000;
+      }
+
+      function renderAuthState() {
+        const authenticated = hasDocsSession();
+        authForm?.classList.toggle('hidden', authenticated);
+        links?.classList.toggle('hidden', !authenticated);
+        authError?.classList.add('hidden');
       }
 
       targets.forEach((target) => {
@@ -3773,6 +3804,31 @@ window.mostrarPagina = function (paginaId) {
       });
 
       closeButton?.addEventListener('click', closeMenu);
+      authForm?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const password = passwordInput?.value?.trim() || '';
+        if (!password) return;
+        authError?.classList.add('hidden');
+
+        try {
+          const response = await fetch(window.getProtocordApiUrl('/autenticacao'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pass: window.toMD5(password) }),
+          });
+          const result = await response.json();
+          if ((result === true || result?.authenticated === true) && result?.token) {
+            sessionStorage.setItem('PROTOCORD_DOCS_AUTH_TIME', String(Date.now()));
+            passwordInput.value = '';
+            renderAuthState();
+            window.requestLucideIcons?.();
+            return;
+          }
+          authError?.classList.remove('hidden');
+        } catch (_error) {
+          authError?.classList.remove('hidden');
+        }
+      });
       document.addEventListener('click', (event) => {
         if (menu.classList.contains('hidden')) return;
         if (menu.contains(event.target) || targets.some((target) => target.contains(event.target))) return;
