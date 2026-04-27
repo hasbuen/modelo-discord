@@ -25,11 +25,16 @@ function runRuntimeConfig({ runtimeConfig, storageValues } = {}) {
   const sandbox = {
     window: {
       PROTOCORD_RUNTIME_CONFIG: runtimeConfig || {},
+      fetch() {
+        return Promise.resolve({ ok: true });
+      },
     },
     localStorage: createStorage(storageValues),
+    Headers,
   };
 
   sandbox.window.localStorage = sandbox.localStorage;
+  sandbox.window.fetch = sandbox.window.fetch.bind(sandbox.window);
   vm.runInNewContext(runtimeConfigSource, sandbox);
   return sandbox.window;
 }
@@ -55,4 +60,27 @@ test('runtime-config usa localStorage como fallback quando nao ha configuracao i
 
   assert.equal(result.PROTOCORD_API_BASE_URL, 'https://persistido.exemplo.com/api');
   assert.equal(result.PROTOCORD_API_SERVER_ORIGIN, 'https://persistido.exemplo.com');
+});
+
+test('runtime-config anexa token somente em chamadas para a API configurada', async () => {
+  let capturedHeaders;
+  const sandbox = {
+    window: {
+      PROTOCORD_RUNTIME_CONFIG: { API_BASE_URL: 'https://api.exemplo.com/api' },
+      getProtocordAuthToken: () => 'session-token',
+      fetch(_url, init) {
+        capturedHeaders = init?.headers;
+        return Promise.resolve({ ok: true });
+      },
+    },
+    localStorage: createStorage(),
+    Headers,
+  };
+  sandbox.window.localStorage = sandbox.localStorage;
+  sandbox.window.fetch = sandbox.window.fetch.bind(sandbox.window);
+
+  vm.runInNewContext(runtimeConfigSource, sandbox);
+  await sandbox.window.fetch('https://api.exemplo.com/api/protocolos');
+
+  assert.equal(new Headers(capturedHeaders).get('authorization'), 'Bearer session-token');
 });

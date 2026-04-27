@@ -40,4 +40,27 @@
     return window.PROTOCORD_API_BASE_URL;
   };
   window.getProtocordApiUrl = toApiUrl;
+
+  window.getProtocordAuthHeaders = function () {
+    const token = typeof window.getProtocordAuthToken === "function"
+      ? window.getProtocordAuthToken()
+      : localStorage.getItem("authToken");
+    return token ? { Authorization: `Bearer ${token}`, "X-ProtoCord-Session": token } : {};
+  };
+
+  const nativeFetch = window.fetch.bind(window);
+  window.fetch = function protocordSecureFetch(input, init = {}) {
+    const url = typeof input === "string" ? input : input?.url;
+    const shouldAttachAuth = typeof url === "string" && url.startsWith(apiBaseUrl);
+    if (!shouldAttachAuth) {
+      return nativeFetch(input, init);
+    }
+
+    const headers = new Headers(init.headers || (typeof input !== "string" ? input.headers : undefined) || {});
+    Object.entries(window.getProtocordAuthHeaders()).forEach(([key, value]) => {
+      if (value && !headers.has(key)) headers.set(key, value);
+    });
+
+    return nativeFetch(input, { ...init, headers });
+  };
 })();

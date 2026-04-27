@@ -1494,6 +1494,119 @@
         animation: ia-processing-progress 1.4s ease-in-out infinite;
       }
 
+      html[data-theme="light"] #pagina-ia .ia-processing-overlay,
+      body[data-theme="light"] #pagina-ia .ia-processing-overlay,
+      html.light #pagina-ia .ia-processing-overlay,
+      body.light #pagina-ia .ia-processing-overlay,
+      .theme-light #pagina-ia .ia-processing-overlay,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-overlay {
+        background:
+          radial-gradient(circle at top, rgba(56, 189, 248, 0.14), transparent 42%),
+          linear-gradient(180deg, rgba(241, 247, 255, 0.78), rgba(226, 236, 248, 0.92));
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-processing-shell,
+      body[data-theme="light"] #pagina-ia .ia-processing-shell,
+      html.light #pagina-ia .ia-processing-shell,
+      body.light #pagina-ia .ia-processing-shell,
+      .theme-light #pagina-ia .ia-processing-shell,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-shell {
+        border-color: rgba(100, 116, 139, 0.18);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(241, 247, 255, 0.98));
+        box-shadow: 0 30px 80px rgba(100, 116, 139, 0.2);
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-processing-copy strong,
+      body[data-theme="light"] #pagina-ia .ia-processing-copy strong,
+      html.light #pagina-ia .ia-processing-copy strong,
+      body.light #pagina-ia .ia-processing-copy strong,
+      .theme-light #pagina-ia .ia-processing-copy strong,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-copy strong,
+      html[data-theme="light"] #pagina-ia .ia-processing-note-head strong,
+      body[data-theme="light"] #pagina-ia .ia-processing-note-head strong,
+      html.light #pagina-ia .ia-processing-note-head strong,
+      body.light #pagina-ia .ia-processing-note-head strong,
+      .theme-light #pagina-ia .ia-processing-note-head strong,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-note-head strong {
+        color: #0f172a;
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-processing-copy span,
+      body[data-theme="light"] #pagina-ia .ia-processing-copy span,
+      html.light #pagina-ia .ia-processing-copy span,
+      body.light #pagina-ia .ia-processing-copy span,
+      .theme-light #pagina-ia .ia-processing-copy span,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-copy span {
+        color: #516277;
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-processing-preview,
+      body[data-theme="light"] #pagina-ia .ia-processing-preview,
+      html.light #pagina-ia .ia-processing-preview,
+      body.light #pagina-ia .ia-processing-preview,
+      .theme-light #pagina-ia .ia-processing-preview,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-preview,
+      html[data-theme="light"] #pagina-ia .ia-processing-notes,
+      body[data-theme="light"] #pagina-ia .ia-processing-notes,
+      html.light #pagina-ia .ia-processing-notes,
+      body.light #pagina-ia .ia-processing-notes,
+      .theme-light #pagina-ia .ia-processing-notes,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-notes {
+        border-color: rgba(148, 163, 184, 0.18);
+        background: rgba(248, 251, 255, 0.9);
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-processing-line,
+      body[data-theme="light"] #pagina-ia .ia-processing-line,
+      html.light #pagina-ia .ia-processing-line,
+      body.light #pagina-ia .ia-processing-line,
+      .theme-light #pagina-ia .ia-processing-line,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-line,
+      html[data-theme="light"] #pagina-ia .ia-processing-block,
+      body[data-theme="light"] #pagina-ia .ia-processing-block,
+      html.light #pagina-ia .ia-processing-block,
+      body.light #pagina-ia .ia-processing-block,
+      .theme-light #pagina-ia .ia-processing-block,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-block {
+        background: rgba(210, 224, 242, 0.88);
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-processing-bar,
+      body[data-theme="light"] #pagina-ia .ia-processing-bar,
+      html.light #pagina-ia .ia-processing-bar,
+      body.light #pagina-ia .ia-processing-bar,
+      .theme-light #pagina-ia .ia-processing-bar,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-bar {
+        background:
+          linear-gradient(180deg, rgba(226, 236, 248, 0.96), rgba(210, 224, 242, 0.9)),
+          repeating-linear-gradient(
+            90deg,
+            rgba(37, 99, 235, 0.08) 0 14px,
+            rgba(37, 99, 235, 0.03) 14px 28px
+          );
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-processing-line::after,
+      body[data-theme="light"] #pagina-ia .ia-processing-line::after,
+      html.light #pagina-ia .ia-processing-line::after,
+      body.light #pagina-ia .ia-processing-line::after,
+      .theme-light #pagina-ia .ia-processing-line::after,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-line::after,
+      html[data-theme="light"] #pagina-ia .ia-processing-block::after,
+      body[data-theme="light"] #pagina-ia .ia-processing-block::after,
+      html.light #pagina-ia .ia-processing-block::after,
+      body.light #pagina-ia .ia-processing-block::after,
+      .theme-light #pagina-ia .ia-processing-block::after,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-block::after,
+      html[data-theme="light"] #pagina-ia .ia-processing-bar::after,
+      body[data-theme="light"] #pagina-ia .ia-processing-bar::after,
+      html.light #pagina-ia .ia-processing-bar::after,
+      body.light #pagina-ia .ia-processing-bar::after,
+      .theme-light #pagina-ia .ia-processing-bar::after,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-bar::after {
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+      }
+
       #pagina-ia ::-webkit-scrollbar {
         width: 8px;
         height: 8px;

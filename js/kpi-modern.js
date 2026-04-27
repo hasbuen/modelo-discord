@@ -156,6 +156,55 @@
     return { allProtocols, releasedDetails, releasedSet };
   }
 
+  function getActiveKpiFilters() {
+    const module = window.moduloSelecionado && window.moduloSelecionado !== "TODOS"
+      ? String(window.moduloSelecionado)
+      : "";
+    const search = String(window.termoBusca || "").trim().toLowerCase();
+    return { module, search };
+  }
+
+  function protocolMatchesFilters(prt, info, filters) {
+    if (filters.module && info?.modulo !== filters.module) {
+      return false;
+    }
+
+    if (!filters.search) {
+      return true;
+    }
+
+    return (
+      String(prt || "").toLowerCase().includes(filters.search) ||
+      String(info?.modulo || "").toLowerCase().includes(filters.search) ||
+      String(info?.descricao || "").toLowerCase().includes(filters.search) ||
+      String(info?.ticket || "").toLowerCase().includes(filters.search)
+    );
+  }
+
+  function applyKpiFilters(protocolIndex, releases) {
+    const filters = getActiveKpiFilters();
+    const filteredProtocolIndex = {};
+
+    Object.entries(protocolIndex || {}).forEach(([prt, info]) => {
+      if (protocolMatchesFilters(prt, info, filters)) {
+        filteredProtocolIndex[prt] = info;
+      }
+    });
+
+    const filteredReleases = (releases || [])
+      .map((release) => ({
+        ...release,
+        protocolos: (release.protocolos || []).filter((prt) => filteredProtocolIndex[prt]),
+      }))
+      .filter((release) => release.protocolos.length > 0);
+
+    return {
+      filters,
+      protocolIndex: filteredProtocolIndex,
+      releases: filteredReleases,
+    };
+  }
+
   function countBy(items, getter) {
     const map = new Map();
     items.forEach((item) => {
@@ -167,7 +216,7 @@
 
   function updateHero(metrics) {
     setText("kpi-sync-badge", metrics.lastSyncLabel);
-    setText("kpi-highlight-module", `Módulo foco: ${metrics.topModule?.label || "--"}`);
+    setText("kpi-highlight-module", `Módulo foco: ${metrics.activeModule || metrics.topModule?.label || "--"}`);
     setText("kpi-highlight-release", `Release líder: ${metrics.topRelease?.label || "--"}`);
   }
 
@@ -208,28 +257,99 @@
   }
 
   function renderRanking(metrics) {
-    const container = byId("ranking-modulos");
-    if (!container) return;
+    const canvas = byId("chartRankingModulos");
+    if (!canvas || typeof Chart === "undefined") return;
+    destroyChart("chartRankingModulos");
 
-    if (!metrics.moduleRanking.length) {
-      container.innerHTML = '<p class="kpi-summary-line">Nenhum dado encontrado para o ranking atual.</p>';
+    const rows = metrics.moduleRanking.slice(0, 8);
+    const labels = rows.map((item, index) => `${index + 1}. ${item.label}`);
+
+    new Chart(canvas, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{
+          label: "Protocolos liberados",
+          data: rows.map((item) => item.count),
+          backgroundColor: rows.map((_, index) => [
+            "rgba(59, 130, 246, 0.86)",
+            "rgba(34, 197, 94, 0.82)",
+            "rgba(249, 115, 22, 0.82)",
+            "rgba(168, 85, 247, 0.82)",
+            "rgba(20, 184, 166, 0.82)",
+            "rgba(234, 179, 8, 0.82)",
+            "rgba(239, 68, 68, 0.82)",
+            "rgba(100, 116, 139, 0.82)",
+          ][index] || "rgba(59, 130, 246, 0.82)"),
+          borderRadius: 12,
+          borderSkipped: false,
+          maxBarThickness: 24,
+        }],
+      },
+      options: {
+        ...commonChartOptions(),
+        indexAxis: "y",
+        onClick: (_event, elements) => {
+          const index = elements?.[0]?.index;
+          const selected = Number.isInteger(index) ? rows[index] : null;
+          if (selected?.label && typeof window.selecionarModulo === "function") {
+            window.selecionarModulo(selected.label, { source: "ranking" });
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (context) => `${formatCount(context.parsed.x)} protocolos liberados`,
+            },
+          },
+        },
+        scales: {
+          x: {
+            ...commonChartOptions().scales.y,
+            ticks: {
+              ...commonChartOptions().scales.y.ticks,
+              precision: 0,
+            },
+          },
+          y: commonChartOptions().scales.x,
+        },
+      },
+    });
+  }
+
+  function renderTableFilterState(metrics) {
+    const filterList = byId("filtro-modulos");
+    if (!filterList) return;
+
+    const filterShell = filterList.closest(".mb-5");
+    filterShell?.classList.remove("hidden");
+    filterShell?.removeAttribute("hidden");
+
+    let note = byId("kpi-ranking-filter-note");
+    if (!note) {
+      note = document.createElement("div");
+      note.id = "kpi-ranking-filter-note";
+      note.className = "kpi-ranking-filter-note hidden";
+      filterList.insertAdjacentElement("afterend", note);
+    }
+
+    const showRankingFilter =
+      window.__kpiModuleFilterSource === "ranking" &&
+      metrics.activeModule &&
+      metrics.activeModule !== "TODOS";
+
+    if (!showRankingFilter) {
+      note.classList.add("hidden");
+      note.innerHTML = "";
       return;
     }
 
-    container.innerHTML = metrics.moduleRanking.slice(0, 8).map((item, index) => {
-      const safeLabel = String(item.label).replace(/'/g, "\\'");
-      return `
-        <div class="reports-ranking-item" title="${item.count} PRTs em releases">
-          <div class="reports-ranking-copy">
-            <strong>${index + 1}. ${item.label}</strong>
-            <span>${item.count} protocolos liberados</span>
-          </div>
-          <button onclick="selecionarModulo('${safeLabel}')" class="reports-ranking-count reports-pill reports-pill-suggestion" type="button">
-            Filtrar
-          </button>
-        </div>
-      `;
-    }).join("");
+    note.classList.remove("hidden");
+    note.innerHTML = `
+      <span>Recorte aplicado pelo ranking: <strong>${escapeHtml(metrics.activeModule)}</strong></span>
+      <button type="button" onclick="selecionarModulo('TODOS')">Limpar</button>
+    `;
   }
 
   function destroyChart(canvasId) {
@@ -552,11 +672,13 @@
         closeInsightModal();
         return;
       }
+    });
 
+    modal?.addEventListener("click", (event) => {
       const paginationButton = event.target.closest("[data-kpi-page-action]");
-      if (paginationButton) {
-        renderInsightModalPage(Number(paginationButton.getAttribute("data-kpi-page")));
-      }
+      if (!paginationButton) return;
+      event.preventDefault();
+      renderInsightModalPage(Number(paginationButton.getAttribute("data-kpi-page")));
     });
 
     document.addEventListener("keydown", (event) => {
@@ -744,11 +866,12 @@
 
   function buildTable(headers, rows, options = {}) {
     const pageSize = options.pageSize || 6;
+    const paginate = options.paginate !== false;
     const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
     const requestedPage = options.page || window.__kpiCurrentModalPage || 1;
     const currentPage = Math.min(Math.max(1, requestedPage), totalPages);
     const start = (currentPage - 1) * pageSize;
-    const pageRows = rows.slice(start, start + pageSize);
+    const pageRows = paginate ? rows.slice(start, start + pageSize) : rows;
 
     if (!rows.length) {
       return '<div class="kpi-insight-empty">Nenhum dado encontrado para este recorte.</div>';
@@ -767,13 +890,13 @@
           </tbody>
         </table>
       </div>
-      <div class="kpi-insight-pagination">
+      ${paginate ? `<div class="kpi-insight-pagination">
         <span class="kpi-insight-pagination-note">Página ${currentPage} de ${totalPages} · ${formatCount(rows.length)} registros</span>
         <div class="kpi-insight-pagination-actions">
           <button type="button" class="kpi-insight-page-btn" data-kpi-page-action="prev" data-kpi-page="${Math.max(1, currentPage - 1)}" ${currentPage === 1 ? "disabled" : ""}>Anterior</button>
           <button type="button" class="kpi-insight-page-btn" data-kpi-page-action="next" data-kpi-page="${Math.min(totalPages, currentPage + 1)}" ${currentPage === totalPages ? "disabled" : ""}>Próxima</button>
         </div>
-      </div>
+      </div>` : ""}
     `;
   }
 
@@ -920,7 +1043,7 @@
           ${buildStorageProgress("Espaço em uso", formatBytes(usedBytes), `${formatPercent(usagePercent)} ocupado no recorte atual.`, usagePercent, "cyan")}
           ${buildStorageProgress("Espaço livre", formatBytes(freeBytes), "Saldo operacional restante no teto acompanhado.", 100 - usagePercent, "violet")}
         </section>
-        ${buildTable(["Origem monitorada", "Volume estimado", "Linhas"], rows, { page })}
+        ${buildTable(["Origem monitorada", "Volume estimado", "Linhas"], rows, { paginate: false })}
       `,
     });
   }
@@ -1138,6 +1261,30 @@
     window.__kpiActionButtonsBound = true;
   }
 
+  function bindKpiSearchInput() {
+    const input = byId("busca-modulo");
+    if (!input || input.dataset.kpiModernBound === "true") return;
+
+    input.dataset.kpiModernBound = "true";
+    input.value = window.termoBusca || input.value || "";
+
+    input.addEventListener("input", (event) => {
+      window.termoBusca = event.target.value || "";
+      window.clearTimeout(window.__kpiSearchRenderTimer);
+      window.__kpiSearchRenderTimer = window.setTimeout(() => {
+        renderWorkspace();
+      }, 120);
+    });
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      input.value = "";
+      window.termoBusca = "";
+      window.clearTimeout(window.__kpiSearchRenderTimer);
+      renderWorkspace();
+    });
+  }
+
   async function renderWorkspace() {
     const page = byId("pagina-historico-liberacoes");
     if (!page) return;
@@ -1147,10 +1294,18 @@
         await window.ensureChartJs();
       }
 
-      const [protocolIndex, releases] = await Promise.all([ensureProtocols(), ensureReleases()]);
+      const [baseProtocolIndex, baseReleases] = await Promise.all([ensureProtocols(), ensureReleases()]);
+      const filtered = applyKpiFilters(baseProtocolIndex, baseReleases);
+      const protocolIndex = filtered.protocolIndex;
+      const releases = filtered.releases;
       const dataset = buildDataset(protocolIndex, releases);
       const metrics = buildMetrics(protocolIndex, releases, dataset);
+      metrics.activeModule = filtered.filters.module;
+      metrics.activeSearch = filtered.filters.search;
       window.__kpiWorkspaceState = {
+        baseProtocolIndex,
+        baseReleases,
+        filters: filtered.filters,
         protocolIndex,
         releases,
         dataset,
@@ -1161,11 +1316,12 @@
       updateCards(metrics);
       updateExecutiveSummary(metrics);
       renderRanking(metrics);
+      if (typeof window.renderizarFiltroModulos === "function") {
+        window.renderizarFiltroModulos();
+      }
+      renderTableFilterState(metrics);
       if (typeof window.renderizarTabelaLiberacoes === "function") {
-        const filteredRows = typeof window.obterLiberacoesFiltradasAtuais === "function"
-          ?window.obterLiberacoesFiltradasAtuais()
-          : releases;
-        window.renderizarTabelaLiberacoes(filteredRows);
+        window.renderizarTabelaLiberacoes(releases);
       }
       renderTop5Chart(metrics);
       renderEvolutionChart(metrics);
@@ -1173,6 +1329,7 @@
       renderTrendChart(metrics);
       renderModuleChart(metrics);
       bindKpiActionButtons();
+      bindKpiSearchInput();
 
       if (window.lucide?.createIcons) {
         window.lucide.createIcons();
@@ -1186,8 +1343,8 @@
 
   if (typeof window.selecionarModulo === "function" && !window.__kpiWrappedSelect) {
     const originalSelecionarModulo = window.selecionarModulo;
-    window.selecionarModulo = function wrappedSelecionarModulo(modulo) {
-      originalSelecionarModulo(modulo);
+    window.selecionarModulo = function wrappedSelecionarModulo(modulo, options = {}) {
+      originalSelecionarModulo(modulo, options);
       setTimeout(() => {
         renderWorkspace();
       }, 80);

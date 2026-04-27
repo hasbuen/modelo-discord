@@ -1181,6 +1181,11 @@ window.initWorkspaceRegistroPage = async function initWorkspaceRegistroPage() {
   }
 };
 
+window.carregarHistorico = async function carregarHistorico() {
+  if (typeof window.hasActiveAuthSession === "function" && !window.hasActiveAuthSession()) return [];
+  return renderizarTabela();
+};
+
 window.addEventListener('DOMContentLoaded', () => {
   const paginaHome = document.getElementById('pagina-home');
   if (paginaHome && !paginaHome.classList.contains('hidden')) {

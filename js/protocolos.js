@@ -85,8 +85,9 @@ function renderizarFiltroModulos() {
   });
 }
 
-function selecionarModulo(modulo) {
+function selecionarModulo(modulo, options = {}) {
   window.moduloSelecionado = modulo;
+  window.__kpiModuleFilterSource = modulo !== "TODOS" && options?.source === "ranking" ? "ranking" : "";
   aplicarFiltroModulo();
   renderizarFiltroModulos();
 }
@@ -118,7 +119,21 @@ function aplicarFiltroModulo() {
 }
 
 function obterProtocolo(prt) {
-  return protocolosCache[prt] || null;
+  const cached = protocolosCache[prt];
+  if (cached) return cached;
+
+  const indexed = window.protocolosIndex?.[prt];
+  if (!indexed) return null;
+
+  return {
+    prt,
+    ticket: indexed.ticket || "",
+    tipo: indexed.tipo ?? "1",
+    modulo: indexed.modulo || "",
+    descricao: indexed.descricao || "",
+    paliativo: indexed.paliativo || "",
+    link: indexed.link || "",
+  };
 }
 
 function getTipoLabel(tipo) {
@@ -127,6 +142,22 @@ function getTipoLabel(tipo) {
 
 function getCorTipo(tipo) {
   return String(tipo) === "0" ?"red" : "green";
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function normalizePrt(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const number = raw.match(/\d{3,}/)?.[0];
+  return number ?`#PRT${number}` : raw;
 }
 
 function criarBadgeProtocolo(prt) {
@@ -291,31 +322,41 @@ function inicializarClicksProtocolos() {
 }
 
 function criarBadgeProtocolo(prt) {
-  const protocolo = obterProtocolo(prt);
+  const normalizedPrt = normalizePrt(prt);
+  const protocolo = obterProtocolo(normalizedPrt);
   const tipo = protocolo?.tipo || "1";
   const tipoLabel = getTipoLabel(tipo);
   const variant = String(tipo) === "0" ?"error" : "success";
+  const hasDetails = Boolean(protocolo);
 
   return `
     <button
       type="button"
-      class="kpi-protocol-badge kpi-protocol-badge-${variant} badge-protocolo"
-      data-prt="${prt}"
-      title="Clique para ver detalhes - ${tipoLabel}"
+      class="kpi-protocol-badge kpi-protocol-badge-${variant}${hasDetails ? "" : " kpi-protocol-badge-muted"} badge-protocolo"
+      data-prt="${escapeHtml(normalizedPrt)}"
+      title="${hasDetails ? `Clique para ver detalhes - ${tipoLabel}` : "Registro ainda sem detalhes carregados"}"
     >
-      <span class="kpi-protocol-badge-label">${prt}</span>
-      <span class="kpi-protocol-badge-meta">${tipoLabel}</span>
+      <span class="kpi-protocol-badge-label">${escapeHtml(normalizedPrt)}</span>
+      <span class="kpi-protocol-badge-meta">${escapeHtml(tipoLabel)}</span>
     </button>
   `;
 }
 
 function abrirModalProtocolo(prt) {
-  const protocolo = obterProtocolo(prt);
-  if (!protocolo) return;
+  const normalizedPrt = normalizePrt(prt);
+  const protocolo = obterProtocolo(normalizedPrt) || {
+    prt: normalizedPrt,
+    ticket: "",
+    tipo: "1",
+    modulo: "",
+    descricao: "Os detalhes deste protocolo ainda não foram carregados. Atualize a tabela ou consulte o histórico para sincronizar os dados.",
+    paliativo: "Nenhum paliativo informado até o momento.",
+    link: "",
+  };
 
   const tipo = getTipoLabel(protocolo.tipo);
   const variant = String(protocolo.tipo) === "0" ?"error" : "success";
-  const modulo = protocolo.modulo || window.protocolosIndex?.[prt]?.modulo || "Módulo não informado";
+  const modulo = protocolo.modulo || window.protocolosIndex?.[normalizedPrt]?.modulo || "Módulo não informado";
   const ticket = protocolo.ticket || "Sem ticket vinculado";
   const descricao = protocolo.descricao || "Sem descrição operacional registrada.";
   const paliativo = protocolo.paliativo || "Nenhum paliativo informado até o momento.";
@@ -326,8 +367,8 @@ function abrirModalProtocolo(prt) {
         <div class="protocol-modal-header">
           <div class="protocol-modal-heading">
             <span class="protocol-modal-eyebrow">Protocolo selecionado</span>
-            <h2 id="protocol-modal-title">${protocolo.prt}</h2>
-            <p>${ticket}</p>
+            <h2 id="protocol-modal-title">${escapeHtml(protocolo.prt)}</h2>
+            <p>${escapeHtml(ticket)}</p>
           </div>
           <button
             type="button"
@@ -339,62 +380,64 @@ function abrirModalProtocolo(prt) {
           </button>
         </div>
 
-        <div class="protocol-modal-meta">
-          <span class="protocol-modal-pill protocol-modal-pill-${variant}">${tipo}</span>
-          <span class="protocol-modal-pill">${modulo}</span>
-          <span class="protocol-modal-pill">PRT ${protocolo.prt}</span>
-        </div>
-
-        <div class="protocol-modal-grid">
-          <section class="protocol-modal-section">
-            <span class="protocol-modal-section-label">Descrição</span>
-            <p>${descricao}</p>
-          </section>
-          <section class="protocol-modal-section">
-            <span class="protocol-modal-section-label">Paliativo</span>
-            <p>${paliativo}</p>
-          </section>
-        </div>
-
-        ${
-          protocolo.link
-            ?`
-          <div class="protocol-modal-link-wrap">
-            <a
-              href="${protocolo.link}"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="protocol-modal-link"
-            >
-              Abrir ticket relacionado
-            </a>
+        <div class="protocol-modal-body">
+          <div class="protocol-modal-meta">
+            <span class="protocol-modal-pill protocol-modal-pill-${variant}">${escapeHtml(tipo)}</span>
+            <span class="protocol-modal-pill">${escapeHtml(modulo)}</span>
+            <span class="protocol-modal-pill">${escapeHtml(protocolo.prt)}</span>
           </div>
-        `
-            : ""
-        }
 
-        <div class="protocol-modal-actions">
-          <button
-            type="button"
-            onclick="fecharModalProtocolo()"
-            class="protocol-modal-btn protocol-modal-btn-secondary"
-          >
-            Fechar
-          </button>
+          <div class="protocol-modal-grid">
+            <section class="protocol-modal-section">
+              <span class="protocol-modal-section-label">Descrição</span>
+              <p>${escapeHtml(descricao)}</p>
+            </section>
+            <section class="protocol-modal-section">
+              <span class="protocol-modal-section-label">Paliativo</span>
+              <p>${escapeHtml(paliativo)}</p>
+            </section>
+          </div>
+
           ${
             protocolo.link
               ?`
-            <a
-              href="${protocolo.link}"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="protocol-modal-btn protocol-modal-btn-primary"
-            >
-              Ver ticket
-            </a>
+            <div class="protocol-modal-link-wrap">
+              <a
+                href="${escapeHtml(protocolo.link)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="protocol-modal-link"
+              >
+                Abrir ticket relacionado
+              </a>
+            </div>
           `
               : ""
           }
+
+          <div class="protocol-modal-actions">
+            <button
+              type="button"
+              onclick="fecharModalProtocolo()"
+              class="protocol-modal-btn protocol-modal-btn-secondary"
+            >
+              Fechar
+            </button>
+            ${
+              protocolo.link
+                ?`
+              <a
+                href="${escapeHtml(protocolo.link)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="protocol-modal-btn protocol-modal-btn-primary"
+              >
+                Ver ticket
+              </a>
+            `
+                : ""
+            }
+          </div>
         </div>
       </div>
     </div>
@@ -403,7 +446,6 @@ function abrirModalProtocolo(prt) {
   document.getElementById("modal-protocolo-overlay")?.remove();
   document.body.insertAdjacentHTML("beforeend", modalHTML);
 }
-
 window.obterProtocolo = obterProtocolo;
 window.abrirModalProtocolo = abrirModalProtocolo;
 window.fecharModalProtocolo = fecharModalProtocolo;

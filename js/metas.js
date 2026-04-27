@@ -3,7 +3,7 @@
     const THEMES = {
       aurora: {
         id: "aurora",
-        name: "Aurora Light",
+        name: "Aurora Clara",
         type: "light",
         panel: "rgba(255,255,255,0.82)",
         panel2: "rgba(255,255,255,0.65)",
@@ -15,7 +15,7 @@
       },
       minimalist: {
         id: "minimalist",
-        name: "Minimalist",
+        name: "Minimalista",
         type: "light",
         panel: "rgba(255,255,255,0.98)",
         panel2: "rgba(255,255,255,0.92)",
@@ -27,7 +27,7 @@
       },
       midnight: {
         id: "midnight",
-        name: "Midnight Navy",
+        name: "Noite Corporativa",
         type: "dark",
         panel: "rgba(18, 28, 55, 0.72)",
         panel2: "rgba(10, 17, 35, 0.62)",
@@ -39,7 +39,7 @@
       },
       oled: {
         id: "oled",
-        name: "OLED Black",
+        name: "Preto OLED",
         type: "dark",
         panel: "rgba(18,18,18,0.92)",
         panel2: "rgba(12,12,12,0.8)",
@@ -78,7 +78,7 @@
         ?document.querySelector(mountSelector)
         : mountSelector;
 
-    if (!mount) throw new Error("Container do MetaFlow não encontrado.");
+    if (!mount) throw new Error("Contêiner do painel de metas não encontrado.");
 
     if (mount.dataset.metaflowMounted === "true") {
       return mount.__metaflowApi || null;
@@ -553,7 +553,7 @@
             position: relative;
             z-index: 1;
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(5, minmax(0, 1fr));
             gap: 12px;
             margin-top: 18px;
           }
@@ -634,6 +634,67 @@
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 18px;
+          }
+
+          .mfu-today-board {
+            display: grid;
+            grid-template-columns: minmax(0, 1.35fr) repeat(3, minmax(150px, .55fr));
+            gap: 16px;
+            align-items: stretch;
+            margin-bottom: 18px;
+          }
+
+          .mfu-today-card {
+            padding: 18px;
+            border-radius: 22px;
+            border: 1px solid var(--border);
+            background: var(--panel);
+            box-shadow: var(--shadow);
+          }
+
+          .mfu-today-card h3 {
+            margin: 0 0 6px;
+            font-size: 1rem;
+          }
+
+          .mfu-today-card strong {
+            display: block;
+            font-size: 2rem;
+            line-height: 1;
+            font-weight: 900;
+          }
+
+          .mfu-today-card p {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: .92rem;
+          }
+
+          .mfu-today-focus {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: center;
+          }
+
+          .mfu-today-focus-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 900;
+          }
+
+          .mfu-today-focus-text {
+            margin: 8px 0 0;
+            color: var(--muted);
+          }
+
+          .mfu-today-focus-value {
+            min-width: 92px;
+            text-align: right;
+          }
+
+          .mfu-today-focus-value strong {
+            font-size: 2.35rem;
           }
 
           .mfu-stat-card h3 {
@@ -725,6 +786,7 @@
             .mfu-goals,
             .mfu-kanban-cols,
             .mfu-stats,
+            .mfu-today-board,
             .mfu-grid-2,
             .mfu-grid-3 {
               grid-template-columns: 1fr;
@@ -903,6 +965,97 @@
       };
     }
 
+    function todayOverview() {
+      const today = getTodayStr();
+      const goals = state.goals.map((goal) => {
+        const entry = entryFor(goal.id, today);
+        const value = entry ?Number(entry.value || 0) : 0;
+        const ceiling = Number(goal.ceiling || 1);
+        const progress = Math.min(100, Math.max(0, (value / ceiling) * 100));
+        const remainingToMinimum = Math.max(0, Number(goal.min || 0) - value);
+        const remainingToCeiling = Math.max(0, ceiling - value);
+        const statusKey = calculateStatus(value, Number(goal.min), Number(goal.tol), ceiling);
+
+        return {
+          ...goal,
+          value,
+          progress,
+          remainingToMinimum,
+          remainingToCeiling,
+          statusKey,
+        };
+      });
+
+      const completed = goals.filter((goal) => goal.statusKey === "atingida" || goal.statusKey === "otimo").length;
+      const pendingTasks = state.tasks.filter((task) => task.status !== "done").length;
+      const bestStreak = goals.reduce((max, goal) => Math.max(max, streakForGoal(goal)), 0);
+      const focusGoal =
+        goals
+          .filter((goal) => goal.remainingToMinimum > 0)
+          .sort((a, b) => a.remainingToMinimum - b.remainingToMinimum || b.progress - a.progress)[0] ||
+        goals.sort((a, b) => a.progress - b.progress)[0] ||
+        null;
+
+      return {
+        totalGoals: goals.length,
+        completed,
+        pendingTasks,
+        bestStreak,
+        focusGoal,
+      };
+    }
+
+    function renderTodayBoard() {
+      const overview = todayOverview();
+      const focus = overview.focusGoal;
+      const focusStatus = focus ?STATUS_COLORS[focus.statusKey] : STATUS_COLORS.naoAtingida;
+
+      return `
+        <section class="mfu-today-board" aria-label="Resumo do dia">
+          <div class="mfu-today-card mfu-today-focus">
+            <div>
+              <h3 class="mfu-today-focus-title">Foco de hoje</h3>
+              ${
+                focus
+                  ?`<p class="mfu-today-focus-text">
+                      ${escapeHtml(focus.name)} · faltam
+                      <strong style="color:var(--text);">${focus.remainingToMinimum || focus.remainingToCeiling}</strong>
+                      ${escapeHtml(focus.unit)} para o próximo marco.
+                    </p>`
+                  : `<p class="mfu-today-focus-text">Crie uma meta para iniciar o acompanhamento diário.</p>`
+              }
+            </div>
+            ${
+              focus
+                ?`<div class="mfu-today-focus-value">
+                    <strong style="color:${focusStatus.color};">${focus.progress.toFixed(0)}%</strong>
+                    <p>${focusStatus.label}</p>
+                  </div>`
+                : ""
+            }
+          </div>
+
+          <div class="mfu-today-card">
+            <h3>Metas em dia</h3>
+            <strong>${overview.completed}/${overview.totalGoals}</strong>
+            <p>atingidas ou acima do previsto</p>
+          </div>
+
+          <div class="mfu-today-card">
+            <h3>Tarefas abertas</h3>
+            <strong>${overview.pendingTasks}</strong>
+            <p>pendentes no quadro</p>
+          </div>
+
+          <div class="mfu-today-card">
+            <h3>Melhor sequência</h3>
+            <strong>${overview.bestStreak}</strong>
+            <p>dia${overview.bestStreak !== 1 ? "s" : ""} consecutivo${overview.bestStreak !== 1 ? "s" : ""}</p>
+          </div>
+        </section>
+      `;
+    }
+
     function renderCompactBar() {
       return `
         <div class="mfu-compactbar">
@@ -1003,6 +1156,7 @@
       }
 
       return `
+        ${renderTodayBoard()}
         <section class="mfu-goals">
           ${state.goals
             .map((goal) => {
@@ -1079,6 +1233,7 @@
                     <button data-action="entry" data-goal-id="${goal.id}" data-inc="1">+1</button>
                     <button data-action="entry" data-goal-id="${goal.id}" data-inc="5">+5</button>
                     <button data-action="entry" data-goal-id="${goal.id}" data-inc="10">+10</button>
+                    <button data-action="entry-custom" data-goal-id="${goal.id}">Outro</button>
                   </div>
                 </article>
               `;
@@ -1396,6 +1551,21 @@
       mount.querySelectorAll("[data-action='entry']").forEach((el) => {
         el.addEventListener("click", async () => {
           await updateEntry(el.dataset.goalId, getTodayStr(), Number(el.dataset.inc));
+        });
+      });
+
+      mount.querySelectorAll("[data-action='entry-custom']").forEach((el) => {
+        el.addEventListener("click", async () => {
+          const rawValue = prompt("Informe o valor que deseja adicionar à meta:");
+          if (rawValue === null) return;
+
+          const value = Number(String(rawValue).replace(",", "."));
+          if (!Number.isFinite(value) || value === 0) {
+            alert("Informe um número válido diferente de zero.");
+            return;
+          }
+
+          await updateEntry(el.dataset.goalId, getTodayStr(), value);
         });
       });
 

@@ -455,6 +455,11 @@
           <span class="sidebar-label">Metas</span>
         </button>
 
+        <button onclick="mostrarPagina('comparador-textos')" data-tooltip="Comparador de Textos" class="sidebar-item" id="btn-comparador-textos">
+          <i data-lucide="git-compare-arrows" class="sidebar-icon"></i>
+          <span class="sidebar-label">Comparador</span>
+        </button>
+
       </nav>
 
       <div class="mt-auto sidebar-footer-panel">
@@ -533,6 +538,9 @@
           </button>
           <button onclick="mostrarPagina('metas')" class="sidebar-item" id="btn-metas-mobile">
             <i data-lucide="target" class="sidebar-icon"></i> Metas
+          </button>
+          <button onclick="mostrarPagina('comparador-textos')" class="sidebar-item" id="btn-comparador-textos-mobile">
+            <i data-lucide="git-compare-arrows" class="sidebar-icon"></i> Comparador
           </button>
           <button onclick="mostrarPagina('relatorios')" class="sidebar-item" id="btn-relatorios-mobile">
             <i data-lucide="file-text" class="sidebar-icon"></i> Relatórios
@@ -970,6 +978,18 @@
                     <canvas id="chartTrendModulo"></canvas>
                   </div>
                 </div>
+
+                <div class="kpi-subpanel">
+                  <div class="kpi-panel-header">
+                    <div>
+                      <h4 class="kpi-subpanel-title">Ranking de módulos</h4>
+                      <p class="kpi-panel-subtitle">Módulos com maior incidência no recorte atual.</p>
+                    </div>
+                  </div>
+                  <div id="ranking-modulos" class="kpi-canvas kpi-canvas-md">
+                    <canvas id="chartRankingModulos"></canvas>
+                  </div>
+                </div>
               </article>
 
               <aside class="kpi-side-stack">
@@ -984,45 +1004,25 @@
                     <p class="kpi-summary-line">Aguardando sincroniza??o da base.</p>
                   </div>
                 </article>
-
-                <article class="kpi-panel">
-                  <div class="kpi-panel-header">
-                    <div>
-                      <h3 class="kpi-panel-title">Ranking de módulos</h3>
-                      <p class="kpi-panel-subtitle">Módulos com maior incidência no recorte atual.</p>
-                    </div>
-                  </div>
-                  <div id="ranking-modulos" class="kpi-ranking-list"></div>
-                </article>
               </aside>
             </section>
 
-            <section class="kpi-detail-grid">
-              <article class="kpi-panel">
-                <div class="kpi-panel-header">
-                  <div>
-                    <h3 class="kpi-panel-title">Protocolos por módulo</h3>
-                    <p class="kpi-panel-subtitle">Participação dos principais módulos na base consolidada.</p>
-                  </div>
-                </div>
-                <div class="kpi-canvas kpi-canvas-md">
-                  <canvas id="grafico-modulos"></canvas>
-                </div>
-                <div id="legenda-modulos" class="kpi-legend"></div>
-              </article>
-            </section>
-
             <section class="kpi-panel">
-              <div class="mb-5 space-y-3">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                  <div>
-                    <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Filtrar por módulo</p>
-                    <div id="filtro-modulos" class="flex flex-wrap gap-2 mt-2"></div>
-                  </div>
+              <div class="mb-5 kpi-table-controls">
+                <div class="kpi-filter-row">
+                  <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Filtrar por módulo</p>
+                  <div id="filtro-modulos" class="flex flex-wrap gap-2 mt-2"></div>
+                </div>
 
-                  <div class="w-full md:w-80">
-                    <input id="busca-modulo" type="text" placeholder="Buscar PRT, módulo ou descrição..." class="w-full px-4 py-3 rounded-xl bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition" />
+                <div class="kpi-inline-module-chart">
+                  <div class="kpi-canvas kpi-canvas-md">
+                    <canvas id="grafico-modulos"></canvas>
                   </div>
+                  <div id="legenda-modulos" class="kpi-legend"></div>
+                </div>
+
+                <div class="kpi-search-row">
+                  <input id="busca-modulo" type="text" placeholder="Buscar PRT, módulo ou descrição..." class="w-full px-4 py-3 rounded-xl bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition" />
                 </div>
               </div>
 
@@ -1711,6 +1711,26 @@
           </section>
         </div>
 
+        <div id="pagina-comparador-textos" class="hidden animate__animated animate__fadeIn">
+          <section class="kpi-shell legacy-shell">
+            <section class="kpi-hero">
+              <div class="kpi-hero-copy">
+                <p class="kpi-eyebrow">Ferramenta</p>
+                <h2 class="kpi-title">Comparador de textos</h2>
+                <p class="kpi-subtitle">Compare versões, identifique alterações e copie um resumo objetivo.</p>
+              </div>
+            </section>
+
+            <iframe
+              id="comparador-textos-frame"
+              title="Comparador de textos"
+              src="html/comparador-textos.html"
+              loading="lazy"
+              style="width:100%;min-height:calc(100vh - 190px);border:0;border-radius:18px;background:var(--bg-card);box-shadow:0 18px 50px rgba(15,23,42,.12);"
+            ></iframe>
+          </section>
+        </div>
+
         <!-- embedded metas assistant removed -->
 
 
@@ -1902,6 +1922,7 @@ const PAGE_CONTEXTS = {
   'sefaz': 'Página SEFAZ - Monitor de disponibilidade SEFAZ',
   'ia': 'Página Transcrever - Transcrição de áudio para tickets',
   'metas': 'Página Metas - Acompanhamento de metas e desempenho',
+  'comparador-textos': 'Página Comparador de Textos - Comparação de versões e revisão textual',
 };
 
 window.mostrarPagina = function (paginaId) {
@@ -2059,7 +2080,19 @@ window.mostrarPagina = function (paginaId) {
           ?`Sistema (${resolvedTheme === 'dark' ?'Dark' : 'Light'})`
           : (theme === 'dark' ?'Dark' : 'Light');
       }
+
+      syncComparadorTheme(theme);
     }
+
+    function syncComparadorTheme(theme) {
+      const frame = document.getElementById('comparador-textos-frame');
+      if (!frame?.contentWindow) return;
+      frame.contentWindow.postMessage({ type: 'protocord-theme', theme: theme || 'system' }, '*');
+    }
+
+    document.getElementById('comparador-textos-frame')?.addEventListener('load', () => {
+      syncComparadorTheme(localStorage.getItem('theme') || 'system');
+    });
 
     window.alternarTema = function (tema) {
       const next = tema || 'system';

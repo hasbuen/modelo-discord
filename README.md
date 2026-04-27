@@ -16,7 +16,7 @@ O projeto entrega uma aplicação estática, executada no navegador, que consome
 - Transcrição e tratamento de áudios de atendimento.
 - Assistente com inteligência artificial, integrado ao servidor, para respostas baseadas em contexto real.
 - Comparador de textos em `html/comparador-textos.html`.
-- Autenticação simples por senha validada no servidor.
+- Autenticação por senha validada no servidor com sessão assinada retornada pela API.
 - Configuração da URL da API em tempo de execução, sem necessidade de recompilar o projeto.
 
 ![Mapa funcional](docs/assets/mapa-funcional-interface.svg)
@@ -118,7 +118,7 @@ Os testes validam configuração em tempo de execução, autenticação, fluxo d
 | Uso | Rota |
 | --- | --- |
 | Saúde do servidor | `GET /api/health` |
-| Autenticação | `GET /api/autenticacao?pass=<md5>` |
+| Autenticação | `POST /api/autenticacao` |
 | Protocolos | `GET/POST/DELETE /api/protocolos` |
 | Módulos | `GET /api/modulos` |
 | Liberações | `GET/POST /api/liberados` |
@@ -141,10 +141,19 @@ Os testes validam configuração em tempo de execução, autenticação, fluxo d
 ## 12. Observações De Manutenção
 
 - Novos recursos devem usar `window.getProtocordApiUrl("/rota")`.
+- Chamadas para a API configurada recebem automaticamente `Authorization: Bearer <sessao>` por `js/runtime-config.js`.
 - Segredos, chaves e credenciais nunca devem ser colocados no código da interface.
 - Dados técnicos retornados pela API devem ser convertidos para linguagem operacional antes de serem exibidos ao usuário.
 - Em alterações de servidor durante testes, limpe `PROTOCORD_API_BASE_URL` no `localStorage`, se necessário.
 
-## 13. Documentação Técnica
+## 13. Segurança E Logs
+
+- A senha não é mais enviada por query string; o login usa `POST /api/autenticacao` com corpo JSON.
+- O token retornado pelo backend é mantido em `localStorage` por até 24 horas e anexado automaticamente nas chamadas ao backend oficial.
+- O frontend não armazena chaves de Supabase, Groq, xAI, Vercel Blob ou Znuny.
+- Logs de segurança ficam no backend; a interface evita registrar credenciais ou tokens no console.
+- Testes cobrem o binding de autenticação e a inclusão automática do token em chamadas à API.
+
+## 14. Documentação Técnica
 
 Consulte [docs/DOCUMENTACAO_TECNICA.md](docs/DOCUMENTACAO_TECNICA.md) para detalhes de módulos, escopos, variáveis, fluxo de dados e relação com o servidor. Também há uma versão consolidada em PDF: [docs/DOCUMENTACAO_TECNICA_PROTOCORD.pdf](docs/DOCUMENTACAO_TECNICA_PROTOCORD.pdf).

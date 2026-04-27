@@ -168,6 +168,10 @@ function hasActiveAuthSession() {
   return diffHoras < 24;
 }
 
+function getAuthToken() {
+  return hasActiveAuthSession() ? localStorage.getItem('authToken') : '';
+}
+
 function broadcastAuthState(authenticated) {
   window.dispatchEvent(new CustomEvent('protocord:auth-changed', {
     detail: { authenticated: Boolean(authenticated) },
@@ -204,22 +208,21 @@ async function validarSenha() {
     // Converte a senha em texto plano para MD5 antes de enviar
     const senhamd5 = toMD5(senha);
 
-    // Faz requisição GET para a API no Vercel, passando o hash MD5 na query string
-    const response = await fetch(window.getProtocordApiUrl(`/autenticacao?pass=${encodeURIComponent(senhamd5)}`), {
-      method: 'GET',
+    const response = await fetch(window.getProtocordApiUrl('/autenticacao'), {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pass: senhamd5 }),
     });
 
     if (!response.ok) {
         throw new Error(`Erro de rede: ${response.status} ${response.statusText}`);
     }
 
-    // A API retorna um booleano (true ou false)
     const resultado = await response.json(); 
 
-    if (resultado === true) {
+    if (resultado === true || resultado?.authenticated === true) {
       // Autenticação bem-sucedida
-      localStorage.setItem('authToken', 'authenticated-' + Date.now());
+      localStorage.setItem('authToken', resultado?.token || ('authenticated-' + Date.now()));
       localStorage.setItem('authTime', new Date().toISOString());
       
       // Esconde a tela de login e mostra o app
@@ -314,6 +317,7 @@ function fazerLogout() {
 }
 
 window.hasActiveAuthSession = hasActiveAuthSession;
+window.getProtocordAuthToken = getAuthToken;
 
 // Executa ao carregar a página
 window.addEventListener('DOMContentLoaded', initAuth);
