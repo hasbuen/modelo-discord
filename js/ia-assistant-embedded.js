@@ -1,7 +1,13 @@
 (function () {
   const STORAGE_PREFIX = "protocord_embed_chat_";
   const EMBED_INSTANCES = {};
-  const ZNUNY_ATTENDANT_PORTAL_URL = "https://rhede.serviceup.app/portal/index.html";
+  function getZnunyAttendantPortalUrl() {
+    return String(
+      window.PROTOCORD_RUNTIME_CONFIG?.ZNUNY_ATTENDANT_PORTAL_URL ||
+      localStorage.getItem("PROTOCORD_ZNUNY_ATTENDANT_PORTAL_URL") ||
+      ""
+    ).trim();
+  }
 
   function getApiBaseUrlSafe() {
     try {
@@ -663,7 +669,10 @@
         if (!trigger) return;
 
         event.preventDefault();
-        window.open(ZNUNY_ATTENDANT_PORTAL_URL, "_blank", "noopener,noreferrer");
+        const portalUrl = getZnunyAttendantPortalUrl();
+        if (portalUrl) {
+          window.open(portalUrl, "_blank", "noopener,noreferrer");
+        }
       });
 
       loadState();

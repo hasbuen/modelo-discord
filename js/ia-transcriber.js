@@ -10,6 +10,14 @@
   let motionClientPromise = null;
   let plyrClientPromise = null;
 
+  function getZnunyTicketUrl() {
+    return String(
+      window.PROTOCORD_RUNTIME_CONFIG?.ZNUNY_TICKET_URL ||
+      localStorage.getItem("PROTOCORD_ZNUNY_TICKET_URL") ||
+      ""
+    ).trim();
+  }
+
   const state = {
     tickets: [],
     activeId: null,
@@ -2718,7 +2726,10 @@
 
       try {
         await navigator.clipboard.writeText(JSON.stringify(payload));
-        window.open("https://rhede.serviceup.app/znuny/index.pl?Action=AgentTicketPhone", "_blank");
+        const ticketUrl = getZnunyTicketUrl();
+        if (ticketUrl) {
+          window.open(ticketUrl, "_blank", "noopener,noreferrer");
+        }
         notify("Payload copiado para o Znuny.", "success");
       } catch (error) {
         notify("Falha ao preparar o transporte.", "error");
