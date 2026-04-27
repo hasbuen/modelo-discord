@@ -248,7 +248,8 @@
       };
 
       window.ensureChartJs = function ensureChartJs() {
-        return loadScript("https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js", () => Boolean(window.Chart));
+        return loadScript("https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js", () => Boolean(window.Chart))
+          .catch(() => loadScript("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js", () => Boolean(window.Chart)));
       };
 
       window.ensureJsPdf = function ensureJsPdf() {
@@ -2013,8 +2014,7 @@ window.mostrarPagina = function (paginaId) {
         window.renderKpiWorkspace();
       } else if (typeof window.initKpiDashboard === 'function') {
         window.initKpiDashboard();
-      }
-      if (typeof window.initLegacyHistoryDashboard === 'function') {
+      } else if (typeof window.initLegacyHistoryDashboard === 'function') {
         window.initLegacyHistoryDashboard();
       }
     }

@@ -41,6 +41,12 @@ test('workspace KPI moderno volta a renderizar a tabela consolidada', () => {
   assert.match(legacyDashboardSource, /window\.protocolosIndex && Object\.keys\(window\.protocolosIndex\)\.length/);
   assert.match(indexSource, /if \(paginaId === 'historico-liberacoes'\) \{/);
   assert.match(indexSource, /window\.renderKpiWorkspace\(\)/);
+  assert.match(indexSource, /else if \(typeof window\.initLegacyHistoryDashboard === 'function'\)/);
+  assert.match(indexSource, /cdnjs\.cloudflare\.com\/ajax\/libs\/Chart\.js\/4\.4\.0\/chart\.umd\.min\.js/);
+  assert.match(kpiSource, /function renderKpiCharts\(metrics\)/);
+  assert.match(kpiSource, /function renderChartSafely\(name, renderFn\)/);
+  assert.match(kpiSource, /window\.ensureChartJs\(\)\.catch/);
+  assert.match(kpiSource, /requestAnimationFrame\(\(\) => renderKpiCharts\(metrics\)\)/);
 });
 
 test('modal de storage usa barras visuais para apresentar volume do Supabase', () => {

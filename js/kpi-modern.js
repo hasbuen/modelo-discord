@@ -575,6 +575,25 @@
     });
   }
 
+  function renderChartSafely(name, renderFn) {
+    try {
+      renderFn();
+    } catch (error) {
+      console.error(`Falha ao renderizar grafico KPI: ${name}`, error);
+    }
+  }
+
+  function renderKpiCharts(metrics) {
+    if (typeof Chart === "undefined") return;
+
+    renderChartSafely("Top 5 releases", () => renderTop5Chart(metrics));
+    renderChartSafely("Evolucao ao longo do tempo", () => renderEvolutionChart(metrics));
+    renderChartSafely("Protocolos por release", () => renderReleaseChart(metrics));
+    renderChartSafely("Tendencia por modulo", () => renderTrendChart(metrics));
+    renderChartSafely("Ranking de modulos", () => renderRanking(metrics));
+    renderChartSafely("Protocolos por modulo", () => renderModuleChart(metrics));
+  }
+
   function buildMetrics(protocolIndex, releases, dataset) {
     const totalRecords = dataset.allProtocols.length;
     const errors = dataset.allProtocols.filter((item) => item.tipo === "0").length;
@@ -1291,7 +1310,9 @@
 
     try {
       if (typeof window.ensureChartJs === "function") {
-        await window.ensureChartJs();
+        await window.ensureChartJs().catch((error) => {
+          console.warn("Chart.js indisponivel; KPI sera renderizado sem graficos.", error);
+        });
       }
 
       const [baseProtocolIndex, baseReleases] = await Promise.all([ensureProtocols(), ensureReleases()]);
@@ -1315,7 +1336,6 @@
       updateHero(metrics);
       updateCards(metrics);
       updateExecutiveSummary(metrics);
-      renderRanking(metrics);
       if (typeof window.renderizarFiltroModulos === "function") {
         window.renderizarFiltroModulos();
       }
@@ -1323,13 +1343,9 @@
       if (typeof window.renderizarTabelaLiberacoes === "function") {
         window.renderizarTabelaLiberacoes(releases);
       }
-      renderTop5Chart(metrics);
-      renderEvolutionChart(metrics);
-      renderReleaseChart(metrics);
-      renderTrendChart(metrics);
-      renderModuleChart(metrics);
       bindKpiActionButtons();
       bindKpiSearchInput();
+      requestAnimationFrame(() => renderKpiCharts(metrics));
 
       if (window.lucide?.createIcons) {
         window.lucide.createIcons();
