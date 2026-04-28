@@ -45,8 +45,14 @@ test('workspace KPI moderno volta a renderizar a tabela consolidada', () => {
   assert.match(indexSource, /cdnjs\.cloudflare\.com\/ajax\/libs\/Chart\.js\/4\.4\.0\/chart\.umd\.min\.js/);
   assert.match(kpiSource, /function renderKpiCharts\(metrics\)/);
   assert.match(kpiSource, /function renderChartSafely\(name, renderFn\)/);
+  assert.match(kpiSource, /function renderModuleLegend\(labels, values, palette\)/);
+  assert.match(kpiSource, /id: "protocordModuleCenter"/);
+  assert.match(kpiSource, /tooltip:\s*\{\s*[\r\n]+\s*callbacks:/);
   assert.match(kpiSource, /window\.ensureChartJs\(\)\.catch/);
   assert.match(kpiSource, /requestAnimationFrame\(\(\) => renderKpiCharts\(metrics\)\)/);
+  assert.match(styleSource, /\.kpi-module-legend-card \{/);
+  assert.match(styleSource, /\[data-theme="light"\] \.kpi-table-wrap thead tr/);
+  assert.match(styleSource, /\[data-theme="light"\] \.kpi-inline-module-chart/);
 });
 
 test('modal de storage usa barras visuais para apresentar volume do Supabase', () => {

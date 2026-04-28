@@ -330,18 +330,6 @@
             <h3>Campos do ticket</h3>
             <div class="znuny-plugin-grid">
               <label>
-                <span>Assunto</span>
-                <input id="znuny-config-subject" type="text" value="Subject" />
-              </label>
-              <label>
-                <span>Contato</span>
-                <input id="znuny-config-contact" type="text" value="DynamicField_Contato" />
-              </label>
-              <label>
-                <span>Editor</span>
-                <input id="znuny-config-richtext" type="text" value="RichText" />
-              </label>
-              <label>
                 <span>Fila</span>
                 <input type="text" data-znuny-fixed-field="Dest" value="6||Suporte::Suporte i9" />
               </label>
@@ -510,9 +498,9 @@
     });
 
     return {
-      subjectFieldId: root.querySelector("#znuny-config-subject")?.value?.trim() || "Subject",
-      contactFieldId: root.querySelector("#znuny-config-contact")?.value?.trim() || "DynamicField_Contato",
-      richTextFieldId: root.querySelector("#znuny-config-richtext")?.value?.trim() || "RichText",
+      subjectFieldId: "Subject",
+      contactFieldId: "DynamicField_Contato",
+      richTextFieldId: "RichText",
       fixedFields: {
         Dest: "6||Suporte::Suporte i9",
         TypeID: "3",
@@ -530,9 +518,6 @@
     const app = document.getElementById("protocord-znuny-plugin-app");
     if (!app || !config) return;
 
-    app.querySelector("#znuny-config-subject").value = config.subjectFieldId || "Subject";
-    app.querySelector("#znuny-config-contact").value = config.contactFieldId || "DynamicField_Contato";
-    app.querySelector("#znuny-config-richtext").value = config.richTextFieldId || "RichText";
     app.querySelectorAll("[data-znuny-fixed-field]").forEach((input) => {
       input.value = config.fixedFields?.[input.dataset.znunyFixedField] ?? input.value;
     });

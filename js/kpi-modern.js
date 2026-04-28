@@ -367,13 +367,18 @@
   }
 
   function commonChartOptions() {
+    const isLight = document.documentElement?.dataset?.theme === "light";
+    const textColor = isLight ? "#334155" : "#c7d7f3";
+    const mutedColor = isLight ? "#64748b" : "#8fa4c8";
+    const gridColor = isLight ? "rgba(148, 163, 184, 0.22)" : "rgba(148, 163, 184, 0.12)";
+
     return {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
         legend: {
           labels: {
-            color: "#c7d7f3",
+            color: textColor,
             font: { size: 11, weight: "600" },
             usePointStyle: true,
           },
@@ -382,15 +387,34 @@
       scales: {
         y: {
           beginAtZero: true,
-          ticks: { color: "#8fa4c8" },
-          grid: { color: "rgba(148, 163, 184, 0.12)" },
+          ticks: { color: mutedColor },
+          grid: { color: gridColor },
         },
         x: {
-          ticks: { color: "#8fa4c8" },
-          grid: { color: "rgba(148, 163, 184, 0.08)" },
+          ticks: { color: mutedColor },
+          grid: { color: isLight ? "rgba(148, 163, 184, 0.16)" : "rgba(148, 163, 184, 0.08)" },
         },
       },
     };
+  }
+
+  function renderModuleLegend(labels, values, palette) {
+    const legend = byId("legenda-modulos");
+    if (!legend) return;
+
+    const total = values.reduce((sum, value) => sum + Number(value || 0), 0);
+    legend.innerHTML = labels.map((label, index) => {
+      const value = Number(values[index] || 0);
+      const percent = total ?((value / total) * 100).toFixed(1).replace(".", ",") : "0,0";
+      return `
+        <button type="button" class="kpi-module-legend-card" data-module="${escapeHtml(label)}">
+          <span class="kpi-module-legend-dot" style="--legend-color:${palette[index] || "#60a5fa"}"></span>
+          <span class="kpi-module-legend-name">${escapeHtml(label)}</span>
+          <strong>${formatCount(value)}</strong>
+          <small>${percent}%</small>
+        </button>
+      `;
+    }).join("");
   }
 
   function renderTop5Chart(metrics) {
@@ -531,8 +555,8 @@
     if (!canvas || typeof Chart === "undefined") return;
     destroyChart("grafico-modulos");
 
-    const topModules = metrics.moduleRanking.slice(0, 7);
-    const rest = metrics.moduleRanking.slice(7).reduce((sum, item) => sum + item.count, 0);
+    const topModules = metrics.moduleRanking.slice(0, 6);
+    const rest = metrics.moduleRanking.slice(6).reduce((sum, item) => sum + item.count, 0);
     const labels = topModules.map((item) => item.label);
     const values = topModules.map((item) => item.count);
 
@@ -542,15 +566,35 @@
     }
 
     const palette = [
-      "#3b82f6",
-      "#22c55e",
+      "#2563eb",
+      "#0f766e",
+      "#16a34a",
       "#f97316",
-      "#a855f7",
-      "#14b8a6",
-      "#eab308",
-      "#ef4444",
-      "#64748b",
+      "#7c3aed",
+      "#db2777",
+      "#475569",
     ];
+    const isLight = document.documentElement?.dataset?.theme === "light";
+    const total = values.reduce((sum, value) => sum + Number(value || 0), 0);
+    const centerTextPlugin = {
+      id: "protocordModuleCenter",
+      afterDraw(chart) {
+        const { ctx, chartArea } = chart;
+        if (!chartArea) return;
+        ctx.save();
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = isLight ? "#0f172a" : "#e7eef8";
+        ctx.font = "800 28px Manrope, Arial, sans-serif";
+        ctx.fillText(formatCount(total), (chartArea.left + chartArea.right) / 2, (chartArea.top + chartArea.bottom) / 2 - 8);
+        ctx.fillStyle = isLight ? "#64748b" : "#8ea2bd";
+        ctx.font = "700 11px Inter, Arial, sans-serif";
+        ctx.fillText("PRTs", (chartArea.left + chartArea.right) / 2, (chartArea.top + chartArea.bottom) / 2 + 18);
+        ctx.restore();
+      },
+    };
+
+    renderModuleLegend(labels, values, palette);
 
     new Chart(canvas, {
       type: "doughnut",
@@ -559,19 +603,30 @@
         datasets: [{
           data: values,
           backgroundColor: palette.slice(0, labels.length),
-          borderColor: "#0b1220",
-          borderWidth: 4,
-          hoverOffset: 10,
+          borderColor: isLight ? "#f8fbff" : "#0b1220",
+          borderWidth: 3,
+          hoverOffset: 8,
+          spacing: 3,
         }],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: "64%",
+        cutout: "66%",
         plugins: {
           legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label(context) {
+                const value = Number(context.raw || 0);
+                const percent = total ?((value / total) * 100).toFixed(1).replace(".", ",") : "0,0";
+                return `${context.label}: ${formatCount(value)} PRTs (${percent}%)`;
+              },
+            },
+          },
         },
       },
+      plugins: [centerTextPlugin],
     });
   }
 

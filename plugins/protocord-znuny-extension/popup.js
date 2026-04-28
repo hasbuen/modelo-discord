@@ -4,9 +4,6 @@ const subject = document.getElementById("subject");
 const contact = document.getElementById("contact");
 const clear = document.getElementById("clear");
 const saveConfig = document.getElementById("save-config");
-const subjectField = document.getElementById("subject-field");
-const contactField = document.getElementById("contact-field");
-const richField = document.getElementById("rich-field");
 
 chrome.runtime.sendMessage({ type: "PROTOCORD_ZNUNY_STATUS" }, (response) => {
   const entry = response?.entry;
@@ -44,17 +41,14 @@ function readConfig() {
   });
 
   return {
-    subjectFieldId: subjectField.value.trim(),
-    contactFieldId: contactField.value.trim(),
-    richTextFieldId: richField.value.trim(),
+    subjectFieldId: "Subject",
+    contactFieldId: "DynamicField_Contato",
+    richTextFieldId: "RichText",
     fixedFields,
   };
 }
 
 function renderConfig(config) {
-  subjectField.value = config.subjectFieldId || "Subject";
-  contactField.value = config.contactFieldId || "DynamicField_Contato";
-  richField.value = config.richTextFieldId || "RichText";
   document.querySelectorAll("[data-fixed-field]").forEach((input) => {
     input.value = config.fixedFields?.[input.dataset.fixedField] || "";
   });

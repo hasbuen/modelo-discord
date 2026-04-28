@@ -42,12 +42,9 @@ Voce pode configurar os campos de duas formas:
 
 Campos configuraveis:
 
-- Campo de assunto
-- Campo de contato
-- Campo do editor
 - Fila, tipo, estado, atendente, prioridade, servico e SLA
 
-O portal e a URL de novo ticket sao fixos e nao aparecem para o usuario. Os nomes internos `Dest`, `TypeID`, `NextStateID`, `NewUserID`, `PriorityID`, `ServiceID` e `SLAID` continuam sendo usados pela extensao para preencher o Znuny.
+O portal, a URL de novo ticket, o campo de assunto, o campo de contato e o editor sao fixos e nao aparecem para o usuario. Os nomes internos `Dest`, `TypeID`, `NextStateID`, `NewUserID`, `PriorityID`, `ServiceID` e `SLAID` continuam sendo usados pela extensao para preencher o Znuny.
 
 As configuracoes ficam em `chrome.storage.local` da propria extensao.
 

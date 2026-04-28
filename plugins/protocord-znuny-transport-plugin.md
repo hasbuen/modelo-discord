@@ -20,7 +20,7 @@ Plugin interno carregado pela propria interface do ProtoCord.
 
 Abra o cog dentro da pagina `Transcrever` e informe:
 
-- Campos do ticket: assunto, contato, editor, fila, tipo, estado, atendente, prioridade, servico e SLA
+- Campos do ticket: fila, tipo, estado, atendente, prioridade, servico e SLA
 
 O plugin salva estes valores em:
 
@@ -29,7 +29,7 @@ localStorage.PROTOCORD_ZNUNY_FIELD_CONFIG
 localStorage.znuny_auto_payload
 ```
 
-A URL do portal e a URL de novo ticket ficam ocultas no painel, pois sao fixas. Os campos do ticket continuam editaveis com labels de negocio e valores padrao ja preenchidos.
+A URL do portal, a URL de novo ticket, o campo de assunto, o campo de contato e o editor ficam ocultos no painel, pois sao fixos. Os demais campos do ticket continuam editaveis com labels de negocio e valores padrao ja preenchidos.
 
 ## Observacao importante
 

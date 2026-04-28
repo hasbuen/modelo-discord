@@ -82,6 +82,9 @@ test('plugin expõe API, armazenamento e app proprio do ProtoCord', () => {
   assert.doesNotMatch(pluginSource, />URL de novo ticket</);
   assert.doesNotMatch(pluginSource, />Portal Znuny</);
   assert.doesNotMatch(pluginSource, /Mapeamento dos campos/);
+  assert.doesNotMatch(pluginSource, /id="znuny-config-subject"/);
+  assert.doesNotMatch(pluginSource, /id="znuny-config-contact"/);
+  assert.doesNotMatch(pluginSource, /id="znuny-config-richtext"/);
   assert.match(pluginSource, />Campos do ticket</);
   assert.match(pluginSource, />Fila</);
   assert.match(pluginSource, />Tipo</);
@@ -137,7 +140,13 @@ test('extensao propria MV3 cobre ProtoCord e Znuny sem Tampermonkey', () => {
   assert.match(extensionZnuny, /SLAID:\s*"Media"/);
   assert.match(extensionPopupHtml, /save-config/);
   assert.match(extensionPopupHtml, /data-fixed-field="Dest"/);
+  assert.doesNotMatch(extensionPopupHtml, /id="subject-field"/);
+  assert.doesNotMatch(extensionPopupHtml, /id="contact-field"/);
+  assert.doesNotMatch(extensionPopupHtml, /id="rich-field"/);
   assert.match(extensionPopupJs, /PROTOCORD_ZNUNY_CONFIG_SAVE/);
+  assert.match(extensionPopupJs, /subjectFieldId:\s*"Subject"/);
+  assert.match(extensionPopupJs, /contactFieldId:\s*"DynamicField_Contato"/);
+  assert.match(extensionPopupJs, /richTextFieldId:\s*"RichText"/);
   assert.match(extensionPopupJs, /renderConfig/);
 });
 
