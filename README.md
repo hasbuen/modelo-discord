@@ -157,3 +157,15 @@ Os testes validam configuração em tempo de execução, autenticação, fluxo d
 ## 14. Documentação Técnica
 
 Consulte [docs/DOCUMENTACAO_TECNICA.md](docs/DOCUMENTACAO_TECNICA.md) para detalhes de módulos, escopos, variáveis, fluxo de dados e relação com o servidor. Também há uma versão consolidada em PDF: [docs/DOCUMENTACAO_TECNICA_PROTOCORD.pdf](docs/DOCUMENTACAO_TECNICA_PROTOCORD.pdf).
+## Plugin Interno Znuny
+
+O ProtoCord inclui o plugin interno `Transporte Znuny`, carregado por `js/protocord-znuny-transport-plugin.js`. Ele adiciona um mini-app `Znuny` dentro da interface, salva a configuracao do portal, recebe o pacote do botao `Transportar` e abre a tela de novo ticket com fallback de copia do relatorio.
+
+Configuracao rapida pelo mini-app ou pelo console:
+
+```js
+localStorage.setItem("PROTOCORD_ZNUNY_BASE_URL", "https://seu-portal.example.com");
+localStorage.setItem("PROTOCORD_ZNUNY_TICKET_URL", "https://seu-portal.example.com/znuny/index.pl?Action=AgentTicketPhone");
+```
+
+Por seguranca do navegador, o plugin interno nao manipula campos de outro dominio. Para preenchimento automatico dentro da pagina do Znuny, use um complemento corporativo ou o userscript opcional em `plugins/protocord-znuny-transporter.user.js`.

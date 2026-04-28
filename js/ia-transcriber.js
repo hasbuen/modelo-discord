@@ -4,6 +4,7 @@
   const MAX_UPLOAD_BYTES = 128 * 1024 * 1024;
   const AUDIO_DB_NAME = "protocord_ia_audio_v1";
   const AUDIO_STORE_NAME = "ticket_audio";
+  const ZNUNY_TRANSPORT_STORAGE_KEY = "protocord_znuny_transport_payload_v1";
   const apiBaseUrl = window.getProtocordApiBaseUrl();
   let blobClientPromise = null;
   let audioDbPromise = null;
@@ -11,11 +12,27 @@
   let plyrClientPromise = null;
 
   function getZnunyTicketUrl() {
-    return String(
+    const explicitUrl = String(
       window.PROTOCORD_RUNTIME_CONFIG?.ZNUNY_TICKET_URL ||
       localStorage.getItem("PROTOCORD_ZNUNY_TICKET_URL") ||
       ""
     ).trim();
+
+    if (explicitUrl) return explicitUrl;
+
+    const baseUrl = String(
+      window.PROTOCORD_RUNTIME_CONFIG?.ZNUNY_BASE_URL ||
+      localStorage.getItem("PROTOCORD_ZNUNY_BASE_URL") ||
+      ""
+    ).trim();
+
+    if (!baseUrl) return "";
+
+    try {
+      return new URL("/znuny/index.pl?Action=AgentTicketPhone", baseUrl).toString();
+    } catch (error) {
+      return "";
+    }
   }
 
   const state = {
@@ -2718,19 +2735,29 @@
       const active = getActiveTicketWithDraft(true);
       if (!active) return;
 
-      const payload = {
-        contato: active.customName ?`${active.customName} (${active.phone})` : `(${active.phone})`,
-        relatorio: buildHtml(active),
-        assunto: active.resumo || "Solicitacao de Suporte",
-      };
+      const payload = buildZnunyTransportPayload(active);
+      persistZnunyTransportPayload(payload);
+      const pluginHandled = window.ProtoCordZnunyTransport?.handleTransport?.(payload);
+      if (!pluginHandled) {
+        emitZnunyTransport(payload);
+      }
 
       try {
         await navigator.clipboard.writeText(JSON.stringify(payload));
+      } catch (error) {
+        // O plugin Tampermonkey usa o evento/localStorage; clipboard e apenas fallback manual.
+      }
+
+      if (pluginHandled) return;
+
+      try {
         const ticketUrl = getZnunyTicketUrl();
         if (ticketUrl) {
           window.open(ticketUrl, "_blank", "noopener,noreferrer");
+          notify("Transporte preparado. Abrindo Znuny.", "success");
+        } else {
+          notify("Transporte preparado. Configure a URL do Znuny no plugin.", "warning");
         }
-        notify("Payload copiado para o Znuny.", "success");
       } catch (error) {
         notify("Falha ao preparar o transporte.", "error");
       }
@@ -3761,6 +3788,69 @@ function renderAudio(active) {
       "ENCAMINHAMENTO / SOLUCAO:",
       ticket?.solucao || "",
     ].join("\n").trim();
+  }
+
+  function buildZnunyTransportPayload(ticket) {
+    const phone = String(ticket?.phone || "").trim();
+    const contact = ticket?.customName ?`${ticket.customName} (${phone || "sem telefone"})` : `(${phone || "sem telefone"})`;
+    const subject = String(ticket?.resumo || ticket?.customName || "Solicitacao de Suporte").trim();
+    const html = buildHtml(ticket);
+    const text = htmlToPlainText(html);
+
+    return {
+      source: "protocord",
+      version: 1,
+      createdAt: new Date().toISOString(),
+      ticketId: ticket?.id || "",
+      contato: contact,
+      telefone: phone,
+      assunto: subject,
+      titulo: subject,
+      problema: ticket?.analysis || "",
+      solucao: ticket?.solucao || "",
+      relatorio: html,
+      relatorioTexto: text,
+      evidencias: Array.isArray(ticket?.images)
+        ?ticket.images.map((image, index) => ({
+            index,
+            name: image?.name || `evidencia-${index + 1}`,
+            type: image?.type || "",
+          }))
+        : [],
+    };
+  }
+
+  function htmlToPlainText(html) {
+    const container = document.createElement("div");
+    container.innerHTML = String(html || "").replace(/<br\s*\/?>/gi, "\n");
+    return String(container.textContent || "")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+
+  function persistZnunyTransportPayload(payload) {
+    const envelope = {
+      payload,
+      savedAt: new Date().toISOString(),
+      expiresAt: Date.now() + 30 * 60 * 1000,
+    };
+
+    try {
+      localStorage.setItem(ZNUNY_TRANSPORT_STORAGE_KEY, JSON.stringify(envelope));
+      window.PROTOCORD_LAST_ZNUNY_TRANSPORT_PAYLOAD = payload;
+      window.PROTOCORD_ZNUNY_TRANSPORT_STORAGE_KEY = ZNUNY_TRANSPORT_STORAGE_KEY;
+    } catch (error) {
+      window.PROTOCORD_LAST_ZNUNY_TRANSPORT_PAYLOAD = payload;
+    }
+  }
+
+  function emitZnunyTransport(payload) {
+    window.dispatchEvent(new CustomEvent("protocord:znuny-transport", {
+      detail: {
+        storageKey: ZNUNY_TRANSPORT_STORAGE_KEY,
+        payload,
+      },
+    }));
   }
 
   function parseSingleReportText(text) {
