@@ -8,6 +8,7 @@
   const TICKET_URL_KEY = "PROTOCORD_ZNUNY_TICKET_URL";
   const DEFAULT_ZNUNY_HOST = ["rhede", "serviceup", "app"].join(".");
   const DEFAULT_ZNUNY_TICKET_URL = `https://${DEFAULT_ZNUNY_HOST}/znuny/index.pl?Action=AgentTicketPhone`;
+  const EXTENSION_RELEASE_URL = "plugins/releases/protocord-znuny-extension-v1.0.0.zip";
 
   const state = {
     payload: null,
@@ -279,22 +280,16 @@
             </div>
             <button type="button" class="znuny-plugin-icon" data-znuny-close="true" aria-label="Fechar">x</button>
           </header>
-          <div class="znuny-plugin-grid">
-            <label>
-              <span>Portal Znuny</span>
-              <input id="znuny-plugin-base-url" type="url" placeholder="https://portal-rhede" />
-            </label>
-            <label>
-              <span>URL de novo ticket</span>
-              <input id="znuny-plugin-ticket-url" type="url" placeholder="https://portal-rhede/znuny/index.pl?Action=AgentTicketPhone" />
-            </label>
-          </div>
-          <div class="znuny-plugin-install">
+          <div class="znuny-plugin-install znuny-plugin-install-primary">
             <div>
               <span>Extensão do navegador</span>
               <strong id="znuny-plugin-extension-status">Verificando instalação...</strong>
+              <p>Baixe a release oficial do ProtoCord para Chrome, Edge ou Opera.</p>
             </div>
-            <button type="button" class="znuny-plugin-secondary" data-znuny-install="true">Como instalar</button>
+            <div class="znuny-plugin-install-actions">
+              <a class="znuny-plugin-primary" data-znuny-download="true" href="${EXTENSION_RELEASE_URL}" download>Baixar extensão</a>
+              <button type="button" class="znuny-plugin-secondary" data-znuny-install="true">Como instalar</button>
+            </div>
           </div>
           <div id="znuny-plugin-install-help" class="znuny-plugin-help hidden">
             <div class="znuny-plugin-wizard" data-znuny-step="1">
@@ -304,12 +299,12 @@
                 <span>3</span>
               </div>
               <div class="znuny-plugin-step" data-step="1">
-                <strong>Abra as extensoes do navegador</strong>
-                <p>Use o menu do Chrome, Edge ou Opera e entre em Extensoes. Navegadores bloqueiam instalacao silenciosa fora das lojas oficiais.</p>
+                <strong>Baixe a release da extensão</strong>
+                <p>Clique em Baixar extensão e extraia o arquivo ZIP em uma pasta permanente do computador.</p>
               </div>
               <div class="znuny-plugin-step hidden" data-step="2">
-                <strong>Carregue a extensao ProtoCord</strong>
-                <p>Ative o modo de desenvolvedor e selecione a pasta <b>modelo-discord/plugins/protocord-znuny-extension</b>.</p>
+                <strong>Carregue no navegador</strong>
+                <p>Abra a tela de extensões do Chrome, Edge ou Opera, ative o modo de desenvolvedor e selecione a pasta extraída da release.</p>
               </div>
               <div class="znuny-plugin-step hidden" data-step="3">
                 <strong>Finalize e teste</strong>
@@ -319,21 +314,6 @@
                 <button type="button" class="znuny-plugin-secondary" data-znuny-step-prev="true">Voltar</button>
                 <button type="button" class="znuny-plugin-primary" data-znuny-step-next="true">Proximo</button>
               </div>
-            </div>
-          </div>
-          <div class="znuny-plugin-config">
-            <span>Mapeamento dos campos</span>
-            <div class="znuny-plugin-config-grid">
-              <label>Assunto<input id="znuny-config-subject" value="Subject" /></label>
-              <label>Contato<input id="znuny-config-contact" value="DynamicField_Contato" /></label>
-              <label>Editor<input id="znuny-config-richtext" value="RichText" /></label>
-              <label>Dest<input data-znuny-fixed-field="Dest" value="6||Suporte::Suporte i9" /></label>
-              <label>TypeID<input data-znuny-fixed-field="TypeID" value="3" /></label>
-              <label>NextStateID<input data-znuny-fixed-field="NextStateID" value="13" /></label>
-              <label>NewUserID<input data-znuny-fixed-field="NewUserID" value="8" /></label>
-              <label>PriorityID<input data-znuny-fixed-field="PriorityID" value="2" /></label>
-              <label>ServiceID<input data-znuny-fixed-field="ServiceID" value="93" /></label>
-              <label>SLAID<input data-znuny-fixed-field="SLAID" value="Media" /></label>
             </div>
           </div>
           <div class="znuny-plugin-preview">
@@ -346,10 +326,54 @@
               <strong id="znuny-plugin-contact">--</strong>
             </div>
           </div>
+          <div class="znuny-plugin-fieldset">
+            <h3>Campos do ticket</h3>
+            <div class="znuny-plugin-grid">
+              <label>
+                <span>Assunto</span>
+                <input id="znuny-config-subject" type="text" value="Subject" />
+              </label>
+              <label>
+                <span>Contato</span>
+                <input id="znuny-config-contact" type="text" value="DynamicField_Contato" />
+              </label>
+              <label>
+                <span>Editor</span>
+                <input id="znuny-config-richtext" type="text" value="RichText" />
+              </label>
+              <label>
+                <span>Fila</span>
+                <input type="text" data-znuny-fixed-field="Dest" value="6||Suporte::Suporte i9" />
+              </label>
+              <label>
+                <span>Tipo</span>
+                <input type="text" data-znuny-fixed-field="TypeID" value="3" />
+              </label>
+              <label>
+                <span>Estado</span>
+                <input type="text" data-znuny-fixed-field="NextStateID" value="13" />
+              </label>
+              <label>
+                <span>Atendente</span>
+                <input type="text" data-znuny-fixed-field="NewUserID" value="8" />
+              </label>
+              <label>
+                <span>Prioridade</span>
+                <input type="text" data-znuny-fixed-field="PriorityID" value="2" />
+              </label>
+              <label>
+                <span>Servico</span>
+                <input type="text" data-znuny-fixed-field="ServiceID" value="93" />
+              </label>
+              <label>
+                <span>SLA</span>
+                <input type="text" data-znuny-fixed-field="SLAID" value="Media" />
+              </label>
+            </div>
+          </div>
           <textarea id="znuny-plugin-report" readonly></textarea>
           <footer class="znuny-plugin-actions">
             <button type="button" class="znuny-plugin-secondary" data-znuny-copy="true">Copiar relatorio</button>
-            <button type="button" class="znuny-plugin-secondary" data-znuny-save-extension="true">Salvar campos</button>
             <button type="button" class="znuny-plugin-secondary" data-znuny-save="true">Salvar config</button>
             <button type="button" class="znuny-plugin-primary" data-znuny-open="true">Abrir novo ticket</button>
           </footer>
@@ -358,9 +382,6 @@
       document.body.appendChild(app);
       bindApp(app);
     }
-
-    app.querySelector("#znuny-plugin-base-url").value = localStorage.getItem(BASE_URL_KEY) || "";
-    app.querySelector("#znuny-plugin-ticket-url").value = localStorage.getItem(TICKET_URL_KEY) || "";
 
     const payload = getPayload();
     app.querySelector("#znuny-plugin-subject").textContent = payload?.assunto || "Nenhum transporte preparado";
@@ -378,9 +399,7 @@
       }
 
       if (event.target?.closest?.("[data-znuny-save]")) {
-        saveConfig(app);
-        notify("Configuracao do plugin salva.", "success");
-        renderApp();
+        saveExtensionConfig(app);
         return;
       }
 
@@ -412,7 +431,7 @@
       }
 
       if (event.target?.closest?.("[data-znuny-open]")) {
-        saveConfig(app);
+        saveExtensionConfig(app);
         const url = getTicketUrl();
         if (!url) {
           notify("Informe a URL do Znuny para abrir o ticket.", "warning");
@@ -435,14 +454,7 @@
   }
 
   function saveConfig(root) {
-    const baseUrl = root.querySelector("#znuny-plugin-base-url")?.value?.trim() || "";
-    const ticketUrl = root.querySelector("#znuny-plugin-ticket-url")?.value?.trim() || "";
-
-    if (baseUrl) localStorage.setItem(BASE_URL_KEY, baseUrl);
-    else localStorage.removeItem(BASE_URL_KEY);
-
-    if (ticketUrl) localStorage.setItem(TICKET_URL_KEY, ticketUrl);
-    else localStorage.removeItem(TICKET_URL_KEY);
+    saveExtensionConfig(root);
   }
 
   function updateExtensionStatus(root) {
@@ -501,7 +513,16 @@
       subjectFieldId: root.querySelector("#znuny-config-subject")?.value?.trim() || "Subject",
       contactFieldId: root.querySelector("#znuny-config-contact")?.value?.trim() || "DynamicField_Contato",
       richTextFieldId: root.querySelector("#znuny-config-richtext")?.value?.trim() || "RichText",
-      fixedFields,
+      fixedFields: {
+        Dest: "6||Suporte::Suporte i9",
+        TypeID: "3",
+        NextStateID: "13",
+        NewUserID: "8",
+        PriorityID: "2",
+        ServiceID: "93",
+        SLAID: "Media",
+        ...fixedFields,
+      },
     };
   }
 
@@ -551,6 +572,34 @@
     const style = document.createElement("style");
     style.id = "protocord-znuny-plugin-style";
     style.textContent = `
+      :root {
+        --znuny-plugin-overlay: rgba(3, 8, 18, .72);
+        --znuny-plugin-shell-bg: linear-gradient(180deg, rgba(9, 20, 39, .98), rgba(5, 12, 26, .98));
+        --znuny-plugin-panel: rgba(6, 14, 28, .58);
+        --znuny-plugin-panel-strong: rgba(3, 8, 18, .54);
+        --znuny-plugin-border: rgba(63, 104, 166, .42);
+        --znuny-plugin-border-soft: rgba(63, 104, 166, .34);
+        --znuny-plugin-title: #ffffff;
+        --znuny-plugin-text: #e8eefc;
+        --znuny-plugin-muted: #8fa4c7;
+        --znuny-plugin-input-bg: rgba(3, 8, 18, .54);
+        --znuny-plugin-shadow: 0 28px 80px rgba(0, 0, 0, .42);
+      }
+
+      html[data-theme="light"] {
+        --znuny-plugin-overlay: rgba(15, 23, 42, .28);
+        --znuny-plugin-shell-bg: linear-gradient(180deg, rgba(255, 255, 255, .98), rgba(240, 247, 255, .98));
+        --znuny-plugin-panel: rgba(255, 255, 255, .76);
+        --znuny-plugin-panel-strong: rgba(248, 251, 255, .92);
+        --znuny-plugin-border: rgba(148, 163, 184, .46);
+        --znuny-plugin-border-soft: rgba(191, 205, 224, .72);
+        --znuny-plugin-title: #0f172a;
+        --znuny-plugin-text: #1e293b;
+        --znuny-plugin-muted: #64748b;
+        --znuny-plugin-input-bg: rgba(255, 255, 255, .94);
+        --znuny-plugin-shadow: 0 28px 80px rgba(15, 23, 42, .18);
+      }
+
       #protocord-znuny-plugin-launcher {
         display: inline-flex;
         align-items: center;
@@ -593,7 +642,7 @@
       .znuny-plugin-backdrop {
         position: absolute;
         inset: 0;
-        background: rgba(3, 8, 18, .72);
+        background: var(--znuny-plugin-overlay);
         backdrop-filter: blur(8px);
       }
 
@@ -604,11 +653,11 @@
         width: min(560px, calc(100vw - 32px));
         max-height: calc(100vh - 52px);
         overflow: auto;
-        border: 1px solid rgba(63, 104, 166, .42);
+        border: 1px solid var(--znuny-plugin-border);
         border-radius: 22px;
-        background: linear-gradient(180deg, rgba(9, 20, 39, .98), rgba(5, 12, 26, .98));
-        box-shadow: 0 28px 80px rgba(0, 0, 0, .42);
-        color: #e8eefc;
+        background: var(--znuny-plugin-shell-bg);
+        box-shadow: var(--znuny-plugin-shadow);
+        color: var(--znuny-plugin-text);
         padding: 20px;
         font-family: Inter, Arial, sans-serif;
       }
@@ -625,7 +674,7 @@
       .znuny-plugin-preview span,
       .znuny-plugin-grid span {
         display: block;
-        color: #8fa4c7;
+        color: var(--znuny-plugin-muted);
         font-size: 11px;
         font-weight: 800;
         letter-spacing: .12em;
@@ -634,7 +683,7 @@
 
       .znuny-plugin-header h2 {
         margin: 5px 0 0;
-        color: #fff;
+        color: var(--znuny-plugin-title);
         font-size: 24px;
         line-height: 1.1;
       }
@@ -642,10 +691,10 @@
       .znuny-plugin-icon,
       .znuny-plugin-secondary,
       .znuny-plugin-primary {
-        border: 1px solid rgba(63, 104, 166, .42);
+        border: 1px solid var(--znuny-plugin-border);
         border-radius: 12px;
-        background: rgba(6, 14, 28, .78);
-        color: #e8eefc;
+        background: var(--znuny-plugin-panel);
+        color: var(--znuny-plugin-text);
         cursor: pointer;
         font-weight: 800;
       }
@@ -657,8 +706,24 @@
 
       .znuny-plugin-grid {
         display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 12px;
         margin-top: 18px;
+      }
+
+      .znuny-plugin-fieldset {
+        border: 1px solid var(--znuny-plugin-border-soft);
+        border-radius: 16px;
+        background: var(--znuny-plugin-panel-strong);
+        margin-top: 14px;
+        padding: 14px;
+      }
+
+      .znuny-plugin-fieldset h3 {
+        margin: 0;
+        color: var(--znuny-plugin-title);
+        font-size: 16px;
+        line-height: 1.2;
       }
 
       .znuny-plugin-install {
@@ -666,9 +731,9 @@
         align-items: center;
         justify-content: space-between;
         gap: 12px;
-        border: 1px solid rgba(63, 104, 166, .34);
+        border: 1px solid var(--znuny-plugin-border-soft);
         border-radius: 14px;
-        background: rgba(6, 14, 28, .58);
+        background: var(--znuny-plugin-panel);
         margin-top: 14px;
         padding: 12px;
       }
@@ -676,15 +741,30 @@
       .znuny-plugin-install strong {
         display: block;
         margin-top: 5px;
-        color: #fff;
+        color: var(--znuny-plugin-title);
         font-size: 13px;
+      }
+
+      .znuny-plugin-install p {
+        margin: 6px 0 0;
+        color: var(--znuny-plugin-muted);
+        font-size: 12px;
+        line-height: 1.35;
+      }
+
+      .znuny-plugin-install-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        flex-wrap: wrap;
       }
 
       .znuny-plugin-help {
         border: 1px solid rgba(40, 198, 229, .24);
         border-radius: 12px;
         background: rgba(40, 198, 229, .08);
-        color: #bcd0ee;
+        color: var(--znuny-plugin-text);
         font-size: 12px;
         line-height: 1.45;
         margin-top: 10px;
@@ -720,7 +800,7 @@
 
       .znuny-plugin-step strong {
         display: block;
-        color: #fff;
+        color: var(--znuny-plugin-title);
         margin-bottom: 6px;
       }
 
@@ -747,10 +827,10 @@
       #znuny-plugin-report {
         width: 100%;
         margin-top: 7px;
-        border: 1px solid rgba(63, 104, 166, .42);
+        border: 1px solid var(--znuny-plugin-border);
         border-radius: 12px;
-        background: rgba(3, 8, 18, .54);
-        color: #e8eefc;
+        background: var(--znuny-plugin-input-bg);
+        color: var(--znuny-plugin-text);
         outline: none;
         padding: 12px;
       }
@@ -763,16 +843,16 @@
       }
 
       .znuny-plugin-preview > div {
-        border: 1px solid rgba(63, 104, 166, .34);
+        border: 1px solid var(--znuny-plugin-border-soft);
         border-radius: 14px;
-        background: rgba(6, 14, 28, .58);
+        background: var(--znuny-plugin-panel);
         padding: 12px;
       }
 
       .znuny-plugin-preview strong {
         display: block;
         margin-top: 6px;
-        color: #fff;
+        color: var(--znuny-plugin-title);
         font-size: 13px;
         line-height: 1.35;
       }
@@ -792,6 +872,10 @@
       .znuny-plugin-secondary,
       .znuny-plugin-primary {
         padding: 11px 14px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .znuny-plugin-primary {
@@ -808,6 +892,10 @@
         }
 
         .znuny-plugin-preview {
+          grid-template-columns: 1fr;
+        }
+
+        .znuny-plugin-grid {
           grid-template-columns: 1fr;
         }
 

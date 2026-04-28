@@ -7,6 +7,7 @@ const root = path.join(__dirname, '..');
 const indexSource = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const transcriberSource = fs.readFileSync(path.join(root, 'js', 'ia-transcriber.js'), 'utf8');
 const pluginSource = fs.readFileSync(path.join(root, 'js', 'protocord-znuny-transport-plugin.js'), 'utf8');
+const styleSource = fs.readFileSync(path.join(root, 'style.css'), 'utf8');
 const extensionRoot = path.join(root, 'plugins', 'protocord-znuny-extension');
 const extensionManifest = JSON.parse(fs.readFileSync(path.join(extensionRoot, 'manifest.json'), 'utf8'));
 const extensionBackground = fs.readFileSync(path.join(extensionRoot, 'background.js'), 'utf8');
@@ -14,6 +15,7 @@ const extensionProtocord = fs.readFileSync(path.join(extensionRoot, 'content-pro
 const extensionZnuny = fs.readFileSync(path.join(extensionRoot, 'content-znuny.js'), 'utf8');
 const extensionPopupHtml = fs.readFileSync(path.join(extensionRoot, 'popup.html'), 'utf8');
 const extensionPopupJs = fs.readFileSync(path.join(extensionRoot, 'popup.js'), 'utf8');
+const extensionReleasePath = path.join(root, 'plugins', 'releases', 'protocord-znuny-extension-v1.0.0.zip');
 const readmeSource = fs.readFileSync(path.join(root, 'README.md'), 'utf8');
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
 const mapGeneratorSource = fs.readFileSync(path.join(root, 'scripts', 'gerar-mapa-codigo.mjs'), 'utf8');
@@ -38,6 +40,9 @@ test('botao Transportar delega para o plugin interno antes do fallback legado', 
   assert.ok(pluginIndex > payloadIndex, 'plugin deve receber o payload preparado');
   assert.ok(eventIndex > pluginIndex, 'evento externo deve ser fallback depois do plugin');
   assert.ok(openIndex > pluginIndex, 'abertura direta deve ser fallback depois do plugin');
+  assert.match(transcriberSource, /function buildEvidenceHtml/);
+  assert.match(transcriberSource, /<strong>Evidencias<\/strong>/);
+  assert.match(transcriberSource, /src: image/);
 });
 
 test('plugin expõe API, armazenamento e app proprio do ProtoCord', () => {
@@ -68,12 +73,29 @@ test('plugin expõe API, armazenamento e app proprio do ProtoCord', () => {
   assert.match(pluginSource, /protocordZnunyExtension/);
   assert.match(pluginSource, /PROTOCORD_ZNUNY_TRANSPORT/);
   assert.match(pluginSource, /data-znuny-install/);
+  assert.match(pluginSource, /protocord-znuny-extension-v1\.0\.0\.zip/);
+  assert.match(pluginSource, /data-znuny-download/);
+  assert.match(pluginSource, /--znuny-plugin-shell-bg/);
+  assert.match(pluginSource, /html\[data-theme="light"\]/);
   assert.match(pluginSource, /data-znuny-step-next/);
   assert.match(pluginSource, /updateInstallWizard/);
-  assert.match(pluginSource, /data-znuny-save-extension/);
-  assert.match(pluginSource, /Mapeamento dos campos/);
+  assert.doesNotMatch(pluginSource, />URL de novo ticket</);
+  assert.doesNotMatch(pluginSource, />Portal Znuny</);
+  assert.doesNotMatch(pluginSource, /Mapeamento dos campos/);
+  assert.match(pluginSource, />Campos do ticket</);
+  assert.match(pluginSource, />Fila</);
+  assert.match(pluginSource, />Tipo</);
+  assert.match(pluginSource, />Atendente</);
+  assert.match(pluginSource, />Prioridade</);
+  assert.match(pluginSource, />Servico</);
+  assert.match(pluginSource, /data-znuny-fixed-field="Dest"/);
+  assert.match(pluginSource, /ServiceID:\s*"93"/);
   assert.match(pluginSource, /PROTOCORD_ZNUNY_CONFIG_SAVE/);
   assert.match(pluginSource, /AgentTicketPhone/);
+  assert.match(styleSource, /\[data-theme="light"\] \.assistant-widget-panel/);
+  assert.match(styleSource, /\[data-theme="light"\] \.assistant-fab/);
+  assert.match(styleSource, /\[data-theme="light"\] \.assistant-form-widget \.assistant-input/);
+  assert.match(styleSource, /html\[data-theme="light"\] \.docs-easter-menu/);
 });
 
 test('extensao propria MV3 cobre ProtoCord e Znuny sem Tampermonkey', () => {
@@ -85,6 +107,8 @@ test('extensao propria MV3 cobre ProtoCord e Znuny sem Tampermonkey', () => {
   assert.ok(extensionManifest.content_scripts.some((entry) => entry.js.includes('content-znuny.js')));
   assert.equal(extensionManifest.background.service_worker, 'background.js');
   assert.equal(extensionManifest.action.default_popup, 'popup.html');
+  assert.ok(fs.existsSync(extensionReleasePath), 'release zip da extensao nao foi gerado');
+  assert.ok(fs.statSync(extensionReleasePath).size > 1000, 'release zip da extensao parece vazio');
   assert.ok(!fs.existsSync(path.join(root, 'plugins', 'protocord-znuny-transporter.user.js')), 'nao deve existir userscript Tampermonkey');
 
   assert.match(extensionBackground, /chrome\.tabs\.create/);
@@ -138,6 +162,8 @@ test('geradores de documentacao conhecem o plugin Znuny', () => {
 
   assert.match(mapGeneratorSource, /protocord-znuny-transport-plugin\.js/);
   assert.match(mapGeneratorSource, /Transcrever, CordIA e plugins/);
+  assert.match(fs.readFileSync(path.join(root, 'scripts', 'gerar-mapa-codigo-3d.mjs'), 'utf8'), /Mesa Neural do Codigo/);
+  assert.match(fs.readFileSync(path.join(root, 'scripts', 'gerar-mapa-codigo-3d.mjs'), 'utf8'), /builderMode = true/);
   assert.match(manualGeneratorSource, /04-plugin-znuny\.png/);
   assert.match(manualGeneratorSource, /Plugin de transporte Znuny/);
 });

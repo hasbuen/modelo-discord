@@ -3815,6 +3815,7 @@ function renderAudio(active) {
       evidencias: Array.isArray(ticket?.images)
         ?ticket.images.map((image, index) => ({
             index,
+            src: image,
             name: image?.name || `evidencia-${index + 1}`,
             type: image?.type || "",
           }))
@@ -4145,6 +4146,7 @@ els.audioPlayer.load();
   function buildHtml(ticket) {
     const phone = ticket.phone || "telefone";
     const contact = ticket.customName ?`${ticket.customName} (${phone})` : `(${phone})`;
+    const evidenceHtml = buildEvidenceHtml(ticket);
 
     return [
       '<span style="color:#f39c12"><strong>PROBLEMA / DUVIDA:</strong></span><br />',
@@ -4152,6 +4154,23 @@ els.audioPlayer.load();
       `<span>${escapeHtml(ticket.analysis || "Aguardando transcricao...")}</span><br /><br />`,
       '<span style="color:#4dabf7"><strong>ENCAMINHAMENTO / SOLUCAO:</strong></span><br />',
       `<span>${escapeHtml(ticket.solucao || "Aguardando transcricao...")}</span>`,
+      evidenceHtml,
+    ].join("");
+  }
+
+  function buildEvidenceHtml(ticket) {
+    const images = Array.isArray(ticket?.images) ? ticket.images.filter(Boolean) : [];
+    if (!images.length) return "";
+
+    const imageBlocks = images.map((image, index) => [
+      `<p style="margin:12px 0 6px;"><strong>Evidencia ${index + 1}</strong></p>`,
+      `<p style="margin:0 0 14px;"><img src="${escapeAttribute(image)}" alt="Evidencia ${index + 1}" style="max-width:100%;height:auto;border:1px solid #d9e2ef;" /></p>`,
+    ].join(""));
+
+    return [
+      '<br /><br />',
+      '<strong>Evidencias</strong>',
+      ...imageBlocks,
     ].join("");
   }
 
