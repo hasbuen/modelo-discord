@@ -171,8 +171,12 @@ test('geradores de documentacao conhecem o plugin Znuny', () => {
 
   assert.match(mapGeneratorSource, /protocord-znuny-transport-plugin\.js/);
   assert.match(mapGeneratorSource, /Transcrever, CordIA e plugins/);
-  assert.match(fs.readFileSync(path.join(root, 'scripts', 'gerar-mapa-codigo-3d.mjs'), 'utf8'), /Mesa Neural do Codigo/);
-  assert.match(fs.readFileSync(path.join(root, 'scripts', 'gerar-mapa-codigo-3d.mjs'), 'utf8'), /builderMode = true/);
+  const map3dSource = fs.readFileSync(path.join(root, 'scripts', 'gerar-mapa-codigo-3d.mjs'), 'utf8');
+  assert.match(map3dSource, /Mapa Neural ProtoCord/);
+  assert.match(map3dSource, /builderMode = true/);
+  assert.match(map3dSource, /id="pinnedTray"/);
+  assert.match(map3dSource, /function removeFromMesa\(id/);
+  assert.match(map3dSource, /data-remove-pinned/);
   assert.match(manualGeneratorSource, /04-plugin-znuny\.png/);
   assert.match(manualGeneratorSource, /Plugin de transporte Znuny/);
 });

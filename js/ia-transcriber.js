@@ -1900,6 +1900,24 @@
         box-shadow: none;
       }
 
+      #pagina-ia .ia-audio-mute-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+      }
+
+      #pagina-ia .ia-audio-mute-icon svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
       #pagina-ia .ia-audio-volume-wrap {
         grid-column: 1;
         grid-row: 3;
@@ -2480,8 +2498,21 @@
       <div id="ia-audio-progress-fill" class="ia-audio-progress-fill"></div>
     </div>
 
-    <button id="ia-audio-mute-btn" class="ia-audio-mini-btn" type="button" aria-label="Mutar áudio">
-      🔊
+    <button id="ia-audio-mute-btn" class="ia-audio-mini-btn" type="button" aria-label="Mutar audio" title="Mutar audio">
+      <span class="ia-audio-mute-icon ia-audio-mute-icon-on" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M4 9v6h4l5 4V5L8 9H4Z"></path>
+          <path d="M16 9.5a4 4 0 0 1 0 5"></path>
+          <path d="M18.5 7a7 7 0 0 1 0 10"></path>
+        </svg>
+      </span>
+      <span class="ia-audio-mute-icon ia-audio-mute-icon-off hidden" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M4 9v6h4l5 4V5L8 9H4Z"></path>
+          <path d="M17 9l4 4"></path>
+          <path d="M21 9l-4 4"></path>
+        </svg>
+      </span>
     </button>
 
     <div class="ia-audio-volume-wrap">
@@ -4389,7 +4420,10 @@ function syncAudioUi() {
   }
 
   if (els.audioMuteBtn) {
-    els.audioMuteBtn.textContent = muted ? "Sem som" : "Com som";
+    els.audioMuteBtn.setAttribute("aria-label", muted ? "Ativar audio" : "Mutar audio");
+    els.audioMuteBtn.setAttribute("title", muted ? "Ativar audio" : "Mutar audio");
+    els.audioMuteBtn.querySelector(".ia-audio-mute-icon-on")?.classList.toggle("hidden", muted);
+    els.audioMuteBtn.querySelector(".ia-audio-mute-icon-off")?.classList.toggle("hidden", !muted);
   }
 
   if (els.audioPlayIconPlay && els.audioPlayIconPause) {
