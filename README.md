@@ -159,13 +159,13 @@ Os testes validam configuração em tempo de execução, autenticação, fluxo d
 Consulte [docs/DOCUMENTACAO_TECNICA.md](docs/DOCUMENTACAO_TECNICA.md) para detalhes de módulos, escopos, variáveis, fluxo de dados e relação com o servidor. Também há uma versão consolidada em PDF: [docs/DOCUMENTACAO_TECNICA_PROTOCORD.pdf](docs/DOCUMENTACAO_TECNICA_PROTOCORD.pdf).
 ## Plugin Interno Znuny
 
-O ProtoCord inclui o plugin interno `Transporte Znuny`, carregado por `js/protocord-znuny-transport-plugin.js`. Ele adiciona um mini-app `Znuny` dentro da interface, salva a configuracao do portal, recebe o pacote do botao `Transportar` e abre a tela de novo ticket com fallback de copia do relatorio.
+O ProtoCord inclui o plugin interno `Transporte Znuny`, carregado por `js/protocord-znuny-transport-plugin.js`. Ele adiciona um cog de configuracao dentro da pagina `Transcrever`, salva a configuracao do portal, recebe o pacote do botao `Transportar` e abre a tela de novo ticket com fallback de copia do relatorio em texto/HTML.
 
 Configuracao rapida pelo mini-app ou pelo console:
 
 ```js
-localStorage.setItem("PROTOCORD_ZNUNY_BASE_URL", "https://seu-portal.example.com");
-localStorage.setItem("PROTOCORD_ZNUNY_TICKET_URL", "https://seu-portal.example.com/znuny/index.pl?Action=AgentTicketPhone");
+localStorage.setItem("PROTOCORD_ZNUNY_BASE_URL", "https://<portal-rhede>");
+localStorage.setItem("PROTOCORD_ZNUNY_TICKET_URL", "https://<portal-rhede>/znuny/index.pl?Action=AgentTicketPhone");
 ```
 
-Por seguranca do navegador, o plugin interno nao manipula campos de outro dominio. Para preenchimento automatico dentro da pagina do Znuny, use um complemento corporativo ou o userscript opcional em `plugins/protocord-znuny-transporter.user.js`.
+O plugin interno tambem grava `znuny_auto_payload` e conversa diretamente com a extensao propria em `plugins/protocord-znuny-extension`. Instale essa pasta como extensao sem compactacao no Chrome, Edge ou Opera para abrir e preencher automaticamente o ticket. O cog da pagina `Transcrever` mostra um assistente de instalacao em 3 passos e permite configurar os IDs/valores dos campos que a extensao deve preencher. Por politica dos navegadores, a instalacao silenciosa fora das lojas oficiais nao e permitida; o assistente reduz o passo a passo, mas a confirmacao do navegador continua necessaria.

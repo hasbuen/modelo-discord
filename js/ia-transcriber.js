@@ -181,6 +181,7 @@
       }
 
       #pagina-ia .ia-sidebar-header {
+        position: relative;
         padding: 26px 22px 18px;
         border-bottom: 1px solid var(--ia-border);
       }
@@ -298,7 +299,8 @@
         position: relative;
       }
 
-      #pagina-ia .ia-search-wrap i {
+      #pagina-ia .ia-search-wrap i,
+      #pagina-ia .ia-search-wrap svg {
         position: absolute;
         left: 14px;
         top: 50%;

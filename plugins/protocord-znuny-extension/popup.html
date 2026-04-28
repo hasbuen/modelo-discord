@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ProtoCord Znuny</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <main>
+    <header>
+      <span>ProtoCord</span>
+      <h1>Transporte Znuny</h1>
+    </header>
+
+    <section class="status">
+      <strong id="status-title">Aguardando transporte</strong>
+      <p id="status-detail">Clique em Transportar dentro do ProtoCord.</p>
+    </section>
+
+    <section class="payload">
+      <label>Assunto</label>
+      <div id="subject">--</div>
+      <label>Contato</label>
+      <div id="contact">--</div>
+    </section>
+
+    <section class="settings">
+      <h2>Campos do Znuny</h2>
+      <label for="subject-field">Assunto</label>
+      <input id="subject-field" value="Subject" />
+      <label for="contact-field">Contato</label>
+      <input id="contact-field" value="DynamicField_Contato" />
+      <label for="rich-field">Editor</label>
+      <input id="rich-field" value="RichText" />
+      <div class="grid">
+        <label>Dest<input data-fixed-field="Dest" /></label>
+        <label>TypeID<input data-fixed-field="TypeID" /></label>
+        <label>NextStateID<input data-fixed-field="NextStateID" /></label>
+        <label>NewUserID<input data-fixed-field="NewUserID" /></label>
+        <label>PriorityID<input data-fixed-field="PriorityID" /></label>
+        <label>ServiceID<input data-fixed-field="ServiceID" /></label>
+        <label>SLAID<input data-fixed-field="SLAID" /></label>
+      </div>
+      <button id="save-config" type="button">Salvar configuração</button>
+    </section>
+
+    <button id="clear" type="button">Limpar transporte</button>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,29 +1,28 @@
 # Plugins ProtoCord
 
-## ProtoCord Znuny Transporter
+## ProtoCord Znuny Transport
 
-Arquivo: `protocord-znuny-transporter.user.js`
+Pasta: `protocord-znuny-extension/`
 
-Use este userscript no Tampermonkey para transportar o relatorio do ticket ativo do ProtoCord para a tela de novo ticket do Znuny.
+Use esta extensao propria do ProtoCord no Chrome, Edge ou Opera para transportar o relatorio do ticket ativo para a tela de novo ticket do Znuny.
 
 Fluxo:
 
 1. No ProtoCord, clique em `Transportar`.
-2. O frontend salva um pacote temporario com contato, assunto e relatorio.
-3. O userscript guarda o pacote no storage do Tampermonkey.
-4. A aba do Znuny e aberta, se a URL estiver configurada.
-5. Na tela de novo ticket, o userscript tenta preencher assunto, cliente/contato e corpo.
+2. A extensao captura o payload com `contato`, `assunto` e `relatorio`, enquanto o ProtoCord copia o relatorio em texto/HTML para a area de transferencia.
+3. A extensao abre `/znuny/index.pl?Action=AgentTicketPhone`.
+4. O content script do Znuny preenche `Subject`, `DynamicField_Contato`, CKEditor RichText e os campos fixos de fila, tipo, estado, proprietario, prioridade, servico e SLA. A aplicacao so considera o transporte concluido quando o relatorio tambem entra no editor.
 
-Configuracao recomendada no console do navegador do ProtoCord:
+Instalacao:
 
-```js
-localStorage.setItem("PROTOCORD_ZNUNY_BASE_URL", "https://seu-portal.example.com");
-```
+1. Abra `chrome://extensions`, `edge://extensions` ou `opera://extensions`.
+2. Ative o modo de desenvolvedor.
+3. Clique em `Carregar sem compactacao`.
+4. Selecione `modelo-discord/plugins/protocord-znuny-extension`.
 
-Ou informe a rota completa:
+Assistente e configuracao:
 
-```js
-localStorage.setItem("PROTOCORD_ZNUNY_TICKET_URL", "https://seu-portal.example.com/znuny/index.pl?Action=AgentTicketPhone");
-```
+- Pelo ProtoCord: na pagina `Transcrever`, clique no cog do plugin, use `Como instalar` para o fluxo guiado e ajuste `Mapeamento dos campos`.
+- Pelo navegador: clique no icone da extensao e ajuste os mesmos campos no popup.
 
-Se preferir deixar a URL fixa dentro do Tampermonkey, edite `znunyNewTicketUrl` no bloco `CONFIG` do userscript.
+Observacao: Chrome, Edge e Opera nao permitem instalacao silenciosa por uma pagina web fora da loja oficial ou de politica corporativa. O assistente reduz o passo a passo, mas a confirmacao do navegador continua obrigatoria.
