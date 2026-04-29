@@ -15,6 +15,7 @@ const FORBIDDEN_PATTERNS = [
   new RegExp('-----BEGIN ' + '(RSA |EC |OPENSSH |)PRIVATE KEY-----'),
 ];
 
+// Explica a responsabilidade de collect files dentro deste modulo.
 function collectFiles(dir, files = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     if (IGNORED_DIRS.has(entry.name)) continue;

@@ -4,27 +4,33 @@
  */
 
 function toMD5(str) {
+  // Explica a responsabilidade de cmn dentro deste modulo.
   function cmn(q, a, b, x, s, t) {
     a = (((a + q) | 0) + ((x + t) | 0)) | 0;
     return (((a << s) | (a >>> (32 - s))) + b) | 0;
   }
 
+  // Explica a responsabilidade de ff dentro deste modulo.
   function ff(a, b, c, d, x, s, t) {
     return cmn((b & c) | (~b & d), a, b, x, s, t);
   }
 
+  // Explica a responsabilidade de gg dentro deste modulo.
   function gg(a, b, c, d, x, s, t) {
     return cmn((b & d) | (c & ~d), a, b, x, s, t);
   }
 
+  // Explica a responsabilidade de hh dentro deste modulo.
   function hh(a, b, c, d, x, s, t) {
     return cmn(b ^ c ^ d, a, b, x, s, t);
   }
 
+  // Explica a responsabilidade de ii dentro deste modulo.
   function ii(a, b, c, d, x, s, t) {
     return cmn(c ^ (b | ~d), a, b, x, s, t);
   }
 
+  // Explica a responsabilidade de md5cycle dentro deste modulo.
   function md5cycle(state, block) {
     let [a, b, c, d] = state;
 
@@ -102,6 +108,7 @@ function toMD5(str) {
     state[3] = (state[3] + d) | 0;
   }
 
+  // Explica a responsabilidade de md5blk dentro deste modulo.
   function md5blk(bytes, start) {
     const out = new Array(16);
     for (let i = 0; i < 16; i += 1) {
@@ -114,6 +121,7 @@ function toMD5(str) {
     return out;
   }
 
+  // Explica a responsabilidade de md51 dentro deste modulo.
   function md51(input) {
     const bytes = new TextEncoder().encode(String(input));
     const state = [1732584193, -271733879, -1732584194, 271733878];
@@ -142,6 +150,7 @@ function toMD5(str) {
     return state;
   }
 
+  // Explica a responsabilidade de to hex dentro deste modulo.
   function toHex(value) {
     let output = "";
     for (let i = 0; i < 4; i += 1) {
@@ -153,6 +162,7 @@ function toMD5(str) {
   return md51(str).map(toHex).join("");
 }
 
+// Valida uma condicao e retorna o resultado para o fluxo (has active auth session).
 function hasActiveAuthSession() {
   const token = localStorage.getItem('authToken');
   const tempo = localStorage.getItem('authTime');
@@ -172,14 +182,17 @@ function hasActiveAuthSession() {
   return diffHoras < 24;
 }
 
+// Valida uma condicao e retorna o resultado para o fluxo (is signed session token).
 function isSignedSessionToken(token) {
   return /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(String(token || ''));
 }
 
+// Busca ou resolve informacoes necessarias para o fluxo (get auth token).
 function getAuthToken() {
   return hasActiveAuthSession() ? localStorage.getItem('authToken') : '';
 }
 
+// Explica a responsabilidade de broadcast auth state dentro deste modulo.
 function broadcastAuthState(authenticated) {
   window.dispatchEvent(new CustomEvent('protocord:auth-changed', {
     detail: { authenticated: Boolean(authenticated) },

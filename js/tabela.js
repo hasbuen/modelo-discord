@@ -22,6 +22,7 @@ export function filtrarTabela() {
   });
 }
 
+// Explica a responsabilidade de ordenar tabela dentro deste modulo.
 export function ordenarTabela(idx) {
   const tbody = document.querySelector("#tabelaRegistros tbody");
   let linhas = [...tbody.querySelectorAll("tr")];
@@ -64,6 +65,7 @@ export function mostrarModalPaliativo(paliativo) {
   }
 }
 
+// Abre a interface, recurso ou fluxo solicitado (abrir modal exclusao).
 export async function abrirModalExclusao(id, ticket) {
   const modal = document.getElementById("confirmModal");
   const confirmBtn = document.getElementById("confirmBtn");
@@ -94,6 +96,7 @@ export async function abrirModalExclusao(id, ticket) {
   }
 }
 
+// Atualiza a tela, o estado interno ou dados derivados (atualizar contadores dos cards).
 export async function atualizarContadoresDosCards(registros) {
   const totalErros = registros.filter(r => r.tipo === '0').length;
   const totalSugestoes = registros.filter(r => r.tipo === '1').length;

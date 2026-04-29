@@ -7,6 +7,7 @@ const { chromium } = require('playwright');
 
 const projectRoot = path.join(__dirname, '..');
 
+// Explica a responsabilidade de content type dentro deste modulo.
 function contentType(filePath) {
   if (filePath.endsWith('.html')) return 'text/html; charset=utf-8';
   if (filePath.endsWith('.css')) return 'text/css; charset=utf-8';
@@ -17,7 +18,9 @@ function contentType(filePath) {
   return 'application/octet-stream';
 }
 
+// Explica a responsabilidade de start server dentro deste modulo.
 async function startServer() {
+  // Explica a responsabilidade de server dentro deste modulo.
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://127.0.0.1');
     const cleanPath = decodeURIComponent(url.pathname).replace(/^\/+/, '') || 'index.html';
@@ -47,11 +50,13 @@ async function startServer() {
   };
 }
 
+// Explica a responsabilidade de rgb channels dentro deste modulo.
 function rgbChannels(value) {
   const match = String(value).match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
   return match ? match.slice(1, 4).map(Number) : [0, 0, 0];
 }
 
+// Explica a responsabilidade de luminance dentro deste modulo.
 function luminance(value) {
   const [r, g, b] = rgbChannels(value);
   return (0.2126 * r) + (0.7152 * g) + (0.0722 * b);
@@ -104,6 +109,7 @@ test('tema claro cobre relatórios e metas sem ilhas escuras críticas', async (
       });
     });
     await page.waitForSelector('#pagina-relatorios .reports-table thead', { state: 'attached', timeout: 10000 });
+    // Explica a responsabilidade de reports theme dentro deste modulo.
     const reportsTheme = await page.evaluate(() => {
       const head = document.querySelector('#pagina-relatorios .reports-table thead');
       const wrap = document.querySelector('#pagina-relatorios .reports-table-wrap');
@@ -132,6 +138,7 @@ test('tema claro cobre relatórios e metas sem ilhas escuras críticas', async (
     });
     await page.waitForSelector('#metas-app .mfu', { state: 'attached', timeout: 10000 });
     await page.waitForTimeout(300);
+    // Explica a responsabilidade de metas theme dentro deste modulo.
     const metasTheme = await page.evaluate(() => {
       const shell = document.querySelector('#metas-app .mfu');
       const panel = document.querySelector('#metas-app .mfu-panel, #metas-app .mfu-today-card');

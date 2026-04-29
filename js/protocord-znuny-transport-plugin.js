@@ -38,6 +38,7 @@
     init();
   }
 
+  // Inicializa os elementos e estados necessarios para esta funcionalidade (init).
   function init() {
     injectStyles();
     renderLauncher();
@@ -51,6 +52,7 @@
     window.addEventListener("message", handleExtensionMessage);
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle transport).
   function handleTransport(payload) {
     const normalized = normalizePayload(payload);
     if (!normalized) {
@@ -86,6 +88,7 @@
     return true;
   }
 
+  // Busca ou resolve informacoes necessarias para o fluxo (get ticket url).
   function getTicketUrl() {
     const explicit = String(
       window.PROTOCORD_RUNTIME_CONFIG?.ZNUNY_TICKET_URL ||
@@ -110,10 +113,12 @@
     }
   }
 
+  // Busca ou resolve informacoes necessarias para o fluxo (get payload).
   function getPayload() {
     return state.payload || restorePayload();
   }
 
+  // Persiste dados ou configuracoes desta funcionalidade (persist payload).
   function persistPayload(payload) {
     const envelope = {
       payload,
@@ -127,6 +132,7 @@
     window.PROTOCORD_ZNUNY_TRANSPORT_STORAGE_KEY = PAYLOAD_KEY;
   }
 
+  // Prepara a copia, download ou exportacao dos dados (copy payload to clipboard).
   async function copyPayloadToClipboard(payload) {
     const html = String(payload?.relatorio || "");
     const text = String(payload?.relatorioTexto || stripHtml(html) || html || "");
@@ -146,6 +152,7 @@
     }
   }
 
+  // Explica a responsabilidade de to znuny clipboard payload dentro deste modulo.
   function toZnunyClipboardPayload(payload) {
     return {
       contato: String(payload?.contato || ""),
@@ -154,6 +161,7 @@
     };
   }
 
+  // Explica a responsabilidade de notify browser extension dentro deste modulo.
   function notifyBrowserExtension(payload) {
     const extensionReady = document.documentElement?.dataset?.protocordZnunyExtension === "ready";
     if (!extensionReady) return false;
@@ -166,6 +174,7 @@
     return true;
   }
 
+  // Carrega ou restaura dados usados por esta funcionalidade (restore payload).
   function restorePayload() {
     try {
       const raw = localStorage.getItem(PAYLOAD_KEY);
@@ -178,6 +187,7 @@
     }
   }
 
+  // Normaliza, interpreta ou formata dados para uso seguro (normalize payload).
   function normalizePayload(payload) {
     if (!payload || typeof payload !== "object") return null;
 
@@ -196,6 +206,7 @@
     };
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render launcher).
   function renderLauncher() {
     const host = findLauncherHost();
     const existing = document.getElementById("protocord-znuny-plugin-launcher");
@@ -222,6 +233,7 @@
     window.lucide?.createIcons?.();
   }
 
+  // Explica a responsabilidade de find launcher host dentro deste modulo.
   function findLauncherHost() {
     const page = document.getElementById("pagina-ia");
     if (!page) return null;
@@ -230,6 +242,7 @@
     return page.querySelector(".ia-sidebar-header") || page.querySelector(".ia-sidebar-top");
   }
 
+  // Explica a responsabilidade de watch launcher host dentro deste modulo.
   function watchLauncherHost() {
     if (state.launcherObserver) return;
     state.launcherObserver = new MutationObserver(() => renderLauncher());
@@ -241,8 +254,10 @@
     });
   }
 
+  // Explica a responsabilidade de schedule launcher sync dentro deste modulo.
   function scheduleLauncherSync() {
     let attempts = 0;
+    // Explica a responsabilidade de timer dentro deste modulo.
     const timer = setInterval(() => {
       renderLauncher();
       attempts += 1;
@@ -252,17 +267,20 @@
     }, 500);
   }
 
+  // Abre a interface, recurso ou fluxo solicitado (open app).
   function openApp() {
     state.appOpen = true;
     renderApp();
   }
 
+  // Fecha a interface, recurso ou fluxo solicitado (close app).
   function closeApp() {
     state.appOpen = false;
     const app = document.getElementById("protocord-znuny-plugin-app");
     app?.remove();
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render app).
   function renderApp() {
     if (!state.appOpen) return;
 
@@ -379,6 +397,7 @@
     requestExtensionConfig();
   }
 
+  // Explica a responsabilidade de bind app dentro deste modulo.
   function bindApp(app) {
     app.addEventListener("click", async (event) => {
       if (event.target?.closest?.("[data-znuny-close]")) {
@@ -441,10 +460,12 @@
     });
   }
 
+  // Persiste dados ou configuracoes desta funcionalidade (save config).
   function saveConfig(root) {
     saveExtensionConfig(root);
   }
 
+  // Atualiza a tela, o estado interno ou dados derivados (update extension status).
   function updateExtensionStatus(root) {
     const status = root.querySelector("#znuny-plugin-extension-status");
     if (!status) return;
@@ -453,6 +474,7 @@
       : "Não detectada";
   }
 
+  // Atualiza a tela, o estado interno ou dados derivados (update install wizard).
   function updateInstallWizard(root) {
     const wizard = root.querySelector(".znuny-plugin-wizard");
     if (!wizard) return;
@@ -471,11 +493,13 @@
     if (next) next.textContent = state.installStep >= 3 ? "Concluir" : "Proximo";
   }
 
+  // Explica a responsabilidade de request extension config dentro deste modulo.
   function requestExtensionConfig() {
     if (document.documentElement?.dataset?.protocordZnunyExtension !== "ready") return;
     window.postMessage({ type: "PROTOCORD_ZNUNY_CONFIG_GET" }, window.location.origin);
   }
 
+  // Persiste dados ou configuracoes desta funcionalidade (save extension config).
   function saveExtensionConfig(root) {
     const config = readExtensionConfig(root);
     localStorage.setItem("PROTOCORD_ZNUNY_FIELD_CONFIG", JSON.stringify(config));
@@ -491,6 +515,7 @@
     }, window.location.origin);
   }
 
+  // Explica a responsabilidade de read extension config dentro deste modulo.
   function readExtensionConfig(root) {
     const fixedFields = {};
     root.querySelectorAll("[data-znuny-fixed-field]").forEach((input) => {
@@ -514,6 +539,7 @@
     };
   }
 
+  // Aplica valores, estado visual ou configuracoes no fluxo atual (apply extension config).
   function applyExtensionConfig(config) {
     const app = document.getElementById("protocord-znuny-plugin-app");
     if (!app || !config) return;
@@ -523,6 +549,7 @@
     });
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle extension message).
   function handleExtensionMessage(event) {
     if (event.source !== window) return;
     if (event.data?.type === "PROTOCORD_ZNUNY_CONFIG_CURRENT") {
@@ -539,18 +566,21 @@
     }
   }
 
+  // Explica a responsabilidade de strip html dentro deste modulo.
   function stripHtml(html) {
     const div = document.createElement("div");
     div.innerHTML = String(html || "").replace(/<br\s*\/?>/gi, "\n");
     return String(div.textContent || "").replace(/\n{3,}/g, "\n\n").trim();
   }
 
+  // Explica a responsabilidade de notify dentro deste modulo.
   function notify(message, type) {
     if (typeof window.showToast === "function") {
       window.showToast(message, type || "info");
     }
   }
 
+  // Explica a responsabilidade de inject styles dentro deste modulo.
   function injectStyles() {
     if (document.getElementById("protocord-znuny-plugin-style")) return;
 

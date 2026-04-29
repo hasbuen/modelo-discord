@@ -1,3 +1,4 @@
+// Explica a responsabilidade de send message dentro deste modulo.
 async function sendMessage() {
   const input = inputEl.value.trim();
   if (!input) return;

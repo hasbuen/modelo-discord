@@ -1,3 +1,4 @@
+// Alterna o estado desta funcionalidade (alternar tema).
 export function alternarTema(tema) {
   const html = document.documentElement;
   const botoesTema = document.querySelectorAll('.toggle-theme-btn');
@@ -17,6 +18,7 @@ export function alternarTema(tema) {
   }
 }
 
+// Carrega ou restaura dados usados por esta funcionalidade (carregar tema preferido).
 export function carregarTemaPreferido() {
   const temaSalvo = localStorage.getItem('theme');
   const html = document.documentElement;

@@ -34,6 +34,7 @@ clear.addEventListener("click", () => {
   });
 });
 
+// Explica a responsabilidade de read config dentro deste modulo.
 function readConfig() {
   const fixedFields = {};
   document.querySelectorAll("[data-fixed-field]").forEach((input) => {
@@ -48,6 +49,7 @@ function readConfig() {
   };
 }
 
+// Renderiza a interface ou a parte visual correspondente (render config).
 function renderConfig(config) {
   document.querySelectorAll("[data-fixed-field]").forEach((input) => {
     input.value = config.fixedFields?.[input.dataset.fixedField] || "";

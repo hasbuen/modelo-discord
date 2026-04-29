@@ -1,4 +1,5 @@
 (function () {
+  // Inicializa os elementos e estados necessarios para esta funcionalidade (init meta flow ultra).
   function initMetaFlowUltra(mountSelector = "#metas-app") {
     const THEMES = {
       global: {
@@ -98,6 +99,7 @@
 
     const db = {
       db: null,
+      // Inicializa os elementos e estados necessarios para esta funcionalidade (init).
       async init() {
         return new Promise((resolve, reject) => {
           const req = indexedDB.open(DB_NAME, DB_VERSION);
@@ -132,6 +134,7 @@
         });
       },
 
+      // Busca ou resolve informacoes necessarias para o fluxo (get).
       async get(store, id) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction(store, "readonly");
@@ -141,6 +144,7 @@
         });
       },
 
+      // Busca ou resolve informacoes necessarias para o fluxo (get all).
       async getAll(store) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction(store, "readonly");
@@ -150,6 +154,7 @@
         });
       },
 
+      // Explica a responsabilidade de put dentro deste modulo.
       async put(store, data) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction(store, "readwrite");
@@ -159,6 +164,7 @@
         });
       },
 
+      // Remove itens, dados ou estado relacionado a esta funcionalidade (delete).
       async delete(store, id) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction(store, "readwrite");
@@ -178,16 +184,19 @@
       pendingKanbanAction: null,
     };
 
+    // Busca ou resolve informacoes necessarias para o fluxo (get today str).
     function getTodayStr() {
       const d = new Date();
       d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
       return d.toISOString().split("T")[0];
     }
 
+    // Explica a responsabilidade de generate id dentro deste modulo.
     function generateId() {
       return Math.random().toString(36).slice(2, 15);
     }
 
+    // Explica a responsabilidade de calculate status dentro deste modulo.
     function calculateStatus(value, min, tol, ceiling) {
       if (value < min) return "naoAtingida";
       if (value >= min && value < tol) return "toleravel";
@@ -195,6 +204,7 @@
       return "otimo";
     }
 
+    // Busca ou resolve informacoes necessarias para o fluxo (get theme).
     function getTheme() {
       if (state.themeId === "global") {
         return getGlobalTheme();
@@ -202,6 +212,7 @@
       return THEMES[state.themeId] || getGlobalTheme();
     }
 
+    // Busca ou resolve informacoes necessarias para o fluxo (get global theme).
     function getGlobalTheme() {
       const isLight = document.documentElement?.dataset?.theme === "light";
       return isLight
@@ -213,6 +224,7 @@
           };
     }
 
+    // Explica a responsabilidade de escape html dentro deste modulo.
     function escapeHtml(value) {
     return String(value || "")
         .replaceAll("&", "&amp;")
@@ -222,10 +234,12 @@
         .replaceAll("'", "&#039;");
     }
 
+    // Explica a responsabilidade de entry for dentro deste modulo.
     function entryFor(goalId, date) {
       return state.entries.find((e) => e.id === `${goalId}_${date}`);
     }
 
+    // Explica a responsabilidade de streak for goal dentro deste modulo.
     function streakForGoal(goal) {
       const today = getTodayStr();
       let streak = 0;
@@ -253,6 +267,7 @@
       return streak;
     }
 
+    // Explica a responsabilidade de inject base dentro deste modulo.
     function injectBase() {
       mount.innerHTML = `
         <style>
@@ -849,6 +864,7 @@
       `;
     }
 
+    // Aplica valores, estado visual ou configuracoes no fluxo atual (apply theme vars).
     function applyThemeVars() {
       const theme = getTheme();
       const root = mount.querySelector(".mfu");
@@ -864,12 +880,14 @@
       root.dataset.theme = theme.type === "dark" ? "dark" : "light";
     }
 
+    // Persiste dados ou configuracoes desta funcionalidade (save theme).
     async function saveTheme(themeId) {
       state.themeId = themeId;
       await db.put("settings", { id: "theme", value: themeId });
       render();
     }
 
+    // Persiste dados ou configuracoes desta funcionalidade (save goal).
     async function saveGoal(goalData) {
       const goal = {
         ...goalData,
@@ -889,6 +907,7 @@
       render();
     }
 
+    // Remove itens, dados ou estado relacionado a esta funcionalidade (delete goal).
     async function deleteGoal(goalId) {
       await db.delete("goals", goalId);
       state.goals = await db.getAll("goals");
@@ -900,6 +919,7 @@
       render();
     }
 
+    // Atualiza a tela, o estado interno ou dados derivados (update entry).
     async function updateEntry(goalId, date, incrementValue) {
       const id = `${goalId}_${date}`;
       let entry = await db.get("entries", id);
@@ -918,6 +938,7 @@
       render();
     }
 
+    // Explica a responsabilidade de add task dentro deste modulo.
     async function addTask(text, goalId) {
       const task = {
         id: generateId(),
@@ -934,6 +955,7 @@
       render();
     }
 
+    // Explica a responsabilidade de move task dentro deste modulo.
     async function moveTask(taskId, status) {
       const task = state.tasks.find((t) => t.id === taskId);
       if (!task || task.status === status) return;
@@ -952,12 +974,14 @@
       render();
     }
 
+    // Remove itens, dados ou estado relacionado a esta funcionalidade (delete task).
     async function deleteTask(taskId) {
       await db.delete("tasks", taskId);
       state.tasks = await db.getAll("tasks");
       render();
     }
 
+    // Explica a responsabilidade de stats summary dentro deste modulo.
     function statsSummary() {
       const trackedDays = new Set(state.entries.map((e) => e.date)).size;
       let total = 0;
@@ -992,8 +1016,10 @@
       };
     }
 
+    // Explica a responsabilidade de today overview dentro deste modulo.
     function todayOverview() {
       const today = getTodayStr();
+      // Explica a responsabilidade de goals dentro deste modulo.
       const goals = state.goals.map((goal) => {
         const entry = entryFor(goal.id, today);
         const value = entry ?Number(entry.value || 0) : 0;
@@ -1032,6 +1058,7 @@
       };
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render today board).
     function renderTodayBoard() {
       const overview = todayOverview();
       const focus = overview.focusGoal;
@@ -1083,6 +1110,7 @@
       `;
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render compact bar).
     function renderCompactBar() {
       return `
         <div class="mfu-compactbar">
@@ -1106,6 +1134,7 @@
       `;
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render onboarding).
     function renderOnboarding() {
       return `
         <div class="mfu-onboarding-wrap">
@@ -1175,6 +1204,7 @@
       `;
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render dashboard).
     function renderDashboard() {
       const today = getTodayStr();
 
@@ -1270,6 +1300,7 @@
       `;
     }
 
+    // Explica a responsabilidade de calculate days remaining dentro deste modulo.
     function calculateDaysRemaining(goal) {
       if (!goal.endDate) return 0;
       const today = getTodayStr();
@@ -1279,6 +1310,7 @@
       return Math.max(0, diff);
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render kanban).
     function renderKanban() {
       const groups = {
         todo: state.tasks.filter((t) => t.status === "todo"),
@@ -1286,6 +1318,7 @@
         done: state.tasks.filter((t) => t.status === "done"),
       };
 
+      // Explica a responsabilidade de column html dentro deste modulo.
       function columnHtml(id, title, items) {
         return `
           <div class="mfu-col">
@@ -1362,6 +1395,7 @@
       `;
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render stats).
     function renderStats() {
       const stats = statsSummary();
 
@@ -1429,6 +1463,7 @@
       `;
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render settings).
     function renderSettings() {
       return `
         <section class="mfu-panel mfu-pad">
@@ -1489,6 +1524,7 @@
       `;
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render modal).
     function renderModal() {
       if (!state.pendingKanbanAction) return "";
 
@@ -1509,6 +1545,7 @@
       `;
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render current view).
     function renderCurrentView() {
       if (!state.goals.length || state.currentView === "onboarding") {
         return renderOnboarding();
@@ -1520,6 +1557,7 @@
       return renderDashboard();
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render).
     function render() {
       applyThemeVars();
 
@@ -1538,6 +1576,7 @@
       bindEvents();
     }
 
+    // Explica a responsabilidade de bind events dentro deste modulo.
     function bindEvents() {
       const goalForm = mount.querySelector("#mfu-goal-form");
       if (goalForm) {
@@ -1652,6 +1691,7 @@
       }
     }
 
+    // Explica a responsabilidade de bootstrap dentro deste modulo.
     async function bootstrap() {
       injectBase();
       await db.init();
@@ -1665,6 +1705,7 @@
         state.themeId = savedTheme.value;
       }
 
+      // Explica a responsabilidade de theme observer dentro deste modulo.
       const themeObserver = new MutationObserver(() => {
         if (state.themeId !== "global") return;
         applyThemeVars();

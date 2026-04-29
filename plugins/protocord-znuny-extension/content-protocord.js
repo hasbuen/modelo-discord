@@ -47,6 +47,7 @@
     }, 250);
   }, true);
 
+  // Explica a responsabilidade de send payload dentro deste modulo.
   function sendPayload(payload) {
     const normalized = normalizePayload(payload);
     if (!normalized) return;
@@ -61,6 +62,7 @@
     });
   }
 
+  // Explica a responsabilidade de read payload from app dentro deste modulo.
   function readPayloadFromApp() {
     const direct = readJson(localStorage.getItem(AUTO_PAYLOAD_KEY));
     if (direct) return direct;
@@ -69,6 +71,7 @@
     return legacy?.payload || legacy || null;
   }
 
+  // Explica a responsabilidade de read json dentro deste modulo.
   function readJson(raw) {
     if (!raw || raw === "undefined") return null;
     try {
@@ -78,6 +81,7 @@
     }
   }
 
+  // Normaliza, interpreta ou formata dados para uso seguro (normalize payload).
   function normalizePayload(payload) {
     if (!payload || typeof payload !== "object") return null;
 

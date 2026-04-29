@@ -1,5 +1,6 @@
 let registrosCache = [];
 
+// Carrega ou restaura dados usados por esta funcionalidade (carregar registros protocolos).
 export async function carregarRegistrosProtocolos() {
   if (registrosCache.length > 0) return registrosCache;
   try {

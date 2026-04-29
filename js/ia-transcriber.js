@@ -11,6 +11,7 @@
   let motionClientPromise = null;
   let plyrClientPromise = null;
 
+  // Busca ou resolve informacoes necessarias para o fluxo (get znuny ticket url).
   function getZnunyTicketUrl() {
     const explicitUrl = String(
       window.PROTOCORD_RUNTIME_CONFIG?.ZNUNY_TICKET_URL ||
@@ -54,6 +55,7 @@
 
   const els = {};
 
+  // Inicializa os elementos e estados necessarios para esta funcionalidade (init).
   function init() {
     injectBaseStyles();
     ensureLayout();
@@ -73,6 +75,7 @@
     primeMotionRuntime();
   }
 
+  // Explica a responsabilidade de inject base styles dentro deste modulo.
   function injectBaseStyles() {
     if (document.getElementById("protocord-ia-enhanced-style")) return;
 
@@ -2291,6 +2294,7 @@
     document.head.appendChild(style);
   }
 
+  // Explica a responsabilidade de ensure layout dentro deste modulo.
   function ensureLayout() {
     const page = document.getElementById("pagina-ia");
     if (!page) return;
@@ -2655,6 +2659,7 @@
     }
   }
 
+  // Explica a responsabilidade de bind elements dentro deste modulo.
   function bindElements() {
     els.page = document.getElementById("pagina-ia");
     els.newTicketBtn = document.getElementById("ia-new-ticket-btn");
@@ -2717,6 +2722,7 @@
 
   }
 
+  // Explica a responsabilidade de bind events dentro deste modulo.
   function bindEvents() {
     els.newTicketBtn?.addEventListener("click", () => {
       if (state.uploading) return;
@@ -2978,6 +2984,7 @@ els.imageEditorFloatingText?.addEventListener("keydown", (event) => {
 els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { passive: false });
   }
 
+  // Carrega ou restaura dados usados por esta funcionalidade (restore state).
   function restoreState() {
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
@@ -2995,6 +3002,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     }
   }
 
+  // Persiste dados ou configuracoes desta funcionalidade (persist).
   function persist() {
     localStorage.setItem(
       STORAGE_KEY,
@@ -3009,10 +3017,12 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     );
   }
 
+  // Busca ou resolve informacoes necessarias para o fluxo (get active ticket).
   function getActiveTicket() {
     return state.tickets.find((ticket) => ticket.id === state.activeId) || null;
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (create ticket).
   function createTicket() {
     const id = String(Date.now());
     const ticket = {
@@ -3040,6 +3050,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     return ticket;
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render).
   function render() {
     renderTicketList();
     renderActiveTicket();
@@ -3047,10 +3058,12 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     animateInterface();
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render ticket list).
   function renderTicketList() {
     if (!els.ticketList) return;
 
     const term = state.searchTerm.trim().toLowerCase();
+    // Explica a responsabilidade de filtered dentro deste modulo.
     const filtered = state.tickets.filter((ticket) => {
       const composite = `${ticket.phone || ""} ${ticket.customName || ""}`.toLowerCase();
       return !term || composite.includes(term);
@@ -3112,6 +3125,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
       .join("");
   }
 
+  // Explica a responsabilidade de commit ticket name dentro deste modulo.
   function commitTicketName(ticketId) {
     const ticket = state.tickets.find((entry) => entry.id === ticketId);
     const input = els.ticketList.querySelector(`[data-ticket-edit-input="${ticketId}"]`);
@@ -3124,6 +3138,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     render();
   }
 
+  // Explica a responsabilidade de focus ticket input dentro deste modulo.
   function focusTicketInput(ticketId) {
     const input = els.ticketList?.querySelector(`[data-ticket-edit-input="${ticketId}"]`);
     if (!input) return;
@@ -3131,6 +3146,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     input.select();
   }
 
+  // Explica a responsabilidade de begin ticket rename dentro deste modulo.
   function beginTicketRename(ticketId) {
     if (!ticketId) return;
 
@@ -3146,6 +3162,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     animateTicketList();
   }
 
+  // Remove itens, dados ou estado relacionado a esta funcionalidade (delete ticket).
   async function deleteTicket(ticketId) {
     const ticket = state.tickets.find((entry) => entry.id === ticketId);
     if (!ticket) return;
@@ -3170,6 +3187,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     render();
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle ticket list click).
   function handleTicketListClick(event) {
     const actionButton = event.target.closest("[data-action]");
     if (actionButton) {
@@ -3204,6 +3222,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     render();
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle ticket list keydown).
   function handleTicketListKeydown(event) {
     const input = event.target.closest("[data-ticket-edit-input]");
     if (!input) return;
@@ -3221,6 +3240,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     }
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle ticket list focus out).
   function handleTicketListFocusOut(event) {
     const input = event.target.closest("[data-ticket-edit-input]");
     if (!input) return;
@@ -3234,6 +3254,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     });
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render active ticket).
   function renderActiveTicket() {
     const active = getActiveTicket();
     const hasActive = Boolean(active);
@@ -3276,6 +3297,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     renderAudio(active);
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render image viewer).
   function renderImageViewer(active) {
     const images = Array.isArray(active?.images) ?active.images : [];
     if (!images.length) {
@@ -3300,6 +3322,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
   }
 
 
+  // Abre a interface, recurso ou fluxo solicitado (open image editor from active).
   function openImageEditorFromActive() {
     const active = getActiveTicket();
     const image = active?.images?.[state.imageIndex];
@@ -3324,6 +3347,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     loadImageEditorCanvas(image);
   }
 
+  // Fecha a interface, recurso ou fluxo solicitado (close image editor).
   function closeImageEditor() {
     if (!els.imageEditorModal) return;
     state.imageEditorOpen = false;
@@ -3340,6 +3364,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     }
   }
 
+// Aplica valores, estado visual ou configuracoes no fluxo atual (set image editor tool).
 function setImageEditorTool(tool) {
   state.imageEditorTool = tool;
 
@@ -3353,6 +3378,7 @@ function setImageEditorTool(tool) {
   }
 }
 
+  // Abre a interface, recurso ou fluxo solicitado (open image editor text input).
   function openImageEditorTextInput(event) {
   if (!els.imageEditorCanvas || !els.imageEditorFloatingText) return;
 
@@ -3376,6 +3402,7 @@ function setImageEditorTool(tool) {
   els.imageEditorFloatingText.focus();
 }
 
+// Explica a responsabilidade de commit image editor text dentro deste modulo.
 function commitImageEditorText() {
   if (!els.imageEditorFloatingText || els.imageEditorFloatingText.classList.contains("hidden")) return;
 
@@ -3402,12 +3429,14 @@ function commitImageEditorText() {
   els.imageEditorFloatingText.classList.add("hidden");
 }
 
+// Explica a responsabilidade de cancel image editor text dentro deste modulo.
 function cancelImageEditorText() {
   if (!els.imageEditorFloatingText) return;
   els.imageEditorFloatingText.value = "";
   els.imageEditorFloatingText.classList.add("hidden");
 }
 
+// Trata o evento ou acao do usuario neste fluxo (handle image editor text wheel).
 function handleImageEditorTextWheel(event) {
   if (state.imageEditorTool !== "text") return;
   if (!els.imageEditorFloatingText || els.imageEditorFloatingText.classList.contains("hidden")) return;
@@ -3419,6 +3448,7 @@ function handleImageEditorTextWheel(event) {
   els.imageEditorFloatingText.style.fontSize = `${state.imageEditorFontSize}px`;
 }
 
+  // Carrega ou restaura dados usados por esta funcionalidade (load image editor canvas).
   function loadImageEditorCanvas(imageSrc) {
     if (!els.imageEditorCanvas) return;
     const canvas = els.imageEditorCanvas;
@@ -3439,6 +3469,7 @@ function handleImageEditorTextWheel(event) {
     image.src = imageSrc;
   }
 
+  // Explica a responsabilidade de redraw image editor canvas dentro deste modulo.
   function redrawImageEditorCanvas(previewShape) {
     if (!els.imageEditorCanvas) return;
     const canvas = els.imageEditorCanvas;
@@ -3453,6 +3484,7 @@ function handleImageEditorTextWheel(event) {
     shapes.forEach((shape) => drawImageEditorShape(ctx, shape));
   }
 
+// Explica a responsabilidade de draw image editor shape dentro deste modulo.
 function drawImageEditorShape(ctx, shape) {
   if (!shape) return;
 
@@ -3522,6 +3554,7 @@ if (shape.type === "text") {
   ctx.restore();
 }
 
+// Busca ou resolve informacoes necessarias para o fluxo (get image editor point).
 function getImageEditorPoint(event) {
   if (!els.imageEditorCanvas) return { x: 0, y: 0 };
 
@@ -3535,6 +3568,7 @@ function getImageEditorPoint(event) {
   };
 }
 
+// Explica a responsabilidade de start image editor draw dentro deste modulo.
 function startImageEditorDraw(event) {
   if (!state.imageEditorOpen || !els.imageEditorCanvas) return;
 
@@ -3557,6 +3591,7 @@ function startImageEditorDraw(event) {
   };
 }
 
+// Explica a responsabilidade de move image editor draw dentro deste modulo.
 function moveImageEditorDraw(event) {
   if (!state.imageEditorOpen || !els.imageEditorCanvas?.__imageEditorDrawing) return;
 
@@ -3569,6 +3604,7 @@ function moveImageEditorDraw(event) {
   redrawImageEditorCanvas(shape);
 }
 
+// Explica a responsabilidade de end image editor draw dentro deste modulo.
 function endImageEditorDraw() {
   if (!state.imageEditorOpen || !els.imageEditorCanvas?.__imageEditorDrawing) return;
 
@@ -3586,12 +3622,14 @@ function endImageEditorDraw() {
   redrawImageEditorCanvas();
 }
 
+  // Explica a responsabilidade de undo image editor annotation dentro deste modulo.
   function undoImageEditorAnnotation() {
     if (!state.imageEditorHistory.length) return;
     state.imageEditorHistory.pop();
     redrawImageEditorCanvas();
   }
 
+  // Persiste dados ou configuracoes desta funcionalidade (save image editor annotation).
   function saveImageEditorAnnotation() {
     const active = getActiveTicket();
     if (!active?.images?.length || !els.imageEditorCanvas) return;
@@ -3611,6 +3649,7 @@ function endImageEditorDraw() {
   }
 
 
+  // Renderiza a interface ou a parte visual correspondente (render report).
   function renderReport(active) {
     const text = state.editingReport ?state.reportDraft : buildSingleReportText(active);
 
@@ -3629,6 +3668,7 @@ function endImageEditorDraw() {
     }
   }
 
+// Renderiza a interface ou a parte visual correspondente (render audio).
 function renderAudio(active) {
   if (!active) {
     els.audioCard.classList.add("hidden");
@@ -3656,6 +3696,7 @@ function renderAudio(active) {
   hydrateLocalAudio(active);
 }
   
+  // Explica a responsabilidade de upload audio dentro deste modulo.
   async function uploadAudio(file) {
     const active = getActiveTicket();
     if (!active) {
@@ -3715,6 +3756,7 @@ function renderAudio(active) {
     }
   }
 
+  // Explica a responsabilidade de prepare audio for transcription dentro deste modulo.
   async function prepareAudioForTranscription(file) {
     if (!file) {
       throw new Error("Nenhum arquivo de áudio informado.");
@@ -3732,12 +3774,14 @@ function renderAudio(active) {
     return file;
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (create http error).
   function createHttpError(message, status) {
     const error = new Error(message);
     error.status = status;
     return error;
   }
 
+  // Normaliza, interpreta ou formata dados para uso seguro (parse json safe).
   async function parseJsonSafe(response) {
     try {
       return await response.json();
@@ -3746,6 +3790,7 @@ function renderAudio(active) {
     }
   }
 
+  // Explica a responsabilidade de send transcription request dentro deste modulo.
   async function sendTranscriptionRequest(file) {
     const formData = new FormData();
     formData.append("audio", file);
@@ -3764,6 +3809,7 @@ function renderAudio(active) {
     return data;
   }
 
+  // Explica a responsabilidade de request blob transcription dentro deste modulo.
   async function requestBlobTranscription(blobUpload, file) {
     const response = await fetch(`${apiBaseUrl}/transcrever`, {
       method: "POST",
@@ -3786,10 +3832,12 @@ function renderAudio(active) {
 
     return data;
   }
+  // Explica a responsabilidade de send legacy transcription request dentro deste modulo.
   async function sendLegacyTranscriptionRequest(file) {
     return sendTranscriptionRequest(file);
   }
 
+  // Explica a responsabilidade de should fallback to blob dentro deste modulo.
   function shouldFallbackToBlob(error) {
     return (
       error?.status === 408 ||
@@ -3800,6 +3848,7 @@ function renderAudio(active) {
     );
   }
 
+  // Explica a responsabilidade de should fallback to direct upload dentro deste modulo.
   function shouldFallbackToDirectUpload(error) {
     return (
       error?.status === 400 ||
@@ -3813,6 +3862,7 @@ function renderAudio(active) {
     );
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build single report text).
   function buildSingleReportText(ticket) {
     return [
       "PROBLEMA / DUVIDA:",
@@ -3823,6 +3873,7 @@ function renderAudio(active) {
     ].join("\n").trim();
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build znuny transport payload).
   function buildZnunyTransportPayload(ticket) {
     const phone = String(ticket?.phone || "").trim();
     const contact = ticket?.customName ?`${ticket.customName} (${phone || "sem telefone"})` : `(${phone || "sem telefone"})`;
@@ -3854,6 +3905,7 @@ function renderAudio(active) {
     };
   }
 
+  // Explica a responsabilidade de html to plain text dentro deste modulo.
   function htmlToPlainText(html) {
     const container = document.createElement("div");
     container.innerHTML = String(html || "").replace(/<br\s*\/?>/gi, "\n");
@@ -3862,6 +3914,7 @@ function renderAudio(active) {
       .trim();
   }
 
+  // Persiste dados ou configuracoes desta funcionalidade (persist znuny transport payload).
   function persistZnunyTransportPayload(payload) {
     const envelope = {
       payload,
@@ -3878,6 +3931,7 @@ function renderAudio(active) {
     }
   }
 
+  // Explica a responsabilidade de emit znuny transport dentro deste modulo.
   function emitZnunyTransport(payload) {
     window.dispatchEvent(new CustomEvent("protocord:znuny-transport", {
       detail: {
@@ -3887,6 +3941,7 @@ function renderAudio(active) {
     }));
   }
 
+  // Normaliza, interpreta ou formata dados para uso seguro (parse single report text).
   function parseSingleReportText(text) {
     const normalized = String(text || "").replace(/\r\n/g, "\n");
     const problemMatch = normalized.match(
@@ -3900,6 +3955,7 @@ function renderAudio(active) {
     };
   }
 
+  // Aplica valores, estado visual ou configuracoes no fluxo atual (apply report draft).
   function applyReportDraft() {
     const active = getActiveTicket();
     if (!active) return;
@@ -3913,6 +3969,7 @@ function renderAudio(active) {
     notify("Relatório atualizado.", "success");
   }
 
+  // Busca ou resolve informacoes necessarias para o fluxo (get active ticket with draft).
   function getActiveTicketWithDraft(persistDraft) {
     const active = getActiveTicket();
     if (!active) return null;
@@ -3933,6 +3990,7 @@ function renderAudio(active) {
     return { ...active, analysis: parsed.analysis, solucao: parsed.solucao };
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle paste images).
   async function handlePasteImages(event) {
     const active = getActiveTicket();
     if (!active) return;
@@ -3954,6 +4012,7 @@ function renderAudio(active) {
     notify(`${images.length} imagem(ns) adicionada(s).`, "success");
   }
 
+  // Explica a responsabilidade de read file as data url dentro deste modulo.
   function readFileAsDataUrl(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -3963,6 +4022,7 @@ function renderAudio(active) {
     });
   }
 
+  // Prepara a copia, download ou exportacao dos dados (copy current image).
   async function copyCurrentImage() {
     const active = getActiveTicket();
     const image = active?.images?.[state.imageIndex];
@@ -3977,6 +4037,7 @@ function renderAudio(active) {
     }
   }
 
+  // Remove itens, dados ou estado relacionado a esta funcionalidade (delete current image).
   function deleteCurrentImage() {
     const active = getActiveTicket();
     if (!active?.images?.length) return;
@@ -3988,12 +4049,14 @@ function renderAudio(active) {
     animateImageStage();
   }
 
+  // Explica a responsabilidade de revoke object url if needed dentro deste modulo.
   function revokeObjectUrlIfNeeded(url) {
     if (url && url.startsWith("blob:")) {
       URL.revokeObjectURL(url);
     }
   }
 
+  // Abre a interface, recurso ou fluxo solicitado (open audio database).
   function openAudioDatabase() {
     if (!audioDbPromise) {
       audioDbPromise = new Promise((resolve, reject) => {
@@ -4014,6 +4077,7 @@ function renderAudio(active) {
     return audioDbPromise;
   }
 
+  // Persiste dados ou configuracoes desta funcionalidade (save local audio).
   async function saveLocalAudio(ticketId, file) {
     const db = await openAudioDatabase();
     const id = String(ticketId || Date.now());
@@ -4034,6 +4098,7 @@ function renderAudio(active) {
     return id;
   }
 
+  // Explica a responsabilidade de read local audio dentro deste modulo.
   async function readLocalAudio(audioKey) {
     if (!audioKey) return null;
     const db = await openAudioDatabase();
@@ -4046,6 +4111,7 @@ function renderAudio(active) {
     });
   }
 
+  // Remove itens, dados ou estado relacionado a esta funcionalidade (delete local audio).
   async function deleteLocalAudio(audioKey) {
     if (!audioKey) return;
     const db = await openAudioDatabase();
@@ -4058,6 +4124,7 @@ function renderAudio(active) {
     });
   }
 
+  // Explica a responsabilidade de hydrate local audio dentro deste modulo.
   async function hydrateLocalAudio(ticket) {
     if (!ticket?.localAudioKey) {
       els.audioCard.classList.add("hidden");
@@ -4087,6 +4154,7 @@ els.audioPlayer.load();
     }
   }
 
+  // Valida uma condicao e retorna o resultado para o fluxo (is upload friendly audio).
   function isUploadFriendlyAudio(file) {
     const type = String(file?.type || "").toLowerCase();
     return (
@@ -4102,6 +4170,7 @@ els.audioPlayer.load();
     );
   }
 
+  // Explica a responsabilidade de upload audio to blob dentro deste modulo.
   async function uploadAudioToBlob(file) {
     if (!isUploadFriendlyAudio(file)) {
       throw new Error("Formato de áudio não suportado para upload.");
@@ -4117,6 +4186,7 @@ els.audioPlayer.load();
     });
   }
 
+  // Carrega ou restaura dados usados por esta funcionalidade (load blob client).
   async function loadBlobClient() {
     if (!blobClientPromise) {
       blobClientPromise = import("https://esm.sh/@vercel/blob/client?target=es2022");
@@ -4125,6 +4195,7 @@ els.audioPlayer.load();
     return blobClientPromise;
   }
 
+  // Carrega ou restaura dados usados por esta funcionalidade (load plyr client).
   async function loadPlyrClient() {
     if (!plyrClientPromise) {
       plyrClientPromise = import("https://cdn.jsdelivr.net/npm/plyr@3.7.8/+esm").catch(() => null);
@@ -4132,6 +4203,7 @@ els.audioPlayer.load();
     return plyrClientPromise;
   }
 
+  // Explica a responsabilidade de ensure plyr player dentro deste modulo.
   async function ensurePlyrPlayer() {
     const module = await loadPlyrClient();
     if (!module || !els.audioPlayer) return null;
@@ -4157,12 +4229,14 @@ els.audioPlayer.load();
     return instance;
   }
 
+  // Explica a responsabilidade de sanitize blob filename dentro deste modulo.
   function sanitizeBlobFilename(filename) {
     return String(filename || "audio.bin")
       .replace(/[^\w.\-]+/g, "_")
       .replace(/_+/g, "_");
   }
 
+  // Explica a responsabilidade de ping backend health dentro deste modulo.
   async function pingBackendHealth() {
     try {
       await fetch(`${apiBaseUrl}/health`, {
@@ -4174,6 +4248,7 @@ els.audioPlayer.load();
     }
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build html).
   function buildHtml(ticket) {
     const phone = ticket.phone || "telefone";
     const contact = ticket.customName ?`${ticket.customName} (${phone})` : `(${phone})`;
@@ -4189,6 +4264,7 @@ els.audioPlayer.load();
     ].join("");
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build evidence html).
   function buildEvidenceHtml(ticket) {
     const images = Array.isArray(ticket?.images) ? ticket.images.filter(Boolean) : [];
     if (!images.length) return "";
@@ -4205,11 +4281,13 @@ els.audioPlayer.load();
     ].join("");
   }
 
+  // Alterna o estado desta funcionalidade (toggle disabled).
   function toggleDisabled(element, disabled) {
     if (!element) return;
     element.disabled = Boolean(disabled);
   }
 
+  // Explica a responsabilidade de escape html dentro deste modulo.
   function escapeHtml(value) {
     return String(value || "")
       .replace(/&/g, "&amp;")
@@ -4219,10 +4297,12 @@ els.audioPlayer.load();
       .replace(/'/g, "&#39;");
   }
 
+  // Explica a responsabilidade de escape attribute dentro deste modulo.
   function escapeAttribute(value) {
     return escapeHtml(value).replace(/`/g, "&#96;");
   }
 
+  // Explica a responsabilidade de notify dentro deste modulo.
   function notify(message, type) {
     if (typeof window.showToast === "function") {
       window.showToast(message, type);
@@ -4232,6 +4312,7 @@ els.audioPlayer.load();
     console.log(`[${type || "info"}] ${message}`);
   }
 
+  // Carrega ou restaura dados usados por esta funcionalidade (load motion client).
   async function loadMotionClient() {
     if (!motionClientPromise) {
       motionClientPromise = import("https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm").catch(() => null);
@@ -4239,11 +4320,13 @@ els.audioPlayer.load();
     return motionClientPromise;
   }
 
+  // Explica a responsabilidade de prime motion runtime dentro deste modulo.
   function primeMotionRuntime() {
     loadMotionClient();
     loadPlyrClient();
   }
 
+  // Explica a responsabilidade de animate interface dentro deste modulo.
   async function animateInterface() {
     const motion = await loadMotionClient();
     if (!motion) return;
@@ -4290,6 +4373,7 @@ els.audioPlayer.load();
     animateTicketList();
   }
 
+  // Explica a responsabilidade de animate ticket list dentro deste modulo.
   async function animateTicketList() {
     const motion = await loadMotionClient();
     if (!motion) return;
@@ -4306,6 +4390,7 @@ els.audioPlayer.load();
     );
   }
 
+  // Explica a responsabilidade de animate report panel dentro deste modulo.
   async function animateReportPanel() {
     const motion = await loadMotionClient();
     if (!motion) return;
@@ -4322,6 +4407,7 @@ els.audioPlayer.load();
     );
   }
 
+  // Explica a responsabilidade de animate image stage dentro deste modulo.
   async function animateImageStage() {
     const motion = await loadMotionClient();
     if (!motion) return;
@@ -4338,6 +4424,7 @@ els.audioPlayer.load();
     );
   }
 
+  // Explica a responsabilidade de animate audio card dentro deste modulo.
   async function animateAudioCard(isPlaying) {
     const motion = await loadMotionClient();
     if (!motion || !els.audioCard) return;
@@ -4382,6 +4469,7 @@ els.audioPlayer.load();
     }
   }
 
+  // Alterna o estado desta funcionalidade (toggle audio playback).
   function toggleAudioPlayback() {
   if (!els.audioPlayer) return;
 
@@ -4395,6 +4483,7 @@ els.audioPlayer.load();
   els.audioPlayer.pause();
 }
 
+// Atualiza a tela, o estado interno ou dados derivados (sync audio ui).
 function syncAudioUi() {
   if (!els.audioPlayer) return;
 
@@ -4437,6 +4526,7 @@ function syncAudioUi() {
   }
 }
 
+// Normaliza, interpreta ou formata dados para uso seguro (format audio time).
 function formatAudioTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
   const mins = Math.floor(seconds / 60);

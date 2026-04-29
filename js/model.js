@@ -7,6 +7,7 @@ function normalize(text) {
     .toLowerCase();
 }
 
+// Carrega ou restaura dados usados por esta funcionalidade (load model and data).
 async function loadModelAndData() {
   try {
     statusEl.textContent = "Iniciando a inteligência...";
@@ -40,6 +41,7 @@ async function loadModelAndData() {
   }
 }
 
+// Busca ou resolve informacoes necessarias para o fluxo (fetch and index protocols).
 async function fetchAndIndexProtocols() {
   try {
     const res = await fetch(`${API_SERVER}/api/protocolos`);
@@ -51,6 +53,7 @@ async function fetchAndIndexProtocols() {
       return;
     }
 
+    // Explica a responsabilidade de docs dentro deste modulo.
     const docs = protocolos.map(p =>
       protocoloFieldsToIndex.map(f => (p?.[f] || "")).filter(Boolean).join(" • ")
     );

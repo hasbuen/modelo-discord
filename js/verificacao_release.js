@@ -1,7 +1,9 @@
+// Abre a interface, recurso ou fluxo solicitado (abrir arquivo rtf).
 function abrirArquivoRTF() {
   document.getElementById('arquivoRTF').click();
 }
 
+// Explica a responsabilidade de processar rtf dentro deste modulo.
 async function processarRTF(event) {
   const arquivo = event.target.files[0];
   if (!arquivo) return;
@@ -36,6 +38,7 @@ async function processarRTF(event) {
     
     const historicoPRTs = await obterListaPRTs();
     
+    // Explica a responsabilidade de resultados dentro deste modulo.
     const resultados = encontrados.map(protocolo => {
       const registro = historicoPRTs.find(reg => reg.protocolo === protocolo);
       return { protocolo, ...registro, estaRegistrado: !!registro };
@@ -189,6 +192,7 @@ async function obterListaPRTs() {
   }
 }
 
+// Carrega ou restaura dados usados por esta funcionalidade (carregar historico liberacoes).
 async function carregarHistoricoLiberacoes() {
   const tbody = document.getElementById("tabelaLiberados");
 
@@ -295,6 +299,7 @@ async function carregarHistoricoLiberacoes() {
   }
 }
 
+// Explica a responsabilidade de mostrar descricao modal dentro deste modulo.
 function mostrarDescricaoModal(prt, descricao) {
   const modal = document.getElementById('descricaoModal');
   const titulo = document.getElementById('descricaoModalTitulo');
@@ -306,6 +311,7 @@ function mostrarDescricaoModal(prt, descricao) {
   modal.classList.remove('hidden');
 }
 
+// Fecha a interface, recurso ou fluxo solicitado (fechar descricao modal).
 function fecharDescricaoModal() {
   const modal = document.getElementById('descricaoModal');
   modal.classList.add('hidden');

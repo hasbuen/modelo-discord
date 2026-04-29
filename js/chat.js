@@ -1,3 +1,4 @@
+// Explica a responsabilidade de enviar pergunta dentro deste modulo.
 export async function enviarPergunta() {
   const input = document.getElementById("chat-input");
   const pergunta = input.value.trim();
@@ -32,6 +33,7 @@ export async function enviarPergunta() {
   }
 }
 
+// Explica a responsabilidade de exibir mensagem dentro deste modulo.
 export function exibirMensagem(remetente, texto) {
   const chat = document.getElementById("chat-container");
   const msg = document.createElement("div");

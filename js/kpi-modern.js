@@ -1,10 +1,12 @@
 (function () {
   const API_BASE = window.getProtocordApiBaseUrl();
 
+  // Explica a responsabilidade de by id dentro deste modulo.
   function byId(id) {
     return document.getElementById(id);
   }
 
+  // Normaliza, interpreta ou formata dados para uso seguro (parse release date).
   function parseReleaseDate(value) {
     if (!value || typeof value !== "string") return null;
     const parts = value.split("/");
@@ -14,6 +16,7 @@
     return new Date(year, month - 1, day);
   }
 
+  // Explica a responsabilidade de sort releases desc dentro deste modulo.
   function sortReleasesDesc(items) {
     return [...items].sort((a, b) => {
       const dateA = parseReleaseDate(a.release);
@@ -22,11 +25,13 @@
     });
   }
 
+  // Normaliza, interpreta ou formata dados para uso seguro (format percent).
   function formatPercent(value) {
     if (!Number.isFinite(value)) return "0%";
     return `${value.toFixed(1).replace(".", ",")}%`;
   }
 
+  // Aplica valores, estado visual ou configuracoes no fluxo atual (set text).
   function setText(id, value) {
     const el = byId(id);
     if (el) {
@@ -37,6 +42,7 @@
     }
   }
 
+  // Explica a responsabilidade de escape html dentro deste modulo.
   function escapeHtml(value) {
     return String(value || "")
       .replace(/&/g, "&amp;")
@@ -46,6 +52,7 @@
       .replace(/'/g, "&#39;");
   }
 
+  // Normaliza, interpreta ou formata dados para uso seguro (format bytes).
   function formatBytes(value) {
     const units = ["B", "KB", "MB", "GB", "TB"];
     let size = Number(value) || 0;
@@ -57,10 +64,12 @@
     return `${size.toFixed(size >= 100 || unitIndex === 0 ? 0 : 1).replace(".", ",")} ${units[unitIndex]}`;
   }
 
+  // Normaliza, interpreta ou formata dados para uso seguro (format count).
   function formatCount(value) {
     return new Intl.NumberFormat("pt-BR").format(Number(value) || 0);
   }
 
+  // Busca ou resolve informacoes necessarias para o fluxo (fetch json).
   async function fetchJson(path) {
     const response = await fetch(`${API_BASE}/${path}`);
     if (!response.ok) {
@@ -69,6 +78,7 @@
     return response.json();
   }
 
+  // Explica a responsabilidade de ensure protocols dentro deste modulo.
   async function ensureProtocols() {
     if (window.protocolosIndex && Object.keys(window.protocolosIndex).length) {
       return window.protocolosIndex;
@@ -106,6 +116,7 @@
     return window.protocolosIndex;
   }
 
+  // Explica a responsabilidade de ensure releases dentro deste modulo.
   async function ensureReleases() {
     if (Array.isArray(window.liberacoesOriginais) && window.liberacoesOriginais.length) {
       return sortReleasesDesc(window.liberacoesOriginais);
@@ -125,6 +136,7 @@
     return sortReleasesDesc(window.liberacoesOriginais);
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build dataset).
   function buildDataset(protocolIndex, releases) {
     const allProtocols = Object.entries(protocolIndex || {}).map(([prt, info]) => ({
       prt,
@@ -156,6 +168,7 @@
     return { allProtocols, releasedDetails, releasedSet };
   }
 
+  // Busca ou resolve informacoes necessarias para o fluxo (get active kpi filters).
   function getActiveKpiFilters() {
     const module = window.moduloSelecionado && window.moduloSelecionado !== "TODOS"
       ? String(window.moduloSelecionado)
@@ -164,6 +177,7 @@
     return { module, search };
   }
 
+  // Explica a responsabilidade de protocol matches filters dentro deste modulo.
   function protocolMatchesFilters(prt, info, filters) {
     if (filters.module && info?.modulo !== filters.module) {
       return false;
@@ -181,6 +195,7 @@
     );
   }
 
+  // Aplica valores, estado visual ou configuracoes no fluxo atual (apply kpi filters).
   function applyKpiFilters(protocolIndex, releases) {
     const filters = getActiveKpiFilters();
     const filteredProtocolIndex = {};
@@ -205,6 +220,7 @@
     };
   }
 
+  // Explica a responsabilidade de count by dentro deste modulo.
   function countBy(items, getter) {
     const map = new Map();
     items.forEach((item) => {
@@ -214,12 +230,14 @@
     return [...map.entries()].map(([label, count]) => ({ label, count }));
   }
 
+  // Atualiza a tela, o estado interno ou dados derivados (update hero).
   function updateHero(metrics) {
     setText("kpi-sync-badge", metrics.lastSyncLabel);
     setText("kpi-highlight-module", `Módulo foco: ${metrics.activeModule || metrics.topModule?.label || "--"}`);
     setText("kpi-highlight-release", `Release líder: ${metrics.topRelease?.label || "--"}`);
   }
 
+  // Atualiza a tela, o estado interno ou dados derivados (update cards).
   function updateCards(metrics) {
     setText("card-total-registrado", String(metrics.totalRecords));
     setText("contador-erros", String(metrics.errors));
@@ -243,6 +261,7 @@
     setText("kpi-note-ultima", metrics.latestRelease ?`Release mais recente detectada: ${metrics.latestRelease}.` : "Nenhuma release disponível.");
   }
 
+  // Atualiza a tela, o estado interno ou dados derivados (update executive summary).
   function updateExecutiveSummary(metrics) {
     const target = byId("kpi-executive-summary");
     if (!target) return;
@@ -256,6 +275,7 @@
     target.innerHTML = lines.map((line) => `<p class="kpi-summary-line">${line}</p>`).join("");
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render ranking).
   function renderRanking(metrics) {
     const canvas = byId("chartRankingModulos");
     if (!canvas || typeof Chart === "undefined") return;
@@ -318,6 +338,7 @@
     });
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render table filter state).
   function renderTableFilterState(metrics) {
     const filterList = byId("filtro-modulos");
     if (!filterList) return;
@@ -352,6 +373,7 @@
     `;
   }
 
+  // Explica a responsabilidade de destroy chart dentro deste modulo.
   function destroyChart(canvasId) {
     const canvas = byId(canvasId);
     if (!canvas || typeof Chart === "undefined") return;
@@ -359,6 +381,7 @@
     if (current) current.destroy();
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (create gradient).
   function createGradient(canvas, colors) {
     const ctx = canvas.getContext("2d");
     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height || 280);
@@ -366,6 +389,7 @@
     return gradient;
   }
 
+  // Explica a responsabilidade de common chart options dentro deste modulo.
   function commonChartOptions() {
     const isLight = document.documentElement?.dataset?.theme === "light";
     const textColor = isLight ? "#334155" : "#c7d7f3";
@@ -398,6 +422,7 @@
     };
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render module legend).
   function renderModuleLegend(labels, values, palette) {
     const legend = byId("legenda-modulos");
     if (!legend) return;
@@ -417,6 +442,7 @@
     }).join("");
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render top5 chart).
   function renderTop5Chart(metrics) {
     const canvas = byId("chartTop5");
     if (!canvas || typeof Chart === "undefined") return;
@@ -457,6 +483,7 @@
     });
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render evolution chart).
   function renderEvolutionChart(metrics) {
     const canvas = byId("chartEvolucao");
     if (!canvas || typeof Chart === "undefined") return;
@@ -487,6 +514,7 @@
     });
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render release chart).
   function renderReleaseChart(metrics) {
     const canvas = byId("chartLiberacoes");
     if (!canvas || typeof Chart === "undefined") return;
@@ -515,6 +543,7 @@
     });
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render trend chart).
   function renderTrendChart(metrics) {
     const canvas = byId("chartTrendModulo");
     if (!canvas || typeof Chart === "undefined") return;
@@ -524,6 +553,7 @@
       ?window.moduloSelecionado
       : metrics.topModule?.label;
 
+    // Explica a responsabilidade de series dentro deste modulo.
     const series = metrics.releasesAsc.map((release) =>
       release.protocolos.filter((prt) => window.protocolosIndex?.[prt]?.modulo === selectedModule).length
     );
@@ -550,6 +580,7 @@
     });
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render module chart).
   function renderModuleChart(metrics) {
     const canvas = byId("grafico-modulos");
     if (!canvas || typeof Chart === "undefined") return;
@@ -578,6 +609,7 @@
     const total = values.reduce((sum, value) => sum + Number(value || 0), 0);
     const centerTextPlugin = {
       id: "protocordModuleCenter",
+      // Explica a responsabilidade de after draw dentro deste modulo.
       afterDraw(chart) {
         const { ctx, chartArea } = chart;
         if (!chartArea) return;
@@ -617,6 +649,7 @@
           legend: { display: false },
           tooltip: {
             callbacks: {
+              // Explica a responsabilidade de label dentro deste modulo.
               label(context) {
                 const value = Number(context.raw || 0);
                 const percent = total ?((value / total) * 100).toFixed(1).replace(".", ",") : "0,0";
@@ -630,6 +663,7 @@
     });
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render chart safely).
   function renderChartSafely(name, renderFn) {
     try {
       renderFn();
@@ -638,6 +672,7 @@
     }
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render kpi charts).
   function renderKpiCharts(metrics) {
     if (typeof Chart === "undefined") return;
 
@@ -649,6 +684,7 @@
     renderChartSafely("Protocolos por modulo", () => renderModuleChart(metrics));
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build metrics).
   function buildMetrics(protocolIndex, releases, dataset) {
     const totalRecords = dataset.allProtocols.length;
     const errors = dataset.allProtocols.filter((item) => item.tipo === "0").length;
@@ -665,6 +701,7 @@
     const topModule = moduleRanking[0] || null;
     const releasesAsc = [...releases].reverse();
     let running = 0;
+    // Explica a responsabilidade de cumulative series dentro deste modulo.
     const cumulativeSeries = releasesAsc.map((item) => {
       running += item.protocolos.length;
       return running;
@@ -691,6 +728,7 @@
     };
   }
 
+  // Busca ou resolve informacoes necessarias para o fluxo (fetch kpi insights).
   async function fetchKpiInsights() {
     if (window.__kpiInsightsPromise) {
       return window.__kpiInsightsPromise;
@@ -712,6 +750,7 @@
     return window.__kpiInsightsPromise;
   }
 
+  // Explica a responsabilidade de ensure modal shell dentro deste modulo.
   function ensureModalShell() {
     let overlay = byId("kpi-insight-modal-overlay");
     if (overlay) return overlay;
@@ -762,6 +801,7 @@
     return overlay;
   }
 
+  // Abre a interface, recurso ou fluxo solicitado (open insight modal).
   function openInsightModal({ eyebrow, title, subtitle, body, renderBody }) {
     const overlay = ensureModalShell();
     const normalizeText = typeof window.normalizeUiText === "function"
@@ -785,6 +825,7 @@
     queueInsightAnimation("open", overlay);
   }
 
+  // Fecha a interface, recurso ou fluxo solicitado (close insight modal).
   function closeInsightModal() {
     const overlay = byId("kpi-insight-modal-overlay");
     if (!overlay || overlay.classList.contains("hidden") || overlay.dataset.closing === "true") return;
@@ -796,6 +837,7 @@
     overlay.setAttribute("aria-hidden", "true");
     document.body.classList.remove("modal-open");
 
+    // Explica a responsabilidade de finalize close dentro deste modulo.
     const finalizeClose = () => {
       if (!document.body.contains(overlay)) return;
       overlay.classList.add("hidden");
@@ -817,6 +859,7 @@
 
   let insightMotionPromise = null;
 
+  // Carrega ou restaura dados usados por esta funcionalidade (load insight motion).
   function loadInsightMotion() {
     if (insightMotionPromise) return insightMotionPromise;
     insightMotionPromise = import("https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm")
@@ -824,6 +867,7 @@
     return insightMotionPromise;
   }
 
+  // Explica a responsabilidade de run insight fallback animation dentro deste modulo.
   function runInsightFallbackAnimation(type, overlay, modal) {
     if (!overlay || !modal) return Promise.resolve();
 
@@ -854,6 +898,7 @@
     return Promise.allSettled([overlayAnimation.finished, modalAnimation.finished]);
   }
 
+  // Explica a responsabilidade de queue insight animation dentro deste modulo.
   async function queueInsightAnimation(type, overlay) {
     const modal = overlay?.querySelector(".kpi-insight-modal");
     if (!overlay || !modal) return;
@@ -882,6 +927,7 @@
     ]);
   }
 
+  // Normaliza, interpreta ou formata dados para uso seguro (normalize insight node).
   function normalizeInsightNode(root) {
     if (!root || typeof window.normalizeUiText !== "function") return;
 
@@ -892,6 +938,7 @@
     }
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render insight modal page).
   function renderInsightModalPage(page) {
     const config = window.__kpiCurrentModalConfig;
     if (!config) return;
@@ -902,6 +949,7 @@
     normalizeInsightNode(modalBody);
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build metric cards).
   function buildMetricCards(cards) {
     return `
       <div class="kpi-insight-metrics">
@@ -916,6 +964,7 @@
     `;
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build insight loading splash).
   function buildInsightLoadingSplash(title, description) {
     return `
       <section class="kpi-insight-loading">
@@ -938,6 +987,7 @@
     `;
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build table).
   function buildTable(headers, rows, options = {}) {
     const pageSize = options.pageSize || 6;
     const paginate = options.paginate !== false;
@@ -974,17 +1024,20 @@
     `;
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build status pill).
   function buildStatusPill(active, positiveLabel, neutralLabel) {
     const label = active ? positiveLabel : neutralLabel;
     const variant = active ? "success" : "neutral";
     return `<span class="kpi-insight-pill kpi-insight-pill-${variant}">${escapeHtml(label)}</span>`;
   }
 
+  // Explica a responsabilidade de clamp percent dentro deste modulo.
   function clampPercent(value) {
     const normalized = Number(value) || 0;
     return Math.max(0, Math.min(100, normalized));
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build storage progress).
   function buildStorageProgress(label, value, note, percent, tone = "cyan") {
     const safePercent = clampPercent(percent);
     return `
@@ -1001,6 +1054,7 @@
     `;
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build storage share row).
   function buildStorageShareRow(label, value, percent, tone = "cyan") {
     const safePercent = clampPercent(percent);
     return `
@@ -1016,6 +1070,7 @@
     `;
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build storage modal).
   function buildStorageModal(insights, state) {
     const storage = insights?.storage || {};
     const totalBytes = Math.max(Number(storage.totalBytes) || 0, 1);
@@ -1031,6 +1086,7 @@
       { label: "Usado", value: formatBytes(usedBytes), percent: usagePercent, tone: "cyan" },
       { label: "Livre", value: formatBytes(freeBytes), percent: 100 - usagePercent, tone: "violet" },
     ];
+    // Explica a responsabilidade de rows dentro deste modulo.
     const rows = tableEntries.map(([table, details], index) => {
       const tableBytes = Number(details?.usedBytes) || 0;
       const tablePercent = (tableBytes / totalBytes) * 100;
@@ -1122,6 +1178,7 @@
     });
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build errors modal).
   function buildErrorsModal(state) {
     const errorRows = state.dataset.allProtocols
       .filter((item) => item.tipo === "0")
@@ -1152,6 +1209,7 @@
     });
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build suggestions modal).
   function buildSuggestionsModal(state) {
     const rows = state.dataset.allProtocols
       .filter((item) => item.tipo !== "0")
@@ -1182,6 +1240,7 @@
     });
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build releases modal).
   function buildReleasesModal(state) {
     const rows = state.releases.map((release) => [
       `<strong>${escapeHtml(release.release)}</strong>`,
@@ -1204,6 +1263,7 @@
     });
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build released modal).
   function buildReleasedModal(state) {
     const rows = state.dataset.releasedDetails
       .slice()
@@ -1231,8 +1291,10 @@
     });
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (build latest modal).
   function buildLatestModal(state) {
     const latest = state.releases[0];
+    // Explica a responsabilidade de rows dentro deste modulo.
     const rows = (latest?.protocolos || []).map((prt) => {
       const info = state.protocolIndex[prt] || {};
       return [
@@ -1258,6 +1320,7 @@
     });
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle kpi action).
   async function handleKpiAction(action) {
     const state = window.__kpiWorkspaceState;
     if (!state) return;
@@ -1323,6 +1386,7 @@
     }
   }
 
+  // Explica a responsabilidade de bind kpi action buttons dentro deste modulo.
   function bindKpiActionButtons() {
     if (window.__kpiActionButtonsBound) return;
 
@@ -1335,6 +1399,7 @@
     window.__kpiActionButtonsBound = true;
   }
 
+  // Explica a responsabilidade de bind kpi search input dentro deste modulo.
   function bindKpiSearchInput() {
     const input = byId("busca-modulo");
     if (!input || input.dataset.kpiModernBound === "true") return;
@@ -1359,6 +1424,7 @@
     });
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render workspace).
   async function renderWorkspace() {
     const page = byId("pagina-historico-liberacoes");
     if (!page) return;

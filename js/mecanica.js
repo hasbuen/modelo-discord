@@ -18,11 +18,13 @@ const CORES_GRAFICO = [
 
 let registrosCache = [];
 
+// Inicializa os elementos e estados necessarios para esta funcionalidade (inicializar workspace registro).
 async function inicializarWorkspaceRegistro() {
   const registrosPromise = renderizarTabela();
   const modulosPromise = carregarModulos();
 
   const registros = await registrosPromise;
+  // Explica a responsabilidade de modulos dentro deste modulo.
   const modulos = await modulosPromise.catch((error) => {
     console.warn("Falha ao carregar modulos do workspace:", error);
     return [];
@@ -111,6 +113,7 @@ function alternarTema(tema) {
   }
 }
 
+// Carrega ou restaura dados usados por esta funcionalidade (carregar tema preferido).
 function carregarTemaPreferido() {
   const temaSalvo = localStorage.getItem('theme');
   const html = document.documentElement;
@@ -135,6 +138,7 @@ function validarURL(url) {
   return /^(http:\/\/|https:\/\/)[\w.-]+\.[a-zA-Z]{2,}(\/.*)?$/.test(url);
 }
 
+// Valida uma condicao e retorna o resultado para o fluxo (validar numeros).
 function validarNumeros(valor) {
   return /^\d+$/.test(valor);
 }
@@ -158,8 +162,10 @@ function exibirModal(mensagem, prt = "", tipo = "info") {
   lucide.createIcons();
 }
 
+// Fecha a interface, recurso ou fluxo solicitado (fechar modal).
 function fecharModal() { document.getElementById("errorModal").classList.add("hidden"); }
 
+// Fecha a interface, recurso ou fluxo solicitado (fechar confirm modal).
 function fecharConfirmModal() {
   document.getElementById("confirmModal").classList.add("hidden");
 }
@@ -245,6 +251,7 @@ ${paliativoFormatado}
   document.getElementById('output').value = texto;
 }
 
+// Persiste dados ou configuracoes desta funcionalidade (salvar registro).
 async function salvarRegistro() {
   const tipo = document.getElementById("tipo").value;
   const modulo = parseInt(document.getElementById("modulo").value);
@@ -272,6 +279,7 @@ async function salvarRegistro() {
   }
 }
 
+// Prepara a copia, download ou exportacao dos dados (copiar texto).
 function copiarTexto() {
   const texto = document.getElementById('output').value;
   if (!texto.trim()) return exibirModal(MENSAGEM_4, "", "info");
@@ -282,6 +290,7 @@ function copiarTexto() {
     .catch(() => exibirModal(MENSAGEM_6, "", "erro"));
 }
 
+// Limpa dados temporarios ou restaura o estado inicial (limpar campos).
 function limparCampos() {
   document.getElementById('modulo').value = '';
   document.getElementById('prt').value = '';
@@ -296,6 +305,7 @@ function limparCampos() {
   document.getElementById("tipo").value = '';
 }
 
+// Explica a responsabilidade de popular modulos select dentro deste modulo.
 async function popularModulosSelect(modulosCarregados) {
   const select = document.getElementById('modulo');
   if (!select) return;
@@ -329,6 +339,7 @@ const PAGINACAO_CONFIG = {
   ordemAscendente: true,
 };
 
+// Explica a responsabilidade de filtrar tabela dentro deste modulo.
 function filtrarTabela() {
   const termoBusca = document.getElementById("busca").value.toLowerCase().trim();
   
@@ -352,6 +363,7 @@ function filtrarTabela() {
   renderizarPaginaAtual();
 }
 
+// Explica a responsabilidade de ordenar tabela dentro deste modulo.
 function ordenarTabela(idx) {
   const { registrosFiltrados, colunaOrdenacao, ordemAscendente } = PAGINACAO_CONFIG;
   
@@ -383,6 +395,7 @@ function ordenarTabela(idx) {
   renderizarPaginaAtual();
 }
 
+// Renderiza a interface ou a parte visual correspondente (renderizar pagina atual).
 function renderizarPaginaAtual() {
   const tbody = document.querySelector("#tabelaRegistros tbody");
   if (!tbody) return;
@@ -409,6 +422,7 @@ function renderizarPaginaAtual() {
     return;
   }
   
+  // Explica a responsabilidade de esc html dentro deste modulo.
   const escHTML = (s) => {
     if (!s && s !== 0) return "";
     return String(s)
@@ -484,6 +498,7 @@ function renderizarPaginaAtual() {
   atualizarControlesPaginacao(totalRegistros, totalPaginas, inicio, fim);
 }
 
+// Atualiza a tela, o estado interno ou dados derivados (atualizar controles paginacao).
 function atualizarControlesPaginacao(totalRegistros, totalPaginas, inicio, fim) {
   const container = document.getElementById("tabela-paginacao");
   const info = document.getElementById("paginacao-info");
@@ -562,6 +577,7 @@ function atualizarControlesPaginacao(totalRegistros, totalPaginas, inicio, fim) 
   }
 }
 
+// Explica a responsabilidade de mudar pagina dentro deste modulo.
 function mudarPagina(direcao) {
   const { paginaAtual, registrosFiltrados, registrosPorPagina } = PAGINACAO_CONFIG;
   const totalPaginas = Math.ceil(registrosFiltrados.length / registrosPorPagina);
@@ -574,6 +590,7 @@ function mudarPagina(direcao) {
   }
 }
 
+// Explica a responsabilidade de ir para pagina dentro deste modulo.
 function irParaPagina(pagina) {
   const { registrosFiltrados, registrosPorPagina } = PAGINACAO_CONFIG;
   const totalPaginas = Math.ceil(registrosFiltrados.length / registrosPorPagina);
@@ -589,6 +606,7 @@ function irParaPagina(pagina) {
 }
 
 
+// Explica a responsabilidade de mostrar modal paliativo dentro deste modulo.
 function mostrarModalPaliativo(paliativo) {
   const modal = document.getElementById("errorModal");
   const modalIcon = document.getElementById("modalIcon");
@@ -601,6 +619,7 @@ function mostrarModalPaliativo(paliativo) {
 
 
 
+// Prepara a copia, download ou exportacao dos dados (copiar linha).
 function copiarLinha(botao, reg) {
   let objetoJson;
 
@@ -760,6 +779,7 @@ ${paliativo}
     })
     .catch(() => exibirModal("Erro ao copiar o paliativo.", "", "erro"));
 }
+// Abre a interface, recurso ou fluxo solicitado (abrir modal exclusao).
 async function abrirModalExclusao(id, ticket) {
   const modal = document.getElementById("confirmModal");
   const confirmBtn = document.getElementById("confirmBtn");
@@ -803,6 +823,7 @@ async function atualizarContadoresDosCards(registros) {
   sugestaoEl.textContent = totalSugestoes;
 }
 
+// Carrega ou restaura dados usados por esta funcionalidade (carregar modulos).
 async function carregarModulos() {
   try {
     const res = await fetch(window.getProtocordApiUrl("/modulos"));
@@ -812,6 +833,7 @@ async function carregarModulos() {
   }
 }
 
+// Monta ou cria a estrutura necessaria para esta etapa (montar grafico modulos).
 function montarGraficoModulos(registros, modulos) {
   const contagem = {};
   registros.forEach(r => {
@@ -882,6 +904,7 @@ function montarGraficoModulos(registros, modulos) {
   criarLegendaModulos(window.graficoModulos);
 }
 
+// Monta ou cria a estrutura necessaria para esta etapa (criar legenda modulos).
 function criarLegendaModulos(chart) {
   const legendaContainer = document.getElementById('legenda-modulos');
   if (!legendaContainer || !chart) return;
@@ -946,6 +969,7 @@ function criarLegendaModulos(chart) {
   });
 }
 
+// Renderiza a interface ou a parte visual correspondente (renderizar tabela).
 async function renderizarTabela() {
   const tbody = document.querySelector("#tabelaRegistros tbody");
   if (!tbody) return [];
@@ -1015,6 +1039,7 @@ async function renderizarTabela() {
 
 window.renderizarTabela = renderizarTabela;
 
+// Explica a responsabilidade de enviar pergunta dentro deste modulo.
 async function enviarPergunta() {
   const input = document.getElementById("chat-input");
   const pergunta = input.value.trim();
@@ -1098,6 +1123,7 @@ function exibirMensagem(remetente, texto) {
   chat.scrollTop = chat.scrollHeight;
 }
 
+// Carrega ou restaura dados usados por esta funcionalidade (carregar template protocolo).
 function carregarTemplateProtocolo(tipo) {
   const templateArea = document.getElementById("descricao-protocolar");
   const btnErro = document.getElementById("btn-erro-template");
@@ -1150,6 +1176,7 @@ function carregarTemplateProtocolo(tipo) {
   templateArea.value = template.trim();
 }
 
+// Prepara a copia, download ou exportacao dos dados (copiar tramite).
 function copiarTramite() {
   const texto = document.getElementById('descricao-protocolar').value;
   if (!texto.trim()) return exibirModal(MENSAGEM_4, "", "info");
@@ -1162,6 +1189,7 @@ function copiarTramite() {
     .catch(() => exibirModal(MENSAGEM_6, "", "erro"));
 }
 
+// Limpa dados temporarios ou restaura o estado inicial (limpar tramite).
 function limparTramite() {
   const templateArea = document.getElementById("descricao-protocolar");
   templateArea.value = "";

@@ -111,6 +111,7 @@
         ["\u00c2\u00b7", "\u00b7"]
       ];
 
+      // Explica a responsabilidade de decode latin1 utf8 dentro deste modulo.
       function decodeLatin1Utf8(value) {
         try {
           const bytes = Uint8Array.from(value, (char) => char.charCodeAt(0) & 255);
@@ -120,6 +121,7 @@
         }
       }
 
+      // Normaliza, interpreta ou formata dados para uso seguro (normalize ui text).
       function normalizeUiText(value) {
         if (typeof value !== "string" || !value) return value;
         let next = value;
@@ -138,6 +140,7 @@
         return next;
       }
 
+      // Normaliza, interpreta ou formata dados para uso seguro (normalize element attributes).
       function normalizeElementAttributes(element) {
         ["title", "placeholder", "aria-label", "data-tooltip"].forEach((name) => {
           const current = element.getAttribute?.(name);
@@ -146,6 +149,7 @@
         });
       }
 
+      // Normaliza, interpreta ou formata dados para uso seguro (normalize dom encoding).
       function normalizeDomEncoding(root = document.body) {
         if (!root) return;
         const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
@@ -161,6 +165,7 @@
         if (root.nodeType === Node.ELEMENT_NODE) normalizeElementAttributes(root);
       }
 
+      // Busca ou resolve informacoes necessarias para o fluxo (get dynamic encoding roots).
       function getDynamicEncodingRoots() {
         const roots = [];
         dynamicRootSelectors.forEach((selector) => {
@@ -171,6 +176,7 @@
         return roots;
       }
 
+      // Explica a responsabilidade de node looks suspicious dentro deste modulo.
       function nodeLooksSuspicious(node) {
         if (!node) return false;
         if (node.nodeType === Node.TEXT_NODE) {
@@ -203,6 +209,7 @@
 
       window.lucide = window.lucide || { createIcons() {} };
 
+      // Carrega ou restaura dados usados por esta funcionalidade (load script).
       function loadScript(src, globalGuard) {
         if (globalGuard && globalGuard()) {
           return Promise.resolve();
@@ -1937,6 +1944,7 @@
       document.getElementById('mobile-overlay').classList.remove('hidden');
     });
 
+    // Fecha a interface, recurso ou fluxo solicitado (close mobile).
     const closeMobile = () => {
       mobileSidebar.classList.add('-translate-x-full');
       document.getElementById('mobile-overlay').classList.add('hidden');
@@ -2089,6 +2097,7 @@ window.mostrarPagina = function (paginaId) {
 
     const mediaTheme = window.matchMedia('(prefers-color-scheme: dark)');
 
+    // Aplica valores, estado visual ou configuracoes no fluxo atual (apply theme).
     function applyTheme(theme) {
       const html = document.documentElement;
       const resolvedTheme = theme === 'system'
@@ -2118,6 +2127,7 @@ window.mostrarPagina = function (paginaId) {
       syncComparadorTheme(theme);
     }
 
+    // Atualiza a tela, o estado interno ou dados derivados (sync comparador theme).
     function syncComparadorTheme(theme) {
       const frame = document.getElementById('comparador-textos-frame');
       if (!frame?.contentWindow) return;
@@ -2293,6 +2303,7 @@ window.mostrarPagina = function (paginaId) {
       toast.style.opacity = '1';
       toast.innerHTML = `<div class="flex-1">${message}</div><button class="ml-2 text-xs opacity-80">Fechar</button>`;
       container.appendChild(toast);
+      // Remove itens, dados ou estado relacionado a esta funcionalidade (remove).
       const remove = () => {
         toast.style.transition = 'opacity 220ms ease, transform 220ms ease';
         toast.style.opacity = '0';
@@ -2487,6 +2498,7 @@ window.mostrarPagina = function (paginaId) {
         const gap = 8;
         const colModulo = pageW - marginLeft - marginRight - (colPos + colPRTs + colReleases) - (gap * 4);
 
+        // Explica a responsabilidade de processed dentro deste modulo.
         const processed = rows.map(r => {
           const moduloLines = doc.splitTextToSize(String(r.modulo || ''), colModulo);
           const h = Math.max(1, moduloLines.length) * lineHeight + 6;
@@ -2506,6 +2518,7 @@ window.mostrarPagina = function (paginaId) {
         let currentPage = 1;
         let yStart = marginTop;
 
+        // Renderiza a interface ou a parte visual correspondente (render header).
         function renderHeader(pageNum) {
           doc.setFontSize(12);
           doc.text('Relatório: Ranking de Módulos', marginLeft, yStart);
@@ -2630,6 +2643,7 @@ window.mostrarPagina = function (paginaId) {
       }
     })();
 
+    // Explica a responsabilidade de slice canvas to pdf dentro deste modulo.
     function _sliceCanvasToPdf(canvas, pdf, marginLeft = 40, marginTop = 50) {
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
@@ -2772,6 +2786,7 @@ window.mostrarPagina = function (paginaId) {
         let currentPage = 1;
         let yStart = marginTop;
 
+        // Renderiza a interface ou a parte visual correspondente (render header).
         function renderHeader(pageNum) {
           doc.setFontSize(12);
           const title = `Relatório de Detalhes - ${tipo === 'todos' ?'Todos' : (tipo === 'erro' ?'Erros' : 'Sugestões')} ${releaseSel !== 'todas' ?' - ' + releaseSel : ''}`;
@@ -2869,6 +2884,7 @@ window.mostrarPagina = function (paginaId) {
       // Ensure export functions exist: add lightweight wrappers that attempt to reload data and retry
       function makeWrapper(name) {
         if (typeof window[name] === 'function') return;
+        // Explica a responsabilidade de wrapper fn dentro deste modulo.
         const wrapperFn = function(...args) {
           window.showToast && window.showToast(name + ' ainda não disponível','warning');
           // Try to (re)load supporting data, then retry
@@ -2899,7 +2915,9 @@ window.mostrarPagina = function (paginaId) {
   <script>
     // Final robust exports: override any wrappers and provide reliable, text-based PDF/CSV exports
     (function(){
+      // Explica a responsabilidade de safe dentro deste modulo.
       function safe(msg){ try{}catch(e){} }
+      // Explica a responsabilidade de ensure releases dentro deste modulo.
       const ensureReleases = async () => {
         if (Array.isArray(window.liberacoesOriginais) && window.liberacoesOriginais.length) return window.liberacoesOriginais;
         if (typeof carregarDadosLiberacoes === 'function') {
@@ -3043,6 +3061,7 @@ window.mostrarPagina = function (paginaId) {
           const lineH = 14;
           let y = 60;
 
+          // Explica a responsabilidade de draw header dentro deste modulo.
           const drawHeader = (title) => {
             doc.setFont('helvetica','bold'); doc.setFontSize(12);
             doc.text(title, xTicket, 36);
@@ -3492,10 +3511,12 @@ window.mostrarPagina = function (paginaId) {
   var animateRef = null;
   var staggerRef = null;
 
+  // Busca ou resolve informacoes necessarias para o fluxo (get all).
   function getAll(selector, context) {
     return Array.prototype.slice.call((context || document).querySelectorAll(selector));
   }
 
+  // Explica a responsabilidade de marcar elementos dentro deste modulo.
   function marcarElementos() {
     motionSelectors.forEach(function (selector) {
       getAll(selector).forEach(function (element) {
@@ -3504,6 +3525,7 @@ window.mostrarPagina = function (paginaId) {
     });
   }
 
+  // Explica a responsabilidade de animar hover dentro deste modulo.
   function animarHover(element) {
     if (!animateRef || !element || element.dataset.pcHoverBound === '1') return;
     element.dataset.pcHoverBound = '1';
@@ -3525,6 +3547,7 @@ window.mostrarPagina = function (paginaId) {
     });
   }
 
+  // Explica a responsabilidade de ligar hovers dentro deste modulo.
   function ligarHovers() {
     [
       '.sidebar-item',
@@ -3540,6 +3563,7 @@ window.mostrarPagina = function (paginaId) {
     });
   }
 
+  // Explica a responsabilidade de ligar foco inputs dentro deste modulo.
   function ligarFocoInputs() {
     getAll('input, textarea, select').forEach(function (element) {
       if (element.dataset.pcFocusBound === '1') return;
@@ -3552,12 +3576,14 @@ window.mostrarPagina = function (paginaId) {
     });
   }
 
+  // Busca ou resolve informacoes necessarias para o fluxo (obter pagina visivel).
   function obterPaginaVisivel() {
     return getAll('[id^="pagina-"]').find(function (element) {
       return !element.classList.contains('hidden');
     });
   }
 
+  // Explica a responsabilidade de animar pagina visivel dentro deste modulo.
   function animarPaginaVisivel() {
     if (!animateRef) return;
 
@@ -3577,6 +3603,7 @@ window.mostrarPagina = function (paginaId) {
     );
   }
 
+  // Explica a responsabilidade de animar troca de tema dentro deste modulo.
   function animarTrocaDeTema() {
     if (!animateRef) return;
 
@@ -3590,6 +3617,7 @@ window.mostrarPagina = function (paginaId) {
     );
   }
 
+  // Explica a responsabilidade de animar player ao tocar dentro deste modulo.
   function animarPlayerAoTocar() {
     var audio = document.getElementById('ia-audio-player');
     var card = document.getElementById('ia-audio-card');
@@ -3597,10 +3625,12 @@ window.mostrarPagina = function (paginaId) {
 
     audio.dataset.pcAudioBound = '1';
 
+    // Trata o evento ou acao do usuario neste fluxo (on play).
     var onPlay = function () {
       animateRef(card, { boxShadow: ['0 0 0 rgba(0,0,0,0)', '0 0 0 1px rgba(34,211,238,.12), 0 16px 36px rgba(34,211,238,.12)'] }, { duration: .28 });
     };
 
+    // Trata o evento ou acao do usuario neste fluxo (on stop).
     var onStop = function () {
       animateRef(card, { boxShadow: ['0 0 0 1px rgba(34,211,238,.12), 0 16px 36px rgba(34,211,238,.12)', '0 10px 24px rgba(0,0,0,.10)'] }, { duration: .28 });
     };
@@ -3610,6 +3640,7 @@ window.mostrarPagina = function (paginaId) {
     audio.addEventListener('ended', onStop);
   }
 
+  // Aplica valores, estado visual ou configuracoes no fluxo atual (aplicar camada visual).
   function aplicarCamadaVisual() {
     marcarElementos();
     ligarHovers();
@@ -3617,6 +3648,7 @@ window.mostrarPagina = function (paginaId) {
     animarPlayerAoTocar();
   }
 
+  // Explica a responsabilidade de observar paginas dentro deste modulo.
   function observarPaginas() {
     var paginas = getAll('[id^="pagina-"]');
     if (!paginas.length) return;
@@ -3632,6 +3664,7 @@ window.mostrarPagina = function (paginaId) {
 
       if (deveAnimarPagina) {
         aplicarCamadaVisual();
+        // Explica a responsabilidade de request animation frame dentro deste modulo.
         requestAnimationFrame(function () {
           animarPaginaVisivel();
         });
@@ -3643,6 +3676,7 @@ window.mostrarPagina = function (paginaId) {
     });
   }
 
+  // Explica a responsabilidade de observar tema dentro deste modulo.
   function observarTema() {
     var html = document.documentElement;
     if (!html) return;
@@ -3651,6 +3685,7 @@ window.mostrarPagina = function (paginaId) {
       mutations.forEach(function (mutation) {
         if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
           aplicarCamadaVisual();
+          // Explica a responsabilidade de request animation frame dentro deste modulo.
           requestAnimationFrame(function () {
             animarTrocaDeTema();
           });
@@ -3661,8 +3696,10 @@ window.mostrarPagina = function (paginaId) {
     observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
   }
 
+  // Explica a responsabilidade de observar dom dentro deste modulo.
   function observarDom() {}
 
+  // Explica a responsabilidade de iniciar camada dentro deste modulo.
   function iniciarCamada() {
     aplicarCamadaVisual();
     animarPaginaVisivel();
@@ -3670,6 +3707,7 @@ window.mostrarPagina = function (paginaId) {
     observarTema();
   }
 
+  // Carrega ou restaura dados usados por esta funcionalidade (carregar motion erodar).
   function carregarMotionERodar() {
     if (window.__motionLayerStarted) return;
     if (typeof window.hasActiveAuthSession === 'function' && !window.hasActiveAuthSession()) {
@@ -3723,6 +3761,7 @@ window.mostrarPagina = function (paginaId) {
 </script>
 <script>
   (function () {
+    // Inicializa os elementos e estados necessarios para esta funcionalidade (init docs easter menu).
     function initDocsEasterMenu() {
       const menu = document.getElementById('docs-easter-menu');
       if (!menu || menu.dataset.bound === '1') return;
@@ -3740,10 +3779,12 @@ window.mostrarPagina = function (paginaId) {
       const links = document.getElementById('docs-easter-links');
       let touchTimer = null;
 
+      // Explica a responsabilidade de clamp dentro deste modulo.
       function clamp(value, min, max) {
         return Math.max(min, Math.min(max, value));
       }
 
+      // Abre a interface, recurso ou fluxo solicitado (open menu).
       function openMenu(x, y) {
         renderAuthState();
         menu.classList.remove('hidden');
@@ -3761,6 +3802,7 @@ window.mostrarPagina = function (paginaId) {
         (links?.classList.contains('hidden') ? passwordInput : menu.querySelector('a'))?.focus({ preventScroll: true });
       }
 
+      // Fecha a interface, recurso ou fluxo solicitado (close menu).
       function closeMenu() {
         menu.classList.add('hidden');
         menu.setAttribute('aria-hidden', 'true');
@@ -3768,12 +3810,14 @@ window.mostrarPagina = function (paginaId) {
         authError?.classList.add('hidden');
       }
 
+      // Valida uma condicao e retorna o resultado para o fluxo (has docs session).
       function hasDocsSession() {
         const time = Number(sessionStorage.getItem('PROTOCORD_DOCS_AUTH_TIME') || 0);
         const token = sessionStorage.getItem('PROTOCORD_DOCS_AUTH_TOKEN');
         return Boolean(token && time && Date.now() - time < 15 * 60 * 1000);
       }
 
+      // Renderiza a interface ou a parte visual correspondente (render auth state).
       function renderAuthState() {
         const authenticated = hasDocsSession();
         authForm?.classList.toggle('hidden', authenticated);

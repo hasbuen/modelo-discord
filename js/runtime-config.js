@@ -3,12 +3,14 @@
   // injetada ou localStorage sem editar os modulos da interface.
   const DEFAULT_API_BASE_URL = "https://modelo-discord-server.vercel.app/api";
 
+  // Normaliza, interpreta ou formata dados para uso seguro (normalize api base url).
   function normalizeApiBaseUrl(value) {
     const fallback = DEFAULT_API_BASE_URL;
     const normalized = String(value || fallback).trim();
     return normalized ?normalized.replace(/\/+$/, "") : fallback;
   }
 
+  // Explica a responsabilidade de to api url dentro deste modulo.
   function toApiUrl(path) {
     const baseUrl = window.PROTOCORD_API_BASE_URL || DEFAULT_API_BASE_URL;
     if (!path) return baseUrl;
@@ -48,6 +50,7 @@
     return token ? { Authorization: `Bearer ${token}`, "X-ProtoCord-Session": token } : {};
   };
 
+  // Limpa dados temporarios ou restaura o estado inicial (clear invalid session).
   function clearInvalidSession() {
     localStorage.removeItem("authToken");
     localStorage.removeItem("authTime");

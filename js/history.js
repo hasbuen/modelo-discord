@@ -11,11 +11,13 @@ function addMessage(sender, text, type = "bot") {
   localStorage.setItem("chat_history", JSON.stringify(history));
 }
 
+// Carrega ou restaura dados usados por esta funcionalidade (load chat history).
 function loadChatHistory() {
   const history = JSON.parse(localStorage.getItem("chat_history") || "[]");
   history.forEach(msg => addMessage(msg.sender, msg.text, msg.type));
 }
 
+// Explica a responsabilidade de gerar dashboard liberacoes dentro deste modulo.
 async function gerarDashboardLiberacoes() {
   const linhas = document.querySelectorAll("#tabelaLiberados tr");
 

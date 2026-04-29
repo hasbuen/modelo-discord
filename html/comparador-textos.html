@@ -396,6 +396,7 @@
   </main>
 
   <script>
+    // Explica a responsabilidade de resolve global theme dentro deste modulo.
     function resolveGlobalTheme(theme) {
       if (!theme || theme === "system") {
         return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -403,10 +404,12 @@
       return theme === "dark" ? "dark" : "light";
     }
 
+    // Aplica valores, estado visual ou configuracoes no fluxo atual (apply global theme).
     function applyGlobalTheme(theme) {
       document.documentElement.setAttribute("data-theme", resolveGlobalTheme(theme));
     }
 
+    // Explica a responsabilidade de read stored theme dentro deste modulo.
     function readStoredTheme() {
       try {
         return localStorage.getItem("theme") || "system";
@@ -478,6 +481,7 @@
       input.addEventListener("change", compare);
     });
 
+    // Normaliza, interpreta ou formata dados para uso seguro (normalize text).
     function normalizeText(value) {
       let text = String(value || "").replace(/\r\n/g, "\n");
       if (els.trimLines.checked) {
@@ -492,15 +496,18 @@
       return text;
     }
 
+    // Explica a responsabilidade de line tokens dentro deste modulo.
     function lineTokens(value) {
       const text = normalizeText(value);
       return text ?text.split("\n") : [];
     }
 
+    // Explica a responsabilidade de word tokens dentro deste modulo.
     function wordTokens(value) {
       return normalizeText(value).match(/(\s+|\S+)/g) || [];
     }
 
+    // Explica a responsabilidade de compute diff dentro deste modulo.
     function computeDiff(seqA, seqB) {
       const m = seqA.length;
       const n = seqB.length;
@@ -535,6 +542,7 @@
       return ops;
     }
 
+    // Explica a responsabilidade de escape html dentro deste modulo.
     function escapeHtml(value) {
       return String(value || "")
         .replace(/&/g, "&amp;")
@@ -542,6 +550,7 @@
         .replace(/>/g, "&gt;");
     }
 
+    // Explica a responsabilidade de summarize dentro deste modulo.
     function summarize(ops) {
       const relevant = ops.filter((op) => currentMode !== "word" || !/^\s+$/.test(op.value));
       const adds = relevant.filter((op) => op.type === "add").length;
@@ -552,6 +561,7 @@
       return { adds, dels, equals, total, similarity };
     }
 
+    // Explica a responsabilidade de compare dentro deste modulo.
     function compare() {
       const original = els.text1.value;
       const revised = els.text2.value;
@@ -578,6 +588,7 @@
       updateSummary(ops);
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render inline).
     function renderInline(ops) {
       els.diffView.innerHTML = `<div class="diff-inline">${ops.map((op) => {
         if (op.type === "add") return `<span class="diff-line diff-line-add">+ ${escapeHtml(op.value)}</span>`;
@@ -586,6 +597,7 @@
       }).join("\n")}</div>`;
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render split).
     function renderSplit(ops) {
       const left = [];
       const right = [];
@@ -603,6 +615,7 @@
         }
       });
 
+      // Renderiza a interface ou a parte visual correspondente (render line).
       const renderLine = (item) => {
         if (item.type === "add") return `<span class="diff-line diff-line-add">+ ${escapeHtml(item.value)}</span>`;
         if (item.type === "del") return `<span class="diff-line diff-line-del">- ${escapeHtml(item.value)}</span>`;
@@ -623,6 +636,7 @@
         </div>`;
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render word).
     function renderWord(ops) {
       els.diffView.innerHTML = `<div class="diff-inline">${ops.map((op) => {
         const value = escapeHtml(op.value);
@@ -632,6 +646,7 @@
       }).join("")}</div>`;
     }
 
+    // Atualiza a tela, o estado interno ou dados derivados (update summary).
     function updateSummary(ops) {
       const summary = summarize(ops);
       els.similarity.textContent = `${summary.similarity}%`;
@@ -642,11 +657,13 @@
       lastSummary = `Comparação de textos: similaridade ${summary.similarity}%, ${summary.adds} adição(ões), ${summary.dels} remoção(ões), ${summary.equals} item(ns) igual(is).`;
     }
 
+    // Atualiza a tela, o estado interno ou dados derivados (update counters).
     function updateCounters() {
       els.counterA.textContent = `${els.text1.value.length} caractere${els.text1.value.length !== 1 ?"s" : ""}`;
       els.counterB.textContent = `${els.text2.value.length} caractere${els.text2.value.length !== 1 ?"s" : ""}`;
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render empty).
     function renderEmpty() {
       els.diffView.innerHTML = '<div class="empty-state">Insira os textos e clique em comparar.</div>';
       els.similarity.textContent = "0%";
@@ -657,6 +674,7 @@
       lastSummary = "Nenhuma comparação realizada.";
     }
 
+    // Limpa dados temporarios ou restaura o estado inicial (clear all).
     function clearAll() {
       els.text1.value = "";
       els.text2.value = "";
@@ -665,6 +683,7 @@
       els.text1.focus();
     }
 
+    // Prepara a copia, download ou exportacao dos dados (copy summary).
     async function copySummary() {
       try {
         await navigator.clipboard.writeText(lastSummary);

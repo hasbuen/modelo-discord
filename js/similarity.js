@@ -9,6 +9,7 @@ function cosineSimilarity(a, b) {
   return (na && nb) ?dot / (Math.sqrt(na) * Math.sqrt(nb)) : 0;
 }
 
+// Normaliza, interpreta ou formata dados para uso seguro (format protocols).
 function formatProtocols(matchedProtocols) {
   if (!matchedProtocols.length) return "Não encontrei protocolos relacionados.";
 

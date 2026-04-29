@@ -74,6 +74,7 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   return false;
 });
 
+// Normaliza, interpreta ou formata dados para uso seguro (normalize payload).
 function normalizePayload(payload) {
   if (!payload || typeof payload !== "object") return null;
 
@@ -86,6 +87,7 @@ function normalizePayload(payload) {
   return normalized.contato && normalized.relatorio ? normalized : null;
 }
 
+// Explica a responsabilidade de merge config dentro deste modulo.
 function mergeConfig(config = {}) {
   return {
     subjectFieldId: String(config.subjectFieldId || DEFAULT_FIELD_CONFIG.subjectFieldId),

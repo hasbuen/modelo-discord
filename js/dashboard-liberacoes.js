@@ -11,6 +11,7 @@ let chartsInstance = {
   chartTrendModulo: null
 };
 
+// Normaliza, interpreta ou formata dados para uso seguro (normalizar prt liberacao).
 function normalizarPrtLiberacao(value) {
   const raw = String(value || "").trim();
   if (!raw) return "";
@@ -18,6 +19,7 @@ function normalizarPrtLiberacao(value) {
   return number ?`#PRT${number}` : raw;
 }
 
+// Explica a responsabilidade de notificar exportacao sem dados dentro deste modulo.
 function notificarExportacaoSemDados() {
   if (typeof window.showToast === 'function') {
     window.showToast('Não há dados para exportar.', 'warning');
@@ -29,6 +31,7 @@ function notificarExportacaoSemDados() {
 // Quantos módulos aparecem como "escalados" (destacados). Usuário pode alterar via UI (1,3,5).
 let topEscalados = 3;
 
+// Carrega ou restaura dados usados por esta funcionalidade (carregar dados liberacoes).
 async function carregarDadosLiberacoes() {
   try {
     const response = await fetch(window.getProtocordApiUrl('/liberados'));
@@ -275,6 +278,7 @@ function renderizarGraficoEvolucao(liberacoes) {
 
   const releases = liberacoes.map(item => item.release);
   let acumulado = 0;
+  // Explica a responsabilidade de cumulativo dentro deste modulo.
   const cumulativo = liberacoes.map(item => {
     acumulado += item.protocolos.length;
     return acumulado;
@@ -419,6 +423,7 @@ function habilitarCliqueGraficoLiberacoes() {
   chartsInstance.chartLiberacoes.update();
 }
 
+// Busca ou resolve informacoes necessarias para o fluxo (obter dados visiveis tabela).
 function obterDadosVisiveisTabela() {
   const linhas = document.querySelectorAll('#tabelaLiberados tr');
   const dados = [];
@@ -499,6 +504,7 @@ window.atualizarRankingModulos = function(liberacoes) {
   `).join('') || '<p class="text-xs text-gray-500">Sem dados</p>';
 };
 
+// Prepara a copia, download ou exportacao dos dados (exportar excel tabela visivel).
 function exportarExcelTabelaVisivel() {
   const dados = obterDadosVisiveisTabela();
   if (!dados.length) return;
@@ -528,6 +534,7 @@ function getTopModule(liberacoes) {
   return ordenado.length ?ordenado[0][0] : null;
 }
 
+// Renderiza a interface ou a parte visual correspondente (renderizar grafico trend modulo).
 function renderizarGraficoTrendModulo(liberacoes, modulo) {
   const ctx = document.getElementById('chartTrendModulo');
   if (!ctx || typeof Chart === 'undefined') return;
@@ -566,6 +573,7 @@ function renderizarGraficoTrendModulo(liberacoes, modulo) {
   });
 }
 
+// Renderiza a interface ou a parte visual correspondente (renderizar ranking modulos).
 function renderizarRankingModulos() {
   const liberacoes = obterLiberacoesFiltradasAtuais();
   const ranking = {};
@@ -664,6 +672,7 @@ renderizarDashboard = function (liberacoes) {
   }, 200);
 };
 
+// Busca ou resolve informacoes necessarias para o fluxo (obter liberacoes filtradas atuais).
 function obterLiberacoesFiltradasAtuais() {
   const origem =
     Array.isArray(liberacoesOriginais) && liberacoesOriginais.length
@@ -765,6 +774,7 @@ function inicializarBuscaModulo() {
   }
 }
 
+// Renderiza a interface ou a parte visual correspondente (renderizar tabela liberacoes).
 function renderizarTabelaLiberacoes(liberacoes) {
   const tbody = document.getElementById('tabelaLiberados');
   if (!tbody) {
@@ -821,6 +831,7 @@ function renderizarTabelaLiberacoes(liberacoes) {
   }
 }
 
+// Busca ou resolve informacoes necessarias para o fluxo (obter dados visiveis tabela).
 function obterDadosVisiveisTabela() {
   const linhas = document.querySelectorAll('#tabelaLiberados tr');
   const dados = [];

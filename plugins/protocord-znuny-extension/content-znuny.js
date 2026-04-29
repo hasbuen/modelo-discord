@@ -24,6 +24,7 @@
 
   bootstrap();
 
+  // Explica a responsabilidade de bootstrap dentro deste modulo.
   function bootstrap() {
     chrome.storage.local.get([STORAGE_KEY, CONFIG_KEY], (data) => {
       fieldConfig = mergeConfig(data[CONFIG_KEY]);
@@ -34,7 +35,9 @@
     });
   }
 
+  // Aplica valores, estado visual ou configuracoes no fluxo atual (apply when ready).
   function applyWhenReady(payload) {
+    // Explica a responsabilidade de run dentro deste modulo.
     const run = () => {
       if (applied) return;
       if (applyPayload(payload)) {
@@ -49,10 +52,12 @@
     setTimeout(() => observer.disconnect(), 20000);
   }
 
+  // Explica a responsabilidade de fill fixed fields dentro deste modulo.
   function fillFixedFields() {
     document.getElementById("OwnerSelectionGetAll")?.click();
 
     let attempts = 0;
+    // Explica a responsabilidade de timer dentro deste modulo.
     const timer = setInterval(() => {
       Object.entries(fieldConfig.fixedFields).forEach(([id, value]) => {
         if (value !== "") setFieldById(id, value);
@@ -62,6 +67,7 @@
     }, 500);
   }
 
+  // Aplica valores, estado visual ou configuracoes no fluxo atual (apply payload).
   function applyPayload(payload) {
     const subject = String(payload.assunto || payload.titulo || "Solicitacao de Suporte").trim();
     const contact = String(payload.contato || "").trim();
@@ -79,6 +85,7 @@
     return count >= 2 && reportApplied > 0;
   }
 
+  // Aplica valores, estado visual ou configuracoes no fluxo atual (set field by id).
   function setFieldById(id, value) {
     const field = document.getElementById(id);
     if (!field) return 0;
@@ -93,6 +100,7 @@
     return 1;
   }
 
+  // Explica a responsabilidade de trigger page change dentro deste modulo.
   function triggerPageChange(id) {
     const script = document.createElement("script");
     script.textContent = `
@@ -105,6 +113,7 @@
     script.remove();
   }
 
+  // Aplica valores, estado visual ou configuracoes no fluxo atual (set rich text).
   function setRichText(html) {
     if (setCkEditorViaPage(html)) return 1;
 
@@ -140,6 +149,7 @@
     return 0;
   }
 
+  // Aplica valores, estado visual ou configuracoes no fluxo atual (set ck editor via page).
   function setCkEditorViaPage(html) {
     const marker = "protocordZnunyRichtextApplied";
     delete document.documentElement.dataset[marker];
@@ -161,6 +171,7 @@
     return document.documentElement.dataset[marker] === "true";
   }
 
+  // Explica a responsabilidade de merge config dentro deste modulo.
   function mergeConfig(config = {}) {
     return {
       subjectFieldId: String(config.subjectFieldId || defaultConfig.subjectFieldId),
@@ -173,6 +184,7 @@
     };
   }
 
+  // Explica a responsabilidade de show notice dentro deste modulo.
   function showNotice(message) {
     const notice = document.createElement("div");
     notice.textContent = message;

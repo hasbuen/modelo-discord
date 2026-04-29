@@ -5,6 +5,7 @@
 
 let protocolosCache = {};
 
+// Carrega ou restaura dados usados por esta funcionalidade (carregar protocolos).
 async function carregarProtocolos() {
   try {
     const response = await fetch(window.getProtocordApiUrl("/protocolos"));
@@ -29,6 +30,7 @@ async function carregarProtocolos() {
   }
 }
 
+// Monta ou cria a estrutura necessaria para esta etapa (criar indice protocolos).
 async function criarIndiceProtocolos(protocolos) {
   window.protocolosIndex = {};
 
@@ -59,6 +61,7 @@ async function criarIndiceProtocolos(protocolos) {
   });
 }
 
+// Renderiza a interface ou a parte visual correspondente (renderizar filtro modulos).
 function renderizarFiltroModulos() {
   const container = document.getElementById("filtro-modulos");
   if (!container || !window.protocolosIndex) return;
@@ -66,6 +69,7 @@ function renderizarFiltroModulos() {
   container.innerHTML = "";
   const modulos = new Set(Object.values(window.protocolosIndex).map((item) => String(item.modulo || "Desconhecido")));
 
+  // Monta ou cria a estrutura necessaria para esta etapa (criar chip).
   const criarChip = (label, ativo) => {
     const safeLabel = String(label).replace(/'/g, "\\'");
     return `
@@ -85,6 +89,7 @@ function renderizarFiltroModulos() {
   });
 }
 
+// Explica a responsabilidade de selecionar modulo dentro deste modulo.
 function selecionarModulo(modulo, options = {}) {
   window.moduloSelecionado = modulo;
   window.__kpiModuleFilterSource = modulo !== "TODOS" && options?.source === "ranking" ? "ranking" : "";
@@ -92,6 +97,7 @@ function selecionarModulo(modulo, options = {}) {
   renderizarFiltroModulos();
 }
 
+// Aplica valores, estado visual ou configuracoes no fluxo atual (aplicar filtro modulo).
 function aplicarFiltroModulo() {
   if (window.moduloSelecionado === "TODOS") {
     if (typeof renderizarTabelaLiberacoes === "function") {
@@ -102,6 +108,7 @@ function aplicarFiltroModulo() {
 
   const filtradas = (window.liberacoesOriginais || [])
     .map((release) => {
+      // Explica a responsabilidade de protocolos filtrados dentro deste modulo.
       const protocolosFiltrados = release.protocolos.filter((prt) => {
         return window.protocolosIndex?.[prt]?.modulo === window.moduloSelecionado;
       });
@@ -118,6 +125,7 @@ function aplicarFiltroModulo() {
   }
 }
 
+// Busca ou resolve informacoes necessarias para o fluxo (obter protocolo).
 function obterProtocolo(prt) {
   const cached = protocolosCache[prt];
   if (cached) return cached;
@@ -136,14 +144,17 @@ function obterProtocolo(prt) {
   };
 }
 
+// Busca ou resolve informacoes necessarias para o fluxo (get tipo label).
 function getTipoLabel(tipo) {
   return String(tipo) === "0" ?"Erro" : "Sugestão";
 }
 
+// Busca ou resolve informacoes necessarias para o fluxo (get cor tipo).
 function getCorTipo(tipo) {
   return String(tipo) === "0" ?"red" : "green";
 }
 
+// Explica a responsabilidade de escape html dentro deste modulo.
 function escapeHtml(value) {
   return String(value || "")
     .replace(/&/g, "&amp;")
@@ -153,6 +164,7 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
+// Normaliza, interpreta ou formata dados para uso seguro (normalize prt).
 function normalizePrt(value) {
   const raw = String(value || "").trim();
   if (!raw) return "";
@@ -160,6 +172,7 @@ function normalizePrt(value) {
   return number ?`#PRT${number}` : raw;
 }
 
+// Monta ou cria a estrutura necessaria para esta etapa (criar badge protocolo).
 function criarBadgeProtocolo(prt) {
   const protocolo = obterProtocolo(prt);
   const tipo = protocolo?.tipo || "1";
@@ -181,6 +194,7 @@ function criarBadgeProtocolo(prt) {
   `;
 }
 
+// Abre a interface, recurso ou fluxo solicitado (abrir modal protocolo).
 function abrirModalProtocolo(prt) {
   const protocolo = obterProtocolo(prt);
   if (!protocolo) return;
@@ -294,10 +308,12 @@ function abrirModalProtocolo(prt) {
   document.body.insertAdjacentHTML("beforeend", modalHTML);
 }
 
+// Fecha a interface, recurso ou fluxo solicitado (fechar modal protocolo).
 function fecharModalProtocolo() {
   document.getElementById("modal-protocolo-overlay")?.remove();
 }
 
+// Inicializa os elementos e estados necessarios para esta funcionalidade (inicializar clicks protocolos).
 function inicializarClicksProtocolos() {
   if (window.__protocolosClicksInitialized) return;
   window.__protocolosClicksInitialized = true;
@@ -321,6 +337,7 @@ function inicializarClicksProtocolos() {
   });
 }
 
+// Monta ou cria a estrutura necessaria para esta etapa (criar badge protocolo).
 function criarBadgeProtocolo(prt) {
   const normalizedPrt = normalizePrt(prt);
   const protocolo = obterProtocolo(normalizedPrt);
@@ -342,6 +359,7 @@ function criarBadgeProtocolo(prt) {
   `;
 }
 
+// Abre a interface, recurso ou fluxo solicitado (abrir modal protocolo).
 function abrirModalProtocolo(prt) {
   const normalizedPrt = normalizePrt(prt);
   const protocolo = obterProtocolo(normalizedPrt) || {

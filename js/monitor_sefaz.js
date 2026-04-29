@@ -66,6 +66,7 @@ function getStatusIconHTML(status) {
     return `<i data-lucide="${iconName}" class="w-5 h-5 ${colorClass}"></i>`;
 }
 
+// Busca ou resolve informacoes necessarias para o fluxo (get status badge html).
 function getStatusBadgeHTML(status) {
     const styles = {
         online: 'bg-green-700 text-white',
@@ -85,6 +86,7 @@ function getStatusBadgeHTML(status) {
     `;
 }
 
+// Busca ou resolve informacoes necessarias para o fluxo (get overall status).
 function getOverallStatus(services) {
     if (services.length === 0) return { status: 'unknown', count: 0, total: 0 };
 
@@ -151,6 +153,7 @@ function renderTableView(mockData) {
     }).join('');
 }
 
+// Renderiza a interface ou a parte visual correspondente (render cards view).
 function renderCardsView(mockData) {
     const cardsContainer = document.getElementById('sefaz-view-cards');
     if (!cardsContainer) return;
@@ -393,7 +396,9 @@ window.fetchStatus = async function () {
 
     await new Promise(resolve => setTimeout(resolve, 200));
 
+    // Explica a responsabilidade de mock data dentro deste modulo.
     const mockData = ESTADOS.map(estado => {
+        // Explica a responsabilidade de generate status dentro deste modulo.
         const generateStatus = () => {
             const r = Math.random();
             if (r > 0.15) return 'online';
@@ -444,7 +449,9 @@ window.fetchStatus = async function () {
     }
 };
 
+// Aplica valores, estado visual ou configuracoes no fluxo atual (setup auto refresh).
 function setupAutoRefresh() {
+    // Explica a responsabilidade de start interval dentro deste modulo.
     const startInterval = () => {
         if (autoRefreshInterval) clearInterval(autoRefreshInterval);
         // Intervalo principal de 30 segundos
@@ -504,12 +511,14 @@ window.salvarUfFavorita = function (uf) {
     }
 };
 
+// Explica a responsabilidade de start favorito monitor dentro deste modulo.
 function startFavoritoMonitor() {
     stopFavoritoMonitor();
     window.fetchStatusFavorito();
     favoritoRefreshInterval = setInterval(window.fetchStatusFavorito, 1000); // 1 segundo
 }
 
+// Explica a responsabilidade de stop favorito monitor dentro deste modulo.
 function stopFavoritoMonitor() {
     if (favoritoRefreshInterval) {
         clearInterval(favoritoRefreshInterval);
@@ -525,6 +534,7 @@ window.fetchStatusFavorito = function () {
         return;
     }
 
+    // Explica a responsabilidade de generate quick status dentro deste modulo.
     const generateQuickStatus = () => {
         const r = Math.random();
         if (r > 0.1) return 'online';
@@ -552,6 +562,7 @@ window.fetchStatusFavorito = function () {
 
 };
 
+// Atualiza a tela, o estado interno ou dados derivados (update favorito display).
 function updateFavoritoDisplay(data) {
     const nomeEl = document.getElementById('favorito-uf-nome');
     const autIconEl = document.getElementById('favorito-aut-icon');
@@ -579,6 +590,7 @@ function updateFavoritoDisplay(data) {
     }
 }
 
+// Inicializa os elementos e estados necessarios para esta funcionalidade (init sefaz monitor).
 function initSefazMonitor() {
     initializeTempoMedioChart();
     loadUfFavorita();

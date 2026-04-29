@@ -1,6 +1,7 @@
 (function () {
   const STORAGE_PREFIX = "protocord_embed_chat_";
   const EMBED_INSTANCES = {};
+  // Busca ou resolve informacoes necessarias para o fluxo (get znuny attendant portal url).
   function getZnunyAttendantPortalUrl() {
     return String(
       window.PROTOCORD_RUNTIME_CONFIG?.ZNUNY_ATTENDANT_PORTAL_URL ||
@@ -9,6 +10,7 @@
     ).trim();
   }
 
+  // Busca ou resolve informacoes necessarias para o fluxo (get api base url safe).
   function getApiBaseUrlSafe() {
     try {
       if (typeof window.getProtocordApiBaseUrl === "function") {
@@ -18,6 +20,7 @@
     return "";
   }
 
+  // Monta ou cria a estrutura necessaria para esta etapa (create embed instance).
   function createEmbedInstance(containerId, pageContext) {
     if (EMBED_INSTANCES[containerId]) return EMBED_INSTANCES[containerId];
 
@@ -37,6 +40,7 @@
 
     const STORAGE_KEY = STORAGE_PREFIX + containerId;
 
+    // Carrega ou restaura dados usados por esta funcionalidade (load state).
     function loadState() {
       try {
         const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
@@ -47,6 +51,7 @@
       }
     }
 
+    // Persiste dados ou configuracoes desta funcionalidade (save state).
     function saveState() {
       localStorage.setItem(
         STORAGE_KEY,
@@ -57,6 +62,7 @@
       );
     }
 
+    // Explica a responsabilidade de escape html dentro deste modulo.
     function escapeHtml(value) {
       return String(value || "")
         .replace(/&/g, "&amp;")
@@ -66,14 +72,17 @@
         .replace(/'/g, "&#39;");
     }
 
+    // Normaliza, interpreta ou formata dados para uso seguro (format message).
     function formatMessage(value) {
       return escapeHtml(value).replace(/\n/g, "<br>");
     }
 
+    // Valida uma condicao e retorna o resultado para o fluxo (is znuny auth failure message).
     function isZnunyAuthFailureMessage(value) {
       return /autentica..o autom..tica falhou/i.test(String(value || "")) && /znuny/i.test(String(value || ""));
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render message content).
     function renderMessageContent(message) {
       const content = String(message?.content || "");
       const normalizedContent = isZnunyAuthFailureMessage(content)
@@ -95,6 +104,7 @@
       `;
     }
 
+    // Busca ou resolve informacoes necessarias para o fluxo (get history for request).
     function getHistoryForRequest() {
       return instance.messages
         .slice(0, -1)
@@ -107,10 +117,12 @@
         });
     }
 
+    // Busca ou resolve informacoes necessarias para o fluxo (get context hint).
     function getContextHint() {
       return instance.context || "Contexto geral do ProtoCord";
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render).
     function render() {
       const messagesContainer = container.querySelector(".embed-chat-messages");
       if (!messagesContainer) return;
@@ -147,6 +159,7 @@
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
+    // Alterna o estado desta funcionalidade (toggle collapse).
     function toggleCollapse() {
       instance.collapsed = !instance.collapsed;
       const panel = container.querySelector(".embed-chat-panel");
@@ -167,12 +180,14 @@
       saveState();
     }
 
+    // Limpa dados temporarios ou restaura o estado inicial (clear messages).
     function clearMessages() {
       instance.messages = [];
       saveState();
       render();
     }
 
+    // Explica a responsabilidade de submit message dentro deste modulo.
     async function submitMessage() {
       const input = container.querySelector(".embed-chat-input");
       const sendBtn = container.querySelector(".embed-chat-send-btn");
@@ -242,6 +257,7 @@
       }
     }
 
+    // Explica a responsabilidade de auto resize textarea dentro deste modulo.
     function autoResizeTextarea() {
       const input = container.querySelector(".embed-chat-input");
       if (!input) return;
@@ -249,6 +265,7 @@
       input.style.height = Math.min(Math.max(44, input.scrollHeight), 120) + "px";
     }
 
+    // Explica a responsabilidade de inject styles dentro deste modulo.
     function injectStyles() {
       if (document.getElementById("embed-chat-styles")) return;
 
@@ -597,6 +614,7 @@
       document.head.appendChild(style);
     }
 
+    // Renderiza a interface ou a parte visual correspondente (render shell).
     function renderShell() {
       injectStyles();
 

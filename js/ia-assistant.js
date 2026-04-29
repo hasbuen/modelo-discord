@@ -5,6 +5,7 @@
   const MAX_WIDGET_WIDTH = 760;
   const MIN_WIDGET_HEIGHT = 420;
   const MAX_WIDGET_HEIGHT = 860;
+  // Busca ou resolve informacoes necessarias para o fluxo (get znuny attendant portal url).
   function getZnunyAttendantPortalUrl() {
     return String(
       window.PROTOCORD_RUNTIME_CONFIG?.ZNUNY_ATTENDANT_PORTAL_URL ||
@@ -13,6 +14,7 @@
     ).trim();
   }
 
+  // Busca ou resolve informacoes necessarias para o fluxo (get api base url safe).
   function getApiBaseUrlSafe() {
     try {
       if (typeof window.getProtocordApiBaseUrl === "function") {
@@ -47,6 +49,7 @@
 
   const els = {};
 
+  // Inicializa os elementos e estados necessarios para esta funcionalidade (init).
   function init() {
     removeLegacyAssistantUi();
     bindElements();
@@ -58,6 +61,7 @@
     render();
   }
 
+  // Explica a responsabilidade de bind elements dentro deste modulo.
   function bindElements() {
     els.widget = document.getElementById("assistant-widget");
     els.panel = document.getElementById("assistant-panel");
@@ -80,6 +84,7 @@
     els.suggestions = Array.from(document.querySelectorAll("[data-assistant-prompt]"));
   }
 
+  // Remove itens, dados ou estado relacionado a esta funcionalidade (remove legacy assistant ui).
   function removeLegacyAssistantUi() {
     [
       "btn-assistente",
@@ -108,6 +113,7 @@
     });
   }
 
+  // Explica a responsabilidade de bind events dentro deste modulo.
   function bindEvents() {
     els.fab?.addEventListener("pointerdown", startWidgetDrag);
     els.header?.addEventListener("pointerdown", startWidgetDrag);
@@ -161,6 +167,7 @@
     autoResizeInput();
   }
 
+  // Carrega ou restaura dados usados por esta funcionalidade (restore state).
   function restoreState() {
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
@@ -173,12 +180,14 @@
     restoreLayoutState();
   }
 
+  // Persiste dados ou configuracoes desta funcionalidade (persist).
   function persist() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       messages: state.messages.slice(-20),
     }));
   }
 
+  // Carrega ou restaura dados usados por esta funcionalidade (restore layout state).
   function restoreLayoutState() {
     try {
       const parsed = JSON.parse(localStorage.getItem(LAYOUT_STORAGE_KEY) || "{}");
@@ -194,6 +203,7 @@
     }
   }
 
+  // Persiste dados ou configuracoes desta funcionalidade (persist layout state).
   function persistLayoutState() {
     localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify({
       panelWidth: state.panelWidth,
@@ -203,6 +213,7 @@
     }));
   }
 
+  // Busca ou resolve informacoes necessarias para o fluxo (get history for request).
   function getHistoryForRequest() {
     return state.messages
       .slice(0, -1)
@@ -214,6 +225,7 @@
       }));
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render).
   function render() {
     if (!els.messages) return;
     toggleWidget(state.open, false);
@@ -240,11 +252,13 @@
     lucide.createIcons();
   }
 
+  // Explica a responsabilidade de submit message dentro deste modulo.
   async function submitMessage() {
     const message = String(els.input?.value || "").trim();
     return submitProvidedMessage(message);
   }
 
+  // Explica a responsabilidade de submit provided message dentro deste modulo.
   async function submitProvidedMessage(message) {
     if (!message || state.sending) return;
 
@@ -302,6 +316,7 @@
     }
   }
 
+  // Alterna o estado desta funcionalidade (toggle sending).
   function toggleSending(sending) {
     if (els.sendBtn) {
       els.sendBtn.disabled = sending;
@@ -321,6 +336,7 @@
     updateStatusBadge();
   }
 
+  // Alterna o estado desta funcionalidade (toggle widget).
   function toggleWidget(forceState, persistState = true) {
     if (!state.authenticated) {
       return;
@@ -352,6 +368,7 @@
     lucide.createIcons();
   }
 
+  // Aplica valores, estado visual ou configuracoes no fluxo atual (apply panel visibility).
   function applyPanelVisibility(isOpen) {
     if (!els.panel) return;
 
@@ -363,6 +380,7 @@
     requestAnimationFrame(applyWidgetPosition);
   }
 
+  // Valida uma condicao e retorna o resultado para o fluxo (is authenticated).
   function isAuthenticated() {
     try {
       if (typeof window.hasActiveAuthSession === "function") {
@@ -373,11 +391,13 @@
     return false;
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle auth changed).
   function handleAuthChanged(event) {
     state.authenticated = Boolean(event?.detail?.authenticated);
     syncAssistantVisibility();
   }
 
+  // Atualiza a tela, o estado interno ou dados derivados (sync assistant visibility).
   function syncAssistantVisibility() {
     state.authenticated = isAuthenticated();
 
@@ -396,6 +416,7 @@
     requestAnimationFrame(applyWidgetPosition);
   }
 
+  // Aplica valores, estado visual ou configuracoes no fluxo atual (apply panel layout).
   function applyPanelLayout() {
     if (!els.panel) return;
 
@@ -419,6 +440,7 @@
     }
   }
 
+  // Aplica valores, estado visual ou configuracoes no fluxo atual (apply widget position).
   function applyWidgetPosition() {
     if (!els.widget || !state.authenticated) return;
 
@@ -443,6 +465,7 @@
     els.widget.style.bottom = "auto";
   }
 
+  // Explica a responsabilidade de start panel resize dentro deste modulo.
   function startPanelResize(event) {
     if (!els.panel || window.innerWidth <= 640) return;
 
@@ -462,6 +485,7 @@
     document.addEventListener("pointercancel", stopPanelResize);
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle panel resize move).
   function handlePanelResizeMove(event) {
     if (!state.resizing || !els.panel) return;
 
@@ -482,6 +506,7 @@
     applyPanelLayout();
   }
 
+  // Explica a responsabilidade de stop panel resize dentro deste modulo.
   function stopPanelResize() {
     if (!state.resizing) return;
 
@@ -492,6 +517,7 @@
     document.removeEventListener("pointercancel", stopPanelResize);
   }
 
+  // Explica a responsabilidade de start widget drag dentro deste modulo.
   function startWidgetDrag(event) {
     if (!els.widget || !state.authenticated || event.button !== 0) return;
 
@@ -517,6 +543,7 @@
     document.addEventListener("pointercancel", stopWidgetDrag);
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle widget drag move).
   function handleWidgetDragMove(event) {
     if (!state.dragging || !els.widget) return;
 
@@ -533,6 +560,7 @@
     applyWidgetPosition();
   }
 
+  // Explica a responsabilidade de stop widget drag dentro deste modulo.
   function stopWidgetDrag() {
     if (!state.dragging) return;
 
@@ -550,10 +578,12 @@
     document.removeEventListener("pointercancel", stopWidgetDrag);
   }
 
+  // Explica a responsabilidade de clamp number dentro deste modulo.
   function clampNumber(value, min, max) {
     return Math.min(Math.max(value, min), max);
   }
 
+  // Renderiza a interface ou a parte visual correspondente (render message content).
   function renderMessageContent(message) {
     const content = String(message?.content || "");
     const normalizedContent = isZnunyAuthFailureMessage(content)
@@ -581,10 +611,12 @@
     `;
   }
 
+  // Valida uma condicao e retorna o resultado para o fluxo (is znuny auth failure message).
   function isZnunyAuthFailureMessage(content) {
     return /autentica..o autom..tica falhou/i.test(String(content || "")) && /znuny/i.test(String(content || ""));
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle audio press start).
   async function handleAudioPressStart(event) {
     if (event.button !== 0 || state.transcribing || state.sending || state.recording) {
       return;
@@ -598,6 +630,7 @@
     await startRecording();
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle audio press end).
   function handleAudioPressEnd(event) {
     state.audioPressActive = false;
     updateAudioUi();
@@ -609,6 +642,7 @@
     stopRecording();
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle audio press cancel).
   function handleAudioPressCancel(event) {
     state.audioPressActive = false;
     updateAudioUi();
@@ -622,6 +656,7 @@
     }
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle audio key down).
   function handleAudioKeyDown(event) {
     if (event.repeat) return;
     if (event.key !== " " && event.key !== "Enter") return;
@@ -630,6 +665,7 @@
     handleAudioPressStart({ button: 0, pointerId: -1, preventDefault() {} });
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle audio key up).
   function handleAudioKeyUp(event) {
     if (event.key !== " " && event.key !== "Enter") return;
 
@@ -637,16 +673,19 @@
     handleAudioPressEnd({ pointerId: -1, preventDefault() {} });
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle global audio pointer end).
   function handleGlobalAudioPointerEnd(event) {
     if (!state.audioPressActive || state.recordingPointerId === null) return;
     handleAudioPressEnd(event);
   }
 
+  // Trata o evento ou acao do usuario neste fluxo (handle global audio pointer cancel).
   function handleGlobalAudioPointerCancel(event) {
     if (!state.audioPressActive || state.recordingPointerId === null) return;
     handleAudioPressCancel(event);
   }
 
+  // Explica a responsabilidade de release audio pointer dentro deste modulo.
   function releaseAudioPointer(pointerId) {
     if (pointerId !== undefined && pointerId !== null) {
       try {
@@ -657,6 +696,7 @@
     state.recordingPointerId = null;
   }
 
+  // Explica a responsabilidade de start recording dentro deste modulo.
   async function startRecording() {
     if (typeof MediaRecorder === "undefined" || !navigator.mediaDevices?.getUserMedia) {
       notify("Seu navegador não suporta gravação de áudio.", "error");
@@ -718,6 +758,7 @@
     }
   }
 
+  // Explica a responsabilidade de stop recording dentro deste modulo.
   function stopRecording() {
     if (!state.mediaRecorder || state.mediaRecorder.state === "inactive") {
       return;
@@ -726,6 +767,7 @@
     state.mediaRecorder.stop();
   }
 
+  // Explica a responsabilidade de transcribe recorded audio dentro deste modulo.
   async function transcribeRecordedAudio(audioBlob) {
     state.transcribing = true;
     updateAudioUi();
@@ -763,6 +805,7 @@
     }
   }
 
+  // Explica a responsabilidade de transcribe audio file dentro deste modulo.
   async function transcribeAudioFile(apiBaseUrl, file) {
     try {
       return await requestDirectAssistantTranscription(apiBaseUrl, file);
@@ -776,6 +819,7 @@
     }
   }
 
+  // Explica a responsabilidade de upload audio blob for assistant dentro deste modulo.
   async function uploadAudioBlobForAssistant(apiBaseUrl, file) {
     const { upload } = await import("https://esm.sh/@vercel/blob/client?target=es2022");
     const pathname = `audios/${Date.now()}-${String(file.name || "audio.webm").replace(/[^\w.\-]+/g, "_").replace(/_+/g, "_")}`;
@@ -786,6 +830,7 @@
     });
   }
 
+  // Explica a responsabilidade de request blob transcription for assistant dentro deste modulo.
   async function requestBlobTranscriptionForAssistant(apiBaseUrl, blobUpload, file) {
     const response = await fetch(`${apiBaseUrl}/transcrever`, {
       method: "POST",
@@ -809,6 +854,7 @@
     return data;
   }
 
+  // Explica a responsabilidade de request direct assistant transcription dentro deste modulo.
   async function requestDirectAssistantTranscription(apiBaseUrl, file) {
     const formData = new FormData();
     formData.append("audio", file);
@@ -834,6 +880,7 @@
     return data;
   }
 
+  // Explica a responsabilidade de should fallback to blob assistant upload dentro deste modulo.
   function shouldFallbackToBlobAssistantUpload(error) {
     return (
       error?.status === 400 ||
@@ -847,6 +894,7 @@
     );
   }
 
+  // Atualiza a tela, o estado interno ou dados derivados (update recording timer).
   function updateRecordingTimer() {
     if (!els.recordingTime || !state.recordingStartedAt) return;
     const elapsedSeconds = Math.max(0, Math.floor((Date.now() - state.recordingStartedAt) / 1000));
@@ -855,6 +903,7 @@
     els.recordingTime.textContent = `${minutes}:${seconds}`;
   }
 
+  // Limpa dados temporarios ou restaura o estado inicial (clear recording timer).
   function clearRecordingTimer() {
     if (state.recordingTimerId) {
       window.clearInterval(state.recordingTimerId);
@@ -862,6 +911,7 @@
     }
   }
 
+  // Atualiza a tela, o estado interno ou dados derivados (update audio ui).
   function updateAudioUi() {
     if (els.audioBtn) {
       els.audioBtn.classList.toggle("recording", state.recording);
@@ -888,6 +938,7 @@
     }
   }
 
+  // Atualiza a tela, o estado interno ou dados derivados (update status badge).
   function updateStatusBadge() {
     if (!els.statusBadge || !els.statusLabel) return;
 
@@ -911,6 +962,7 @@
     }
   }
 
+  // Explica a responsabilidade de pick supported mime type dentro deste modulo.
   function pickSupportedMimeType() {
     const mimeTypes = [
       "audio/webm;codecs=opus",
@@ -922,6 +974,7 @@
     return mimeTypes.find((type) => MediaRecorder.isTypeSupported(type)) || "";
   }
 
+  // Explica a responsabilidade de escape html dentro deste modulo.
   function escapeHtml(value) {
     return String(value || "")
       .replace(/&/g, "&amp;")
@@ -931,12 +984,14 @@
       .replace(/'/g, "&#39;");
   }
 
+  // Explica a responsabilidade de notify dentro deste modulo.
   function notify(message, type) {
     if (typeof window.showToast === "function") {
       window.showToast(message, type);
     }
   }
 
+  // Explica a responsabilidade de auto resize input dentro deste modulo.
   function autoResizeInput() {
     if (!els.input) return;
 
@@ -945,6 +1000,7 @@
     els.input.style.height = `${nextHeight}px`;
   }
 
+  // Limpa dados temporarios ou restaura o estado inicial (reset input height).
   function resetInputHeight() {
     if (!els.input) return;
     els.input.style.height = "52px";
@@ -988,6 +1044,7 @@
 
   let started = false;
 
+  // Explica a responsabilidade de boot assistant dentro deste modulo.
   function bootAssistant() {
     if (started) return;
     if (typeof window.hasActiveAuthSession === "function" && !window.hasActiveAuthSession()) return;
