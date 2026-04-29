@@ -80,6 +80,15 @@ h1, h2, h3, h4, .sidebar-brand-name, .kpi-title, .reports-title, .assistant-titl
   background-color: rgba(37, 99, 235, 0.05) !important;
 }
 
+[id^="pagina-"] {
+  content-visibility: auto;
+  contain-intrinsic-size: 960px;
+}
+
+[id^="pagina-"].hidden {
+  content-visibility: hidden;
+}
+
 [data-theme="light"] .reports-hero,
 [data-theme="light"] .reports-card,
 [data-theme="light"] .reports-kpi-card,
@@ -99,6 +108,85 @@ h1, h2, h3, h4, .sidebar-brand-name, .kpi-title, .reports-title, .assistant-titl
 [data-theme="light"] .kpi-subpanel {
   background: rgba(248, 251, 255, 0.92) !important;
   border-color: rgba(148, 163, 184, 0.16) !important;
+}
+
+[data-theme="light"] .reports-table thead,
+[data-theme="light"] .reports-table thead tr,
+[data-theme="light"] .legacy-table thead,
+[data-theme="light"] .legacy-table thead tr {
+  background: linear-gradient(180deg, rgba(241, 247, 255, 0.98), rgba(226, 237, 249, 0.96)) !important;
+  color: #334155 !important;
+}
+
+[data-theme="light"] .reports-table th,
+[data-theme="light"] .legacy-table th {
+  color: #334155 !important;
+}
+
+[data-theme="light"] .reports-table td,
+[data-theme="light"] .reports-desc-cell,
+[data-theme="light"] .reports-cell-ticket,
+[data-theme="light"] .reports-cell-prt,
+[data-theme="light"] .reports-cell-modulo,
+[data-theme="light"] .reports-cell-release,
+[data-theme="light"] .reports-cell-desc {
+  color: #334155 !important;
+}
+
+[data-theme="light"] .reports-table tbody tr {
+  background: rgba(255, 255, 255, 0.76) !important;
+}
+
+[data-theme="light"] .reports-table tbody tr:hover {
+  background: rgba(37, 99, 235, 0.06) !important;
+}
+
+[data-theme="light"] #metas-app .mfu,
+[data-theme="light"] #metas-app .mfu-shell {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #metas-app .mfu-compactbar,
+[data-theme="light"] #metas-app .mfu-panel,
+[data-theme="light"] #metas-app .mfu-goal-card,
+[data-theme="light"] #metas-app .mfu-today-card,
+[data-theme="light"] #metas-app .mfu-col,
+[data-theme="light"] #metas-app .mfu-task,
+[data-theme="light"] #metas-app .mfu-item-row,
+[data-theme="light"] #metas-app .mfu-modal-card {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.96), rgba(240, 247, 255, 0.92)) !important;
+  border-color: rgba(148, 163, 184, 0.18) !important;
+  color: #0f172a !important;
+  box-shadow: 0 18px 42px rgba(100, 116, 139, 0.14) !important;
+}
+
+[data-theme="light"] #metas-app .mfu-tab,
+[data-theme="light"] #metas-app .mfu-btn,
+[data-theme="light"] #metas-app .mfu-theme-select,
+[data-theme="light"] #metas-app .mfu-field input,
+[data-theme="light"] #metas-app .mfu-field select,
+[data-theme="light"] #metas-app .mfu-field textarea,
+[data-theme="light"] #metas-app .mfu-actions button {
+  background: rgba(255, 255, 255, 0.94) !important;
+  border-color: rgba(148, 163, 184, 0.22) !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #metas-app .mfu-tab.active,
+[data-theme="light"] #metas-app .mfu-btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="light"] #metas-app .mfu-subtitle,
+[data-theme="light"] #metas-app .mfu-field label,
+[data-theme="light"] #metas-app .mfu-goal-value span,
+[data-theme="light"] #metas-app .mfu-progress-labels,
+[data-theme="light"] #metas-app .mfu-today-card p,
+[data-theme="light"] #metas-app .mfu-task small,
+[data-theme="light"] #metas-app .mfu-item-row p,
+[data-theme="light"] #metas-app .mfu-empty {
+  color: #516277 !important;
 }
 
 [data-theme="light"] .kpi-title,

@@ -1,6 +1,18 @@
 (function () {
   function initMetaFlowUltra(mountSelector = "#metas-app") {
     const THEMES = {
+      global: {
+        id: "global",
+        name: "Tema ProtoCord",
+        type: "auto",
+        panel: "rgba(255,255,255,0.92)",
+        panel2: "rgba(248,251,255,0.86)",
+        text: "#0f172a",
+        muted: "#516277",
+        border: "rgba(148,163,184,0.18)",
+        primary: "#2563eb",
+        primaryHover: "#1d4ed8",
+      },
       aurora: {
         id: "aurora",
         name: "Aurora Clara",
@@ -161,7 +173,7 @@
       goals: [],
       entries: [],
       tasks: [],
-      themeId: "midnight",
+      themeId: "global",
       currentView: "dashboard",
       pendingKanbanAction: null,
     };
@@ -184,7 +196,21 @@
     }
 
     function getTheme() {
-      return THEMES[state.themeId] || THEMES.midnight;
+      if (state.themeId === "global") {
+        return getGlobalTheme();
+      }
+      return THEMES[state.themeId] || getGlobalTheme();
+    }
+
+    function getGlobalTheme() {
+      const isLight = document.documentElement?.dataset?.theme === "light";
+      return isLight
+        ? THEMES.global
+        : {
+            ...THEMES.midnight,
+            id: "global",
+            name: "Tema ProtoCord",
+          };
     }
 
     function escapeHtml(value) {
@@ -835,6 +861,7 @@
       root.style.setProperty("--border", theme.border);
       root.style.setProperty("--primary", theme.primary);
       root.style.setProperty("--primary-hover", theme.primaryHover);
+      root.dataset.theme = theme.type === "dark" ? "dark" : "light";
     }
 
     async function saveTheme(themeId) {
@@ -1637,6 +1664,12 @@
       if (savedTheme?.value && THEMES[savedTheme.value]) {
         state.themeId = savedTheme.value;
       }
+
+      const themeObserver = new MutationObserver(() => {
+        if (state.themeId !== "global") return;
+        applyThemeVars();
+      });
+      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
       state.currentView = state.goals.length ?"dashboard" : "onboarding";
       render();
