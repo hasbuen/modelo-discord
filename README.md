@@ -2,8 +2,6 @@
 
 Interface web do ProtoCord, destinada ao apoio operacional de analistas de suporte na criação de protocolos, consulta de histórico, verificação de liberações, transcrição de áudios de atendimento e uso de assistente com inteligência artificial.
 
-![Arquitetura da interface](docs/assets/arquitetura-interface.svg)
-
 ## 1. Finalidade
 
 O projeto entrega uma aplicação estática, executada no navegador, que consome a API do projeto `modelo-discord-server`. A interface não armazena informações sensíveis nem acessa serviços externos diretamente. Todo acesso a banco de dados, provedores de inteligência artificial, arquivos temporários e sistemas integrados ocorre por meio do servidor.
@@ -18,8 +16,6 @@ O projeto entrega uma aplicação estática, executada no navegador, que consome
 - Comparador de textos em `html/comparador-textos.html`.
 - Autenticação por senha validada no servidor com sessão assinada retornada pela API.
 - Configuração da URL da API em tempo de execução, sem necessidade de recompilar o projeto.
-
-![Mapa funcional](docs/assets/mapa-funcional-interface.svg)
 
 ## 3. Tecnologias Utilizadas
 
@@ -156,7 +152,9 @@ Os testes validam configuração em tempo de execução, autenticação, fluxo d
 
 ## 14. Documentação Técnica
 
-Consulte [docs/DOCUMENTACAO_TECNICA.md](docs/DOCUMENTACAO_TECNICA.md) para detalhes de módulos, escopos, variáveis, fluxo de dados e relação com o servidor. Também há uma versão consolidada em PDF: [docs/DOCUMENTACAO_TECNICA_PROTOCORD.pdf](docs/DOCUMENTACAO_TECNICA_PROTOCORD.pdf).
+A documentação oficial, manuais, mapa neural e relatórios ficam exclusivamente no repositório `modelo-discord-server` e são servidos pelo backend por rota autenticada. O frontend mantém apenas a interface de consulta: após autenticação, ele solicita os documentos via `GET /api/autenticacao?doc=<chave>` com token de sessão, sem publicar arquivos locais no GitHub Pages.
+
+Não adicione diretórios `docs/`, PDFs, screenshots de manual ou geradores de documentação neste repositório. A fonte de verdade documental do projeto é o backend.
 ## Plugin Interno Znuny
 
 O ProtoCord inclui o plugin interno `Transporte Znuny`, carregado por `js/protocord-znuny-transport-plugin.js`. Ele adiciona um cog de configuracao dentro da pagina `Transcrever`, salva a configuracao do portal, recebe o pacote do botao `Transportar` e abre a tela de novo ticket com fallback de copia do relatorio em texto/HTML.

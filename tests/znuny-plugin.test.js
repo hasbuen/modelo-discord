@@ -18,8 +18,6 @@ const extensionPopupJs = fs.readFileSync(path.join(extensionRoot, 'popup.js'), '
 const extensionReleasePath = path.join(root, 'plugins', 'releases', 'protocord-znuny-extension-v1.0.0.zip');
 const readmeSource = fs.readFileSync(path.join(root, 'README.md'), 'utf8');
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
-const mapGeneratorSource = fs.readFileSync(path.join(root, 'scripts', 'gerar-mapa-codigo.mjs'), 'utf8');
-const manualGeneratorSource = fs.readFileSync(path.join(root, 'scripts', 'gerar-manual-transcrever-cordia.mjs'), 'utf8');
 
 test('plugin interno de transporte Znuny carrega antes do transcritor', () => {
   const pluginIndex = indexSource.indexOf('js/protocord-znuny-transport-plugin.js');
@@ -150,33 +148,23 @@ test('extensao propria MV3 cobre ProtoCord e Znuny sem Tampermonkey', () => {
   assert.match(extensionPopupJs, /renderConfig/);
 });
 
-test('README referencia assets versionados e existentes', () => {
-  const imageRefs = [...readmeSource.matchAll(/!\[[^\]]+\]\((docs\/assets\/[^)]+)\)/g)]
-    .map((match) => match[1]);
-
-  assert.ok(imageRefs.includes('docs/assets/arquitetura-interface.svg'));
-  assert.ok(imageRefs.includes('docs/assets/mapa-funcional-interface.svg'));
-
-  for (const ref of imageRefs) {
-    const fullPath = path.join(root, ref);
-    assert.ok(fs.existsSync(fullPath), `${ref} nao existe`);
-    assert.ok(fs.statSync(fullPath).size > 500, `${ref} parece vazio`);
-  }
+test('documentacao nao fica publicada no frontend', () => {
+  assert.ok(!fs.existsSync(path.join(root, 'docs')), 'frontend nao deve publicar diretorio docs');
+  assert.ok(!fs.existsSync(path.join(root, 'scripts', 'gerar-mapa-codigo.mjs')), 'gerador de mapa deve ficar fora do frontend publico');
+  assert.ok(!fs.existsSync(path.join(root, 'scripts', 'gerar-manual-usuario.mjs')), 'gerador de manual deve ficar fora do frontend publico');
+  assert.ok(!fs.existsSync(path.join(root, 'scripts', 'gerar-manual-transcrever-cordia.mjs')), 'gerador de manual deve ficar fora do frontend publico');
+  assert.deepEqual(Object.keys(packageJson.scripts).sort(), ['test']);
+  assert.doesNotMatch(readmeSource, /\]\(docs\//);
+  assert.match(readmeSource, /modelo-discord-server/);
+  assert.match(readmeSource, /GET \/api\/autenticacao\?doc=<chave>/);
 });
 
-test('geradores de documentacao conhecem o plugin Znuny', () => {
-  assert.equal(packageJson.scripts['docs:map'], 'node scripts/gerar-mapa-codigo.mjs && node scripts/gerar-mapa-codigo-3d.mjs');
-  assert.equal(packageJson.scripts['docs:manual'], 'node scripts/gerar-manual-usuario.mjs && node scripts/gerar-manual-transcrever-cordia.mjs');
-  assert.equal(packageJson.scripts['docs:update'], 'npm run docs:map && npm run docs:manual');
-
-  assert.match(mapGeneratorSource, /protocord-znuny-transport-plugin\.js/);
-  assert.match(mapGeneratorSource, /Transcrever, CordIA e plugins/);
-  const map3dSource = fs.readFileSync(path.join(root, 'scripts', 'gerar-mapa-codigo-3d.mjs'), 'utf8');
-  assert.match(map3dSource, /Mapa Neural ProtoCord/);
-  assert.match(map3dSource, /builderMode = true/);
-  assert.match(map3dSource, /id="pinnedTray"/);
-  assert.match(map3dSource, /function removeFromMesa\(id/);
-  assert.match(map3dSource, /data-remove-pinned/);
-  assert.match(manualGeneratorSource, /04-plugin-znuny\.png/);
-  assert.match(manualGeneratorSource, /Plugin de transporte Znuny/);
+test('atalho de documentacao consulta apenas o backend autenticado', () => {
+  assert.match(indexSource, /data-doc-key="manual-usuario"/);
+  assert.match(indexSource, /data-doc-key="manual-transcrever-cordia"/);
+  assert.match(indexSource, /data-doc-key="mind-map"/);
+  assert.match(indexSource, /getProtocordApiUrl\(`\/autenticacao\?doc=\$\{encodeURIComponent\(docKey\)\}`\)/);
+  assert.match(indexSource, /Authorization:\s*`Bearer \$\{token\}`/);
+  assert.doesNotMatch(indexSource, /docs\/manual/);
+  assert.doesNotMatch(indexSource, /docs\/code-map/);
 });
