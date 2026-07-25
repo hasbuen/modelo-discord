@@ -8,10 +8,7 @@
 
   const byId = (id) => document.getElementById(id);
 
-<<<<<<< HEAD
-=======
-  // Normaliza, interpreta ou formata dados para uso seguro (normalize).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   const normalize = (value) => {
     if (!value) return "";
     try {
@@ -25,10 +22,7 @@
     }
   };
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de escape html dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   const escapeHtml = (value) =>
     String(value || "")
       .replaceAll("&", "&amp;")
@@ -37,10 +31,7 @@
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#39;");
 
-<<<<<<< HEAD
-=======
-  // Normaliza, interpreta ou formata dados para uso seguro (format date).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   const formatDate = (value) => {
     if (!value) return "";
     const [day, month, year] = String(value).split("/");
@@ -48,10 +39,7 @@
     return `${year}-${month}-${day}`;
   };
 
-<<<<<<< HEAD
-=======
-  // Busca ou resolve informacoes necessarias para o fluxo (fetch json).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function fetchJson(path) {
     const response = await fetch(`${API_BASE}${path}`);
     if (!response.ok) {
@@ -60,10 +48,7 @@
     return response.json();
   }
 
-<<<<<<< HEAD
-=======
-  // Carrega ou restaura dados usados por esta funcionalidade (load rows).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function loadRows() {
     const [protocolos, modulos, liberados] = await Promise.all([
       fetchJson("/protocolos"),
@@ -115,10 +100,7 @@
     return rows;
   }
 
-<<<<<<< HEAD
-=======
-  // Busca ou resolve informacoes necessarias para o fluxo (get filters).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function getFilters() {
     return {
       tipo: byId("relatorio-tipo-select")?.value || "todos",
@@ -129,10 +111,7 @@
     };
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de aggregate dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function aggregate(rows, key) {
     const map = new Map();
     rows.forEach((row) => {
@@ -144,17 +123,8 @@
       .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, "pt-BR"));
   }
 
-<<<<<<< HEAD
-  function applyFilters() {
+function applyFilters() {
     const filters = getFilters();
-
-=======
-  // Aplica valores, estado visual ou configuracoes no fluxo atual (apply filters).
-  function applyFilters() {
-    const filters = getFilters();
-
-    // Explica a responsabilidade de rows dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     let rows = state.rows.filter((row) => {
       if (filters.tipo !== "todos") {
         const wanted = filters.tipo === "erro" ?"erro" : "sugestao";
@@ -186,10 +156,7 @@
     return rows;
   }
 
-<<<<<<< HEAD
-=======
-  // Renderiza a interface ou a parte visual correspondente (render filters).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function renderFilters() {
     const releaseSelect = byId("relatorio-release-select");
     const moduloSelect = byId("reports-modulo-select");
@@ -224,10 +191,7 @@
     moduloSelect.value = modulos.includes(currentModulo) ?currentModulo : "todos";
   }
 
-<<<<<<< HEAD
-=======
-  // Renderiza a interface ou a parte visual correspondente (render kpis).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function renderKpis(rows) {
     const releases = new Set(rows.map((row) => row.release));
     const erros = rows.filter((row) => row.tipoRaw === "0").length;
@@ -253,10 +217,7 @@
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Monta ou cria a estrutura necessaria para esta etapa (build executive narrative).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function buildExecutiveNarrative(rows, topModule, topRelease) {
     const errors = rows.filter((row) => row.tipoRaw === "0").length;
     const suggestions = rows.length - errors;
@@ -268,10 +229,7 @@
     ].join(" ");
   }
 
-<<<<<<< HEAD
-=======
-  // Renderiza a interface ou a parte visual correspondente (render summary).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function renderSummary(rows) {
     const target = byId("reports-summary-grid");
     if (!target) return;
@@ -290,10 +248,7 @@
     const byRelease = aggregate(rows, "release");
     const topModule = byModule[0];
     const topRelease = byRelease[0];
-<<<<<<< HEAD
-=======
-    // Explica a responsabilidade de long desc dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     const longDesc = rows.reduce((acc, row) => {
       return (row.descricao || "").length > (acc.descricao || "").length ?row : acc;
     }, rows[0]);
@@ -318,10 +273,7 @@
     `;
   }
 
-<<<<<<< HEAD
-=======
-  // Renderiza a interface ou a parte visual correspondente (render preview).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function renderPreview(rows) {
     const body = byId("reports-preview-body");
     const count = byId("reports-preview-count");
@@ -356,10 +308,7 @@
     `).join("");
   }
 
-<<<<<<< HEAD
-=======
-  // Renderiza a interface ou a parte visual correspondente (render ranking).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function renderRanking(rows, targetId, key, singular) {
     const target = byId(targetId);
     if (!target) return;
@@ -381,10 +330,7 @@
     `).join("");
   }
 
-<<<<<<< HEAD
-=======
-  // Renderiza a interface ou a parte visual correspondente (render workspace).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function renderWorkspace() {
     const rows = state.filteredRows;
     renderKpis(rows);
@@ -394,10 +340,7 @@
     renderRanking(rows, "reports-release-ranking", "release", "release");
   }
 
-<<<<<<< HEAD
-=======
-  // Prepara a copia, download ou exportacao dos dados (download blob).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function downloadBlob(blob, filename) {
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
@@ -406,10 +349,7 @@
     setTimeout(() => URL.revokeObjectURL(link.href), 500);
   }
 
-<<<<<<< HEAD
-=======
-  // Prepara a copia, download ou exportacao dos dados (export rows as csv).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function exportRowsAsCsv(rows, filename) {
     const header = ["Ticket", "PRT", "Tipo", "Módulo", "Release", "Descrição"];
     const csv = [
@@ -424,10 +364,7 @@
     downloadBlob(new Blob([csv], { type: "text/csv;charset=utf-8;" }), filename);
   }
 
-<<<<<<< HEAD
-=======
-  // Prepara a copia, download ou exportacao dos dados (export matrix csv).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function exportMatrixCsv(rows) {
     const releases = [...new Set(rows.map((row) => row.release))].sort((a, b) =>
       formatDate(b).localeCompare(formatDate(a), "pt-BR")
@@ -454,10 +391,7 @@
     );
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de ensure pdf dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function ensurePdf() {
     if (!window.jspdf?.jsPDF && typeof window.ensureJsPdf === "function") {
       await window.ensureJsPdf();
@@ -468,10 +402,7 @@
     return window.jspdf.jsPDF;
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de draw page label dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function drawPageLabel(doc, pageWidth, pageHeight, pageNumber) {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
@@ -479,10 +410,7 @@
     doc.text(`Página ${pageNumber}`, pageWidth - 82, pageHeight - 18);
   }
 
-<<<<<<< HEAD
-=======
-  // Prepara a copia, download ou exportacao dos dados (export executive pdf).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function exportExecutivePdf() {
     const rows = state.filteredRows;
     if (!rows.length) {
@@ -500,10 +428,7 @@
     let y = 44;
     let pageNumber = 1;
 
-<<<<<<< HEAD
-=======
-    // Explica a responsabilidade de ensure space dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     const ensureSpace = (needed) => {
       if (y + needed <= pageHeight - 34) return;
       drawPageLabel(doc, pageWidth, pageHeight, pageNumber);
@@ -573,10 +498,7 @@
     doc.save(`relatorio_executivo_${new Date().toISOString().slice(0, 10)}.pdf`);
   }
 
-<<<<<<< HEAD
-=======
-  // Prepara a copia, download ou exportacao dos dados (export details pdf).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function exportDetailsPdf() {
     const rows = state.filteredRows;
     if (!rows.length) {
@@ -604,10 +526,7 @@
       descricao: { x: 528, width: pageWidth - 528 - marginRight, title: "Descrição" },
     };
 
-<<<<<<< HEAD
-=======
-    // Explica a responsabilidade de draw header dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     const drawHeader = (title) => {
       doc.setFont("helvetica", "bold");
       doc.setFontSize(15);
@@ -629,10 +548,7 @@
       y = 78;
     };
 
-<<<<<<< HEAD
-=======
-    // Explica a responsabilidade de ensure space dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     const ensureSpace = (needed) => {
       if (y + needed <= pageHeight - bottomMargin) return;
       drawPageLabel(doc, pageWidth, pageHeight, pageNumber);
@@ -686,10 +602,7 @@
     doc.save(`relatorio_detalhado_${new Date().toISOString().slice(0, 10)}.pdf`);
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de bind events dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function bindEvents() {
     byId("reports-refresh-btn")?.addEventListener("click", async () => {
       await refreshReports();
@@ -757,10 +670,7 @@
     });
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de refresh reports dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function refreshReports() {
     try {
       window.showLoader?.("Atualizando base de relatórios...");

@@ -18,19 +18,13 @@ const CORES_GRAFICO = [
 
 let registrosCache = [];
 
-<<<<<<< HEAD
-=======
-// Inicializa os elementos e estados necessarios para esta funcionalidade (inicializar workspace registro).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 async function inicializarWorkspaceRegistro() {
   const registrosPromise = renderizarTabela();
   const modulosPromise = carregarModulos();
 
   const registros = await registrosPromise;
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de modulos dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   const modulos = await modulosPromise.catch((error) => {
     console.warn("Falha ao carregar modulos do workspace:", error);
     return [];
@@ -119,10 +113,7 @@ function alternarTema(tema) {
   }
 }
 
-<<<<<<< HEAD
-=======
-// Carrega ou restaura dados usados por esta funcionalidade (carregar tema preferido).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function carregarTemaPreferido() {
   const temaSalvo = localStorage.getItem('theme');
   const html = document.documentElement;
@@ -147,10 +138,7 @@ function validarURL(url) {
   return /^(http:\/\/|https:\/\/)[\w.-]+\.[a-zA-Z]{2,}(\/.*)?$/.test(url);
 }
 
-<<<<<<< HEAD
-=======
-// Valida uma condicao e retorna o resultado para o fluxo (validar numeros).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function validarNumeros(valor) {
   return /^\d+$/.test(valor);
 }
@@ -174,15 +162,7 @@ function exibirModal(mensagem, prt = "", tipo = "info") {
   lucide.createIcons();
 }
 
-<<<<<<< HEAD
 function fecharModal() { document.getElementById("errorModal").classList.add("hidden"); }
-
-=======
-// Fecha a interface, recurso ou fluxo solicitado (fechar modal).
-function fecharModal() { document.getElementById("errorModal").classList.add("hidden"); }
-
-// Fecha a interface, recurso ou fluxo solicitado (fechar confirm modal).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function fecharConfirmModal() {
   document.getElementById("confirmModal").classList.add("hidden");
 }
@@ -268,10 +248,7 @@ ${paliativoFormatado}
   document.getElementById('output').value = texto;
 }
 
-<<<<<<< HEAD
-=======
-// Persiste dados ou configuracoes desta funcionalidade (salvar registro).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 async function salvarRegistro() {
   const tipo = document.getElementById("tipo").value;
   const modulo = parseInt(document.getElementById("modulo").value);
@@ -299,10 +276,7 @@ async function salvarRegistro() {
   }
 }
 
-<<<<<<< HEAD
-=======
-// Prepara a copia, download ou exportacao dos dados (copiar texto).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function copiarTexto() {
   const texto = document.getElementById('output').value;
   if (!texto.trim()) return exibirModal(MENSAGEM_4, "", "info");
@@ -313,10 +287,7 @@ function copiarTexto() {
     .catch(() => exibirModal(MENSAGEM_6, "", "erro"));
 }
 
-<<<<<<< HEAD
-=======
-// Limpa dados temporarios ou restaura o estado inicial (limpar campos).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function limparCampos() {
   document.getElementById('modulo').value = '';
   document.getElementById('prt').value = '';
@@ -331,10 +302,7 @@ function limparCampos() {
   document.getElementById("tipo").value = '';
 }
 
-<<<<<<< HEAD
-=======
-// Explica a responsabilidade de popular modulos select dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 async function popularModulosSelect(modulosCarregados) {
   const select = document.getElementById('modulo');
   if (!select) return;
@@ -368,10 +336,7 @@ const PAGINACAO_CONFIG = {
   ordemAscendente: true,
 };
 
-<<<<<<< HEAD
-=======
-// Explica a responsabilidade de filtrar tabela dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function filtrarTabela() {
   const termoBusca = document.getElementById("busca").value.toLowerCase().trim();
   
@@ -395,10 +360,7 @@ function filtrarTabela() {
   renderizarPaginaAtual();
 }
 
-<<<<<<< HEAD
-=======
-// Explica a responsabilidade de ordenar tabela dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function ordenarTabela(idx) {
   const { registrosFiltrados, colunaOrdenacao, ordemAscendente } = PAGINACAO_CONFIG;
   
@@ -430,10 +392,7 @@ function ordenarTabela(idx) {
   renderizarPaginaAtual();
 }
 
-<<<<<<< HEAD
-=======
-// Renderiza a interface ou a parte visual correspondente (renderizar pagina atual).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function renderizarPaginaAtual() {
   const tbody = document.querySelector("#tabelaRegistros tbody");
   if (!tbody) return;
@@ -460,10 +419,7 @@ function renderizarPaginaAtual() {
     return;
   }
   
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de esc html dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   const escHTML = (s) => {
     if (!s && s !== 0) return "";
     return String(s)
@@ -539,10 +495,7 @@ function renderizarPaginaAtual() {
   atualizarControlesPaginacao(totalRegistros, totalPaginas, inicio, fim);
 }
 
-<<<<<<< HEAD
-=======
-// Atualiza a tela, o estado interno ou dados derivados (atualizar controles paginacao).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function atualizarControlesPaginacao(totalRegistros, totalPaginas, inicio, fim) {
   const container = document.getElementById("tabela-paginacao");
   const info = document.getElementById("paginacao-info");
@@ -621,10 +574,7 @@ function atualizarControlesPaginacao(totalRegistros, totalPaginas, inicio, fim) 
   }
 }
 
-<<<<<<< HEAD
-=======
-// Explica a responsabilidade de mudar pagina dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function mudarPagina(direcao) {
   const { paginaAtual, registrosFiltrados, registrosPorPagina } = PAGINACAO_CONFIG;
   const totalPaginas = Math.ceil(registrosFiltrados.length / registrosPorPagina);
@@ -637,10 +587,7 @@ function mudarPagina(direcao) {
   }
 }
 
-<<<<<<< HEAD
-=======
-// Explica a responsabilidade de ir para pagina dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function irParaPagina(pagina) {
   const { registrosFiltrados, registrosPorPagina } = PAGINACAO_CONFIG;
   const totalPaginas = Math.ceil(registrosFiltrados.length / registrosPorPagina);
@@ -656,10 +603,7 @@ function irParaPagina(pagina) {
 }
 
 
-<<<<<<< HEAD
-=======
-// Explica a responsabilidade de mostrar modal paliativo dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function mostrarModalPaliativo(paliativo) {
   const modal = document.getElementById("errorModal");
   const modalIcon = document.getElementById("modalIcon");
@@ -672,10 +616,7 @@ function mostrarModalPaliativo(paliativo) {
 
 
 
-<<<<<<< HEAD
-=======
-// Prepara a copia, download ou exportacao dos dados (copiar linha).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function copiarLinha(botao, reg) {
   let objetoJson;
 
@@ -835,10 +776,7 @@ ${paliativo}
     })
     .catch(() => exibirModal("Erro ao copiar o paliativo.", "", "erro"));
 }
-<<<<<<< HEAD
-=======
-// Abre a interface, recurso ou fluxo solicitado (abrir modal exclusao).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 async function abrirModalExclusao(id, ticket) {
   const modal = document.getElementById("confirmModal");
   const confirmBtn = document.getElementById("confirmBtn");
@@ -882,10 +820,7 @@ async function atualizarContadoresDosCards(registros) {
   sugestaoEl.textContent = totalSugestoes;
 }
 
-<<<<<<< HEAD
-=======
-// Carrega ou restaura dados usados por esta funcionalidade (carregar modulos).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 async function carregarModulos() {
   try {
     const res = await fetch(window.getProtocordApiUrl("/modulos"));
@@ -895,10 +830,7 @@ async function carregarModulos() {
   }
 }
 
-<<<<<<< HEAD
-=======
-// Monta ou cria a estrutura necessaria para esta etapa (montar grafico modulos).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function montarGraficoModulos(registros, modulos) {
   const contagem = {};
   registros.forEach(r => {
@@ -969,10 +901,7 @@ function montarGraficoModulos(registros, modulos) {
   criarLegendaModulos(window.graficoModulos);
 }
 
-<<<<<<< HEAD
-=======
-// Monta ou cria a estrutura necessaria para esta etapa (criar legenda modulos).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function criarLegendaModulos(chart) {
   const legendaContainer = document.getElementById('legenda-modulos');
   if (!legendaContainer || !chart) return;
@@ -1037,10 +966,7 @@ function criarLegendaModulos(chart) {
   });
 }
 
-<<<<<<< HEAD
-=======
-// Renderiza a interface ou a parte visual correspondente (renderizar tabela).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 async function renderizarTabela() {
   const tbody = document.querySelector("#tabelaRegistros tbody");
   if (!tbody) return [];
@@ -1110,10 +1036,7 @@ async function renderizarTabela() {
 
 window.renderizarTabela = renderizarTabela;
 
-<<<<<<< HEAD
-=======
-// Explica a responsabilidade de enviar pergunta dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 async function enviarPergunta() {
   const input = document.getElementById("chat-input");
   const pergunta = input.value.trim();
@@ -1197,10 +1120,7 @@ function exibirMensagem(remetente, texto) {
   chat.scrollTop = chat.scrollHeight;
 }
 
-<<<<<<< HEAD
-=======
-// Carrega ou restaura dados usados por esta funcionalidade (carregar template protocolo).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function carregarTemplateProtocolo(tipo) {
   const templateArea = document.getElementById("descricao-protocolar");
   const btnErro = document.getElementById("btn-erro-template");
@@ -1253,10 +1173,7 @@ function carregarTemplateProtocolo(tipo) {
   templateArea.value = template.trim();
 }
 
-<<<<<<< HEAD
-=======
-// Prepara a copia, download ou exportacao dos dados (copiar tramite).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function copiarTramite() {
   const texto = document.getElementById('descricao-protocolar').value;
   if (!texto.trim()) return exibirModal(MENSAGEM_4, "", "info");
@@ -1269,10 +1186,7 @@ function copiarTramite() {
     .catch(() => exibirModal(MENSAGEM_6, "", "erro"));
 }
 
-<<<<<<< HEAD
-=======
-// Limpa dados temporarios ou restaura o estado inicial (limpar tramite).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function limparTramite() {
   const templateArea = document.getElementById("descricao-protocolar");
   templateArea.value = "";
@@ -1292,14 +1206,7 @@ window.initWorkspaceRegistroPage = async function initWorkspaceRegistroPage() {
   }
 };
 
-<<<<<<< HEAD
-=======
-window.carregarHistorico = async function carregarHistorico() {
-  if (typeof window.hasActiveAuthSession === "function" && !window.hasActiveAuthSession()) return [];
-  return renderizarTabela();
-};
 
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 window.addEventListener('DOMContentLoaded', () => {
   const paginaHome = document.getElementById('pagina-home');
   if (paginaHome && !paginaHome.classList.contains('hidden')) {

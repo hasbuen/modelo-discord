@@ -7,10 +7,7 @@ function normalize(text) {
     .toLowerCase();
 }
 
-<<<<<<< HEAD
-=======
-// Carrega ou restaura dados usados por esta funcionalidade (load model and data).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 async function loadModelAndData() {
   try {
     statusEl.textContent = "Iniciando a inteligência...";
@@ -44,10 +41,7 @@ async function loadModelAndData() {
   }
 }
 
-<<<<<<< HEAD
-=======
-// Busca ou resolve informacoes necessarias para o fluxo (fetch and index protocols).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 async function fetchAndIndexProtocols() {
   try {
     const res = await fetch(`${API_SERVER}/api/protocolos`);
@@ -59,10 +53,7 @@ async function fetchAndIndexProtocols() {
       return;
     }
 
-<<<<<<< HEAD
-=======
-    // Explica a responsabilidade de docs dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     const docs = protocolos.map(p =>
       protocoloFieldsToIndex.map(f => (p?.[f] || "")).filter(Boolean).join(" • ")
     );

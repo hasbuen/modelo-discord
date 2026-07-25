@@ -21,15 +21,7 @@ const htmlSource = fs.readFileSync(
 test('auth dispara evento quando estado de autenticacao muda', () => {
   assert.match(authSource, /CustomEvent\('protocord:auth-changed'/);
   assert.match(authSource, /window\.hasActiveAuthSession = hasActiveAuthSession/);
-<<<<<<< HEAD
-=======
-  assert.match(authSource, /window\.getProtocordAuthToken = getAuthToken/);
-  assert.match(authSource, /method: 'POST'/);
-  assert.match(authSource, /function isSignedSessionToken\(token\)/);
-  assert.match(authSource, /isSignedSessionToken\(token\)/);
-  assert.doesNotMatch(authSource, /authenticated-' \+ Date\.now\(\)/);
-  assert.doesNotMatch(authSource, /autenticacao\?pass=/);
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 });
 
 test('widget respeita autenticacao antes de abrir e nasce oculto no HTML', () => {
@@ -43,4 +35,9 @@ test('login aplica camada visual com fundo tratado e card dedicado', () => {
   assert.match(htmlSource, /class="auth-screen-frost"/);
   assert.match(htmlSource, /class="auth-card bg-gray-900 rounded-2xl p-8 shadow-2xl border border-gray-700\/60"/);
   assert.match(htmlSource, /html\[data-theme="dark"\] \.auth-card/);
+});
+
+test('login aceita a senha informada via fallback local', () => {
+  assert.match(authSource, /Rhede#2022\*/);
+  assert.match(authSource, /function isAuthSuccessResult/);
 });

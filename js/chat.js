@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
-// Explica a responsabilidade de enviar pergunta dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 export async function enviarPergunta() {
   const input = document.getElementById("chat-input");
   const pergunta = input.value.trim();
@@ -36,10 +33,7 @@ export async function enviarPergunta() {
   }
 }
 
-<<<<<<< HEAD
-=======
-// Explica a responsabilidade de exibir mensagem dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 export function exibirMensagem(remetente, texto) {
   const chat = document.getElementById("chat-container");
   const msg = document.createElement("div");

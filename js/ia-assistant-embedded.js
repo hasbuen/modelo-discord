@@ -1,21 +1,7 @@
 (function () {
   const STORAGE_PREFIX = "protocord_embed_chat_";
   const EMBED_INSTANCES = {};
-<<<<<<< HEAD
-  const ZNUNY_ATTENDANT_PORTAL_URL = "https://rhede.serviceup.app/portal/index.html";
-
-=======
-  // Busca ou resolve informacoes necessarias para o fluxo (get znuny attendant portal url).
-  function getZnunyAttendantPortalUrl() {
-    return String(
-      window.PROTOCORD_RUNTIME_CONFIG?.ZNUNY_ATTENDANT_PORTAL_URL ||
-      localStorage.getItem("PROTOCORD_ZNUNY_ATTENDANT_PORTAL_URL") ||
-      ""
-    ).trim();
-  }
-
-  // Busca ou resolve informacoes necessarias para o fluxo (get api base url safe).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+const ZNUNY_ATTENDANT_PORTAL_URL = "https://rhede.serviceup.app/portal/index.html";
   function getApiBaseUrlSafe() {
     try {
       if (typeof window.getProtocordApiBaseUrl === "function") {
@@ -25,10 +11,7 @@
     return "";
   }
 
-<<<<<<< HEAD
-=======
-  // Monta ou cria a estrutura necessaria para esta etapa (create embed instance).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function createEmbedInstance(containerId, pageContext) {
     if (EMBED_INSTANCES[containerId]) return EMBED_INSTANCES[containerId];
 
@@ -48,10 +31,7 @@
 
     const STORAGE_KEY = STORAGE_PREFIX + containerId;
 
-<<<<<<< HEAD
-=======
-    // Carrega ou restaura dados usados por esta funcionalidade (load state).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     function loadState() {
       try {
         const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
@@ -62,10 +42,7 @@
       }
     }
 
-<<<<<<< HEAD
-=======
-    // Persiste dados ou configuracoes desta funcionalidade (save state).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     function saveState() {
       localStorage.setItem(
         STORAGE_KEY,
@@ -76,10 +53,7 @@
       );
     }
 
-<<<<<<< HEAD
-=======
-    // Explica a responsabilidade de escape html dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     function escapeHtml(value) {
       return String(value || "")
         .replace(/&/g, "&amp;")
@@ -89,26 +63,17 @@
         .replace(/'/g, "&#39;");
     }
 
-<<<<<<< HEAD
-=======
-    // Normaliza, interpreta ou formata dados para uso seguro (format message).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     function formatMessage(value) {
       return escapeHtml(value).replace(/\n/g, "<br>");
     }
 
-<<<<<<< HEAD
-=======
-    // Valida uma condicao e retorna o resultado para o fluxo (is znuny auth failure message).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     function isZnunyAuthFailureMessage(value) {
       return /autentica..o autom..tica falhou/i.test(String(value || "")) && /znuny/i.test(String(value || ""));
     }
 
-<<<<<<< HEAD
-=======
-    // Renderiza a interface ou a parte visual correspondente (render message content).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     function renderMessageContent(message) {
       const content = String(message?.content || "");
       const normalizedContent = isZnunyAuthFailureMessage(content)
@@ -130,10 +95,7 @@
       `;
     }
 
-<<<<<<< HEAD
-=======
-    // Busca ou resolve informacoes necessarias para o fluxo (get history for request).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     function getHistoryForRequest() {
       return instance.messages
         .slice(0, -1)
@@ -146,18 +108,12 @@
         });
     }
 
-<<<<<<< HEAD
-=======
-    // Busca ou resolve informacoes necessarias para o fluxo (get context hint).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     function getContextHint() {
       return instance.context || "Contexto geral do ProtoCord";
     }
 
-<<<<<<< HEAD
-=======
-    // Renderiza a interface ou a parte visual correspondente (render).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     function render() {
       const messagesContainer = container.querySelector(".embed-chat-messages");
       if (!messagesContainer) return;
@@ -194,10 +150,7 @@
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
-<<<<<<< HEAD
-=======
-    // Alterna o estado desta funcionalidade (toggle collapse).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     function toggleCollapse() {
       instance.collapsed = !instance.collapsed;
       const panel = container.querySelector(".embed-chat-panel");
@@ -218,20 +171,14 @@
       saveState();
     }
 
-<<<<<<< HEAD
-=======
-    // Limpa dados temporarios ou restaura o estado inicial (clear messages).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     function clearMessages() {
       instance.messages = [];
       saveState();
       render();
     }
 
-<<<<<<< HEAD
-=======
-    // Explica a responsabilidade de submit message dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     async function submitMessage() {
       const input = container.querySelector(".embed-chat-input");
       const sendBtn = container.querySelector(".embed-chat-send-btn");
@@ -301,10 +248,7 @@
       }
     }
 
-<<<<<<< HEAD
-=======
-    // Explica a responsabilidade de auto resize textarea dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     function autoResizeTextarea() {
       const input = container.querySelector(".embed-chat-input");
       if (!input) return;
@@ -312,10 +256,7 @@
       input.style.height = Math.min(Math.max(44, input.scrollHeight), 120) + "px";
     }
 
-<<<<<<< HEAD
-=======
-    // Explica a responsabilidade de inject styles dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     function injectStyles() {
       if (document.getElementById("embed-chat-styles")) return;
 
@@ -664,10 +605,7 @@
       document.head.appendChild(style);
     }
 
-<<<<<<< HEAD
-=======
-    // Renderiza a interface ou a parte visual correspondente (render shell).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     function renderShell() {
       injectStyles();
 
@@ -740,14 +678,7 @@
         if (!trigger) return;
 
         event.preventDefault();
-<<<<<<< HEAD
-        window.open(ZNUNY_ATTENDANT_PORTAL_URL, "_blank", "noopener,noreferrer");
-=======
-        const portalUrl = getZnunyAttendantPortalUrl();
-        if (portalUrl) {
-          window.open(portalUrl, "_blank", "noopener,noreferrer");
-        }
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+window.open(ZNUNY_ATTENDANT_PORTAL_URL, "_blank", "noopener,noreferrer");
       });
 
       loadState();

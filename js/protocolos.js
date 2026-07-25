@@ -5,10 +5,7 @@
 
 let protocolosCache = {};
 
-<<<<<<< HEAD
-=======
-// Carrega ou restaura dados usados por esta funcionalidade (carregar protocolos).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 async function carregarProtocolos() {
   try {
     const response = await fetch(window.getProtocordApiUrl("/protocolos"));
@@ -33,10 +30,7 @@ async function carregarProtocolos() {
   }
 }
 
-<<<<<<< HEAD
-=======
-// Monta ou cria a estrutura necessaria para esta etapa (criar indice protocolos).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 async function criarIndiceProtocolos(protocolos) {
   window.protocolosIndex = {};
 
@@ -58,11 +52,7 @@ async function criarIndiceProtocolos(protocolos) {
   protocolos.forEach((item) => {
     const moduloId = String(item.modulo || "");
     window.protocolosIndex[item.prt] = {
-<<<<<<< HEAD
-      modulo: moduloMap[moduloId] || item.modulo || "Desconhecido",
-=======
-      modulo: String(moduloMap[moduloId] || item.modulo || "Desconhecido"),
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+modulo: moduloMap[moduloId] || item.modulo || "Desconhecido",
       tipo: item.tipo,
       descricao: item.descricao,
       ticket: item.ticket || "",
@@ -71,23 +61,13 @@ async function criarIndiceProtocolos(protocolos) {
   });
 }
 
-<<<<<<< HEAD
-=======
-// Renderiza a interface ou a parte visual correspondente (renderizar filtro modulos).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function renderizarFiltroModulos() {
   const container = document.getElementById("filtro-modulos");
   if (!container || !window.protocolosIndex) return;
 
   container.innerHTML = "";
-<<<<<<< HEAD
-  const modulos = new Set(Object.values(window.protocolosIndex).map((item) => item.modulo));
-
-=======
-  const modulos = new Set(Object.values(window.protocolosIndex).map((item) => String(item.modulo || "Desconhecido")));
-
-  // Monta ou cria a estrutura necessaria para esta etapa (criar chip).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+const modulos = new Set(Object.values(window.protocolosIndex).map((item) => item.modulo));
   const criarChip = (label, ativo) => {
     const safeLabel = String(label).replace(/'/g, "\\'");
     return `
@@ -102,32 +82,18 @@ function renderizarFiltroModulos() {
   };
 
   container.innerHTML += criarChip("TODOS", window.moduloSelecionado === "TODOS");
-<<<<<<< HEAD
-  [...modulos].sort((a, b) => a.localeCompare(b, "pt-BR")).forEach((modulo) => {
-=======
-  [...modulos].sort((a, b) => String(a).localeCompare(String(b), "pt-BR")).forEach((modulo) => {
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+[...modulos].sort((a, b) => a.localeCompare(b, "pt-BR")).forEach((modulo) => {
     container.innerHTML += criarChip(modulo, window.moduloSelecionado === modulo);
   });
 }
 
-<<<<<<< HEAD
 function selecionarModulo(modulo) {
   window.moduloSelecionado = modulo;
-=======
-// Explica a responsabilidade de selecionar modulo dentro deste modulo.
-function selecionarModulo(modulo, options = {}) {
-  window.moduloSelecionado = modulo;
-  window.__kpiModuleFilterSource = modulo !== "TODOS" && options?.source === "ranking" ? "ranking" : "";
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   aplicarFiltroModulo();
   renderizarFiltroModulos();
 }
 
-<<<<<<< HEAD
-=======
-// Aplica valores, estado visual ou configuracoes no fluxo atual (aplicar filtro modulo).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function aplicarFiltroModulo() {
   if (window.moduloSelecionado === "TODOS") {
     if (typeof renderizarTabelaLiberacoes === "function") {
@@ -138,10 +104,7 @@ function aplicarFiltroModulo() {
 
   const filtradas = (window.liberacoesOriginais || [])
     .map((release) => {
-<<<<<<< HEAD
-=======
-      // Explica a responsabilidade de protocolos filtrados dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
       const protocolosFiltrados = release.protocolos.filter((prt) => {
         return window.protocolosIndex?.[prt]?.modulo === window.moduloSelecionado;
       });
@@ -158,67 +121,19 @@ function aplicarFiltroModulo() {
   }
 }
 
-<<<<<<< HEAD
 function obterProtocolo(prt) {
   return protocolosCache[prt] || null;
 }
-
-=======
-// Busca ou resolve informacoes necessarias para o fluxo (obter protocolo).
-function obterProtocolo(prt) {
-  const cached = protocolosCache[prt];
-  if (cached) return cached;
-
-  const indexed = window.protocolosIndex?.[prt];
-  if (!indexed) return null;
-
-  return {
-    prt,
-    ticket: indexed.ticket || "",
-    tipo: indexed.tipo ?? "1",
-    modulo: indexed.modulo || "",
-    descricao: indexed.descricao || "",
-    paliativo: indexed.paliativo || "",
-    link: indexed.link || "",
-  };
-}
-
-// Busca ou resolve informacoes necessarias para o fluxo (get tipo label).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function getTipoLabel(tipo) {
   return String(tipo) === "0" ?"Erro" : "Sugestão";
 }
 
-<<<<<<< HEAD
-=======
-// Busca ou resolve informacoes necessarias para o fluxo (get cor tipo).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function getCorTipo(tipo) {
   return String(tipo) === "0" ?"red" : "green";
 }
 
-<<<<<<< HEAD
-=======
-// Explica a responsabilidade de escape html dentro deste modulo.
-function escapeHtml(value) {
-  return String(value || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
 
-// Normaliza, interpreta ou formata dados para uso seguro (normalize prt).
-function normalizePrt(value) {
-  const raw = String(value || "").trim();
-  if (!raw) return "";
-  const number = raw.match(/\d{3,}/)?.[0];
-  return number ?`#PRT${number}` : raw;
-}
-
-// Monta ou cria a estrutura necessaria para esta etapa (criar badge protocolo).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function criarBadgeProtocolo(prt) {
   const protocolo = obterProtocolo(prt);
   const tipo = protocolo?.tipo || "1";
@@ -240,10 +155,7 @@ function criarBadgeProtocolo(prt) {
   `;
 }
 
-<<<<<<< HEAD
-=======
-// Abre a interface, recurso ou fluxo solicitado (abrir modal protocolo).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function abrirModalProtocolo(prt) {
   const protocolo = obterProtocolo(prt);
   if (!protocolo) return;
@@ -357,18 +269,12 @@ function abrirModalProtocolo(prt) {
   document.body.insertAdjacentHTML("beforeend", modalHTML);
 }
 
-<<<<<<< HEAD
-=======
-// Fecha a interface, recurso ou fluxo solicitado (fechar modal protocolo).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function fecharModalProtocolo() {
   document.getElementById("modal-protocolo-overlay")?.remove();
 }
 
-<<<<<<< HEAD
-=======
-// Inicializa os elementos e estados necessarios para esta funcionalidade (inicializar clicks protocolos).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function inicializarClicksProtocolos() {
   if (window.__protocolosClicksInitialized) return;
   window.__protocolosClicksInitialized = true;
@@ -392,46 +298,25 @@ function inicializarClicksProtocolos() {
   });
 }
 
-<<<<<<< HEAD
 function criarBadgeProtocolo(prt) {
   const protocolo = obterProtocolo(prt);
   const tipo = protocolo?.tipo || "1";
   const tipoLabel = getTipoLabel(tipo);
   const variant = String(tipo) === "0" ?"error" : "success";
-=======
-// Monta ou cria a estrutura necessaria para esta etapa (criar badge protocolo).
-function criarBadgeProtocolo(prt) {
-  const normalizedPrt = normalizePrt(prt);
-  const protocolo = obterProtocolo(normalizedPrt);
-  const tipo = protocolo?.tipo || "1";
-  const tipoLabel = getTipoLabel(tipo);
-  const variant = String(tipo) === "0" ?"error" : "success";
-  const hasDetails = Boolean(protocolo);
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 
   return `
     <button
       type="button"
-<<<<<<< HEAD
-      class="kpi-protocol-badge kpi-protocol-badge-${variant} badge-protocolo"
+class="kpi-protocol-badge kpi-protocol-badge-${variant} badge-protocolo"
       data-prt="${prt}"
       title="Clique para ver detalhes - ${tipoLabel}"
     >
       <span class="kpi-protocol-badge-label">${prt}</span>
       <span class="kpi-protocol-badge-meta">${tipoLabel}</span>
-=======
-      class="kpi-protocol-badge kpi-protocol-badge-${variant}${hasDetails ? "" : " kpi-protocol-badge-muted"} badge-protocolo"
-      data-prt="${escapeHtml(normalizedPrt)}"
-      title="${hasDetails ? `Clique para ver detalhes - ${tipoLabel}` : "Registro ainda sem detalhes carregados"}"
-    >
-      <span class="kpi-protocol-badge-label">${escapeHtml(normalizedPrt)}</span>
-      <span class="kpi-protocol-badge-meta">${escapeHtml(tipoLabel)}</span>
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     </button>
   `;
 }
 
-<<<<<<< HEAD
 function abrirModalProtocolo(prt) {
   const protocolo = obterProtocolo(prt);
   if (!protocolo) return;
@@ -439,24 +324,6 @@ function abrirModalProtocolo(prt) {
   const tipo = getTipoLabel(protocolo.tipo);
   const variant = String(protocolo.tipo) === "0" ?"error" : "success";
   const modulo = protocolo.modulo || window.protocolosIndex?.[prt]?.modulo || "Módulo não informado";
-=======
-// Abre a interface, recurso ou fluxo solicitado (abrir modal protocolo).
-function abrirModalProtocolo(prt) {
-  const normalizedPrt = normalizePrt(prt);
-  const protocolo = obterProtocolo(normalizedPrt) || {
-    prt: normalizedPrt,
-    ticket: "",
-    tipo: "1",
-    modulo: "",
-    descricao: "Os detalhes deste protocolo ainda não foram carregados. Atualize a tabela ou consulte o histórico para sincronizar os dados.",
-    paliativo: "Nenhum paliativo informado até o momento.",
-    link: "",
-  };
-
-  const tipo = getTipoLabel(protocolo.tipo);
-  const variant = String(protocolo.tipo) === "0" ?"error" : "success";
-  const modulo = protocolo.modulo || window.protocolosIndex?.[normalizedPrt]?.modulo || "Módulo não informado";
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   const ticket = protocolo.ticket || "Sem ticket vinculado";
   const descricao = protocolo.descricao || "Sem descrição operacional registrada.";
   const paliativo = protocolo.paliativo || "Nenhum paliativo informado até o momento.";
@@ -467,13 +334,8 @@ function abrirModalProtocolo(prt) {
         <div class="protocol-modal-header">
           <div class="protocol-modal-heading">
             <span class="protocol-modal-eyebrow">Protocolo selecionado</span>
-<<<<<<< HEAD
-            <h2 id="protocol-modal-title">${protocolo.prt}</h2>
+<h2 id="protocol-modal-title">${protocolo.prt}</h2>
             <p>${ticket}</p>
-=======
-            <h2 id="protocol-modal-title">${escapeHtml(protocolo.prt)}</h2>
-            <p>${escapeHtml(ticket)}</p>
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
           </div>
           <button
             type="button"
@@ -485,8 +347,7 @@ function abrirModalProtocolo(prt) {
           </button>
         </div>
 
-<<<<<<< HEAD
-        <div class="protocol-modal-meta">
+<div class="protocol-modal-meta">
           <span class="protocol-modal-pill protocol-modal-pill-${variant}">${tipo}</span>
           <span class="protocol-modal-pill">${modulo}</span>
           <span class="protocol-modal-pill">PRT ${protocolo.prt}</span>
@@ -542,66 +403,6 @@ function abrirModalProtocolo(prt) {
           `
               : ""
           }
-=======
-        <div class="protocol-modal-body">
-          <div class="protocol-modal-meta">
-            <span class="protocol-modal-pill protocol-modal-pill-${variant}">${escapeHtml(tipo)}</span>
-            <span class="protocol-modal-pill">${escapeHtml(modulo)}</span>
-            <span class="protocol-modal-pill">${escapeHtml(protocolo.prt)}</span>
-          </div>
-
-          <div class="protocol-modal-grid">
-            <section class="protocol-modal-section">
-              <span class="protocol-modal-section-label">Descrição</span>
-              <p>${escapeHtml(descricao)}</p>
-            </section>
-            <section class="protocol-modal-section">
-              <span class="protocol-modal-section-label">Paliativo</span>
-              <p>${escapeHtml(paliativo)}</p>
-            </section>
-          </div>
-
-          ${
-            protocolo.link
-              ?`
-            <div class="protocol-modal-link-wrap">
-              <a
-                href="${escapeHtml(protocolo.link)}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="protocol-modal-link"
-              >
-                Abrir ticket relacionado
-              </a>
-            </div>
-          `
-              : ""
-          }
-
-          <div class="protocol-modal-actions">
-            <button
-              type="button"
-              onclick="fecharModalProtocolo()"
-              class="protocol-modal-btn protocol-modal-btn-secondary"
-            >
-              Fechar
-            </button>
-            ${
-              protocolo.link
-                ?`
-              <a
-                href="${escapeHtml(protocolo.link)}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="protocol-modal-btn protocol-modal-btn-primary"
-              >
-                Ver ticket
-              </a>
-            `
-                : ""
-            }
-          </div>
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         </div>
       </div>
     </div>
@@ -610,10 +411,7 @@ function abrirModalProtocolo(prt) {
   document.getElementById("modal-protocolo-overlay")?.remove();
   document.body.insertAdjacentHTML("beforeend", modalHTML);
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 window.obterProtocolo = obterProtocolo;
 window.abrirModalProtocolo = abrirModalProtocolo;
 window.fecharModalProtocolo = fecharModalProtocolo;

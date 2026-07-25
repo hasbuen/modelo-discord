@@ -66,10 +66,7 @@ function getStatusIconHTML(status) {
     return `<i data-lucide="${iconName}" class="w-5 h-5 ${colorClass}"></i>`;
 }
 
-<<<<<<< HEAD
-=======
-// Busca ou resolve informacoes necessarias para o fluxo (get status badge html).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function getStatusBadgeHTML(status) {
     const styles = {
         online: 'bg-green-700 text-white',
@@ -89,10 +86,7 @@ function getStatusBadgeHTML(status) {
     `;
 }
 
-<<<<<<< HEAD
-=======
-// Busca ou resolve informacoes necessarias para o fluxo (get overall status).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function getOverallStatus(services) {
     if (services.length === 0) return { status: 'unknown', count: 0, total: 0 };
 
@@ -159,10 +153,7 @@ function renderTableView(mockData) {
     }).join('');
 }
 
-<<<<<<< HEAD
-=======
-// Renderiza a interface ou a parte visual correspondente (render cards view).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function renderCardsView(mockData) {
     const cardsContainer = document.getElementById('sefaz-view-cards');
     if (!cardsContainer) return;
@@ -405,13 +396,7 @@ window.fetchStatus = async function () {
 
     await new Promise(resolve => setTimeout(resolve, 200));
 
-<<<<<<< HEAD
-    const mockData = ESTADOS.map(estado => {
-=======
-    // Explica a responsabilidade de mock data dentro deste modulo.
-    const mockData = ESTADOS.map(estado => {
-        // Explica a responsabilidade de generate status dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+const mockData = ESTADOS.map(estado => {
         const generateStatus = () => {
             const r = Math.random();
             if (r > 0.15) return 'online';
@@ -462,13 +447,7 @@ window.fetchStatus = async function () {
     }
 };
 
-<<<<<<< HEAD
 function setupAutoRefresh() {
-=======
-// Aplica valores, estado visual ou configuracoes no fluxo atual (setup auto refresh).
-function setupAutoRefresh() {
-    // Explica a responsabilidade de start interval dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     const startInterval = () => {
         if (autoRefreshInterval) clearInterval(autoRefreshInterval);
         // Intervalo principal de 30 segundos
@@ -528,20 +507,14 @@ window.salvarUfFavorita = function (uf) {
     }
 };
 
-<<<<<<< HEAD
-=======
-// Explica a responsabilidade de start favorito monitor dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function startFavoritoMonitor() {
     stopFavoritoMonitor();
     window.fetchStatusFavorito();
     favoritoRefreshInterval = setInterval(window.fetchStatusFavorito, 1000); // 1 segundo
 }
 
-<<<<<<< HEAD
-=======
-// Explica a responsabilidade de stop favorito monitor dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function stopFavoritoMonitor() {
     if (favoritoRefreshInterval) {
         clearInterval(favoritoRefreshInterval);
@@ -557,10 +530,7 @@ window.fetchStatusFavorito = function () {
         return;
     }
 
-<<<<<<< HEAD
-=======
-    // Explica a responsabilidade de generate quick status dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     const generateQuickStatus = () => {
         const r = Math.random();
         if (r > 0.1) return 'online';
@@ -588,10 +558,7 @@ window.fetchStatusFavorito = function () {
 
 };
 
-<<<<<<< HEAD
-=======
-// Atualiza a tela, o estado interno ou dados derivados (update favorito display).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function updateFavoritoDisplay(data) {
     const nomeEl = document.getElementById('favorito-uf-nome');
     const autIconEl = document.getElementById('favorito-aut-icon');
@@ -619,10 +586,7 @@ function updateFavoritoDisplay(data) {
     }
 }
 
-<<<<<<< HEAD
-=======
-// Inicializa os elementos e estados necessarios para esta funcionalidade (init sefaz monitor).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 function initSefazMonitor() {
     initializeTempoMedioChart();
     loadUfFavorita();

@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
-// Explica a responsabilidade de send message dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 async function sendMessage() {
   const input = inputEl.value.trim();
   if (!input) return;

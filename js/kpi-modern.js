@@ -1,18 +1,12 @@
 (function () {
   const API_BASE = window.getProtocordApiBaseUrl();
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de by id dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function byId(id) {
     return document.getElementById(id);
   }
 
-<<<<<<< HEAD
-=======
-  // Normaliza, interpreta ou formata dados para uso seguro (parse release date).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function parseReleaseDate(value) {
     if (!value || typeof value !== "string") return null;
     const parts = value.split("/");
@@ -22,10 +16,7 @@
     return new Date(year, month - 1, day);
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de sort releases desc dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function sortReleasesDesc(items) {
     return [...items].sort((a, b) => {
       const dateA = parseReleaseDate(a.release);
@@ -34,19 +25,13 @@
     });
   }
 
-<<<<<<< HEAD
-=======
-  // Normaliza, interpreta ou formata dados para uso seguro (format percent).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function formatPercent(value) {
     if (!Number.isFinite(value)) return "0%";
     return `${value.toFixed(1).replace(".", ",")}%`;
   }
 
-<<<<<<< HEAD
-=======
-  // Aplica valores, estado visual ou configuracoes no fluxo atual (set text).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function setText(id, value) {
     const el = byId(id);
     if (el) {
@@ -57,10 +42,7 @@
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de escape html dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function escapeHtml(value) {
     return String(value || "")
       .replace(/&/g, "&amp;")
@@ -70,10 +52,7 @@
       .replace(/'/g, "&#39;");
   }
 
-<<<<<<< HEAD
-=======
-  // Normaliza, interpreta ou formata dados para uso seguro (format bytes).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function formatBytes(value) {
     const units = ["B", "KB", "MB", "GB", "TB"];
     let size = Number(value) || 0;
@@ -85,18 +64,12 @@
     return `${size.toFixed(size >= 100 || unitIndex === 0 ? 0 : 1).replace(".", ",")} ${units[unitIndex]}`;
   }
 
-<<<<<<< HEAD
-=======
-  // Normaliza, interpreta ou formata dados para uso seguro (format count).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function formatCount(value) {
     return new Intl.NumberFormat("pt-BR").format(Number(value) || 0);
   }
 
-<<<<<<< HEAD
-=======
-  // Busca ou resolve informacoes necessarias para o fluxo (fetch json).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function fetchJson(path) {
     const response = await fetch(`${API_BASE}/${path}`);
     if (!response.ok) {
@@ -105,10 +78,7 @@
     return response.json();
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de ensure protocols dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function ensureProtocols() {
     if (window.protocolosIndex && Object.keys(window.protocolosIndex).length) {
       return window.protocolosIndex;
@@ -146,10 +116,7 @@
     return window.protocolosIndex;
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de ensure releases dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function ensureReleases() {
     if (Array.isArray(window.liberacoesOriginais) && window.liberacoesOriginais.length) {
       return sortReleasesDesc(window.liberacoesOriginais);
@@ -169,10 +136,7 @@
     return sortReleasesDesc(window.liberacoesOriginais);
   }
 
-<<<<<<< HEAD
-=======
-  // Monta ou cria a estrutura necessaria para esta etapa (build dataset).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function buildDataset(protocolIndex, releases) {
     const allProtocols = Object.entries(protocolIndex || {}).map(([prt, info]) => ({
       prt,
@@ -204,62 +168,7 @@
     return { allProtocols, releasedDetails, releasedSet };
   }
 
-<<<<<<< HEAD
-=======
-  // Busca ou resolve informacoes necessarias para o fluxo (get active kpi filters).
-  function getActiveKpiFilters() {
-    const module = window.moduloSelecionado && window.moduloSelecionado !== "TODOS"
-      ? String(window.moduloSelecionado)
-      : "";
-    const search = String(window.termoBusca || "").trim().toLowerCase();
-    return { module, search };
-  }
 
-  // Explica a responsabilidade de protocol matches filters dentro deste modulo.
-  function protocolMatchesFilters(prt, info, filters) {
-    if (filters.module && info?.modulo !== filters.module) {
-      return false;
-    }
-
-    if (!filters.search) {
-      return true;
-    }
-
-    return (
-      String(prt || "").toLowerCase().includes(filters.search) ||
-      String(info?.modulo || "").toLowerCase().includes(filters.search) ||
-      String(info?.descricao || "").toLowerCase().includes(filters.search) ||
-      String(info?.ticket || "").toLowerCase().includes(filters.search)
-    );
-  }
-
-  // Aplica valores, estado visual ou configuracoes no fluxo atual (apply kpi filters).
-  function applyKpiFilters(protocolIndex, releases) {
-    const filters = getActiveKpiFilters();
-    const filteredProtocolIndex = {};
-
-    Object.entries(protocolIndex || {}).forEach(([prt, info]) => {
-      if (protocolMatchesFilters(prt, info, filters)) {
-        filteredProtocolIndex[prt] = info;
-      }
-    });
-
-    const filteredReleases = (releases || [])
-      .map((release) => ({
-        ...release,
-        protocolos: (release.protocolos || []).filter((prt) => filteredProtocolIndex[prt]),
-      }))
-      .filter((release) => release.protocolos.length > 0);
-
-    return {
-      filters,
-      protocolIndex: filteredProtocolIndex,
-      releases: filteredReleases,
-    };
-  }
-
-  // Explica a responsabilidade de count by dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function countBy(items, getter) {
     const map = new Map();
     items.forEach((item) => {
@@ -269,23 +178,11 @@
     return [...map.entries()].map(([label, count]) => ({ label, count }));
   }
 
-<<<<<<< HEAD
-  function updateHero(metrics) {
+function updateHero(metrics) {
     setText("kpi-sync-badge", metrics.lastSyncLabel);
     setText("kpi-highlight-module", `Módulo foco: ${metrics.topModule?.label || "--"}`);
     setText("kpi-highlight-release", `Release líder: ${metrics.topRelease?.label || "--"}`);
   }
-
-=======
-  // Atualiza a tela, o estado interno ou dados derivados (update hero).
-  function updateHero(metrics) {
-    setText("kpi-sync-badge", metrics.lastSyncLabel);
-    setText("kpi-highlight-module", `Módulo foco: ${metrics.activeModule || metrics.topModule?.label || "--"}`);
-    setText("kpi-highlight-release", `Release líder: ${metrics.topRelease?.label || "--"}`);
-  }
-
-  // Atualiza a tela, o estado interno ou dados derivados (update cards).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function updateCards(metrics) {
     setText("card-total-registrado", String(metrics.totalRecords));
     setText("contador-erros", String(metrics.errors));
@@ -309,10 +206,7 @@
     setText("kpi-note-ultima", metrics.latestRelease ?`Release mais recente detectada: ${metrics.latestRelease}.` : "Nenhuma release disponível.");
   }
 
-<<<<<<< HEAD
-=======
-  // Atualiza a tela, o estado interno ou dados derivados (update executive summary).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function updateExecutiveSummary(metrics) {
     const target = byId("kpi-executive-summary");
     if (!target) return;
@@ -326,8 +220,7 @@
     target.innerHTML = lines.map((line) => `<p class="kpi-summary-line">${line}</p>`).join("");
   }
 
-<<<<<<< HEAD
-  function renderRanking(metrics) {
+function renderRanking(metrics) {
     const container = byId("ranking-modulos");
     if (!container) return;
 
@@ -351,108 +244,6 @@
       `;
     }).join("");
   }
-
-=======
-  // Renderiza a interface ou a parte visual correspondente (render ranking).
-  function renderRanking(metrics) {
-    const canvas = byId("chartRankingModulos");
-    if (!canvas || typeof Chart === "undefined") return;
-    destroyChart("chartRankingModulos");
-
-    const rows = metrics.moduleRanking.slice(0, 8);
-    const labels = rows.map((item, index) => `${index + 1}. ${item.label}`);
-
-    new Chart(canvas, {
-      type: "bar",
-      data: {
-        labels,
-        datasets: [{
-          label: "Protocolos liberados",
-          data: rows.map((item) => item.count),
-          backgroundColor: rows.map((_, index) => [
-            "rgba(59, 130, 246, 0.86)",
-            "rgba(34, 197, 94, 0.82)",
-            "rgba(249, 115, 22, 0.82)",
-            "rgba(168, 85, 247, 0.82)",
-            "rgba(20, 184, 166, 0.82)",
-            "rgba(234, 179, 8, 0.82)",
-            "rgba(239, 68, 68, 0.82)",
-            "rgba(100, 116, 139, 0.82)",
-          ][index] || "rgba(59, 130, 246, 0.82)"),
-          borderRadius: 12,
-          borderSkipped: false,
-          maxBarThickness: 24,
-        }],
-      },
-      options: {
-        ...commonChartOptions(),
-        indexAxis: "y",
-        onClick: (_event, elements) => {
-          const index = elements?.[0]?.index;
-          const selected = Number.isInteger(index) ? rows[index] : null;
-          if (selected?.label && typeof window.selecionarModulo === "function") {
-            window.selecionarModulo(selected.label, { source: "ranking" });
-          }
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: (context) => `${formatCount(context.parsed.x)} protocolos liberados`,
-            },
-          },
-        },
-        scales: {
-          x: {
-            ...commonChartOptions().scales.y,
-            ticks: {
-              ...commonChartOptions().scales.y.ticks,
-              precision: 0,
-            },
-          },
-          y: commonChartOptions().scales.x,
-        },
-      },
-    });
-  }
-
-  // Renderiza a interface ou a parte visual correspondente (render table filter state).
-  function renderTableFilterState(metrics) {
-    const filterList = byId("filtro-modulos");
-    if (!filterList) return;
-
-    const filterShell = filterList.closest(".mb-5");
-    filterShell?.classList.remove("hidden");
-    filterShell?.removeAttribute("hidden");
-
-    let note = byId("kpi-ranking-filter-note");
-    if (!note) {
-      note = document.createElement("div");
-      note.id = "kpi-ranking-filter-note";
-      note.className = "kpi-ranking-filter-note hidden";
-      filterList.insertAdjacentElement("afterend", note);
-    }
-
-    const showRankingFilter =
-      window.__kpiModuleFilterSource === "ranking" &&
-      metrics.activeModule &&
-      metrics.activeModule !== "TODOS";
-
-    if (!showRankingFilter) {
-      note.classList.add("hidden");
-      note.innerHTML = "";
-      return;
-    }
-
-    note.classList.remove("hidden");
-    note.innerHTML = `
-      <span>Recorte aplicado pelo ranking: <strong>${escapeHtml(metrics.activeModule)}</strong></span>
-      <button type="button" onclick="selecionarModulo('TODOS')">Limpar</button>
-    `;
-  }
-
-  // Explica a responsabilidade de destroy chart dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function destroyChart(canvasId) {
     const canvas = byId(canvasId);
     if (!canvas || typeof Chart === "undefined") return;
@@ -460,10 +251,7 @@
     if (current) current.destroy();
   }
 
-<<<<<<< HEAD
-=======
-  // Monta ou cria a estrutura necessaria para esta etapa (create gradient).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function createGradient(canvas, colors) {
     const ctx = canvas.getContext("2d");
     const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height || 280);
@@ -471,28 +259,14 @@
     return gradient;
   }
 
-<<<<<<< HEAD
-  function commonChartOptions() {
-=======
-  // Explica a responsabilidade de common chart options dentro deste modulo.
-  function commonChartOptions() {
-    const isLight = document.documentElement?.dataset?.theme === "light";
-    const textColor = isLight ? "#334155" : "#c7d7f3";
-    const mutedColor = isLight ? "#64748b" : "#8fa4c8";
-    const gridColor = isLight ? "rgba(148, 163, 184, 0.22)" : "rgba(148, 163, 184, 0.12)";
-
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+function commonChartOptions() {
     return {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
         legend: {
           labels: {
-<<<<<<< HEAD
-            color: "#c7d7f3",
-=======
-            color: textColor,
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+color: "#c7d7f3",
             font: { size: 11, weight: "600" },
             usePointStyle: true,
           },
@@ -501,50 +275,18 @@
       scales: {
         y: {
           beginAtZero: true,
-<<<<<<< HEAD
-          ticks: { color: "#8fa4c8" },
+ticks: { color: "#8fa4c8" },
           grid: { color: "rgba(148, 163, 184, 0.12)" },
         },
         x: {
           ticks: { color: "#8fa4c8" },
           grid: { color: "rgba(148, 163, 184, 0.08)" },
-=======
-          ticks: { color: mutedColor },
-          grid: { color: gridColor },
-        },
-        x: {
-          ticks: { color: mutedColor },
-          grid: { color: isLight ? "rgba(148, 163, 184, 0.16)" : "rgba(148, 163, 184, 0.08)" },
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         },
       },
     };
   }
 
-<<<<<<< HEAD
-=======
-  // Renderiza a interface ou a parte visual correspondente (render module legend).
-  function renderModuleLegend(labels, values, palette) {
-    const legend = byId("legenda-modulos");
-    if (!legend) return;
 
-    const total = values.reduce((sum, value) => sum + Number(value || 0), 0);
-    legend.innerHTML = labels.map((label, index) => {
-      const value = Number(values[index] || 0);
-      const percent = total ?((value / total) * 100).toFixed(1).replace(".", ",") : "0,0";
-      return `
-        <button type="button" class="kpi-module-legend-card" data-module="${escapeHtml(label)}">
-          <span class="kpi-module-legend-dot" style="--legend-color:${palette[index] || "#60a5fa"}"></span>
-          <span class="kpi-module-legend-name">${escapeHtml(label)}</span>
-          <strong>${formatCount(value)}</strong>
-          <small>${percent}%</small>
-        </button>
-      `;
-    }).join("");
-  }
-
-  // Renderiza a interface ou a parte visual correspondente (render top5 chart).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function renderTop5Chart(metrics) {
     const canvas = byId("chartTop5");
     if (!canvas || typeof Chart === "undefined") return;
@@ -585,10 +327,7 @@
     });
   }
 
-<<<<<<< HEAD
-=======
-  // Renderiza a interface ou a parte visual correspondente (render evolution chart).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function renderEvolutionChart(metrics) {
     const canvas = byId("chartEvolucao");
     if (!canvas || typeof Chart === "undefined") return;
@@ -619,10 +358,7 @@
     });
   }
 
-<<<<<<< HEAD
-=======
-  // Renderiza a interface ou a parte visual correspondente (render release chart).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function renderReleaseChart(metrics) {
     const canvas = byId("chartLiberacoes");
     if (!canvas || typeof Chart === "undefined") return;
@@ -651,10 +387,7 @@
     });
   }
 
-<<<<<<< HEAD
-=======
-  // Renderiza a interface ou a parte visual correspondente (render trend chart).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function renderTrendChart(metrics) {
     const canvas = byId("chartTrendModulo");
     if (!canvas || typeof Chart === "undefined") return;
@@ -664,10 +397,7 @@
       ?window.moduloSelecionado
       : metrics.topModule?.label;
 
-<<<<<<< HEAD
-=======
-    // Explica a responsabilidade de series dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     const series = metrics.releasesAsc.map((release) =>
       release.protocolos.filter((prt) => window.protocolosIndex?.[prt]?.modulo === selectedModule).length
     );
@@ -694,22 +424,14 @@
     });
   }
 
-<<<<<<< HEAD
-=======
-  // Renderiza a interface ou a parte visual correspondente (render module chart).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function renderModuleChart(metrics) {
     const canvas = byId("grafico-modulos");
     if (!canvas || typeof Chart === "undefined") return;
     destroyChart("grafico-modulos");
 
-<<<<<<< HEAD
-    const topModules = metrics.moduleRanking.slice(0, 7);
+const topModules = metrics.moduleRanking.slice(0, 7);
     const rest = metrics.moduleRanking.slice(7).reduce((sum, item) => sum + item.count, 0);
-=======
-    const topModules = metrics.moduleRanking.slice(0, 6);
-    const rest = metrics.moduleRanking.slice(6).reduce((sum, item) => sum + item.count, 0);
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     const labels = topModules.map((item) => item.label);
     const values = topModules.map((item) => item.count);
 
@@ -719,8 +441,7 @@
     }
 
     const palette = [
-<<<<<<< HEAD
-      "#3b82f6",
+"#3b82f6",
       "#22c55e",
       "#f97316",
       "#a855f7",
@@ -729,38 +450,6 @@
       "#ef4444",
       "#64748b",
     ];
-=======
-      "#2563eb",
-      "#0f766e",
-      "#16a34a",
-      "#f97316",
-      "#7c3aed",
-      "#db2777",
-      "#475569",
-    ];
-    const isLight = document.documentElement?.dataset?.theme === "light";
-    const total = values.reduce((sum, value) => sum + Number(value || 0), 0);
-    const centerTextPlugin = {
-      id: "protocordModuleCenter",
-      // Explica a responsabilidade de after draw dentro deste modulo.
-      afterDraw(chart) {
-        const { ctx, chartArea } = chart;
-        if (!chartArea) return;
-        ctx.save();
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = isLight ? "#0f172a" : "#e7eef8";
-        ctx.font = "800 28px Manrope, Arial, sans-serif";
-        ctx.fillText(formatCount(total), (chartArea.left + chartArea.right) / 2, (chartArea.top + chartArea.bottom) / 2 - 8);
-        ctx.fillStyle = isLight ? "#64748b" : "#8ea2bd";
-        ctx.font = "700 11px Inter, Arial, sans-serif";
-        ctx.fillText("PRTs", (chartArea.left + chartArea.right) / 2, (chartArea.top + chartArea.bottom) / 2 + 18);
-        ctx.restore();
-      },
-    };
-
-    renderModuleLegend(labels, values, palette);
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 
     new Chart(canvas, {
       type: "doughnut",
@@ -769,73 +458,21 @@
         datasets: [{
           data: values,
           backgroundColor: palette.slice(0, labels.length),
-<<<<<<< HEAD
-          borderColor: "#0b1220",
+borderColor: "#0b1220",
           borderWidth: 4,
           hoverOffset: 10,
-=======
-          borderColor: isLight ? "#f8fbff" : "#0b1220",
-          borderWidth: 3,
-          hoverOffset: 8,
-          spacing: 3,
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         }],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-<<<<<<< HEAD
-        cutout: "64%",
+cutout: "64%",
         plugins: {
           legend: { display: false },
         },
       },
     });
   }
-
-=======
-        cutout: "66%",
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              // Explica a responsabilidade de label dentro deste modulo.
-              label(context) {
-                const value = Number(context.raw || 0);
-                const percent = total ?((value / total) * 100).toFixed(1).replace(".", ",") : "0,0";
-                return `${context.label}: ${formatCount(value)} PRTs (${percent}%)`;
-              },
-            },
-          },
-        },
-      },
-      plugins: [centerTextPlugin],
-    });
-  }
-
-  // Renderiza a interface ou a parte visual correspondente (render chart safely).
-  function renderChartSafely(name, renderFn) {
-    try {
-      renderFn();
-    } catch (error) {
-      console.error(`Falha ao renderizar grafico KPI: ${name}`, error);
-    }
-  }
-
-  // Renderiza a interface ou a parte visual correspondente (render kpi charts).
-  function renderKpiCharts(metrics) {
-    if (typeof Chart === "undefined") return;
-
-    renderChartSafely("Top 5 releases", () => renderTop5Chart(metrics));
-    renderChartSafely("Evolucao ao longo do tempo", () => renderEvolutionChart(metrics));
-    renderChartSafely("Protocolos por release", () => renderReleaseChart(metrics));
-    renderChartSafely("Tendencia por modulo", () => renderTrendChart(metrics));
-    renderChartSafely("Ranking de modulos", () => renderRanking(metrics));
-    renderChartSafely("Protocolos por modulo", () => renderModuleChart(metrics));
-  }
-
-  // Monta ou cria a estrutura necessaria para esta etapa (build metrics).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function buildMetrics(protocolIndex, releases, dataset) {
     const totalRecords = dataset.allProtocols.length;
     const errors = dataset.allProtocols.filter((item) => item.tipo === "0").length;
@@ -852,10 +489,7 @@
     const topModule = moduleRanking[0] || null;
     const releasesAsc = [...releases].reverse();
     let running = 0;
-<<<<<<< HEAD
-=======
-    // Explica a responsabilidade de cumulative series dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     const cumulativeSeries = releasesAsc.map((item) => {
       running += item.protocolos.length;
       return running;
@@ -882,10 +516,7 @@
     };
   }
 
-<<<<<<< HEAD
-=======
-  // Busca ou resolve informacoes necessarias para o fluxo (fetch kpi insights).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function fetchKpiInsights() {
     if (window.__kpiInsightsPromise) {
       return window.__kpiInsightsPromise;
@@ -907,10 +538,7 @@
     return window.__kpiInsightsPromise;
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de ensure modal shell dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function ensureModalShell() {
     let overlay = byId("kpi-insight-modal-overlay");
     if (overlay) return overlay;
@@ -945,21 +573,10 @@
         closeInsightModal();
         return;
       }
-<<<<<<< HEAD
-
-      const paginationButton = event.target.closest("[data-kpi-page-action]");
+const paginationButton = event.target.closest("[data-kpi-page-action]");
       if (paginationButton) {
         renderInsightModalPage(Number(paginationButton.getAttribute("data-kpi-page")));
       }
-=======
-    });
-
-    modal?.addEventListener("click", (event) => {
-      const paginationButton = event.target.closest("[data-kpi-page-action]");
-      if (!paginationButton) return;
-      event.preventDefault();
-      renderInsightModalPage(Number(paginationButton.getAttribute("data-kpi-page")));
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     });
 
     document.addEventListener("keydown", (event) => {
@@ -969,10 +586,7 @@
     return overlay;
   }
 
-<<<<<<< HEAD
-=======
-  // Abre a interface, recurso ou fluxo solicitado (open insight modal).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function openInsightModal({ eyebrow, title, subtitle, body, renderBody }) {
     const overlay = ensureModalShell();
     const normalizeText = typeof window.normalizeUiText === "function"
@@ -996,10 +610,7 @@
     queueInsightAnimation("open", overlay);
   }
 
-<<<<<<< HEAD
-=======
-  // Fecha a interface, recurso ou fluxo solicitado (close insight modal).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function closeInsightModal() {
     const overlay = byId("kpi-insight-modal-overlay");
     if (!overlay || overlay.classList.contains("hidden") || overlay.dataset.closing === "true") return;
@@ -1011,10 +622,7 @@
     overlay.setAttribute("aria-hidden", "true");
     document.body.classList.remove("modal-open");
 
-<<<<<<< HEAD
-=======
-    // Explica a responsabilidade de finalize close dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     const finalizeClose = () => {
       if (!document.body.contains(overlay)) return;
       overlay.classList.add("hidden");
@@ -1036,10 +644,7 @@
 
   let insightMotionPromise = null;
 
-<<<<<<< HEAD
-=======
-  // Carrega ou restaura dados usados por esta funcionalidade (load insight motion).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function loadInsightMotion() {
     if (insightMotionPromise) return insightMotionPromise;
     insightMotionPromise = import("https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm")
@@ -1047,10 +652,7 @@
     return insightMotionPromise;
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de run insight fallback animation dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function runInsightFallbackAnimation(type, overlay, modal) {
     if (!overlay || !modal) return Promise.resolve();
 
@@ -1081,10 +683,7 @@
     return Promise.allSettled([overlayAnimation.finished, modalAnimation.finished]);
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de queue insight animation dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function queueInsightAnimation(type, overlay) {
     const modal = overlay?.querySelector(".kpi-insight-modal");
     if (!overlay || !modal) return;
@@ -1113,10 +712,7 @@
     ]);
   }
 
-<<<<<<< HEAD
-=======
-  // Normaliza, interpreta ou formata dados para uso seguro (normalize insight node).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function normalizeInsightNode(root) {
     if (!root || typeof window.normalizeUiText !== "function") return;
 
@@ -1127,10 +723,7 @@
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Renderiza a interface ou a parte visual correspondente (render insight modal page).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function renderInsightModalPage(page) {
     const config = window.__kpiCurrentModalConfig;
     if (!config) return;
@@ -1141,10 +734,7 @@
     normalizeInsightNode(modalBody);
   }
 
-<<<<<<< HEAD
-=======
-  // Monta ou cria a estrutura necessaria para esta etapa (build metric cards).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function buildMetricCards(cards) {
     return `
       <div class="kpi-insight-metrics">
@@ -1159,10 +749,7 @@
     `;
   }
 
-<<<<<<< HEAD
-=======
-  // Monta ou cria a estrutura necessaria para esta etapa (build insight loading splash).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function buildInsightLoadingSplash(title, description) {
     return `
       <section class="kpi-insight-loading">
@@ -1185,24 +772,13 @@
     `;
   }
 
-<<<<<<< HEAD
-  function buildTable(headers, rows, options = {}) {
+function buildTable(headers, rows, options = {}) {
     const pageSize = options.pageSize || 6;
-=======
-  // Monta ou cria a estrutura necessaria para esta etapa (build table).
-  function buildTable(headers, rows, options = {}) {
-    const pageSize = options.pageSize || 6;
-    const paginate = options.paginate !== false;
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
     const requestedPage = options.page || window.__kpiCurrentModalPage || 1;
     const currentPage = Math.min(Math.max(1, requestedPage), totalPages);
     const start = (currentPage - 1) * pageSize;
-<<<<<<< HEAD
-    const pageRows = rows.slice(start, start + pageSize);
-=======
-    const pageRows = paginate ? rows.slice(start, start + pageSize) : rows;
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+const pageRows = rows.slice(start, start + pageSize);
 
     if (!rows.length) {
       return '<div class="kpi-insight-empty">Nenhum dado encontrado para este recorte.</div>';
@@ -1221,47 +797,28 @@
           </tbody>
         </table>
       </div>
-<<<<<<< HEAD
-      <div class="kpi-insight-pagination">
-=======
-      ${paginate ? `<div class="kpi-insight-pagination">
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+<div class="kpi-insight-pagination">
         <span class="kpi-insight-pagination-note">Página ${currentPage} de ${totalPages} · ${formatCount(rows.length)} registros</span>
         <div class="kpi-insight-pagination-actions">
           <button type="button" class="kpi-insight-page-btn" data-kpi-page-action="prev" data-kpi-page="${Math.max(1, currentPage - 1)}" ${currentPage === 1 ? "disabled" : ""}>Anterior</button>
           <button type="button" class="kpi-insight-page-btn" data-kpi-page-action="next" data-kpi-page="${Math.min(totalPages, currentPage + 1)}" ${currentPage === totalPages ? "disabled" : ""}>Próxima</button>
         </div>
-<<<<<<< HEAD
-      </div>
+</div>
     `;
   }
-
-=======
-      </div>` : ""}
-    `;
-  }
-
-  // Monta ou cria a estrutura necessaria para esta etapa (build status pill).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function buildStatusPill(active, positiveLabel, neutralLabel) {
     const label = active ? positiveLabel : neutralLabel;
     const variant = active ? "success" : "neutral";
     return `<span class="kpi-insight-pill kpi-insight-pill-${variant}">${escapeHtml(label)}</span>`;
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de clamp percent dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function clampPercent(value) {
     const normalized = Number(value) || 0;
     return Math.max(0, Math.min(100, normalized));
   }
 
-<<<<<<< HEAD
-=======
-  // Monta ou cria a estrutura necessaria para esta etapa (build storage progress).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function buildStorageProgress(label, value, note, percent, tone = "cyan") {
     const safePercent = clampPercent(percent);
     return `
@@ -1278,10 +835,7 @@
     `;
   }
 
-<<<<<<< HEAD
-=======
-  // Monta ou cria a estrutura necessaria para esta etapa (build storage share row).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function buildStorageShareRow(label, value, percent, tone = "cyan") {
     const safePercent = clampPercent(percent);
     return `
@@ -1297,10 +851,7 @@
     `;
   }
 
-<<<<<<< HEAD
-=======
-  // Monta ou cria a estrutura necessaria para esta etapa (build storage modal).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function buildStorageModal(insights, state) {
     const storage = insights?.storage || {};
     const totalBytes = Math.max(Number(storage.totalBytes) || 0, 1);
@@ -1316,10 +867,7 @@
       { label: "Usado", value: formatBytes(usedBytes), percent: usagePercent, tone: "cyan" },
       { label: "Livre", value: formatBytes(freeBytes), percent: 100 - usagePercent, tone: "violet" },
     ];
-<<<<<<< HEAD
-=======
-    // Explica a responsabilidade de rows dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
     const rows = tableEntries.map(([table, details], index) => {
       const tableBytes = Number(details?.usedBytes) || 0;
       const tablePercent = (tableBytes / totalBytes) * 100;
@@ -1406,19 +954,12 @@
           ${buildStorageProgress("Espaço em uso", formatBytes(usedBytes), `${formatPercent(usagePercent)} ocupado no recorte atual.`, usagePercent, "cyan")}
           ${buildStorageProgress("Espaço livre", formatBytes(freeBytes), "Saldo operacional restante no teto acompanhado.", 100 - usagePercent, "violet")}
         </section>
-<<<<<<< HEAD
-        ${buildTable(["Origem monitorada", "Volume estimado", "Linhas"], rows, { page })}
-=======
-        ${buildTable(["Origem monitorada", "Volume estimado", "Linhas"], rows, { paginate: false })}
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+${buildTable(["Origem monitorada", "Volume estimado", "Linhas"], rows, { page })}
       `,
     });
   }
 
-<<<<<<< HEAD
-=======
-  // Monta ou cria a estrutura necessaria para esta etapa (build errors modal).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function buildErrorsModal(state) {
     const errorRows = state.dataset.allProtocols
       .filter((item) => item.tipo === "0")
@@ -1449,10 +990,7 @@
     });
   }
 
-<<<<<<< HEAD
-=======
-  // Monta ou cria a estrutura necessaria para esta etapa (build suggestions modal).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function buildSuggestionsModal(state) {
     const rows = state.dataset.allProtocols
       .filter((item) => item.tipo !== "0")
@@ -1483,10 +1021,7 @@
     });
   }
 
-<<<<<<< HEAD
-=======
-  // Monta ou cria a estrutura necessaria para esta etapa (build releases modal).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function buildReleasesModal(state) {
     const rows = state.releases.map((release) => [
       `<strong>${escapeHtml(release.release)}</strong>`,
@@ -1509,10 +1044,7 @@
     });
   }
 
-<<<<<<< HEAD
-=======
-  // Monta ou cria a estrutura necessaria para esta etapa (build released modal).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function buildReleasedModal(state) {
     const rows = state.dataset.releasedDetails
       .slice()
@@ -1540,15 +1072,8 @@
     });
   }
 
-<<<<<<< HEAD
-  function buildLatestModal(state) {
+function buildLatestModal(state) {
     const latest = state.releases[0];
-=======
-  // Monta ou cria a estrutura necessaria para esta etapa (build latest modal).
-  function buildLatestModal(state) {
-    const latest = state.releases[0];
-    // Explica a responsabilidade de rows dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     const rows = (latest?.protocolos || []).map((prt) => {
       const info = state.protocolIndex[prt] || {};
       return [
@@ -1574,10 +1099,7 @@
     });
   }
 
-<<<<<<< HEAD
-=======
-  // Trata o evento ou acao do usuario neste fluxo (handle kpi action).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function handleKpiAction(action) {
     const state = window.__kpiWorkspaceState;
     if (!state) return;
@@ -1643,10 +1165,7 @@
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de bind kpi action buttons dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function bindKpiActionButtons() {
     if (window.__kpiActionButtonsBound) return;
 
@@ -1659,68 +1178,20 @@
     window.__kpiActionButtonsBound = true;
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de bind kpi search input dentro deste modulo.
-  function bindKpiSearchInput() {
-    const input = byId("busca-modulo");
-    if (!input || input.dataset.kpiModernBound === "true") return;
 
-    input.dataset.kpiModernBound = "true";
-    input.value = window.termoBusca || input.value || "";
-
-    input.addEventListener("input", (event) => {
-      window.termoBusca = event.target.value || "";
-      window.clearTimeout(window.__kpiSearchRenderTimer);
-      window.__kpiSearchRenderTimer = window.setTimeout(() => {
-        renderWorkspace();
-      }, 120);
-    });
-
-    input.addEventListener("keydown", (event) => {
-      if (event.key !== "Escape") return;
-      input.value = "";
-      window.termoBusca = "";
-      window.clearTimeout(window.__kpiSearchRenderTimer);
-      renderWorkspace();
-    });
-  }
-
-  // Renderiza a interface ou a parte visual correspondente (render workspace).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function renderWorkspace() {
     const page = byId("pagina-historico-liberacoes");
     if (!page) return;
 
     try {
       if (typeof window.ensureChartJs === "function") {
-<<<<<<< HEAD
-        await window.ensureChartJs();
+await window.ensureChartJs();
       }
 
       const [protocolIndex, releases] = await Promise.all([ensureProtocols(), ensureReleases()]);
       const dataset = buildDataset(protocolIndex, releases);
       const metrics = buildMetrics(protocolIndex, releases, dataset);
       window.__kpiWorkspaceState = {
-=======
-        await window.ensureChartJs().catch((error) => {
-          console.warn("Chart.js indisponivel; KPI sera renderizado sem graficos.", error);
-        });
-      }
-
-      const [baseProtocolIndex, baseReleases] = await Promise.all([ensureProtocols(), ensureReleases()]);
-      const filtered = applyKpiFilters(baseProtocolIndex, baseReleases);
-      const protocolIndex = filtered.protocolIndex;
-      const releases = filtered.releases;
-      const dataset = buildDataset(protocolIndex, releases);
-      const metrics = buildMetrics(protocolIndex, releases, dataset);
-      metrics.activeModule = filtered.filters.module;
-      metrics.activeSearch = filtered.filters.search;
-      window.__kpiWorkspaceState = {
-        baseProtocolIndex,
-        baseReleases,
-        filters: filtered.filters,
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         protocolIndex,
         releases,
         dataset,
@@ -1730,8 +1201,7 @@
       updateHero(metrics);
       updateCards(metrics);
       updateExecutiveSummary(metrics);
-<<<<<<< HEAD
-      renderRanking(metrics);
+renderRanking(metrics);
       if (typeof window.renderizarTabelaLiberacoes === "function") {
         const filteredRows = typeof window.obterLiberacoesFiltradasAtuais === "function"
           ?window.obterLiberacoesFiltradasAtuais()
@@ -1744,18 +1214,6 @@
       renderTrendChart(metrics);
       renderModuleChart(metrics);
       bindKpiActionButtons();
-=======
-      if (typeof window.renderizarFiltroModulos === "function") {
-        window.renderizarFiltroModulos();
-      }
-      renderTableFilterState(metrics);
-      if (typeof window.renderizarTabelaLiberacoes === "function") {
-        window.renderizarTabelaLiberacoes(releases);
-      }
-      bindKpiActionButtons();
-      bindKpiSearchInput();
-      requestAnimationFrame(() => renderKpiCharts(metrics));
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 
       if (window.lucide?.createIcons) {
         window.lucide.createIcons();
@@ -1769,13 +1227,8 @@
 
   if (typeof window.selecionarModulo === "function" && !window.__kpiWrappedSelect) {
     const originalSelecionarModulo = window.selecionarModulo;
-<<<<<<< HEAD
-    window.selecionarModulo = function wrappedSelecionarModulo(modulo) {
+window.selecionarModulo = function wrappedSelecionarModulo(modulo) {
       originalSelecionarModulo(modulo);
-=======
-    window.selecionarModulo = function wrappedSelecionarModulo(modulo, options = {}) {
-      originalSelecionarModulo(modulo, options);
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       setTimeout(() => {
         renderWorkspace();
       }, 80);

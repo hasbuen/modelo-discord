@@ -5,21 +5,7 @@
   const MAX_WIDGET_WIDTH = 760;
   const MIN_WIDGET_HEIGHT = 420;
   const MAX_WIDGET_HEIGHT = 860;
-<<<<<<< HEAD
-  const ZNUNY_ATTENDANT_PORTAL_URL = "https://rhede.serviceup.app/portal/index.html";
-
-=======
-  // Busca ou resolve informacoes necessarias para o fluxo (get znuny attendant portal url).
-  function getZnunyAttendantPortalUrl() {
-    return String(
-      window.PROTOCORD_RUNTIME_CONFIG?.ZNUNY_ATTENDANT_PORTAL_URL ||
-      localStorage.getItem("PROTOCORD_ZNUNY_ATTENDANT_PORTAL_URL") ||
-      ""
-    ).trim();
-  }
-
-  // Busca ou resolve informacoes necessarias para o fluxo (get api base url safe).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+const ZNUNY_ATTENDANT_PORTAL_URL = "https://rhede.serviceup.app/portal/index.html";
   function getApiBaseUrlSafe() {
     try {
       if (typeof window.getProtocordApiBaseUrl === "function") {
@@ -54,10 +40,7 @@
 
   const els = {};
 
-<<<<<<< HEAD
-=======
-  // Inicializa os elementos e estados necessarios para esta funcionalidade (init).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function init() {
     removeLegacyAssistantUi();
     bindElements();
@@ -69,10 +52,7 @@
     render();
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de bind elements dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function bindElements() {
     els.widget = document.getElementById("assistant-widget");
     els.panel = document.getElementById("assistant-panel");
@@ -95,10 +75,7 @@
     els.suggestions = Array.from(document.querySelectorAll("[data-assistant-prompt]"));
   }
 
-<<<<<<< HEAD
-=======
-  // Remove itens, dados ou estado relacionado a esta funcionalidade (remove legacy assistant ui).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function removeLegacyAssistantUi() {
     [
       "btn-assistente",
@@ -127,10 +104,7 @@
     });
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de bind events dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function bindEvents() {
     els.fab?.addEventListener("pointerdown", startWidgetDrag);
     els.header?.addEventListener("pointerdown", startWidgetDrag);
@@ -184,10 +158,7 @@
     autoResizeInput();
   }
 
-<<<<<<< HEAD
-=======
-  // Carrega ou restaura dados usados por esta funcionalidade (restore state).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function restoreState() {
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
@@ -200,20 +171,14 @@
     restoreLayoutState();
   }
 
-<<<<<<< HEAD
-=======
-  // Persiste dados ou configuracoes desta funcionalidade (persist).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function persist() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       messages: state.messages.slice(-20),
     }));
   }
 
-<<<<<<< HEAD
-=======
-  // Carrega ou restaura dados usados por esta funcionalidade (restore layout state).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function restoreLayoutState() {
     try {
       const parsed = JSON.parse(localStorage.getItem(LAYOUT_STORAGE_KEY) || "{}");
@@ -229,10 +194,7 @@
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Persiste dados ou configuracoes desta funcionalidade (persist layout state).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function persistLayoutState() {
     localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify({
       panelWidth: state.panelWidth,
@@ -242,10 +204,7 @@
     }));
   }
 
-<<<<<<< HEAD
-=======
-  // Busca ou resolve informacoes necessarias para o fluxo (get history for request).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function getHistoryForRequest() {
     return state.messages
       .slice(0, -1)
@@ -257,10 +216,7 @@
       }));
   }
 
-<<<<<<< HEAD
-=======
-  // Renderiza a interface ou a parte visual correspondente (render).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function render() {
     if (!els.messages) return;
     toggleWidget(state.open, false);
@@ -287,19 +243,13 @@
     lucide.createIcons();
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de submit message dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function submitMessage() {
     const message = String(els.input?.value || "").trim();
     return submitProvidedMessage(message);
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de submit provided message dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function submitProvidedMessage(message) {
     if (!message || state.sending) return;
 
@@ -357,10 +307,7 @@
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Alterna o estado desta funcionalidade (toggle sending).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function toggleSending(sending) {
     if (els.sendBtn) {
       els.sendBtn.disabled = sending;
@@ -380,10 +327,7 @@
     updateStatusBadge();
   }
 
-<<<<<<< HEAD
-=======
-  // Alterna o estado desta funcionalidade (toggle widget).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function toggleWidget(forceState, persistState = true) {
     if (!state.authenticated) {
       return;
@@ -415,10 +359,7 @@
     lucide.createIcons();
   }
 
-<<<<<<< HEAD
-=======
-  // Aplica valores, estado visual ou configuracoes no fluxo atual (apply panel visibility).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function applyPanelVisibility(isOpen) {
     if (!els.panel) return;
 
@@ -430,10 +371,7 @@
     requestAnimationFrame(applyWidgetPosition);
   }
 
-<<<<<<< HEAD
-=======
-  // Valida uma condicao e retorna o resultado para o fluxo (is authenticated).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function isAuthenticated() {
     try {
       if (typeof window.hasActiveAuthSession === "function") {
@@ -444,19 +382,13 @@
     return false;
   }
 
-<<<<<<< HEAD
-=======
-  // Trata o evento ou acao do usuario neste fluxo (handle auth changed).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function handleAuthChanged(event) {
     state.authenticated = Boolean(event?.detail?.authenticated);
     syncAssistantVisibility();
   }
 
-<<<<<<< HEAD
-=======
-  // Atualiza a tela, o estado interno ou dados derivados (sync assistant visibility).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function syncAssistantVisibility() {
     state.authenticated = isAuthenticated();
 
@@ -475,10 +407,7 @@
     requestAnimationFrame(applyWidgetPosition);
   }
 
-<<<<<<< HEAD
-=======
-  // Aplica valores, estado visual ou configuracoes no fluxo atual (apply panel layout).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function applyPanelLayout() {
     if (!els.panel) return;
 
@@ -502,10 +431,7 @@
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Aplica valores, estado visual ou configuracoes no fluxo atual (apply widget position).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function applyWidgetPosition() {
     if (!els.widget || !state.authenticated) return;
 
@@ -530,10 +456,7 @@
     els.widget.style.bottom = "auto";
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de start panel resize dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function startPanelResize(event) {
     if (!els.panel || window.innerWidth <= 640) return;
 
@@ -553,10 +476,7 @@
     document.addEventListener("pointercancel", stopPanelResize);
   }
 
-<<<<<<< HEAD
-=======
-  // Trata o evento ou acao do usuario neste fluxo (handle panel resize move).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function handlePanelResizeMove(event) {
     if (!state.resizing || !els.panel) return;
 
@@ -577,10 +497,7 @@
     applyPanelLayout();
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de stop panel resize dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function stopPanelResize() {
     if (!state.resizing) return;
 
@@ -591,10 +508,7 @@
     document.removeEventListener("pointercancel", stopPanelResize);
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de start widget drag dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function startWidgetDrag(event) {
     if (!els.widget || !state.authenticated || event.button !== 0) return;
 
@@ -620,10 +534,7 @@
     document.addEventListener("pointercancel", stopWidgetDrag);
   }
 
-<<<<<<< HEAD
-=======
-  // Trata o evento ou acao do usuario neste fluxo (handle widget drag move).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function handleWidgetDragMove(event) {
     if (!state.dragging || !els.widget) return;
 
@@ -640,10 +551,7 @@
     applyWidgetPosition();
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de stop widget drag dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function stopWidgetDrag() {
     if (!state.dragging) return;
 
@@ -661,18 +569,12 @@
     document.removeEventListener("pointercancel", stopWidgetDrag);
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de clamp number dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function clampNumber(value, min, max) {
     return Math.min(Math.max(value, min), max);
   }
 
-<<<<<<< HEAD
-=======
-  // Renderiza a interface ou a parte visual correspondente (render message content).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function renderMessageContent(message) {
     const content = String(message?.content || "");
     const normalizedContent = isZnunyAuthFailureMessage(content)
@@ -700,18 +602,12 @@
     `;
   }
 
-<<<<<<< HEAD
-=======
-  // Valida uma condicao e retorna o resultado para o fluxo (is znuny auth failure message).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function isZnunyAuthFailureMessage(content) {
     return /autentica..o autom..tica falhou/i.test(String(content || "")) && /znuny/i.test(String(content || ""));
   }
 
-<<<<<<< HEAD
-=======
-  // Trata o evento ou acao do usuario neste fluxo (handle audio press start).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function handleAudioPressStart(event) {
     if (event.button !== 0 || state.transcribing || state.sending || state.recording) {
       return;
@@ -725,10 +621,7 @@
     await startRecording();
   }
 
-<<<<<<< HEAD
-=======
-  // Trata o evento ou acao do usuario neste fluxo (handle audio press end).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function handleAudioPressEnd(event) {
     state.audioPressActive = false;
     updateAudioUi();
@@ -740,10 +633,7 @@
     stopRecording();
   }
 
-<<<<<<< HEAD
-=======
-  // Trata o evento ou acao do usuario neste fluxo (handle audio press cancel).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function handleAudioPressCancel(event) {
     state.audioPressActive = false;
     updateAudioUi();
@@ -757,10 +647,7 @@
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Trata o evento ou acao do usuario neste fluxo (handle audio key down).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function handleAudioKeyDown(event) {
     if (event.repeat) return;
     if (event.key !== " " && event.key !== "Enter") return;
@@ -769,10 +656,7 @@
     handleAudioPressStart({ button: 0, pointerId: -1, preventDefault() {} });
   }
 
-<<<<<<< HEAD
-=======
-  // Trata o evento ou acao do usuario neste fluxo (handle audio key up).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function handleAudioKeyUp(event) {
     if (event.key !== " " && event.key !== "Enter") return;
 
@@ -780,28 +664,19 @@
     handleAudioPressEnd({ pointerId: -1, preventDefault() {} });
   }
 
-<<<<<<< HEAD
-=======
-  // Trata o evento ou acao do usuario neste fluxo (handle global audio pointer end).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function handleGlobalAudioPointerEnd(event) {
     if (!state.audioPressActive || state.recordingPointerId === null) return;
     handleAudioPressEnd(event);
   }
 
-<<<<<<< HEAD
-=======
-  // Trata o evento ou acao do usuario neste fluxo (handle global audio pointer cancel).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function handleGlobalAudioPointerCancel(event) {
     if (!state.audioPressActive || state.recordingPointerId === null) return;
     handleAudioPressCancel(event);
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de release audio pointer dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function releaseAudioPointer(pointerId) {
     if (pointerId !== undefined && pointerId !== null) {
       try {
@@ -812,10 +687,7 @@
     state.recordingPointerId = null;
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de start recording dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function startRecording() {
     if (typeof MediaRecorder === "undefined" || !navigator.mediaDevices?.getUserMedia) {
       notify("Seu navegador não suporta gravação de áudio.", "error");
@@ -877,10 +749,7 @@
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de stop recording dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function stopRecording() {
     if (!state.mediaRecorder || state.mediaRecorder.state === "inactive") {
       return;
@@ -889,10 +758,7 @@
     state.mediaRecorder.stop();
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de transcribe recorded audio dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function transcribeRecordedAudio(audioBlob) {
     state.transcribing = true;
     updateAudioUi();
@@ -930,10 +796,7 @@
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de transcribe audio file dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function transcribeAudioFile(apiBaseUrl, file) {
     try {
       return await requestDirectAssistantTranscription(apiBaseUrl, file);
@@ -947,10 +810,7 @@
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de upload audio blob for assistant dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function uploadAudioBlobForAssistant(apiBaseUrl, file) {
     const { upload } = await import("https://esm.sh/@vercel/blob/client?target=es2022");
     const pathname = `audios/${Date.now()}-${String(file.name || "audio.webm").replace(/[^\w.\-]+/g, "_").replace(/_+/g, "_")}`;
@@ -961,10 +821,7 @@
     });
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de request blob transcription for assistant dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function requestBlobTranscriptionForAssistant(apiBaseUrl, blobUpload, file) {
     const response = await fetch(`${apiBaseUrl}/transcrever`, {
       method: "POST",
@@ -988,10 +845,7 @@
     return data;
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de request direct assistant transcription dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   async function requestDirectAssistantTranscription(apiBaseUrl, file) {
     const formData = new FormData();
     formData.append("audio", file);
@@ -1017,10 +871,7 @@
     return data;
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de should fallback to blob assistant upload dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function shouldFallbackToBlobAssistantUpload(error) {
     return (
       error?.status === 400 ||
@@ -1034,10 +885,7 @@
     );
   }
 
-<<<<<<< HEAD
-=======
-  // Atualiza a tela, o estado interno ou dados derivados (update recording timer).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function updateRecordingTimer() {
     if (!els.recordingTime || !state.recordingStartedAt) return;
     const elapsedSeconds = Math.max(0, Math.floor((Date.now() - state.recordingStartedAt) / 1000));
@@ -1046,10 +894,7 @@
     els.recordingTime.textContent = `${minutes}:${seconds}`;
   }
 
-<<<<<<< HEAD
-=======
-  // Limpa dados temporarios ou restaura o estado inicial (clear recording timer).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function clearRecordingTimer() {
     if (state.recordingTimerId) {
       window.clearInterval(state.recordingTimerId);
@@ -1057,10 +902,7 @@
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Atualiza a tela, o estado interno ou dados derivados (update audio ui).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function updateAudioUi() {
     if (els.audioBtn) {
       els.audioBtn.classList.toggle("recording", state.recording);
@@ -1087,10 +929,7 @@
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Atualiza a tela, o estado interno ou dados derivados (update status badge).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function updateStatusBadge() {
     if (!els.statusBadge || !els.statusLabel) return;
 
@@ -1114,10 +953,7 @@
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de pick supported mime type dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function pickSupportedMimeType() {
     const mimeTypes = [
       "audio/webm;codecs=opus",
@@ -1129,10 +965,7 @@
     return mimeTypes.find((type) => MediaRecorder.isTypeSupported(type)) || "";
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de escape html dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function escapeHtml(value) {
     return String(value || "")
       .replace(/&/g, "&amp;")
@@ -1142,20 +975,14 @@
       .replace(/'/g, "&#39;");
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de notify dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function notify(message, type) {
     if (typeof window.showToast === "function") {
       window.showToast(message, type);
     }
   }
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de auto resize input dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function autoResizeInput() {
     if (!els.input) return;
 
@@ -1164,10 +991,7 @@
     els.input.style.height = `${nextHeight}px`;
   }
 
-<<<<<<< HEAD
-=======
-  // Limpa dados temporarios ou restaura o estado inicial (reset input height).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function resetInputHeight() {
     if (!els.input) return;
     els.input.style.height = "52px";
@@ -1180,14 +1004,7 @@
     if (!trigger) return;
 
     event.preventDefault();
-<<<<<<< HEAD
-    window.open(ZNUNY_ATTENDANT_PORTAL_URL, "_blank", "noopener,noreferrer");
-=======
-    const portalUrl = getZnunyAttendantPortalUrl();
-    if (portalUrl) {
-      window.open(portalUrl, "_blank", "noopener,noreferrer");
-    }
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+window.open(ZNUNY_ATTENDANT_PORTAL_URL, "_blank", "noopener,noreferrer");
   });
 
   window.toggleAssistantWidget = function () {
@@ -1215,10 +1032,7 @@
 
   let started = false;
 
-<<<<<<< HEAD
-=======
-  // Explica a responsabilidade de boot assistant dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
   function bootAssistant() {
     if (started) return;
     if (typeof window.hasActiveAuthSession === "function" && !window.hasActiveAuthSession()) return;

@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
-// Explica a responsabilidade de exibir modal dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 export function exibirModal(mensagem, prt = "", tipo = "info") {
   const modal = document.getElementById("errorModal");
   const modalIcon = document.getElementById("modalIcon");
@@ -20,10 +17,7 @@ export function exibirModal(mensagem, prt = "", tipo = "info") {
   lucide.createIcons();
 }
 
-<<<<<<< HEAD
-=======
-// Abre a interface, recurso ou fluxo solicitado (abrir modal exclusao).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 export async function abrirModalExclusao(id, ticket) {
   const modal = document.getElementById("confirmModal");
   const confirmBtn = document.getElementById("confirmBtn");
@@ -51,10 +45,7 @@ export async function abrirModalExclusao(id, ticket) {
   modal.classList.remove("hidden");
 };
 
-<<<<<<< HEAD
-=======
-// Explica a responsabilidade de mostrar modal paliativo dentro deste modulo.
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 export function mostrarModalPaliativo(paliativo) {
   const modal = document.getElementById("errorModal");
   const modalIcon = document.getElementById("modalIcon");
@@ -70,10 +61,7 @@ export function mostrarModalPaliativo(paliativo) {
   }
 }
 
-<<<<<<< HEAD
-=======
-// Fecha a interface, recurso ou fluxo solicitado (fechar descricao modal).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 export function fecharDescricaoModal() {
   document.getElementById("descricaoModal").classList.add("hidden");
 }

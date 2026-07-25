@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
-// Alterna o estado desta funcionalidade (alternar tema).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 export function alternarTema(tema) {
   const html = document.documentElement;
   const botoesTema = document.querySelectorAll('.toggle-theme-btn');
@@ -21,10 +18,7 @@ export function alternarTema(tema) {
   }
 }
 
-<<<<<<< HEAD
-=======
-// Carrega ou restaura dados usados por esta funcionalidade (carregar tema preferido).
->>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
+
 export function carregarTemaPreferido() {
   const temaSalvo = localStorage.getItem('theme');
   const html = document.documentElement;
