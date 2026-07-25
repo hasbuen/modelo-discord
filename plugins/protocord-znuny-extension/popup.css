@@ -1,0 +1,105 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 380px;
+  margin: 0;
+  color: #e8eefc;
+  background: #081122;
+  font-family: Arial, sans-serif;
+}
+
+main {
+  padding: 16px;
+}
+
+header span,
+label {
+  color: #8fa4c7;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 4px 0 14px;
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+.status,
+.payload,
+.settings {
+  border: 1px solid rgba(63, 104, 166, .42);
+  border-radius: 12px;
+  background: rgba(6, 14, 28, .72);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.status strong,
+.payload div {
+  display: block;
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.status p {
+  margin: 6px 0 0;
+  color: #9fb1d1;
+  font-size: 12px;
+}
+
+.settings h2 {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.settings input {
+  width: 100%;
+  border: 1px solid rgba(63, 104, 166, .42);
+  border-radius: 8px;
+  background: rgba(3, 8, 18, .62);
+  color: #e8eefc;
+  margin: 5px 0 9px;
+  padding: 8px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.grid label {
+  margin: 0;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+label:first-child {
+  margin-top: 0;
+}
+
+button {
+  width: 100%;
+  border: 1px solid rgba(40, 198, 229, .55);
+  border-radius: 10px;
+  background: #28c6e5;
+  color: #06111f;
+  cursor: pointer;
+  font-weight: 800;
+  padding: 10px 12px;
+}
+
+#save-config {
+  margin: 4px 0 10px;
+  background: rgba(40, 198, 229, .16);
+  color: #e8eefc;
+}

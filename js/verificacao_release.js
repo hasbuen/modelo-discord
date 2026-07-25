@@ -1,7 +1,15 @@
+<<<<<<< HEAD
+=======
+// Abre a interface, recurso ou fluxo solicitado (abrir arquivo rtf).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function abrirArquivoRTF() {
   document.getElementById('arquivoRTF').click();
 }
 
+<<<<<<< HEAD
+=======
+// Explica a responsabilidade de processar rtf dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 async function processarRTF(event) {
   const arquivo = event.target.files[0];
   if (!arquivo) return;
@@ -36,6 +44,10 @@ async function processarRTF(event) {
     
     const historicoPRTs = await obterListaPRTs();
     
+<<<<<<< HEAD
+=======
+    // Explica a responsabilidade de resultados dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     const resultados = encontrados.map(protocolo => {
       const registro = historicoPRTs.find(reg => reg.protocolo === protocolo);
       return { protocolo, ...registro, estaRegistrado: !!registro };
@@ -189,6 +201,10 @@ async function obterListaPRTs() {
   }
 }
 
+<<<<<<< HEAD
+=======
+// Carrega ou restaura dados usados por esta funcionalidade (carregar historico liberacoes).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 async function carregarHistoricoLiberacoes() {
   const tbody = document.getElementById("tabelaLiberados");
 
@@ -295,6 +311,10 @@ async function carregarHistoricoLiberacoes() {
   }
 }
 
+<<<<<<< HEAD
+=======
+// Explica a responsabilidade de mostrar descricao modal dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function mostrarDescricaoModal(prt, descricao) {
   const modal = document.getElementById('descricaoModal');
   const titulo = document.getElementById('descricaoModalTitulo');
@@ -306,6 +326,10 @@ function mostrarDescricaoModal(prt, descricao) {
   modal.classList.remove('hidden');
 }
 
+<<<<<<< HEAD
+=======
+// Fecha a interface, recurso ou fluxo solicitado (fechar descricao modal).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function fecharDescricaoModal() {
   const modal = document.getElementById('descricaoModal');
   modal.classList.add('hidden');

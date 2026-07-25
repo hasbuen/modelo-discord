@@ -2,6 +2,11 @@ let protocolosIndex = {};
 let moduloSelecionado = 'TODOS';
 let liberacoesOriginais = [];
 
+<<<<<<< HEAD
+=======
+window.moduloSelecionado = window.moduloSelecionado || moduloSelecionado;
+
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 let chartsInstance = {
   chartLiberacoes: null,
   chartTop5: null,
@@ -9,6 +14,18 @@ let chartsInstance = {
   chartTrendModulo: null
 };
 
+<<<<<<< HEAD
+=======
+// Normaliza, interpreta ou formata dados para uso seguro (normalizar prt liberacao).
+function normalizarPrtLiberacao(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const number = raw.match(/\d{3,}/)?.[0];
+  return number ?`#PRT${number}` : raw;
+}
+
+// Explica a responsabilidade de notificar exportacao sem dados dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function notificarExportacaoSemDados() {
   if (typeof window.showToast === 'function') {
     window.showToast('Não há dados para exportar.', 'warning');
@@ -20,6 +37,10 @@ function notificarExportacaoSemDados() {
 // Quantos módulos aparecem como "escalados" (destacados). Usuário pode alterar via UI (1,3,5).
 let topEscalados = 3;
 
+<<<<<<< HEAD
+=======
+// Carrega ou restaura dados usados por esta funcionalidade (carregar dados liberacoes).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 async function carregarDadosLiberacoes() {
   try {
     const response = await fetch(window.getProtocordApiUrl('/liberados'));
@@ -33,7 +54,14 @@ async function carregarDadosLiberacoes() {
     // Converte formato da API para nosso formato
     const liberacoes = dadosAPI.map(item => ({
       release: item.release,
+<<<<<<< HEAD
       protocolos: item.prts.split(' ').filter(p => p.trim().length > 0)
+=======
+      protocolos: String(item.prts || '')
+        .split(/\s+/)
+        .map(normalizarPrtLiberacao)
+        .filter(Boolean)
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     }));
 
     // Ordena por data decrescente (mais recente primeiro)
@@ -263,6 +291,10 @@ function renderizarGraficoEvolucao(liberacoes) {
 
   const releases = liberacoes.map(item => item.release);
   let acumulado = 0;
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de cumulativo dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   const cumulativo = liberacoes.map(item => {
     acumulado += item.protocolos.length;
     return acumulado;
@@ -407,6 +439,10 @@ function habilitarCliqueGraficoLiberacoes() {
   chartsInstance.chartLiberacoes.update();
 }
 
+<<<<<<< HEAD
+=======
+// Busca ou resolve informacoes necessarias para o fluxo (obter dados visiveis tabela).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function obterDadosVisiveisTabela() {
   const linhas = document.querySelectorAll('#tabelaLiberados tr');
   const dados = [];
@@ -487,6 +523,10 @@ window.atualizarRankingModulos = function(liberacoes) {
   `).join('') || '<p class="text-xs text-gray-500">Sem dados</p>';
 };
 
+<<<<<<< HEAD
+=======
+// Prepara a copia, download ou exportacao dos dados (exportar excel tabela visivel).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function exportarExcelTabelaVisivel() {
   const dados = obterDadosVisiveisTabela();
   if (!dados.length) return;
@@ -516,6 +556,10 @@ function getTopModule(liberacoes) {
   return ordenado.length ?ordenado[0][0] : null;
 }
 
+<<<<<<< HEAD
+=======
+// Renderiza a interface ou a parte visual correspondente (renderizar grafico trend modulo).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function renderizarGraficoTrendModulo(liberacoes, modulo) {
   const ctx = document.getElementById('chartTrendModulo');
   if (!ctx || typeof Chart === 'undefined') return;
@@ -554,6 +598,10 @@ function renderizarGraficoTrendModulo(liberacoes, modulo) {
   });
 }
 
+<<<<<<< HEAD
+=======
+// Renderiza a interface ou a parte visual correspondente (renderizar ranking modulos).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function renderizarRankingModulos() {
   const liberacoes = obterLiberacoesFiltradasAtuais();
   const ranking = {};
@@ -652,14 +700,33 @@ renderizarDashboard = function (liberacoes) {
   }, 200);
 };
 
+<<<<<<< HEAD
 function obterLiberacoesFiltradasAtuais() {
   let dados = JSON.parse(JSON.stringify(liberacoesOriginais));
+=======
+// Busca ou resolve informacoes necessarias para o fluxo (obter liberacoes filtradas atuais).
+function obterLiberacoesFiltradasAtuais() {
+  const origem =
+    Array.isArray(liberacoesOriginais) && liberacoesOriginais.length
+      ? liberacoesOriginais
+      : (Array.isArray(window.liberacoesOriginais) ? window.liberacoesOriginais : []);
+  const indiceProtocolos =
+    window.protocolosIndex && Object.keys(window.protocolosIndex).length
+      ? window.protocolosIndex
+      : protocolosIndex;
+
+  let dados = JSON.parse(JSON.stringify(origem));
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 
   // Filtro por módulo
   if (typeof moduloSelecionado !== 'undefined' && moduloSelecionado !== 'TODOS') {
     dados = dados.map(r => {
       r.protocolos = r.protocolos.filter(prt =>
+<<<<<<< HEAD
         protocolosIndex[prt]?.modulo === moduloSelecionado
+=======
+        indiceProtocolos[prt]?.modulo === moduloSelecionado
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       );
       return r;
     }).filter(r => r.protocolos.length > 0);
@@ -670,7 +737,11 @@ function obterLiberacoesFiltradasAtuais() {
     const busca = termoBusca.toLowerCase();
     dados = dados.map(r => {
       r.protocolos = r.protocolos.filter(prt => {
+<<<<<<< HEAD
         const info = protocolosIndex[prt];
+=======
+        const info = indiceProtocolos[prt];
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         return (
           prt.toLowerCase().includes(busca) ||
           info?.modulo?.toLowerCase().includes(busca) ||
@@ -686,8 +757,16 @@ function obterLiberacoesFiltradasAtuais() {
 
 const _selecionarModuloOriginal = window.selecionarModulo;
 
+<<<<<<< HEAD
 window.selecionarModulo = function (modulo) {
   _selecionarModuloOriginal(modulo);
+=======
+window.selecionarModulo = function (modulo, options = {}) {
+  moduloSelecionado = modulo;
+  window.moduloSelecionado = modulo;
+  window.__kpiModuleFilterSource = modulo !== 'TODOS' && options?.source === 'ranking' ? 'ranking' : '';
+  _selecionarModuloOriginal(modulo, options);
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 
   const filtradas = obterLiberacoesFiltradasAtuais();
   renderizarTabelaLiberacoes(filtradas);
@@ -741,6 +820,10 @@ function inicializarBuscaModulo() {
   }
 }
 
+<<<<<<< HEAD
+=======
+// Renderiza a interface ou a parte visual correspondente (renderizar tabela liberacoes).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function renderizarTabelaLiberacoes(liberacoes) {
   const tbody = document.getElementById('tabelaLiberados');
   if (!tbody) {
@@ -751,14 +834,22 @@ function renderizarTabelaLiberacoes(liberacoes) {
   tbody.innerHTML = '';
 
   liberacoes.forEach(item => {
+<<<<<<< HEAD
     const detalhesProtocolos = (item.protocolos || []).map(prt => ({
+=======
+    const protocolosNormalizados = [...new Set((item.protocolos || []).map(normalizarPrtLiberacao).filter(Boolean))];
+    const detalhesProtocolos = protocolosNormalizados.map(prt => ({
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       prt,
       info: (window.obterProtocolo?.(prt) || window.protocolosIndex?.[prt] || {})
     }));
     const modulos = [...new Set(detalhesProtocolos.map(({ info }) => info?.modulo).filter(Boolean))];
+<<<<<<< HEAD
     const descricaoDestaque =
       detalhesProtocolos.find(({ info }) => info?.descricao)?.info?.descricao ||
       'Sem descrição operacional disponível.';
+=======
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     const tr = document.createElement('tr');
     tr.className = 'kpi-release-row';
 
@@ -782,7 +873,11 @@ function renderizarTabelaLiberacoes(liberacoes) {
       <td class="py-4 px-4 align-top">
         <div class="kpi-release-protocols">
           <div class="kpi-release-badges">${protocolosHTML}</div>
+<<<<<<< HEAD
           <p class="kpi-release-snippet">${descricaoDestaque}</p>
+=======
+          <p class="kpi-release-snippet">Clique em um PRT para ver descrição, paliativo, ticket e referência.</p>
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         </div>
       </td>
     `;
@@ -793,8 +888,18 @@ function renderizarTabelaLiberacoes(liberacoes) {
   if (liberacoes.length === 0) {
     tbody.innerHTML = '<tr><td colspan="3" class="text-center py-6 text-gray-400">Nenhum dado de liberação encontrado.</td></tr>';
   }
+<<<<<<< HEAD
 }
 
+=======
+
+  if (typeof window.inicializarClicksProtocolos === 'function') {
+    window.inicializarClicksProtocolos();
+  }
+}
+
+// Busca ou resolve informacoes necessarias para o fluxo (obter dados visiveis tabela).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function obterDadosVisiveisTabela() {
   const linhas = document.querySelectorAll('#tabelaLiberados tr');
   const dados = [];
@@ -816,3 +921,7 @@ function obterDadosVisiveisTabela() {
 
 window.renderizarTabelaLiberacoes = renderizarTabelaLiberacoes;
 window.obterLiberacoesFiltradasAtuais = obterLiberacoesFiltradasAtuais;
+<<<<<<< HEAD
+=======
+window.carregarDadosLiberacoes = carregarDadosLiberacoes;
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621

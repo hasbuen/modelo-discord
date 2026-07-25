@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "ProtoCord Znuny Transport",
+  "version": "1.0.0",
+  "description": "Transporta o relatório do ProtoCord para um novo ticket do Znuny.",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": [
+    "http://localhost/*",
+    "http://127.0.0.1/*",
+    "https://hasbuen.github.io/*",
+    "https://*.serviceup.app/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "ProtoCord Znuny",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost/*",
+        "http://127.0.0.1/*",
+        "https://hasbuen.github.io/*"
+      ],
+      "js": ["content-protocord.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": ["https://*.serviceup.app/znuny/index.pl*"],
+      "js": ["content-znuny.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

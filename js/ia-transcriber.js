@@ -4,13 +4,45 @@
   const MAX_UPLOAD_BYTES = 128 * 1024 * 1024;
   const AUDIO_DB_NAME = "protocord_ia_audio_v1";
   const AUDIO_STORE_NAME = "ticket_audio";
+<<<<<<< HEAD
   const PLACEHOLDER_PHONE = "Novo Ticket";
+=======
+  const ZNUNY_TRANSPORT_STORAGE_KEY = "protocord_znuny_transport_payload_v1";
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   const apiBaseUrl = window.getProtocordApiBaseUrl();
   let blobClientPromise = null;
   let audioDbPromise = null;
   let motionClientPromise = null;
   let plyrClientPromise = null;
 
+<<<<<<< HEAD
+=======
+  // Busca ou resolve informacoes necessarias para o fluxo (get znuny ticket url).
+  function getZnunyTicketUrl() {
+    const explicitUrl = String(
+      window.PROTOCORD_RUNTIME_CONFIG?.ZNUNY_TICKET_URL ||
+      localStorage.getItem("PROTOCORD_ZNUNY_TICKET_URL") ||
+      ""
+    ).trim();
+
+    if (explicitUrl) return explicitUrl;
+
+    const baseUrl = String(
+      window.PROTOCORD_RUNTIME_CONFIG?.ZNUNY_BASE_URL ||
+      localStorage.getItem("PROTOCORD_ZNUNY_BASE_URL") ||
+      ""
+    ).trim();
+
+    if (!baseUrl) return "";
+
+    try {
+      return new URL("/znuny/index.pl?Action=AgentTicketPhone", baseUrl).toString();
+    } catch (error) {
+      return "";
+    }
+  }
+
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   const state = {
     tickets: [],
     activeId: null,
@@ -30,6 +62,10 @@
 
   const els = {};
 
+<<<<<<< HEAD
+=======
+  // Inicializa os elementos e estados necessarios para esta funcionalidade (init).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function init() {
     injectBaseStyles();
     ensureLayout();
@@ -49,6 +85,10 @@
     primeMotionRuntime();
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de inject base styles dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function injectBaseStyles() {
     if (document.getElementById("protocord-ia-enhanced-style")) return;
 
@@ -64,7 +104,11 @@
       }
 
       #pagina-ia {
+<<<<<<< HEAD
         --ia-bg: #07111f;
+=======
+        --ia-bg: transparent;
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         --ia-bg-soft: rgba(8, 17, 34, .78);
         --ia-bg-elev: rgba(7, 17, 33, .92);
         --ia-panel: rgba(7, 17, 33, .74);
@@ -157,6 +201,10 @@
       }
 
       #pagina-ia .ia-sidebar-header {
+<<<<<<< HEAD
+=======
+        position: relative;
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         padding: 26px 22px 18px;
         border-bottom: 1px solid var(--ia-border);
       }
@@ -274,7 +322,12 @@
         position: relative;
       }
 
+<<<<<<< HEAD
       #pagina-ia .ia-search-wrap i {
+=======
+      #pagina-ia .ia-search-wrap i,
+      #pagina-ia .ia-search-wrap svg {
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         position: absolute;
         left: 14px;
         top: 50%;
@@ -1495,6 +1548,122 @@
         animation: ia-processing-progress 1.4s ease-in-out infinite;
       }
 
+<<<<<<< HEAD
+=======
+      html[data-theme="light"] #pagina-ia .ia-processing-overlay,
+      body[data-theme="light"] #pagina-ia .ia-processing-overlay,
+      html.light #pagina-ia .ia-processing-overlay,
+      body.light #pagina-ia .ia-processing-overlay,
+      .theme-light #pagina-ia .ia-processing-overlay,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-overlay {
+        background:
+          radial-gradient(circle at top, rgba(56, 189, 248, 0.14), transparent 42%),
+          linear-gradient(180deg, rgba(241, 247, 255, 0.78), rgba(226, 236, 248, 0.92));
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-processing-shell,
+      body[data-theme="light"] #pagina-ia .ia-processing-shell,
+      html.light #pagina-ia .ia-processing-shell,
+      body.light #pagina-ia .ia-processing-shell,
+      .theme-light #pagina-ia .ia-processing-shell,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-shell {
+        border-color: rgba(100, 116, 139, 0.18);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(241, 247, 255, 0.98));
+        box-shadow: 0 30px 80px rgba(100, 116, 139, 0.2);
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-processing-copy strong,
+      body[data-theme="light"] #pagina-ia .ia-processing-copy strong,
+      html.light #pagina-ia .ia-processing-copy strong,
+      body.light #pagina-ia .ia-processing-copy strong,
+      .theme-light #pagina-ia .ia-processing-copy strong,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-copy strong,
+      html[data-theme="light"] #pagina-ia .ia-processing-note-head strong,
+      body[data-theme="light"] #pagina-ia .ia-processing-note-head strong,
+      html.light #pagina-ia .ia-processing-note-head strong,
+      body.light #pagina-ia .ia-processing-note-head strong,
+      .theme-light #pagina-ia .ia-processing-note-head strong,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-note-head strong {
+        color: #0f172a;
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-processing-copy span,
+      body[data-theme="light"] #pagina-ia .ia-processing-copy span,
+      html.light #pagina-ia .ia-processing-copy span,
+      body.light #pagina-ia .ia-processing-copy span,
+      .theme-light #pagina-ia .ia-processing-copy span,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-copy span {
+        color: #516277;
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-processing-preview,
+      body[data-theme="light"] #pagina-ia .ia-processing-preview,
+      html.light #pagina-ia .ia-processing-preview,
+      body.light #pagina-ia .ia-processing-preview,
+      .theme-light #pagina-ia .ia-processing-preview,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-preview,
+      html[data-theme="light"] #pagina-ia .ia-processing-notes,
+      body[data-theme="light"] #pagina-ia .ia-processing-notes,
+      html.light #pagina-ia .ia-processing-notes,
+      body.light #pagina-ia .ia-processing-notes,
+      .theme-light #pagina-ia .ia-processing-notes,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-notes {
+        border-color: rgba(148, 163, 184, 0.18);
+        background: rgba(248, 251, 255, 0.9);
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-processing-line,
+      body[data-theme="light"] #pagina-ia .ia-processing-line,
+      html.light #pagina-ia .ia-processing-line,
+      body.light #pagina-ia .ia-processing-line,
+      .theme-light #pagina-ia .ia-processing-line,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-line,
+      html[data-theme="light"] #pagina-ia .ia-processing-block,
+      body[data-theme="light"] #pagina-ia .ia-processing-block,
+      html.light #pagina-ia .ia-processing-block,
+      body.light #pagina-ia .ia-processing-block,
+      .theme-light #pagina-ia .ia-processing-block,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-block {
+        background: rgba(210, 224, 242, 0.88);
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-processing-bar,
+      body[data-theme="light"] #pagina-ia .ia-processing-bar,
+      html.light #pagina-ia .ia-processing-bar,
+      body.light #pagina-ia .ia-processing-bar,
+      .theme-light #pagina-ia .ia-processing-bar,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-bar {
+        background:
+          linear-gradient(180deg, rgba(226, 236, 248, 0.96), rgba(210, 224, 242, 0.9)),
+          repeating-linear-gradient(
+            90deg,
+            rgba(37, 99, 235, 0.08) 0 14px,
+            rgba(37, 99, 235, 0.03) 14px 28px
+          );
+      }
+
+      html[data-theme="light"] #pagina-ia .ia-processing-line::after,
+      body[data-theme="light"] #pagina-ia .ia-processing-line::after,
+      html.light #pagina-ia .ia-processing-line::after,
+      body.light #pagina-ia .ia-processing-line::after,
+      .theme-light #pagina-ia .ia-processing-line::after,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-line::after,
+      html[data-theme="light"] #pagina-ia .ia-processing-block::after,
+      body[data-theme="light"] #pagina-ia .ia-processing-block::after,
+      html.light #pagina-ia .ia-processing-block::after,
+      body.light #pagina-ia .ia-processing-block::after,
+      .theme-light #pagina-ia .ia-processing-block::after,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-block::after,
+      html[data-theme="light"] #pagina-ia .ia-processing-bar::after,
+      body[data-theme="light"] #pagina-ia .ia-processing-bar::after,
+      html.light #pagina-ia .ia-processing-bar::after,
+      body.light #pagina-ia .ia-processing-bar::after,
+      .theme-light #pagina-ia .ia-processing-bar::after,
+      [data-bs-theme="light"] #pagina-ia .ia-processing-bar::after {
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.2), transparent);
+      }
+
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       #pagina-ia ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -1761,6 +1930,27 @@
         box-shadow: none;
       }
 
+<<<<<<< HEAD
+=======
+      #pagina-ia .ia-audio-mute-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+      }
+
+      #pagina-ia .ia-audio-mute-icon svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       #pagina-ia .ia-audio-volume-wrap {
         grid-column: 1;
         grid-row: 3;
@@ -2134,6 +2324,10 @@
     document.head.appendChild(style);
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de ensure layout dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function ensureLayout() {
     const page = document.getElementById("pagina-ia");
     if (!page) return;
@@ -2341,8 +2535,26 @@
       <div id="ia-audio-progress-fill" class="ia-audio-progress-fill"></div>
     </div>
 
+<<<<<<< HEAD
     <button id="ia-audio-mute-btn" class="ia-audio-mini-btn" type="button" aria-label="Mutar áudio">
       🔊
+=======
+    <button id="ia-audio-mute-btn" class="ia-audio-mini-btn" type="button" aria-label="Mutar audio" title="Mutar audio">
+      <span class="ia-audio-mute-icon ia-audio-mute-icon-on" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M4 9v6h4l5 4V5L8 9H4Z"></path>
+          <path d="M16 9.5a4 4 0 0 1 0 5"></path>
+          <path d="M18.5 7a7 7 0 0 1 0 10"></path>
+        </svg>
+      </span>
+      <span class="ia-audio-mute-icon ia-audio-mute-icon-off hidden" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M4 9v6h4l5 4V5L8 9H4Z"></path>
+          <path d="M17 9l4 4"></path>
+          <path d="M21 9l-4 4"></path>
+        </svg>
+      </span>
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     </button>
 
     <div class="ia-audio-volume-wrap">
@@ -2485,6 +2697,10 @@
     }
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de bind elements dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function bindElements() {
     els.page = document.getElementById("pagina-ia");
     els.newTicketBtn = document.getElementById("ia-new-ticket-btn");
@@ -2547,6 +2763,10 @@
 
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de bind events dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function bindEvents() {
     els.newTicketBtn?.addEventListener("click", () => {
       if (state.uploading) return;
@@ -2598,6 +2818,7 @@
       const active = getActiveTicketWithDraft(true);
       if (!active) return;
 
+<<<<<<< HEAD
       const payload = {
         contato: active.customName ?`${active.customName} (${active.phone})` : `(${active.phone})`,
         relatorio: buildHtml(active),
@@ -2608,6 +2829,31 @@
         await navigator.clipboard.writeText(JSON.stringify(payload));
         window.open("https://rhede.serviceup.app/znuny/index.pl?Action=AgentTicketPhone", "_blank");
         notify("Payload copiado para o Znuny.", "success");
+=======
+      const payload = buildZnunyTransportPayload(active);
+      persistZnunyTransportPayload(payload);
+      const pluginHandled = window.ProtoCordZnunyTransport?.handleTransport?.(payload);
+      if (!pluginHandled) {
+        emitZnunyTransport(payload);
+      }
+
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(payload));
+      } catch (error) {
+        // O plugin Tampermonkey usa o evento/localStorage; clipboard e apenas fallback manual.
+      }
+
+      if (pluginHandled) return;
+
+      try {
+        const ticketUrl = getZnunyTicketUrl();
+        if (ticketUrl) {
+          window.open(ticketUrl, "_blank", "noopener,noreferrer");
+          notify("Transporte preparado. Abrindo Znuny.", "success");
+        } else {
+          notify("Transporte preparado. Configure a URL do Znuny no plugin.", "warning");
+        }
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       } catch (error) {
         notify("Falha ao preparar o transporte.", "error");
       }
@@ -2795,6 +3041,10 @@ els.imageEditorFloatingText?.addEventListener("keydown", (event) => {
 els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { passive: false });
   }
 
+<<<<<<< HEAD
+=======
+  // Carrega ou restaura dados usados por esta funcionalidade (restore state).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function restoreState() {
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
@@ -2810,10 +3060,16 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
       state.tickets = [];
       state.activeId = null;
     }
+<<<<<<< HEAD
 
     syncTicketsWithPhonebook();
   }
 
+=======
+  }
+
+  // Persiste dados ou configuracoes desta funcionalidade (persist).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function persist() {
     localStorage.setItem(
       STORAGE_KEY,
@@ -2828,15 +3084,27 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     );
   }
 
+<<<<<<< HEAD
+=======
+  // Busca ou resolve informacoes necessarias para o fluxo (get active ticket).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function getActiveTicket() {
     return state.tickets.find((ticket) => ticket.id === state.activeId) || null;
   }
 
+<<<<<<< HEAD
+=======
+  // Monta ou cria a estrutura necessaria para esta etapa (create ticket).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function createTicket() {
     const id = String(Date.now());
     const ticket = {
       id,
+<<<<<<< HEAD
       phone: PLACEHOLDER_PHONE,
+=======
+      phone: "Novo Ticket",
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       customName: "",
       images: [],
       analysis: "",
@@ -2859,6 +3127,10 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     return ticket;
   }
 
+<<<<<<< HEAD
+=======
+  // Renderiza a interface ou a parte visual correspondente (render).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function render() {
     renderTicketList();
     renderActiveTicket();
@@ -2866,10 +3138,18 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     animateInterface();
   }
 
+<<<<<<< HEAD
+=======
+  // Renderiza a interface ou a parte visual correspondente (render ticket list).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function renderTicketList() {
     if (!els.ticketList) return;
 
     const term = state.searchTerm.trim().toLowerCase();
+<<<<<<< HEAD
+=======
+    // Explica a responsabilidade de filtered dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     const filtered = state.tickets.filter((ticket) => {
       const composite = `${ticket.phone || ""} ${ticket.customName || ""}`.toLowerCase();
       return !term || composite.includes(term);
@@ -2931,6 +3211,10 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
       .join("");
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de commit ticket name dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function commitTicketName(ticketId) {
     const ticket = state.tickets.find((entry) => entry.id === ticketId);
     const input = els.ticketList.querySelector(`[data-ticket-edit-input="${ticketId}"]`);
@@ -2938,6 +3222,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
 
     const value = input.value.trim();
     ticket.customName = value;
+<<<<<<< HEAD
     const savedContact = rememberTicketContact(ticket);
     state.editingTicketId = null;
     persist();
@@ -2947,6 +3232,14 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     }
   }
 
+=======
+    state.editingTicketId = null;
+    persist();
+    render();
+  }
+
+  // Explica a responsabilidade de focus ticket input dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function focusTicketInput(ticketId) {
     const input = els.ticketList?.querySelector(`[data-ticket-edit-input="${ticketId}"]`);
     if (!input) return;
@@ -2954,6 +3247,10 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     input.select();
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de begin ticket rename dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function beginTicketRename(ticketId) {
     if (!ticketId) return;
 
@@ -2969,6 +3266,10 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     animateTicketList();
   }
 
+<<<<<<< HEAD
+=======
+  // Remove itens, dados ou estado relacionado a esta funcionalidade (delete ticket).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function deleteTicket(ticketId) {
     const ticket = state.tickets.find((entry) => entry.id === ticketId);
     if (!ticket) return;
@@ -2993,6 +3294,10 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     render();
   }
 
+<<<<<<< HEAD
+=======
+  // Trata o evento ou acao do usuario neste fluxo (handle ticket list click).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function handleTicketListClick(event) {
     const actionButton = event.target.closest("[data-action]");
     if (actionButton) {
@@ -3027,6 +3332,10 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     render();
   }
 
+<<<<<<< HEAD
+=======
+  // Trata o evento ou acao do usuario neste fluxo (handle ticket list keydown).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function handleTicketListKeydown(event) {
     const input = event.target.closest("[data-ticket-edit-input]");
     if (!input) return;
@@ -3044,6 +3353,10 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     }
   }
 
+<<<<<<< HEAD
+=======
+  // Trata o evento ou acao do usuario neste fluxo (handle ticket list focus out).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function handleTicketListFocusOut(event) {
     const input = event.target.closest("[data-ticket-edit-input]");
     if (!input) return;
@@ -3057,6 +3370,10 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     });
   }
 
+<<<<<<< HEAD
+=======
+  // Renderiza a interface ou a parte visual correspondente (render active ticket).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function renderActiveTicket() {
     const active = getActiveTicket();
     const hasActive = Boolean(active);
@@ -3099,6 +3416,10 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     renderAudio(active);
   }
 
+<<<<<<< HEAD
+=======
+  // Renderiza a interface ou a parte visual correspondente (render image viewer).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function renderImageViewer(active) {
     const images = Array.isArray(active?.images) ?active.images : [];
     if (!images.length) {
@@ -3123,6 +3444,10 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
   }
 
 
+<<<<<<< HEAD
+=======
+  // Abre a interface, recurso ou fluxo solicitado (open image editor from active).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function openImageEditorFromActive() {
     const active = getActiveTicket();
     const image = active?.images?.[state.imageIndex];
@@ -3147,6 +3472,10 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     loadImageEditorCanvas(image);
   }
 
+<<<<<<< HEAD
+=======
+  // Fecha a interface, recurso ou fluxo solicitado (close image editor).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function closeImageEditor() {
     if (!els.imageEditorModal) return;
     state.imageEditorOpen = false;
@@ -3163,6 +3492,10 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     }
   }
 
+<<<<<<< HEAD
+=======
+// Aplica valores, estado visual ou configuracoes no fluxo atual (set image editor tool).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function setImageEditorTool(tool) {
   state.imageEditorTool = tool;
 
@@ -3176,6 +3509,10 @@ function setImageEditorTool(tool) {
   }
 }
 
+<<<<<<< HEAD
+=======
+  // Abre a interface, recurso ou fluxo solicitado (open image editor text input).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function openImageEditorTextInput(event) {
   if (!els.imageEditorCanvas || !els.imageEditorFloatingText) return;
 
@@ -3199,6 +3536,10 @@ function setImageEditorTool(tool) {
   els.imageEditorFloatingText.focus();
 }
 
+<<<<<<< HEAD
+=======
+// Explica a responsabilidade de commit image editor text dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function commitImageEditorText() {
   if (!els.imageEditorFloatingText || els.imageEditorFloatingText.classList.contains("hidden")) return;
 
@@ -3225,12 +3566,20 @@ function commitImageEditorText() {
   els.imageEditorFloatingText.classList.add("hidden");
 }
 
+<<<<<<< HEAD
+=======
+// Explica a responsabilidade de cancel image editor text dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function cancelImageEditorText() {
   if (!els.imageEditorFloatingText) return;
   els.imageEditorFloatingText.value = "";
   els.imageEditorFloatingText.classList.add("hidden");
 }
 
+<<<<<<< HEAD
+=======
+// Trata o evento ou acao do usuario neste fluxo (handle image editor text wheel).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function handleImageEditorTextWheel(event) {
   if (state.imageEditorTool !== "text") return;
   if (!els.imageEditorFloatingText || els.imageEditorFloatingText.classList.contains("hidden")) return;
@@ -3242,6 +3591,10 @@ function handleImageEditorTextWheel(event) {
   els.imageEditorFloatingText.style.fontSize = `${state.imageEditorFontSize}px`;
 }
 
+<<<<<<< HEAD
+=======
+  // Carrega ou restaura dados usados por esta funcionalidade (load image editor canvas).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function loadImageEditorCanvas(imageSrc) {
     if (!els.imageEditorCanvas) return;
     const canvas = els.imageEditorCanvas;
@@ -3262,6 +3615,10 @@ function handleImageEditorTextWheel(event) {
     image.src = imageSrc;
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de redraw image editor canvas dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function redrawImageEditorCanvas(previewShape) {
     if (!els.imageEditorCanvas) return;
     const canvas = els.imageEditorCanvas;
@@ -3276,6 +3633,10 @@ function handleImageEditorTextWheel(event) {
     shapes.forEach((shape) => drawImageEditorShape(ctx, shape));
   }
 
+<<<<<<< HEAD
+=======
+// Explica a responsabilidade de draw image editor shape dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function drawImageEditorShape(ctx, shape) {
   if (!shape) return;
 
@@ -3345,6 +3706,10 @@ if (shape.type === "text") {
   ctx.restore();
 }
 
+<<<<<<< HEAD
+=======
+// Busca ou resolve informacoes necessarias para o fluxo (get image editor point).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function getImageEditorPoint(event) {
   if (!els.imageEditorCanvas) return { x: 0, y: 0 };
 
@@ -3358,6 +3723,10 @@ function getImageEditorPoint(event) {
   };
 }
 
+<<<<<<< HEAD
+=======
+// Explica a responsabilidade de start image editor draw dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function startImageEditorDraw(event) {
   if (!state.imageEditorOpen || !els.imageEditorCanvas) return;
 
@@ -3380,6 +3749,10 @@ function startImageEditorDraw(event) {
   };
 }
 
+<<<<<<< HEAD
+=======
+// Explica a responsabilidade de move image editor draw dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function moveImageEditorDraw(event) {
   if (!state.imageEditorOpen || !els.imageEditorCanvas?.__imageEditorDrawing) return;
 
@@ -3392,6 +3765,10 @@ function moveImageEditorDraw(event) {
   redrawImageEditorCanvas(shape);
 }
 
+<<<<<<< HEAD
+=======
+// Explica a responsabilidade de end image editor draw dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function endImageEditorDraw() {
   if (!state.imageEditorOpen || !els.imageEditorCanvas?.__imageEditorDrawing) return;
 
@@ -3409,12 +3786,20 @@ function endImageEditorDraw() {
   redrawImageEditorCanvas();
 }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de undo image editor annotation dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function undoImageEditorAnnotation() {
     if (!state.imageEditorHistory.length) return;
     state.imageEditorHistory.pop();
     redrawImageEditorCanvas();
   }
 
+<<<<<<< HEAD
+=======
+  // Persiste dados ou configuracoes desta funcionalidade (save image editor annotation).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function saveImageEditorAnnotation() {
     const active = getActiveTicket();
     if (!active?.images?.length || !els.imageEditorCanvas) return;
@@ -3434,6 +3819,10 @@ function endImageEditorDraw() {
   }
 
 
+<<<<<<< HEAD
+=======
+  // Renderiza a interface ou a parte visual correspondente (render report).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function renderReport(active) {
     const text = state.editingReport ?state.reportDraft : buildSingleReportText(active);
 
@@ -3452,6 +3841,10 @@ function endImageEditorDraw() {
     }
   }
 
+<<<<<<< HEAD
+=======
+// Renderiza a interface ou a parte visual correspondente (render audio).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function renderAudio(active) {
   if (!active) {
     els.audioCard.classList.add("hidden");
@@ -3479,6 +3872,10 @@ function renderAudio(active) {
   hydrateLocalAudio(active);
 }
   
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de upload audio dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function uploadAudio(file) {
     const active = getActiveTicket();
     if (!active) {
@@ -3520,7 +3917,10 @@ function renderAudio(active) {
       active.solucao = data.solucao || "";
       active.resumo = (data.resumo || "").substring(0, 255);
       active.phone = data.telefone || active.phone;
+<<<<<<< HEAD
       applyPhonebookNameToTicket(active, { force: !active.customName });
+=======
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       active.nomeArquivoNoServidor = data.nomeArquivoNoServidor || "";
       active.blobUrl = data.blobUrl || "";
       active.localAudioKey = localAudioKey;
@@ -3539,6 +3939,10 @@ function renderAudio(active) {
     }
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de prepare audio for transcription dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function prepareAudioForTranscription(file) {
     if (!file) {
       throw new Error("Nenhum arquivo de áudio informado.");
@@ -3556,12 +3960,20 @@ function renderAudio(active) {
     return file;
   }
 
+<<<<<<< HEAD
+=======
+  // Monta ou cria a estrutura necessaria para esta etapa (create http error).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function createHttpError(message, status) {
     const error = new Error(message);
     error.status = status;
     return error;
   }
 
+<<<<<<< HEAD
+=======
+  // Normaliza, interpreta ou formata dados para uso seguro (parse json safe).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function parseJsonSafe(response) {
     try {
       return await response.json();
@@ -3570,6 +3982,10 @@ function renderAudio(active) {
     }
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de send transcription request dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function sendTranscriptionRequest(file) {
     const formData = new FormData();
     formData.append("audio", file);
@@ -3588,6 +4004,10 @@ function renderAudio(active) {
     return data;
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de request blob transcription dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function requestBlobTranscription(blobUpload, file) {
     const response = await fetch(`${apiBaseUrl}/transcrever`, {
       method: "POST",
@@ -3610,10 +4030,18 @@ function renderAudio(active) {
 
     return data;
   }
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de send legacy transcription request dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function sendLegacyTranscriptionRequest(file) {
     return sendTranscriptionRequest(file);
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de should fallback to blob dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function shouldFallbackToBlob(error) {
     return (
       error?.status === 408 ||
@@ -3624,6 +4052,10 @@ function renderAudio(active) {
     );
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de should fallback to direct upload dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function shouldFallbackToDirectUpload(error) {
     return (
       error?.status === 400 ||
@@ -3637,6 +4069,10 @@ function renderAudio(active) {
     );
   }
 
+<<<<<<< HEAD
+=======
+  // Monta ou cria a estrutura necessaria para esta etapa (build single report text).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function buildSingleReportText(ticket) {
     return [
       "PROBLEMA / DUVIDA:",
@@ -3647,6 +4083,7 @@ function renderAudio(active) {
     ].join("\n").trim();
   }
 
+<<<<<<< HEAD
   function getPhonebookApi() {
     return window.ProtoCordPhonebook || null;
   }
@@ -3707,6 +4144,77 @@ function renderAudio(active) {
     });
   }
 
+=======
+  // Monta ou cria a estrutura necessaria para esta etapa (build znuny transport payload).
+  function buildZnunyTransportPayload(ticket) {
+    const phone = String(ticket?.phone || "").trim();
+    const contact = ticket?.customName ?`${ticket.customName} (${phone || "sem telefone"})` : `(${phone || "sem telefone"})`;
+    const subject = String(ticket?.resumo || ticket?.customName || "Solicitacao de Suporte").trim();
+    const html = buildHtml(ticket);
+    const text = htmlToPlainText(html);
+
+    return {
+      source: "protocord",
+      version: 1,
+      createdAt: new Date().toISOString(),
+      ticketId: ticket?.id || "",
+      contato: contact,
+      telefone: phone,
+      assunto: subject,
+      titulo: subject,
+      problema: ticket?.analysis || "",
+      solucao: ticket?.solucao || "",
+      relatorio: html,
+      relatorioTexto: text,
+      evidencias: Array.isArray(ticket?.images)
+        ?ticket.images.map((image, index) => ({
+            index,
+            src: image,
+            name: image?.name || `evidencia-${index + 1}`,
+            type: image?.type || "",
+          }))
+        : [],
+    };
+  }
+
+  // Explica a responsabilidade de html to plain text dentro deste modulo.
+  function htmlToPlainText(html) {
+    const container = document.createElement("div");
+    container.innerHTML = String(html || "").replace(/<br\s*\/?>/gi, "\n");
+    return String(container.textContent || "")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+
+  // Persiste dados ou configuracoes desta funcionalidade (persist znuny transport payload).
+  function persistZnunyTransportPayload(payload) {
+    const envelope = {
+      payload,
+      savedAt: new Date().toISOString(),
+      expiresAt: Date.now() + 30 * 60 * 1000,
+    };
+
+    try {
+      localStorage.setItem(ZNUNY_TRANSPORT_STORAGE_KEY, JSON.stringify(envelope));
+      window.PROTOCORD_LAST_ZNUNY_TRANSPORT_PAYLOAD = payload;
+      window.PROTOCORD_ZNUNY_TRANSPORT_STORAGE_KEY = ZNUNY_TRANSPORT_STORAGE_KEY;
+    } catch (error) {
+      window.PROTOCORD_LAST_ZNUNY_TRANSPORT_PAYLOAD = payload;
+    }
+  }
+
+  // Explica a responsabilidade de emit znuny transport dentro deste modulo.
+  function emitZnunyTransport(payload) {
+    window.dispatchEvent(new CustomEvent("protocord:znuny-transport", {
+      detail: {
+        storageKey: ZNUNY_TRANSPORT_STORAGE_KEY,
+        payload,
+      },
+    }));
+  }
+
+  // Normaliza, interpreta ou formata dados para uso seguro (parse single report text).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function parseSingleReportText(text) {
     const normalized = String(text || "").replace(/\r\n/g, "\n");
     const problemMatch = normalized.match(
@@ -3720,6 +4228,10 @@ function renderAudio(active) {
     };
   }
 
+<<<<<<< HEAD
+=======
+  // Aplica valores, estado visual ou configuracoes no fluxo atual (apply report draft).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function applyReportDraft() {
     const active = getActiveTicket();
     if (!active) return;
@@ -3733,6 +4245,10 @@ function renderAudio(active) {
     notify("Relatório atualizado.", "success");
   }
 
+<<<<<<< HEAD
+=======
+  // Busca ou resolve informacoes necessarias para o fluxo (get active ticket with draft).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function getActiveTicketWithDraft(persistDraft) {
     const active = getActiveTicket();
     if (!active) return null;
@@ -3753,6 +4269,10 @@ function renderAudio(active) {
     return { ...active, analysis: parsed.analysis, solucao: parsed.solucao };
   }
 
+<<<<<<< HEAD
+=======
+  // Trata o evento ou acao do usuario neste fluxo (handle paste images).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function handlePasteImages(event) {
     const active = getActiveTicket();
     if (!active) return;
@@ -3774,6 +4294,10 @@ function renderAudio(active) {
     notify(`${images.length} imagem(ns) adicionada(s).`, "success");
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de read file as data url dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function readFileAsDataUrl(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -3783,6 +4307,10 @@ function renderAudio(active) {
     });
   }
 
+<<<<<<< HEAD
+=======
+  // Prepara a copia, download ou exportacao dos dados (copy current image).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function copyCurrentImage() {
     const active = getActiveTicket();
     const image = active?.images?.[state.imageIndex];
@@ -3797,6 +4325,10 @@ function renderAudio(active) {
     }
   }
 
+<<<<<<< HEAD
+=======
+  // Remove itens, dados ou estado relacionado a esta funcionalidade (delete current image).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function deleteCurrentImage() {
     const active = getActiveTicket();
     if (!active?.images?.length) return;
@@ -3808,12 +4340,20 @@ function renderAudio(active) {
     animateImageStage();
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de revoke object url if needed dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function revokeObjectUrlIfNeeded(url) {
     if (url && url.startsWith("blob:")) {
       URL.revokeObjectURL(url);
     }
   }
 
+<<<<<<< HEAD
+=======
+  // Abre a interface, recurso ou fluxo solicitado (open audio database).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function openAudioDatabase() {
     if (!audioDbPromise) {
       audioDbPromise = new Promise((resolve, reject) => {
@@ -3834,6 +4374,10 @@ function renderAudio(active) {
     return audioDbPromise;
   }
 
+<<<<<<< HEAD
+=======
+  // Persiste dados ou configuracoes desta funcionalidade (save local audio).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function saveLocalAudio(ticketId, file) {
     const db = await openAudioDatabase();
     const id = String(ticketId || Date.now());
@@ -3854,6 +4398,10 @@ function renderAudio(active) {
     return id;
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de read local audio dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function readLocalAudio(audioKey) {
     if (!audioKey) return null;
     const db = await openAudioDatabase();
@@ -3866,6 +4414,10 @@ function renderAudio(active) {
     });
   }
 
+<<<<<<< HEAD
+=======
+  // Remove itens, dados ou estado relacionado a esta funcionalidade (delete local audio).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function deleteLocalAudio(audioKey) {
     if (!audioKey) return;
     const db = await openAudioDatabase();
@@ -3878,6 +4430,10 @@ function renderAudio(active) {
     });
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de hydrate local audio dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function hydrateLocalAudio(ticket) {
     if (!ticket?.localAudioKey) {
       els.audioCard.classList.add("hidden");
@@ -3907,6 +4463,10 @@ els.audioPlayer.load();
     }
   }
 
+<<<<<<< HEAD
+=======
+  // Valida uma condicao e retorna o resultado para o fluxo (is upload friendly audio).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function isUploadFriendlyAudio(file) {
     const type = String(file?.type || "").toLowerCase();
     return (
@@ -3922,6 +4482,10 @@ els.audioPlayer.load();
     );
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de upload audio to blob dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function uploadAudioToBlob(file) {
     if (!isUploadFriendlyAudio(file)) {
       throw new Error("Formato de áudio não suportado para upload.");
@@ -3937,6 +4501,10 @@ els.audioPlayer.load();
     });
   }
 
+<<<<<<< HEAD
+=======
+  // Carrega ou restaura dados usados por esta funcionalidade (load blob client).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function loadBlobClient() {
     if (!blobClientPromise) {
       blobClientPromise = import("https://esm.sh/@vercel/blob/client?target=es2022");
@@ -3945,6 +4513,10 @@ els.audioPlayer.load();
     return blobClientPromise;
   }
 
+<<<<<<< HEAD
+=======
+  // Carrega ou restaura dados usados por esta funcionalidade (load plyr client).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function loadPlyrClient() {
     if (!plyrClientPromise) {
       plyrClientPromise = import("https://cdn.jsdelivr.net/npm/plyr@3.7.8/+esm").catch(() => null);
@@ -3952,6 +4524,10 @@ els.audioPlayer.load();
     return plyrClientPromise;
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de ensure plyr player dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function ensurePlyrPlayer() {
     const module = await loadPlyrClient();
     if (!module || !els.audioPlayer) return null;
@@ -3977,12 +4553,20 @@ els.audioPlayer.load();
     return instance;
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de sanitize blob filename dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function sanitizeBlobFilename(filename) {
     return String(filename || "audio.bin")
       .replace(/[^\w.\-]+/g, "_")
       .replace(/_+/g, "_");
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de ping backend health dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function pingBackendHealth() {
     try {
       await fetch(`${apiBaseUrl}/health`, {
@@ -3994,9 +4578,17 @@ els.audioPlayer.load();
     }
   }
 
+<<<<<<< HEAD
   function buildHtml(ticket) {
     const phone = ticket.phone || "telefone";
     const contact = ticket.customName ?`${ticket.customName} (${phone})` : `(${phone})`;
+=======
+  // Monta ou cria a estrutura necessaria para esta etapa (build html).
+  function buildHtml(ticket) {
+    const phone = ticket.phone || "telefone";
+    const contact = ticket.customName ?`${ticket.customName} (${phone})` : `(${phone})`;
+    const evidenceHtml = buildEvidenceHtml(ticket);
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 
     return [
       '<span style="color:#f39c12"><strong>PROBLEMA / DUVIDA:</strong></span><br />',
@@ -4004,14 +4596,43 @@ els.audioPlayer.load();
       `<span>${escapeHtml(ticket.analysis || "Aguardando transcricao...")}</span><br /><br />`,
       '<span style="color:#4dabf7"><strong>ENCAMINHAMENTO / SOLUCAO:</strong></span><br />',
       `<span>${escapeHtml(ticket.solucao || "Aguardando transcricao...")}</span>`,
+<<<<<<< HEAD
     ].join("");
   }
 
+=======
+      evidenceHtml,
+    ].join("");
+  }
+
+  // Monta ou cria a estrutura necessaria para esta etapa (build evidence html).
+  function buildEvidenceHtml(ticket) {
+    const images = Array.isArray(ticket?.images) ? ticket.images.filter(Boolean) : [];
+    if (!images.length) return "";
+
+    const imageBlocks = images.map((image, index) => [
+      `<p style="margin:12px 0 6px;"><strong>Evidencia ${index + 1}</strong></p>`,
+      `<p style="margin:0 0 14px;"><img src="${escapeAttribute(image)}" alt="Evidencia ${index + 1}" style="max-width:100%;height:auto;border:1px solid #d9e2ef;" /></p>`,
+    ].join(""));
+
+    return [
+      '<br /><br />',
+      '<strong>Evidencias</strong>',
+      ...imageBlocks,
+    ].join("");
+  }
+
+  // Alterna o estado desta funcionalidade (toggle disabled).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function toggleDisabled(element, disabled) {
     if (!element) return;
     element.disabled = Boolean(disabled);
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de escape html dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function escapeHtml(value) {
     return String(value || "")
       .replace(/&/g, "&amp;")
@@ -4021,10 +4642,18 @@ els.audioPlayer.load();
       .replace(/'/g, "&#39;");
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de escape attribute dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function escapeAttribute(value) {
     return escapeHtml(value).replace(/`/g, "&#96;");
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de notify dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function notify(message, type) {
     if (typeof window.showToast === "function") {
       window.showToast(message, type);
@@ -4034,6 +4663,10 @@ els.audioPlayer.load();
     console.log(`[${type || "info"}] ${message}`);
   }
 
+<<<<<<< HEAD
+=======
+  // Carrega ou restaura dados usados por esta funcionalidade (load motion client).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function loadMotionClient() {
     if (!motionClientPromise) {
       motionClientPromise = import("https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm").catch(() => null);
@@ -4041,11 +4674,19 @@ els.audioPlayer.load();
     return motionClientPromise;
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de prime motion runtime dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function primeMotionRuntime() {
     loadMotionClient();
     loadPlyrClient();
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de animate interface dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function animateInterface() {
     const motion = await loadMotionClient();
     if (!motion) return;
@@ -4092,6 +4733,10 @@ els.audioPlayer.load();
     animateTicketList();
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de animate ticket list dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function animateTicketList() {
     const motion = await loadMotionClient();
     if (!motion) return;
@@ -4108,6 +4753,10 @@ els.audioPlayer.load();
     );
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de animate report panel dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function animateReportPanel() {
     const motion = await loadMotionClient();
     if (!motion) return;
@@ -4124,6 +4773,10 @@ els.audioPlayer.load();
     );
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de animate image stage dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function animateImageStage() {
     const motion = await loadMotionClient();
     if (!motion) return;
@@ -4140,6 +4793,10 @@ els.audioPlayer.load();
     );
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de animate audio card dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   async function animateAudioCard(isPlaying) {
     const motion = await loadMotionClient();
     if (!motion || !els.audioCard) return;
@@ -4184,6 +4841,10 @@ els.audioPlayer.load();
     }
   }
 
+<<<<<<< HEAD
+=======
+  // Alterna o estado desta funcionalidade (toggle audio playback).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function toggleAudioPlayback() {
   if (!els.audioPlayer) return;
 
@@ -4197,6 +4858,10 @@ els.audioPlayer.load();
   els.audioPlayer.pause();
 }
 
+<<<<<<< HEAD
+=======
+// Atualiza a tela, o estado interno ou dados derivados (sync audio ui).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function syncAudioUi() {
   if (!els.audioPlayer) return;
 
@@ -4222,7 +4887,14 @@ function syncAudioUi() {
   }
 
   if (els.audioMuteBtn) {
+<<<<<<< HEAD
     els.audioMuteBtn.textContent = muted ? "Sem som" : "Com som";
+=======
+    els.audioMuteBtn.setAttribute("aria-label", muted ? "Ativar audio" : "Mutar audio");
+    els.audioMuteBtn.setAttribute("title", muted ? "Ativar audio" : "Mutar audio");
+    els.audioMuteBtn.querySelector(".ia-audio-mute-icon-on")?.classList.toggle("hidden", muted);
+    els.audioMuteBtn.querySelector(".ia-audio-mute-icon-off")?.classList.toggle("hidden", !muted);
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   }
 
   if (els.audioPlayIconPlay && els.audioPlayIconPause) {
@@ -4236,6 +4908,10 @@ function syncAudioUi() {
   }
 }
 
+<<<<<<< HEAD
+=======
+// Normaliza, interpreta ou formata dados para uso seguro (format audio time).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 function formatAudioTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
   const mins = Math.floor(seconds / 60);
@@ -4258,6 +4934,7 @@ function formatAudioTime(seconds) {
       window.initIaTranscriberPage?.();
     }
   });
+<<<<<<< HEAD
 
   window.addEventListener("protocord:phonebook-updated", (event) => {
     const contact = event.detail?.contact;
@@ -4271,4 +4948,6 @@ function formatAudioTime(seconds) {
       render();
     }
   });
+=======
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 })();

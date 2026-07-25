@@ -28,11 +28,39 @@ const indexSource = fs.readFileSync(
 );
 
 test('workspace KPI moderno volta a renderizar a tabela consolidada', () => {
+<<<<<<< HEAD
   assert.match(kpiSource, /renderizarTabelaLiberacoes\(filteredRows\)/);
   assert.match(legacyDashboardSource, /className = 'kpi-release-row'/);
   assert.match(legacyDashboardSource, /window\.renderizarTabelaLiberacoes = renderizarTabelaLiberacoes/);
   assert.match(indexSource, /if \(paginaId === 'historico-liberacoes'\) \{/);
   assert.match(indexSource, /window\.renderKpiWorkspace\(\)/);
+=======
+  assert.match(kpiSource, /function applyKpiFilters\(protocolIndex, releases\)/);
+  assert.match(kpiSource, /const filtered = applyKpiFilters\(baseProtocolIndex, baseReleases\)/);
+  assert.match(kpiSource, /renderizarTabelaLiberacoes\(releases\)/);
+  assert.match(kpiSource, /metrics\.activeModule = filtered\.filters\.module/);
+  assert.match(legacyDashboardSource, /className = 'kpi-release-row'/);
+  assert.match(legacyDashboardSource, /window\.renderizarTabelaLiberacoes = renderizarTabelaLiberacoes/);
+  assert.match(legacyDashboardSource, /window\.carregarDadosLiberacoes = carregarDadosLiberacoes/);
+  assert.match(legacyDashboardSource, /window\.moduloSelecionado = modulo/);
+  assert.match(legacyDashboardSource, /Array\.isArray\(window\.liberacoesOriginais\)/);
+  assert.match(legacyDashboardSource, /const indiceProtocolos =/);
+  assert.match(legacyDashboardSource, /window\.protocolosIndex && Object\.keys\(window\.protocolosIndex\)\.length/);
+  assert.match(indexSource, /if \(paginaId === 'historico-liberacoes'\) \{/);
+  assert.match(indexSource, /window\.renderKpiWorkspace\(\)/);
+  assert.match(indexSource, /else if \(typeof window\.initLegacyHistoryDashboard === 'function'\)/);
+  assert.match(indexSource, /cdnjs\.cloudflare\.com\/ajax\/libs\/Chart\.js\/4\.4\.0\/chart\.umd\.min\.js/);
+  assert.match(kpiSource, /function renderKpiCharts\(metrics\)/);
+  assert.match(kpiSource, /function renderChartSafely\(name, renderFn\)/);
+  assert.match(kpiSource, /function renderModuleLegend\(labels, values, palette\)/);
+  assert.match(kpiSource, /id: "protocordModuleCenter"/);
+  assert.match(kpiSource, /tooltip:\s*\{\s*[\r\n]+\s*callbacks:/);
+  assert.match(kpiSource, /window\.ensureChartJs\(\)\.catch/);
+  assert.match(kpiSource, /requestAnimationFrame\(\(\) => renderKpiCharts\(metrics\)\)/);
+  assert.match(styleSource, /\.kpi-module-legend-card \{/);
+  assert.match(styleSource, /\[data-theme="light"\] \.kpi-table-wrap thead tr/);
+  assert.match(styleSource, /\[data-theme="light"\] \.kpi-inline-module-chart/);
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 });
 
 test('modal de storage usa barras visuais para apresentar volume do Supabase', () => {
@@ -41,18 +69,46 @@ test('modal de storage usa barras visuais para apresentar volume do Supabase', (
   assert.match(kpiSource, /class="kpi-storage-hero-fill"/);
   assert.match(kpiSource, /class="kpi-storage-progress-grid"/);
   assert.match(kpiSource, /class="kpi-storage-share-fill kpi-storage-share-fill-\$\{tone\}"/);
+<<<<<<< HEAD
   assert.match(kpiSource, /buildTable\(\["Origem monitorada", "Volume estimado", "Linhas"\], rows, \{ page \}\)/);
+=======
+  assert.match(kpiSource, /buildTable\(\["Origem monitorada", "Volume estimado", "Linhas"\], rows, \{ paginate: false \}\)/);
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   assert.match(styleSource, /\.kpi-storage-hero \{/);
   assert.match(styleSource, /\.kpi-storage-hero-fill,\s*[\r\n]+\s*\.kpi-storage-progress-fill,\s*[\r\n]+\s*\.kpi-storage-share-fill \{/);
   assert.match(styleSource, /\.kpi-storage-share-track \{/);
 });
 
 test('badges e modal de protocolo usam a nova camada visual operacional', () => {
+<<<<<<< HEAD
   assert.match(protocolosSource, /class="kpi-protocol-badge kpi-protocol-badge-\$\{variant\} badge-protocolo"/);
   assert.match(protocolosSource, /id="modal-protocolo-overlay" class="protocol-modal-overlay"/);
   assert.match(protocolosSource, /window\.__protocolosClicksInitialized/);
   assert.match(styleSource, /\.protocol-modal-card \{/);
   assert.match(styleSource, /\.kpi-release-row \{/);
+=======
+  assert.match(protocolosSource, /kpi-protocol-badge-\$\{variant\}/);
+  assert.match(protocolosSource, /badge-protocolo/);
+  assert.match(protocolosSource, /function normalizePrt\(value\)/);
+  assert.match(protocolosSource, /kpi-protocol-badge-muted/);
+  assert.match(protocolosSource, /const indexed = window\.protocolosIndex\?\.\[prt\]/);
+  assert.match(protocolosSource, /return \{\s*prt,/);
+  assert.match(protocolosSource, /modulo: String\(moduloMap\[moduloId\] \|\| item\.modulo \|\| "Desconhecido"\)/);
+  assert.match(protocolosSource, /String\(a\)\.localeCompare\(String\(b\), "pt-BR"\)/);
+  assert.match(protocolosSource, /id="modal-protocolo-overlay" class="protocol-modal-overlay"/);
+  assert.match(protocolosSource, /class="protocol-modal-body"/);
+  assert.match(protocolosSource, /window\.__protocolosClicksInitialized/);
+  assert.match(legacyDashboardSource, /function normalizarPrtLiberacao\(value\)/);
+  assert.match(legacyDashboardSource, /Clique em um PRT para ver descrição, paliativo, ticket e referência/);
+  assert.match(legacyDashboardSource, /window\.inicializarClicksProtocolos\(\)/);
+  assert.match(styleSource, /\.protocol-modal-card \{/);
+  assert.match(styleSource, /max-height: min\(86vh, 920px\)/);
+  assert.match(styleSource, /\.protocol-modal-body::-webkit-scrollbar-thumb/);
+  assert.match(styleSource, /overflow-wrap: anywhere/);
+  assert.match(styleSource, /\.kpi-release-row \{/);
+  assert.match(styleSource, /\.kpi-release-badges \{\s*[\r\n]+\s*display: flex;\s*[\r\n]+\s*flex-wrap: wrap;\s*[\r\n]+\s*align-items: flex-start;/);
+  assert.match(styleSource, /\.kpi-protocol-badge \{\s*[\r\n]+\s*display: inline-flex;[\s\S]*max-width: 100%;/);
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 });
 
 test('cards do KPI expõem atalhos acionáveis com modal detalhado', () => {

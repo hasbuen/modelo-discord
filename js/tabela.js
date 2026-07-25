@@ -22,6 +22,10 @@ export function filtrarTabela() {
   });
 }
 
+<<<<<<< HEAD
+=======
+// Explica a responsabilidade de ordenar tabela dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 export function ordenarTabela(idx) {
   const tbody = document.querySelector("#tabelaRegistros tbody");
   let linhas = [...tbody.querySelectorAll("tr")];
@@ -64,6 +68,10 @@ export function mostrarModalPaliativo(paliativo) {
   }
 }
 
+<<<<<<< HEAD
+=======
+// Abre a interface, recurso ou fluxo solicitado (abrir modal exclusao).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 export async function abrirModalExclusao(id, ticket) {
   const modal = document.getElementById("confirmModal");
   const confirmBtn = document.getElementById("confirmBtn");
@@ -94,6 +102,10 @@ export async function abrirModalExclusao(id, ticket) {
   }
 }
 
+<<<<<<< HEAD
+=======
+// Atualiza a tela, o estado interno ou dados derivados (atualizar contadores dos cards).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 export async function atualizarContadoresDosCards(registros) {
   const totalErros = registros.filter(r => r.tipo === '0').length;
   const totalSugestoes = registros.filter(r => r.tipo === '1').length;

@@ -111,6 +111,10 @@
         ["\u00c2\u00b7", "\u00b7"]
       ];
 
+<<<<<<< HEAD
+=======
+      // Explica a responsabilidade de decode latin1 utf8 dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       function decodeLatin1Utf8(value) {
         try {
           const bytes = Uint8Array.from(value, (char) => char.charCodeAt(0) & 255);
@@ -120,6 +124,10 @@
         }
       }
 
+<<<<<<< HEAD
+=======
+      // Normaliza, interpreta ou formata dados para uso seguro (normalize ui text).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       function normalizeUiText(value) {
         if (typeof value !== "string" || !value) return value;
         let next = value;
@@ -138,6 +146,10 @@
         return next;
       }
 
+<<<<<<< HEAD
+=======
+      // Normaliza, interpreta ou formata dados para uso seguro (normalize element attributes).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       function normalizeElementAttributes(element) {
         ["title", "placeholder", "aria-label", "data-tooltip"].forEach((name) => {
           const current = element.getAttribute?.(name);
@@ -146,6 +158,10 @@
         });
       }
 
+<<<<<<< HEAD
+=======
+      // Normaliza, interpreta ou formata dados para uso seguro (normalize dom encoding).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       function normalizeDomEncoding(root = document.body) {
         if (!root) return;
         const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
@@ -161,6 +177,10 @@
         if (root.nodeType === Node.ELEMENT_NODE) normalizeElementAttributes(root);
       }
 
+<<<<<<< HEAD
+=======
+      // Busca ou resolve informacoes necessarias para o fluxo (get dynamic encoding roots).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       function getDynamicEncodingRoots() {
         const roots = [];
         dynamicRootSelectors.forEach((selector) => {
@@ -171,6 +191,10 @@
         return roots;
       }
 
+<<<<<<< HEAD
+=======
+      // Explica a responsabilidade de node looks suspicious dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       function nodeLooksSuspicious(node) {
         if (!node) return false;
         if (node.nodeType === Node.TEXT_NODE) {
@@ -203,6 +227,10 @@
 
       window.lucide = window.lucide || { createIcons() {} };
 
+<<<<<<< HEAD
+=======
+      // Carrega ou restaura dados usados por esta funcionalidade (load script).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       function loadScript(src, globalGuard) {
         if (globalGuard && globalGuard()) {
           return Promise.resolve();
@@ -248,7 +276,12 @@
       };
 
       window.ensureChartJs = function ensureChartJs() {
+<<<<<<< HEAD
         return loadScript("https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js", () => Boolean(window.Chart));
+=======
+        return loadScript("https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js", () => Boolean(window.Chart))
+          .catch(() => loadScript("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js", () => Boolean(window.Chart)));
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       };
 
       window.ensureJsPdf = function ensureJsPdf() {
@@ -375,14 +408,22 @@
 
     <header id="desktop-header"
       class="hidden md:flex items-center justify-between fixed top-0 right-0 z-20 px-6 py-3 h-16 w-auto left-56">
+<<<<<<< HEAD
       <div class="flex items-center gap-3">
+=======
+      <div id="docs-easter-brand" class="flex items-center gap-3 docs-easter-target" title="Documentação">
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         <div class="bg-blue-600 p-1.5 rounded-lg">
           <i data-lucide="bandage" class="w-5 h-5 text-white"></i>
         </div>
         <h1 class="text-xl font-bold tracking-tight">ProtoCord</h1>
       </div>
       <div class="flex items-center gap-4">
+<<<<<<< HEAD
         <span class="text-sm text-gray-400">v2.0</span>
+=======
+        <span id="docs-easter-version" class="text-sm text-gray-400 docs-easter-target">v2.0</span>
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       </div>
     </header>
 
@@ -450,16 +491,27 @@
           </span>
         </button>
 
+<<<<<<< HEAD
         <button onclick="mostrarPagina('agenda')" data-tooltip="Agenda telefônica" class="sidebar-item" id="btn-agenda">
           <i data-lucide="contact-round" class="sidebar-icon"></i>
           <span class="sidebar-label">Agenda</span>
         </button>
 
+=======
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         <button onclick="mostrarPagina('metas')" data-tooltip="Metas" class="sidebar-item" id="btn-metas">
           <i data-lucide="target" class="sidebar-icon"></i>
           <span class="sidebar-label">Metas</span>
         </button>
 
+<<<<<<< HEAD
+=======
+        <button onclick="mostrarPagina('comparador-textos')" data-tooltip="Comparador de Textos" class="sidebar-item" id="btn-comparador-textos">
+          <i data-lucide="git-compare-arrows" class="sidebar-icon"></i>
+          <span class="sidebar-label">Comparador</span>
+        </button>
+
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       </nav>
 
       <div class="mt-auto sidebar-footer-panel">
@@ -490,7 +542,11 @@
         <button id="btn-mobile-menu" class="p-2 -ml-2 rounded-md hover:bg-gray-800">
           <i data-lucide="menu" class="w-6 h-6"></i>
         </button>
+<<<<<<< HEAD
         <span class="font-bold text-lg">ProtoCord</span>
+=======
+        <span id="docs-easter-mobile" class="font-bold text-lg docs-easter-target">ProtoCord</span>
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       </div>
       <button id="btn-mobile-theme" class="mobile-theme-chip" onclick="alternarTema(window.__nextThemeOption ?window.__nextThemeOption() : 'dark')">
         <i data-lucide="sun-moon" class="w-4 h-4"></i>
@@ -499,6 +555,42 @@
     </header>
 
     <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden"></div>
+<<<<<<< HEAD
+=======
+    <div id="docs-easter-menu" class="docs-easter-menu hidden" role="menu" aria-hidden="true">
+      <div class="docs-easter-menu-header">
+        <span>Central oculta</span>
+        <button type="button" id="docs-easter-close" aria-label="Fechar documentação">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <p>Área restrita para documentação e mapa do projeto.</p>
+      <form id="docs-easter-auth" class="docs-easter-auth" autocomplete="off">
+        <label for="docs-easter-password">Senha</label>
+        <div class="docs-easter-auth-row">
+          <input id="docs-easter-password" type="password" autocomplete="current-password" placeholder="Digite sua senha" />
+          <button type="submit" aria-label="Acessar documentação">
+            <i data-lucide="log-in" class="w-4 h-4"></i>
+          </button>
+        </div>
+        <small id="docs-easter-error" class="hidden">Senha não validada.</small>
+      </form>
+      <div id="docs-easter-links" class="docs-easter-links hidden">
+        <button type="button" data-doc-key="manual-usuario" role="menuitem">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+          Manual do usuário
+        </button>
+        <button type="button" data-doc-key="manual-transcrever-cordia" role="menuitem">
+          <i data-lucide="mic-2" class="w-4 h-4"></i>
+          Manual Transcrever e CordIA
+        </button>
+        <button type="button" data-doc-key="mind-map" role="menuitem">
+          <i data-lucide="network" class="w-4 h-4"></i>
+          Mind Map
+        </button>
+      </div>
+    </div>
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     <aside id="mobile-sidebar"
       class="fixed inset-y-0 left-0 w-64 bg-gray-900 border-r border-gray-700 z-50 transform -translate-x-full transition-transform duration-300 md:hidden p-4">
       <div class="flex items-center justify-between mb-6">
@@ -536,12 +628,21 @@
             <i data-lucide="bot" class="sidebar-icon"></i> Transcrever
             <span class="sidebar-pill ml-2">Plus</span>
           </button>
+<<<<<<< HEAD
           <button onclick="mostrarPagina('agenda')" class="sidebar-item" id="btn-agenda-mobile">
             <i data-lucide="contact-round" class="sidebar-icon"></i> Agenda
           </button>
           <button onclick="mostrarPagina('metas')" class="sidebar-item" id="btn-metas-mobile">
             <i data-lucide="target" class="sidebar-icon"></i> Metas
           </button>
+=======
+          <button onclick="mostrarPagina('metas')" class="sidebar-item" id="btn-metas-mobile">
+            <i data-lucide="target" class="sidebar-icon"></i> Metas
+          </button>
+          <button onclick="mostrarPagina('comparador-textos')" class="sidebar-item" id="btn-comparador-textos-mobile">
+            <i data-lucide="git-compare-arrows" class="sidebar-icon"></i> Comparador
+          </button>
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
           <button onclick="mostrarPagina('relatorios')" class="sidebar-item" id="btn-relatorios-mobile">
             <i data-lucide="file-text" class="sidebar-icon"></i> Relatórios
             <span class="sidebar-pill ml-2">Plus</span>
@@ -978,6 +1079,21 @@
                     <canvas id="chartTrendModulo"></canvas>
                   </div>
                 </div>
+<<<<<<< HEAD
+=======
+
+                <div class="kpi-subpanel">
+                  <div class="kpi-panel-header">
+                    <div>
+                      <h4 class="kpi-subpanel-title">Ranking de módulos</h4>
+                      <p class="kpi-panel-subtitle">Módulos com maior incidência no recorte atual.</p>
+                    </div>
+                  </div>
+                  <div id="ranking-modulos" class="kpi-canvas kpi-canvas-md">
+                    <canvas id="chartRankingModulos"></canvas>
+                  </div>
+                </div>
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
               </article>
 
               <aside class="kpi-side-stack">
@@ -992,6 +1108,7 @@
                     <p class="kpi-summary-line">Aguardando sincroniza??o da base.</p>
                   </div>
                 </article>
+<<<<<<< HEAD
 
                 <article class="kpi-panel">
                   <div class="kpi-panel-header">
@@ -1031,6 +1148,27 @@
                   <div class="w-full md:w-80">
                     <input id="busca-modulo" type="text" placeholder="Buscar PRT, módulo ou descrição..." class="w-full px-4 py-3 rounded-xl bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition" />
                   </div>
+=======
+              </aside>
+            </section>
+
+            <section class="kpi-panel">
+              <div class="mb-5 kpi-table-controls">
+                <div class="kpi-filter-row">
+                  <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Filtrar por módulo</p>
+                  <div id="filtro-modulos" class="flex flex-wrap gap-2 mt-2"></div>
+                </div>
+
+                <div class="kpi-inline-module-chart">
+                  <div class="kpi-canvas kpi-canvas-md">
+                    <canvas id="grafico-modulos"></canvas>
+                  </div>
+                  <div id="legenda-modulos" class="kpi-legend"></div>
+                </div>
+
+                <div class="kpi-search-row">
+                  <input id="busca-modulo" type="text" placeholder="Buscar PRT, módulo ou descrição..." class="w-full px-4 py-3 rounded-xl bg-gray-800 text-gray-200 focus:ring-2 focus:ring-blue-500 outline-none transition" />
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
                 </div>
               </div>
 
@@ -1719,9 +1857,33 @@
           </section>
         </div>
 
+<<<<<<< HEAD
         <!-- embedded metas assistant removed -->
 
         <div id="pagina-agenda" class="hidden animate__animated animate__fadeIn"></div>
+=======
+        <div id="pagina-comparador-textos" class="hidden animate__animated animate__fadeIn">
+          <section class="kpi-shell legacy-shell">
+            <section class="kpi-hero">
+              <div class="kpi-hero-copy">
+                <p class="kpi-eyebrow">Ferramenta</p>
+                <h2 class="kpi-title">Comparador de textos</h2>
+                <p class="kpi-subtitle">Compare versões, identifique alterações e copie um resumo objetivo.</p>
+              </div>
+            </section>
+
+            <iframe
+              id="comparador-textos-frame"
+              title="Comparador de textos"
+              src="html/comparador-textos.html"
+              loading="lazy"
+              style="width:100%;min-height:calc(100vh - 190px);border:0;border-radius:18px;background:var(--bg-card);box-shadow:0 18px 50px rgba(15,23,42,.12);"
+            ></iframe>
+          </section>
+        </div>
+
+        <!-- embedded metas assistant removed -->
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 
 
       </div>
@@ -1849,7 +2011,11 @@
   <script src="js/similarity.js"></script>
   <script src="js/responses.js"></script>
   <script src="js/monitor_sefaz.js"></script>
+<<<<<<< HEAD
   <script src="js/phonebook.js"></script>
+=======
+  <script src="js/protocord-znuny-transport-plugin.js"></script>
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   <script src="js/ia-transcriber.js"></script>
   <script src="js/ia-assistant.js"></script>
   <script>
@@ -1893,6 +2059,10 @@
       document.getElementById('mobile-overlay').classList.remove('hidden');
     });
 
+<<<<<<< HEAD
+=======
+    // Fecha a interface, recurso ou fluxo solicitado (close mobile).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     const closeMobile = () => {
       mobileSidebar.classList.add('-translate-x-full');
       document.getElementById('mobile-overlay').classList.add('hidden');
@@ -1912,8 +2082,13 @@ const PAGE_CONTEXTS = {
   'relatorios': 'Página Relatórios - Exportação e análise de dados',
   'sefaz': 'Página SEFAZ - Monitor de disponibilidade SEFAZ',
   'ia': 'Página Transcrever - Transcrição de áudio para tickets',
+<<<<<<< HEAD
   'agenda': 'Página Agenda - Contatos telefônicos dos atendimentos',
   'metas': 'Página Metas - Acompanhamento de metas e desempenho',
+=======
+  'metas': 'Página Metas - Acompanhamento de metas e desempenho',
+  'comparador-textos': 'Página Comparador de Textos - Comparação de versões e revisão textual',
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 };
 
 window.mostrarPagina = function (paginaId) {
@@ -1982,6 +2157,7 @@ window.mostrarPagina = function (paginaId) {
     }
 
     // ===============================
+<<<<<<< HEAD
     // PÁGINA AGENDA TELEFÔNICA
     // ===============================
     if (paginaId === 'agenda') {
@@ -1991,6 +2167,8 @@ window.mostrarPagina = function (paginaId) {
     }
 
     // ===============================
+=======
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     // HISTÓRICO
     // ===============================
     if (paginaId === 'historico') {
@@ -2013,8 +2191,12 @@ window.mostrarPagina = function (paginaId) {
         window.renderKpiWorkspace();
       } else if (typeof window.initKpiDashboard === 'function') {
         window.initKpiDashboard();
+<<<<<<< HEAD
       }
       if (typeof window.initLegacyHistoryDashboard === 'function') {
+=======
+      } else if (typeof window.initLegacyHistoryDashboard === 'function') {
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         window.initLegacyHistoryDashboard();
       }
     }
@@ -2055,6 +2237,10 @@ window.mostrarPagina = function (paginaId) {
 
     const mediaTheme = window.matchMedia('(prefers-color-scheme: dark)');
 
+<<<<<<< HEAD
+=======
+    // Aplica valores, estado visual ou configuracoes no fluxo atual (apply theme).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function applyTheme(theme) {
       const html = document.documentElement;
       const resolvedTheme = theme === 'system'
@@ -2080,8 +2266,26 @@ window.mostrarPagina = function (paginaId) {
           ?`Sistema (${resolvedTheme === 'dark' ?'Dark' : 'Light'})`
           : (theme === 'dark' ?'Dark' : 'Light');
       }
+<<<<<<< HEAD
     }
 
+=======
+
+      syncComparadorTheme(theme);
+    }
+
+    // Atualiza a tela, o estado interno ou dados derivados (sync comparador theme).
+    function syncComparadorTheme(theme) {
+      const frame = document.getElementById('comparador-textos-frame');
+      if (!frame?.contentWindow) return;
+      frame.contentWindow.postMessage({ type: 'protocord-theme', theme: theme || 'system' }, '*');
+    }
+
+    document.getElementById('comparador-textos-frame')?.addEventListener('load', () => {
+      syncComparadorTheme(localStorage.getItem('theme') || 'system');
+    });
+
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     window.alternarTema = function (tema) {
       const next = tema || 'system';
       if (next === 'system') {
@@ -2247,6 +2451,10 @@ window.mostrarPagina = function (paginaId) {
       toast.style.opacity = '1';
       toast.innerHTML = `<div class="flex-1">${message}</div><button class="ml-2 text-xs opacity-80">Fechar</button>`;
       container.appendChild(toast);
+<<<<<<< HEAD
+=======
+      // Remove itens, dados ou estado relacionado a esta funcionalidade (remove).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       const remove = () => {
         toast.style.transition = 'opacity 220ms ease, transform 220ms ease';
         toast.style.opacity = '0';
@@ -2372,7 +2580,11 @@ window.mostrarPagina = function (paginaId) {
               y = 40;
             }
             pdf.text(`${i+1}. ${labels[i]}`, 40, y);
+<<<<<<< HEAD
             pdf.text(String(data[i] ?''), pdfWidth - 80, y);
+=======
+            pdf.text(String(data[i] ?? ''), pdfWidth - 80, y);
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
             y += lineH;
           }
         }
@@ -2441,6 +2653,10 @@ window.mostrarPagina = function (paginaId) {
         const gap = 8;
         const colModulo = pageW - marginLeft - marginRight - (colPos + colPRTs + colReleases) - (gap * 4);
 
+<<<<<<< HEAD
+=======
+        // Explica a responsabilidade de processed dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         const processed = rows.map(r => {
           const moduloLines = doc.splitTextToSize(String(r.modulo || ''), colModulo);
           const h = Math.max(1, moduloLines.length) * lineHeight + 6;
@@ -2460,6 +2676,10 @@ window.mostrarPagina = function (paginaId) {
         let currentPage = 1;
         let yStart = marginTop;
 
+<<<<<<< HEAD
+=======
+        // Renderiza a interface ou a parte visual correspondente (render header).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         function renderHeader(pageNum) {
           doc.setFontSize(12);
           doc.text('Relatório: Ranking de Módulos', marginLeft, yStart);
@@ -2584,6 +2804,10 @@ window.mostrarPagina = function (paginaId) {
       }
     })();
 
+<<<<<<< HEAD
+=======
+    // Explica a responsabilidade de slice canvas to pdf dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function _sliceCanvasToPdf(canvas, pdf, marginLeft = 40, marginTop = 50) {
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
@@ -2726,6 +2950,10 @@ window.mostrarPagina = function (paginaId) {
         let currentPage = 1;
         let yStart = marginTop;
 
+<<<<<<< HEAD
+=======
+        // Renderiza a interface ou a parte visual correspondente (render header).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         function renderHeader(pageNum) {
           doc.setFontSize(12);
           const title = `Relatório de Detalhes - ${tipo === 'todos' ?'Todos' : (tipo === 'erro' ?'Erros' : 'Sugestões')} ${releaseSel !== 'todas' ?' - ' + releaseSel : ''}`;
@@ -2823,6 +3051,10 @@ window.mostrarPagina = function (paginaId) {
       // Ensure export functions exist: add lightweight wrappers that attempt to reload data and retry
       function makeWrapper(name) {
         if (typeof window[name] === 'function') return;
+<<<<<<< HEAD
+=======
+        // Explica a responsabilidade de wrapper fn dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         const wrapperFn = function(...args) {
           window.showToast && window.showToast(name + ' ainda não disponível','warning');
           // Try to (re)load supporting data, then retry
@@ -2853,7 +3085,13 @@ window.mostrarPagina = function (paginaId) {
   <script>
     // Final robust exports: override any wrappers and provide reliable, text-based PDF/CSV exports
     (function(){
+<<<<<<< HEAD
       function safe(msg){ try{}catch(e){} }
+=======
+      // Explica a responsabilidade de safe dentro deste modulo.
+      function safe(msg){ try{}catch(e){} }
+      // Explica a responsabilidade de ensure releases dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       const ensureReleases = async () => {
         if (Array.isArray(window.liberacoesOriginais) && window.liberacoesOriginais.length) return window.liberacoesOriginais;
         if (typeof carregarDadosLiberacoes === 'function') {
@@ -2928,7 +3166,11 @@ window.mostrarPagina = function (paginaId) {
                 p = window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {};
               }
 
+<<<<<<< HEAD
               const tipoRaw = (p && p.tipo !== undefined) ?p.tipo : (window.protocolosIndex?.[prt]?.tipo ?'');
+=======
+              const tipoRaw = (p && p.tipo !== undefined) ? p.tipo : (window.protocolosIndex?.[prt]?.tipo || '');
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
               const tipoLabel = (typeof getTipoLabel==='function')?getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugestão');
               const normTipo = normalizeLabel(tipoLabel);
               if (tipo==='erro' && normTipo!=='erro') continue;
@@ -2969,7 +3211,11 @@ window.mostrarPagina = function (paginaId) {
                 p = window.protocolosCache?.[prt] || window.protocolosIndex?.[prt] || {};
               }
 
+<<<<<<< HEAD
               const tipoRaw = (p && p.tipo !== undefined) ?p.tipo : (window.protocolosIndex?.[prt]?.tipo ?'');
+=======
+              const tipoRaw = (p && p.tipo !== undefined) ? p.tipo : (window.protocolosIndex?.[prt]?.tipo || '');
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
               const tipoLabel = (typeof getTipoLabel==='function')?getTipoLabel(tipoRaw) : (tipoRaw==='0'?'Erro':'Sugestão');
               const normTipo = normalizeLabel(tipoLabel);
               if (tipo==='erro' && normTipo!=='erro') continue;
@@ -2997,6 +3243,10 @@ window.mostrarPagina = function (paginaId) {
           const lineH = 14;
           let y = 60;
 
+<<<<<<< HEAD
+=======
+          // Explica a responsabilidade de draw header dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
           const drawHeader = (title) => {
             doc.setFont('helvetica','bold'); doc.setFontSize(12);
             doc.text(title, xTicket, 36);
@@ -3446,10 +3696,18 @@ window.mostrarPagina = function (paginaId) {
   var animateRef = null;
   var staggerRef = null;
 
+<<<<<<< HEAD
+=======
+  // Busca ou resolve informacoes necessarias para o fluxo (get all).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function getAll(selector, context) {
     return Array.prototype.slice.call((context || document).querySelectorAll(selector));
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de marcar elementos dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function marcarElementos() {
     motionSelectors.forEach(function (selector) {
       getAll(selector).forEach(function (element) {
@@ -3458,6 +3716,10 @@ window.mostrarPagina = function (paginaId) {
     });
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de animar hover dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function animarHover(element) {
     if (!animateRef || !element || element.dataset.pcHoverBound === '1') return;
     element.dataset.pcHoverBound = '1';
@@ -3479,6 +3741,10 @@ window.mostrarPagina = function (paginaId) {
     });
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de ligar hovers dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function ligarHovers() {
     [
       '.sidebar-item',
@@ -3494,6 +3760,10 @@ window.mostrarPagina = function (paginaId) {
     });
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de ligar foco inputs dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function ligarFocoInputs() {
     getAll('input, textarea, select').forEach(function (element) {
       if (element.dataset.pcFocusBound === '1') return;
@@ -3506,12 +3776,20 @@ window.mostrarPagina = function (paginaId) {
     });
   }
 
+<<<<<<< HEAD
+=======
+  // Busca ou resolve informacoes necessarias para o fluxo (obter pagina visivel).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function obterPaginaVisivel() {
     return getAll('[id^="pagina-"]').find(function (element) {
       return !element.classList.contains('hidden');
     });
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de animar pagina visivel dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function animarPaginaVisivel() {
     if (!animateRef) return;
 
@@ -3531,6 +3809,10 @@ window.mostrarPagina = function (paginaId) {
     );
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de animar troca de tema dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function animarTrocaDeTema() {
     if (!animateRef) return;
 
@@ -3544,6 +3826,10 @@ window.mostrarPagina = function (paginaId) {
     );
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de animar player ao tocar dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function animarPlayerAoTocar() {
     var audio = document.getElementById('ia-audio-player');
     var card = document.getElementById('ia-audio-card');
@@ -3551,10 +3837,18 @@ window.mostrarPagina = function (paginaId) {
 
     audio.dataset.pcAudioBound = '1';
 
+<<<<<<< HEAD
+=======
+    // Trata o evento ou acao do usuario neste fluxo (on play).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     var onPlay = function () {
       animateRef(card, { boxShadow: ['0 0 0 rgba(0,0,0,0)', '0 0 0 1px rgba(34,211,238,.12), 0 16px 36px rgba(34,211,238,.12)'] }, { duration: .28 });
     };
 
+<<<<<<< HEAD
+=======
+    // Trata o evento ou acao do usuario neste fluxo (on stop).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     var onStop = function () {
       animateRef(card, { boxShadow: ['0 0 0 1px rgba(34,211,238,.12), 0 16px 36px rgba(34,211,238,.12)', '0 10px 24px rgba(0,0,0,.10)'] }, { duration: .28 });
     };
@@ -3564,6 +3858,10 @@ window.mostrarPagina = function (paginaId) {
     audio.addEventListener('ended', onStop);
   }
 
+<<<<<<< HEAD
+=======
+  // Aplica valores, estado visual ou configuracoes no fluxo atual (aplicar camada visual).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function aplicarCamadaVisual() {
     marcarElementos();
     ligarHovers();
@@ -3571,6 +3869,10 @@ window.mostrarPagina = function (paginaId) {
     animarPlayerAoTocar();
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de observar paginas dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function observarPaginas() {
     var paginas = getAll('[id^="pagina-"]');
     if (!paginas.length) return;
@@ -3586,6 +3888,10 @@ window.mostrarPagina = function (paginaId) {
 
       if (deveAnimarPagina) {
         aplicarCamadaVisual();
+<<<<<<< HEAD
+=======
+        // Explica a responsabilidade de request animation frame dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         requestAnimationFrame(function () {
           animarPaginaVisivel();
         });
@@ -3597,6 +3903,10 @@ window.mostrarPagina = function (paginaId) {
     });
   }
 
+<<<<<<< HEAD
+=======
+  // Explica a responsabilidade de observar tema dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function observarTema() {
     var html = document.documentElement;
     if (!html) return;
@@ -3605,6 +3915,10 @@ window.mostrarPagina = function (paginaId) {
       mutations.forEach(function (mutation) {
         if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
           aplicarCamadaVisual();
+<<<<<<< HEAD
+=======
+          // Explica a responsabilidade de request animation frame dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
           requestAnimationFrame(function () {
             animarTrocaDeTema();
           });
@@ -3615,8 +3929,15 @@ window.mostrarPagina = function (paginaId) {
     observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
   }
 
+<<<<<<< HEAD
   function observarDom() {}
 
+=======
+  // Explica a responsabilidade de observar dom dentro deste modulo.
+  function observarDom() {}
+
+  // Explica a responsabilidade de iniciar camada dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function iniciarCamada() {
     aplicarCamadaVisual();
     animarPaginaVisivel();
@@ -3624,6 +3945,10 @@ window.mostrarPagina = function (paginaId) {
     observarTema();
   }
 
+<<<<<<< HEAD
+=======
+  // Carrega ou restaura dados usados por esta funcionalidade (carregar motion erodar).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
   function carregarMotionERodar() {
     if (window.__motionLayerStarted) return;
     if (typeof window.hasActiveAuthSession === 'function' && !window.hasActiveAuthSession()) {
@@ -3675,6 +4000,176 @@ window.mostrarPagina = function (paginaId) {
   });
 })();
 </script>
+<<<<<<< HEAD
+=======
+<script>
+  (function () {
+    // Inicializa os elementos e estados necessarios para esta funcionalidade (init docs easter menu).
+    function initDocsEasterMenu() {
+      const menu = document.getElementById('docs-easter-menu');
+      if (!menu || menu.dataset.bound === '1') return;
+      menu.dataset.bound = '1';
+
+      const targets = [
+        document.getElementById('docs-easter-brand'),
+        document.getElementById('docs-easter-version'),
+        document.getElementById('docs-easter-mobile')
+      ].filter(Boolean);
+      const closeButton = document.getElementById('docs-easter-close');
+      const authForm = document.getElementById('docs-easter-auth');
+      const passwordInput = document.getElementById('docs-easter-password');
+      const authError = document.getElementById('docs-easter-error');
+      const links = document.getElementById('docs-easter-links');
+      let touchTimer = null;
+
+      // Explica a responsabilidade de clamp dentro deste modulo.
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      // Abre a interface, recurso ou fluxo solicitado (open menu).
+      function openMenu(x, y) {
+        renderAuthState();
+        menu.classList.remove('hidden');
+        menu.setAttribute('aria-hidden', 'false');
+        window.requestLucideIcons?.();
+
+        const rect = menu.getBoundingClientRect();
+        const nextLeft = clamp(x, 12, window.innerWidth - rect.width - 12);
+        const nextTop = clamp(y, 72, window.innerHeight - rect.height - 12);
+
+        menu.style.left = `${nextLeft}px`;
+        menu.style.top = `${nextTop}px`;
+        menu.style.right = 'auto';
+
+        (links?.classList.contains('hidden') ? passwordInput : menu.querySelector('a'))?.focus({ preventScroll: true });
+      }
+
+      // Fecha a interface, recurso ou fluxo solicitado (close menu).
+      function closeMenu() {
+        menu.classList.add('hidden');
+        menu.setAttribute('aria-hidden', 'true');
+        if (passwordInput) passwordInput.value = '';
+        authError?.classList.add('hidden');
+      }
+
+      // Valida uma condicao e retorna o resultado para o fluxo (has docs session).
+      function hasDocsSession() {
+        const time = Number(sessionStorage.getItem('PROTOCORD_DOCS_AUTH_TIME') || 0);
+        const token = sessionStorage.getItem('PROTOCORD_DOCS_AUTH_TOKEN');
+        return Boolean(token && time && Date.now() - time < 15 * 60 * 1000);
+      }
+
+      // Renderiza a interface ou a parte visual correspondente (render auth state).
+      function renderAuthState() {
+        const authenticated = hasDocsSession();
+        authForm?.classList.toggle('hidden', authenticated);
+        links?.classList.toggle('hidden', !authenticated);
+        authError?.classList.add('hidden');
+      }
+
+      targets.forEach((target) => {
+        target.addEventListener('contextmenu', (event) => {
+          event.preventDefault();
+          openMenu(event.clientX, event.clientY);
+        });
+
+        target.addEventListener('click', (event) => {
+          if (window.matchMedia('(max-width: 767px)').matches) {
+            openMenu(event.clientX || 18, 74);
+          }
+        });
+
+        target.addEventListener('touchstart', (event) => {
+          const touch = event.touches?.[0];
+          window.clearTimeout(touchTimer);
+          touchTimer = window.setTimeout(() => {
+            openMenu(touch?.clientX || 18, touch?.clientY || 74);
+          }, 520);
+        }, { passive: true });
+
+        target.addEventListener('touchend', () => window.clearTimeout(touchTimer));
+        target.addEventListener('touchcancel', () => window.clearTimeout(touchTimer));
+      });
+
+      closeButton?.addEventListener('click', closeMenu);
+      authForm?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const password = passwordInput?.value?.trim() || '';
+        if (!password) return;
+        authError?.classList.add('hidden');
+
+        try {
+          const response = await fetch(window.getProtocordApiUrl('/autenticacao'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pass: window.toMD5(password) }),
+          });
+          const result = await response.json();
+          if ((result === true || result?.authenticated === true) && result?.token) {
+            sessionStorage.setItem('PROTOCORD_DOCS_AUTH_TIME', String(Date.now()));
+            sessionStorage.setItem('PROTOCORD_DOCS_AUTH_TOKEN', result.token);
+            passwordInput.value = '';
+            renderAuthState();
+            window.requestLucideIcons?.();
+            return;
+          }
+          authError?.classList.remove('hidden');
+        } catch (_error) {
+          authError?.classList.remove('hidden');
+        }
+      });
+      links?.addEventListener('click', async (event) => {
+        const button = event.target.closest('[data-doc-key]');
+        if (!button) return;
+        const token = sessionStorage.getItem('PROTOCORD_DOCS_AUTH_TOKEN');
+        const docKey = button.dataset.docKey;
+        if (!token || !docKey) {
+          renderAuthState();
+          return;
+        }
+
+        button.disabled = true;
+        try {
+          const response = await fetch(window.getProtocordApiUrl(`/autenticacao?doc=${encodeURIComponent(docKey)}`), {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!response.ok) throw new Error('Documento não autorizado');
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          window.open(url, '_blank', 'noopener,noreferrer');
+          window.setTimeout(() => URL.revokeObjectURL(url), 60 * 1000);
+        } catch (_error) {
+          sessionStorage.removeItem('PROTOCORD_DOCS_AUTH_TOKEN');
+          sessionStorage.removeItem('PROTOCORD_DOCS_AUTH_TIME');
+          authError?.classList.remove('hidden');
+          renderAuthState();
+        } finally {
+          button.disabled = false;
+        }
+      });
+      document.addEventListener('click', (event) => {
+        if (menu.classList.contains('hidden')) return;
+        if (menu.contains(event.target) || targets.some((target) => target.contains(event.target))) return;
+        closeMenu();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeMenu();
+        if (event.altKey && event.key.toLowerCase() === 'd') {
+          event.preventDefault();
+          openMenu(window.innerWidth - 340, 76);
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initDocsEasterMenu);
+    } else {
+      initDocsEasterMenu();
+    }
+  })();
+</script>
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 </body>
 
 </html>

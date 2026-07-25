@@ -1,9 +1,30 @@
 (function () {
+<<<<<<< HEAD
   function initMetaFlowUltra(mountSelector = "#metas-app") {
     const THEMES = {
       aurora: {
         id: "aurora",
         name: "Aurora Light",
+=======
+  // Inicializa os elementos e estados necessarios para esta funcionalidade (init meta flow ultra).
+  function initMetaFlowUltra(mountSelector = "#metas-app") {
+    const THEMES = {
+      global: {
+        id: "global",
+        name: "Tema ProtoCord",
+        type: "auto",
+        panel: "rgba(255,255,255,0.92)",
+        panel2: "rgba(248,251,255,0.86)",
+        text: "#0f172a",
+        muted: "#516277",
+        border: "rgba(148,163,184,0.18)",
+        primary: "#2563eb",
+        primaryHover: "#1d4ed8",
+      },
+      aurora: {
+        id: "aurora",
+        name: "Aurora Clara",
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         type: "light",
         panel: "rgba(255,255,255,0.82)",
         panel2: "rgba(255,255,255,0.65)",
@@ -15,7 +36,11 @@
       },
       minimalist: {
         id: "minimalist",
+<<<<<<< HEAD
         name: "Minimalist",
+=======
+        name: "Minimalista",
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         type: "light",
         panel: "rgba(255,255,255,0.98)",
         panel2: "rgba(255,255,255,0.92)",
@@ -27,7 +52,11 @@
       },
       midnight: {
         id: "midnight",
+<<<<<<< HEAD
         name: "Midnight Navy",
+=======
+        name: "Noite Corporativa",
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         type: "dark",
         panel: "rgba(18, 28, 55, 0.72)",
         panel2: "rgba(10, 17, 35, 0.62)",
@@ -39,7 +68,11 @@
       },
       oled: {
         id: "oled",
+<<<<<<< HEAD
         name: "OLED Black",
+=======
+        name: "Preto OLED",
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         type: "dark",
         panel: "rgba(18,18,18,0.92)",
         panel2: "rgba(12,12,12,0.8)",
@@ -78,7 +111,11 @@
         ?document.querySelector(mountSelector)
         : mountSelector;
 
+<<<<<<< HEAD
     if (!mount) throw new Error("Container do MetaFlow não encontrado.");
+=======
+    if (!mount) throw new Error("Contêiner do painel de metas não encontrado.");
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 
     if (mount.dataset.metaflowMounted === "true") {
       return mount.__metaflowApi || null;
@@ -86,6 +123,10 @@
 
     const db = {
       db: null,
+<<<<<<< HEAD
+=======
+      // Inicializa os elementos e estados necessarios para esta funcionalidade (init).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       async init() {
         return new Promise((resolve, reject) => {
           const req = indexedDB.open(DB_NAME, DB_VERSION);
@@ -120,6 +161,10 @@
         });
       },
 
+<<<<<<< HEAD
+=======
+      // Busca ou resolve informacoes necessarias para o fluxo (get).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       async get(store, id) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction(store, "readonly");
@@ -129,6 +174,10 @@
         });
       },
 
+<<<<<<< HEAD
+=======
+      // Busca ou resolve informacoes necessarias para o fluxo (get all).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       async getAll(store) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction(store, "readonly");
@@ -138,6 +187,10 @@
         });
       },
 
+<<<<<<< HEAD
+=======
+      // Explica a responsabilidade de put dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       async put(store, data) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction(store, "readwrite");
@@ -147,6 +200,10 @@
         });
       },
 
+<<<<<<< HEAD
+=======
+      // Remove itens, dados ou estado relacionado a esta funcionalidade (delete).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       async delete(store, id) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction(store, "readwrite");
@@ -161,21 +218,37 @@
       goals: [],
       entries: [],
       tasks: [],
+<<<<<<< HEAD
       themeId: "midnight",
+=======
+      themeId: "global",
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       currentView: "dashboard",
       pendingKanbanAction: null,
     };
 
+<<<<<<< HEAD
+=======
+    // Busca ou resolve informacoes necessarias para o fluxo (get today str).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function getTodayStr() {
       const d = new Date();
       d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
       return d.toISOString().split("T")[0];
     }
 
+<<<<<<< HEAD
+=======
+    // Explica a responsabilidade de generate id dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function generateId() {
       return Math.random().toString(36).slice(2, 15);
     }
 
+<<<<<<< HEAD
+=======
+    // Explica a responsabilidade de calculate status dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function calculateStatus(value, min, tol, ceiling) {
       if (value < min) return "naoAtingida";
       if (value >= min && value < tol) return "toleravel";
@@ -183,10 +256,34 @@
       return "otimo";
     }
 
+<<<<<<< HEAD
     function getTheme() {
       return THEMES[state.themeId] || THEMES.midnight;
     }
 
+=======
+    // Busca ou resolve informacoes necessarias para o fluxo (get theme).
+    function getTheme() {
+      if (state.themeId === "global") {
+        return getGlobalTheme();
+      }
+      return THEMES[state.themeId] || getGlobalTheme();
+    }
+
+    // Busca ou resolve informacoes necessarias para o fluxo (get global theme).
+    function getGlobalTheme() {
+      const isLight = document.documentElement?.dataset?.theme === "light";
+      return isLight
+        ? THEMES.global
+        : {
+            ...THEMES.midnight,
+            id: "global",
+            name: "Tema ProtoCord",
+          };
+    }
+
+    // Explica a responsabilidade de escape html dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function escapeHtml(value) {
     return String(value || "")
         .replaceAll("&", "&amp;")
@@ -196,10 +293,18 @@
         .replaceAll("'", "&#039;");
     }
 
+<<<<<<< HEAD
+=======
+    // Explica a responsabilidade de entry for dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function entryFor(goalId, date) {
       return state.entries.find((e) => e.id === `${goalId}_${date}`);
     }
 
+<<<<<<< HEAD
+=======
+    // Explica a responsabilidade de streak for goal dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function streakForGoal(goal) {
       const today = getTodayStr();
       let streak = 0;
@@ -227,6 +332,10 @@
       return streak;
     }
 
+<<<<<<< HEAD
+=======
+    // Explica a responsabilidade de inject base dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function injectBase() {
       mount.innerHTML = `
         <style>
@@ -553,7 +662,11 @@
             position: relative;
             z-index: 1;
             display: grid;
+<<<<<<< HEAD
             grid-template-columns: repeat(4, minmax(0, 1fr));
+=======
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
             gap: 12px;
             margin-top: 18px;
           }
@@ -636,6 +749,70 @@
             gap: 18px;
           }
 
+<<<<<<< HEAD
+=======
+          .mfu-today-board {
+            display: grid;
+            grid-template-columns: minmax(0, 1.35fr) repeat(3, minmax(150px, .55fr));
+            gap: 16px;
+            align-items: stretch;
+            margin-bottom: 18px;
+          }
+
+          .mfu-today-card {
+            padding: 18px;
+            border-radius: 22px;
+            border: 1px solid var(--border);
+            background: var(--panel);
+            box-shadow: var(--shadow);
+          }
+
+          .mfu-today-card h3 {
+            margin: 0 0 6px;
+            font-size: 1rem;
+          }
+
+          .mfu-today-card strong {
+            display: block;
+            font-size: 2rem;
+            line-height: 1;
+            font-weight: 900;
+          }
+
+          .mfu-today-card p {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: .92rem;
+          }
+
+          .mfu-today-focus {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: center;
+          }
+
+          .mfu-today-focus-title {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 900;
+          }
+
+          .mfu-today-focus-text {
+            margin: 8px 0 0;
+            color: var(--muted);
+          }
+
+          .mfu-today-focus-value {
+            min-width: 92px;
+            text-align: right;
+          }
+
+          .mfu-today-focus-value strong {
+            font-size: 2.35rem;
+          }
+
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
           .mfu-stat-card h3 {
             margin: 0 0 8px;
             font-size: 1rem;
@@ -725,6 +902,10 @@
             .mfu-goals,
             .mfu-kanban-cols,
             .mfu-stats,
+<<<<<<< HEAD
+=======
+            .mfu-today-board,
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
             .mfu-grid-2,
             .mfu-grid-3 {
               grid-template-columns: 1fr;
@@ -761,6 +942,10 @@
       `;
     }
 
+<<<<<<< HEAD
+=======
+    // Aplica valores, estado visual ou configuracoes no fluxo atual (apply theme vars).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function applyThemeVars() {
       const theme = getTheme();
       const root = mount.querySelector(".mfu");
@@ -773,14 +958,25 @@
       root.style.setProperty("--border", theme.border);
       root.style.setProperty("--primary", theme.primary);
       root.style.setProperty("--primary-hover", theme.primaryHover);
+<<<<<<< HEAD
     }
 
+=======
+      root.dataset.theme = theme.type === "dark" ? "dark" : "light";
+    }
+
+    // Persiste dados ou configuracoes desta funcionalidade (save theme).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     async function saveTheme(themeId) {
       state.themeId = themeId;
       await db.put("settings", { id: "theme", value: themeId });
       render();
     }
 
+<<<<<<< HEAD
+=======
+    // Persiste dados ou configuracoes desta funcionalidade (save goal).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     async function saveGoal(goalData) {
       const goal = {
         ...goalData,
@@ -800,6 +996,10 @@
       render();
     }
 
+<<<<<<< HEAD
+=======
+    // Remove itens, dados ou estado relacionado a esta funcionalidade (delete goal).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     async function deleteGoal(goalId) {
       await db.delete("goals", goalId);
       state.goals = await db.getAll("goals");
@@ -811,6 +1011,10 @@
       render();
     }
 
+<<<<<<< HEAD
+=======
+    // Atualiza a tela, o estado interno ou dados derivados (update entry).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     async function updateEntry(goalId, date, incrementValue) {
       const id = `${goalId}_${date}`;
       let entry = await db.get("entries", id);
@@ -829,6 +1033,10 @@
       render();
     }
 
+<<<<<<< HEAD
+=======
+    // Explica a responsabilidade de add task dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     async function addTask(text, goalId) {
       const task = {
         id: generateId(),
@@ -845,6 +1053,10 @@
       render();
     }
 
+<<<<<<< HEAD
+=======
+    // Explica a responsabilidade de move task dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     async function moveTask(taskId, status) {
       const task = state.tasks.find((t) => t.id === taskId);
       if (!task || task.status === status) return;
@@ -863,12 +1075,20 @@
       render();
     }
 
+<<<<<<< HEAD
+=======
+    // Remove itens, dados ou estado relacionado a esta funcionalidade (delete task).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     async function deleteTask(taskId) {
       await db.delete("tasks", taskId);
       state.tasks = await db.getAll("tasks");
       render();
     }
 
+<<<<<<< HEAD
+=======
+    // Explica a responsabilidade de stats summary dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function statsSummary() {
       const trackedDays = new Set(state.entries.map((e) => e.date)).size;
       let total = 0;
@@ -903,6 +1123,104 @@
       };
     }
 
+<<<<<<< HEAD
+=======
+    // Explica a responsabilidade de today overview dentro deste modulo.
+    function todayOverview() {
+      const today = getTodayStr();
+      // Explica a responsabilidade de goals dentro deste modulo.
+      const goals = state.goals.map((goal) => {
+        const entry = entryFor(goal.id, today);
+        const value = entry ?Number(entry.value || 0) : 0;
+        const ceiling = Number(goal.ceiling || 1);
+        const progress = Math.min(100, Math.max(0, (value / ceiling) * 100));
+        const remainingToMinimum = Math.max(0, Number(goal.min || 0) - value);
+        const remainingToCeiling = Math.max(0, ceiling - value);
+        const statusKey = calculateStatus(value, Number(goal.min), Number(goal.tol), ceiling);
+
+        return {
+          ...goal,
+          value,
+          progress,
+          remainingToMinimum,
+          remainingToCeiling,
+          statusKey,
+        };
+      });
+
+      const completed = goals.filter((goal) => goal.statusKey === "atingida" || goal.statusKey === "otimo").length;
+      const pendingTasks = state.tasks.filter((task) => task.status !== "done").length;
+      const bestStreak = goals.reduce((max, goal) => Math.max(max, streakForGoal(goal)), 0);
+      const focusGoal =
+        goals
+          .filter((goal) => goal.remainingToMinimum > 0)
+          .sort((a, b) => a.remainingToMinimum - b.remainingToMinimum || b.progress - a.progress)[0] ||
+        goals.sort((a, b) => a.progress - b.progress)[0] ||
+        null;
+
+      return {
+        totalGoals: goals.length,
+        completed,
+        pendingTasks,
+        bestStreak,
+        focusGoal,
+      };
+    }
+
+    // Renderiza a interface ou a parte visual correspondente (render today board).
+    function renderTodayBoard() {
+      const overview = todayOverview();
+      const focus = overview.focusGoal;
+      const focusStatus = focus ?STATUS_COLORS[focus.statusKey] : STATUS_COLORS.naoAtingida;
+
+      return `
+        <section class="mfu-today-board" aria-label="Resumo do dia">
+          <div class="mfu-today-card mfu-today-focus">
+            <div>
+              <h3 class="mfu-today-focus-title">Foco de hoje</h3>
+              ${
+                focus
+                  ?`<p class="mfu-today-focus-text">
+                      ${escapeHtml(focus.name)} · faltam
+                      <strong style="color:var(--text);">${focus.remainingToMinimum || focus.remainingToCeiling}</strong>
+                      ${escapeHtml(focus.unit)} para o próximo marco.
+                    </p>`
+                  : `<p class="mfu-today-focus-text">Crie uma meta para iniciar o acompanhamento diário.</p>`
+              }
+            </div>
+            ${
+              focus
+                ?`<div class="mfu-today-focus-value">
+                    <strong style="color:${focusStatus.color};">${focus.progress.toFixed(0)}%</strong>
+                    <p>${focusStatus.label}</p>
+                  </div>`
+                : ""
+            }
+          </div>
+
+          <div class="mfu-today-card">
+            <h3>Metas em dia</h3>
+            <strong>${overview.completed}/${overview.totalGoals}</strong>
+            <p>atingidas ou acima do previsto</p>
+          </div>
+
+          <div class="mfu-today-card">
+            <h3>Tarefas abertas</h3>
+            <strong>${overview.pendingTasks}</strong>
+            <p>pendentes no quadro</p>
+          </div>
+
+          <div class="mfu-today-card">
+            <h3>Melhor sequência</h3>
+            <strong>${overview.bestStreak}</strong>
+            <p>dia${overview.bestStreak !== 1 ? "s" : ""} consecutivo${overview.bestStreak !== 1 ? "s" : ""}</p>
+          </div>
+        </section>
+      `;
+    }
+
+    // Renderiza a interface ou a parte visual correspondente (render compact bar).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function renderCompactBar() {
       return `
         <div class="mfu-compactbar">
@@ -926,6 +1244,10 @@
       `;
     }
 
+<<<<<<< HEAD
+=======
+    // Renderiza a interface ou a parte visual correspondente (render onboarding).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function renderOnboarding() {
       return `
         <div class="mfu-onboarding-wrap">
@@ -995,6 +1317,10 @@
       `;
     }
 
+<<<<<<< HEAD
+=======
+    // Renderiza a interface ou a parte visual correspondente (render dashboard).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function renderDashboard() {
       const today = getTodayStr();
 
@@ -1003,6 +1329,10 @@
       }
 
       return `
+<<<<<<< HEAD
+=======
+        ${renderTodayBoard()}
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
         <section class="mfu-goals">
           ${state.goals
             .map((goal) => {
@@ -1079,6 +1409,10 @@
                     <button data-action="entry" data-goal-id="${goal.id}" data-inc="1">+1</button>
                     <button data-action="entry" data-goal-id="${goal.id}" data-inc="5">+5</button>
                     <button data-action="entry" data-goal-id="${goal.id}" data-inc="10">+10</button>
+<<<<<<< HEAD
+=======
+                    <button data-action="entry-custom" data-goal-id="${goal.id}">Outro</button>
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
                   </div>
                 </article>
               `;
@@ -1088,6 +1422,10 @@
       `;
     }
 
+<<<<<<< HEAD
+=======
+    // Explica a responsabilidade de calculate days remaining dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function calculateDaysRemaining(goal) {
       if (!goal.endDate) return 0;
       const today = getTodayStr();
@@ -1097,6 +1435,10 @@
       return Math.max(0, diff);
     }
 
+<<<<<<< HEAD
+=======
+    // Renderiza a interface ou a parte visual correspondente (render kanban).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function renderKanban() {
       const groups = {
         todo: state.tasks.filter((t) => t.status === "todo"),
@@ -1104,6 +1446,10 @@
         done: state.tasks.filter((t) => t.status === "done"),
       };
 
+<<<<<<< HEAD
+=======
+      // Explica a responsabilidade de column html dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       function columnHtml(id, title, items) {
         return `
           <div class="mfu-col">
@@ -1180,6 +1526,10 @@
       `;
     }
 
+<<<<<<< HEAD
+=======
+    // Renderiza a interface ou a parte visual correspondente (render stats).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function renderStats() {
       const stats = statsSummary();
 
@@ -1247,6 +1597,10 @@
       `;
     }
 
+<<<<<<< HEAD
+=======
+    // Renderiza a interface ou a parte visual correspondente (render settings).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function renderSettings() {
       return `
         <section class="mfu-panel mfu-pad">
@@ -1307,6 +1661,10 @@
       `;
     }
 
+<<<<<<< HEAD
+=======
+    // Renderiza a interface ou a parte visual correspondente (render modal).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function renderModal() {
       if (!state.pendingKanbanAction) return "";
 
@@ -1327,6 +1685,10 @@
       `;
     }
 
+<<<<<<< HEAD
+=======
+    // Renderiza a interface ou a parte visual correspondente (render current view).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function renderCurrentView() {
       if (!state.goals.length || state.currentView === "onboarding") {
         return renderOnboarding();
@@ -1338,6 +1700,10 @@
       return renderDashboard();
     }
 
+<<<<<<< HEAD
+=======
+    // Renderiza a interface ou a parte visual correspondente (render).
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function render() {
       applyThemeVars();
 
@@ -1356,6 +1722,10 @@
       bindEvents();
     }
 
+<<<<<<< HEAD
+=======
+    // Explica a responsabilidade de bind events dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     function bindEvents() {
       const goalForm = mount.querySelector("#mfu-goal-form");
       if (goalForm) {
@@ -1399,6 +1769,24 @@
         });
       });
 
+<<<<<<< HEAD
+=======
+      mount.querySelectorAll("[data-action='entry-custom']").forEach((el) => {
+        el.addEventListener("click", async () => {
+          const rawValue = prompt("Informe o valor que deseja adicionar à meta:");
+          if (rawValue === null) return;
+
+          const value = Number(String(rawValue).replace(",", "."));
+          if (!Number.isFinite(value) || value === 0) {
+            alert("Informe um número válido diferente de zero.");
+            return;
+          }
+
+          await updateEntry(el.dataset.goalId, getTodayStr(), value);
+        });
+      });
+
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       mount.querySelectorAll("[data-action='delete-goal']").forEach((el) => {
         el.addEventListener("click", async () => {
           if (confirm("Deseja excluir esta meta?")) {
@@ -1455,6 +1843,10 @@
       }
     }
 
+<<<<<<< HEAD
+=======
+    // Explica a responsabilidade de bootstrap dentro deste modulo.
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
     async function bootstrap() {
       injectBase();
       await db.init();
@@ -1468,6 +1860,16 @@
         state.themeId = savedTheme.value;
       }
 
+<<<<<<< HEAD
+=======
+      // Explica a responsabilidade de theme observer dentro deste modulo.
+      const themeObserver = new MutationObserver(() => {
+        if (state.themeId !== "global") return;
+        applyThemeVars();
+      });
+      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
       state.currentView = state.goals.length ?"dashboard" : "onboarding";
       render();
     }

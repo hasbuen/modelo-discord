@@ -21,6 +21,15 @@ const htmlSource = fs.readFileSync(
 test('auth dispara evento quando estado de autenticacao muda', () => {
   assert.match(authSource, /CustomEvent\('protocord:auth-changed'/);
   assert.match(authSource, /window\.hasActiveAuthSession = hasActiveAuthSession/);
+<<<<<<< HEAD
+=======
+  assert.match(authSource, /window\.getProtocordAuthToken = getAuthToken/);
+  assert.match(authSource, /method: 'POST'/);
+  assert.match(authSource, /function isSignedSessionToken\(token\)/);
+  assert.match(authSource, /isSignedSessionToken\(token\)/);
+  assert.doesNotMatch(authSource, /authenticated-' \+ Date\.now\(\)/);
+  assert.doesNotMatch(authSource, /autenticacao\?pass=/);
+>>>>>>> a0026365360ce715e3d1e15751d8b3a97946f621
 });
 
 test('widget respeita autenticacao antes de abrir e nasce oculto no HTML', () => {
