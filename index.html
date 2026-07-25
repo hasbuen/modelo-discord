@@ -450,6 +450,11 @@
           </span>
         </button>
 
+        <button onclick="mostrarPagina('agenda')" data-tooltip="Agenda telefônica" class="sidebar-item" id="btn-agenda">
+          <i data-lucide="contact-round" class="sidebar-icon"></i>
+          <span class="sidebar-label">Agenda</span>
+        </button>
+
         <button onclick="mostrarPagina('metas')" data-tooltip="Metas" class="sidebar-item" id="btn-metas">
           <i data-lucide="target" class="sidebar-icon"></i>
           <span class="sidebar-label">Metas</span>
@@ -530,6 +535,9 @@
         <button onclick="mostrarPagina('ia')" class="sidebar-item" id="btn-ia-mobile">
             <i data-lucide="bot" class="sidebar-icon"></i> Transcrever
             <span class="sidebar-pill ml-2">Plus</span>
+          </button>
+          <button onclick="mostrarPagina('agenda')" class="sidebar-item" id="btn-agenda-mobile">
+            <i data-lucide="contact-round" class="sidebar-icon"></i> Agenda
           </button>
           <button onclick="mostrarPagina('metas')" class="sidebar-item" id="btn-metas-mobile">
             <i data-lucide="target" class="sidebar-icon"></i> Metas
@@ -1713,6 +1721,8 @@
 
         <!-- embedded metas assistant removed -->
 
+        <div id="pagina-agenda" class="hidden animate__animated animate__fadeIn"></div>
+
 
       </div>
     </main>
@@ -1839,6 +1849,7 @@
   <script src="js/similarity.js"></script>
   <script src="js/responses.js"></script>
   <script src="js/monitor_sefaz.js"></script>
+  <script src="js/phonebook.js"></script>
   <script src="js/ia-transcriber.js"></script>
   <script src="js/ia-assistant.js"></script>
   <script>
@@ -1901,6 +1912,7 @@ const PAGE_CONTEXTS = {
   'relatorios': 'Página Relatórios - Exportação e análise de dados',
   'sefaz': 'Página SEFAZ - Monitor de disponibilidade SEFAZ',
   'ia': 'Página Transcrever - Transcrição de áudio para tickets',
+  'agenda': 'Página Agenda - Contatos telefônicos dos atendimentos',
   'metas': 'Página Metas - Acompanhamento de metas e desempenho',
 };
 
@@ -1966,6 +1978,15 @@ window.mostrarPagina = function (paginaId) {
     if (paginaId === 'metas') {
       if (typeof window.initMetasPage === 'function') {
         window.initMetasPage();
+      }
+    }
+
+    // ===============================
+    // PÁGINA AGENDA TELEFÔNICA
+    // ===============================
+    if (paginaId === 'agenda') {
+      if (typeof window.initPhonebookPage === 'function') {
+        window.initPhonebookPage();
       }
     }
 

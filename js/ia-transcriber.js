@@ -4,6 +4,7 @@
   const MAX_UPLOAD_BYTES = 128 * 1024 * 1024;
   const AUDIO_DB_NAME = "protocord_ia_audio_v1";
   const AUDIO_STORE_NAME = "ticket_audio";
+  const PLACEHOLDER_PHONE = "Novo Ticket";
   const apiBaseUrl = window.getProtocordApiBaseUrl();
   let blobClientPromise = null;
   let audioDbPromise = null;
@@ -2809,6 +2810,8 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
       state.tickets = [];
       state.activeId = null;
     }
+
+    syncTicketsWithPhonebook();
   }
 
   function persist() {
@@ -2833,7 +2836,7 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
     const id = String(Date.now());
     const ticket = {
       id,
-      phone: "Novo Ticket",
+      phone: PLACEHOLDER_PHONE,
       customName: "",
       images: [],
       analysis: "",
@@ -2935,9 +2938,13 @@ els.imageEditorCanvas?.addEventListener("wheel", handleImageEditorTextWheel, { p
 
     const value = input.value.trim();
     ticket.customName = value;
+    const savedContact = rememberTicketContact(ticket);
     state.editingTicketId = null;
     persist();
     render();
+    if (savedContact) {
+      notify("Contato salvo na agenda.", "success");
+    }
   }
 
   function focusTicketInput(ticketId) {
@@ -3513,6 +3520,7 @@ function renderAudio(active) {
       active.solucao = data.solucao || "";
       active.resumo = (data.resumo || "").substring(0, 255);
       active.phone = data.telefone || active.phone;
+      applyPhonebookNameToTicket(active, { force: !active.customName });
       active.nomeArquivoNoServidor = data.nomeArquivoNoServidor || "";
       active.blobUrl = data.blobUrl || "";
       active.localAudioKey = localAudioKey;
@@ -3637,6 +3645,66 @@ function renderAudio(active) {
       "ENCAMINHAMENTO / SOLUCAO:",
       ticket?.solucao || "",
     ].join("\n").trim();
+  }
+
+  function getPhonebookApi() {
+    return window.ProtoCordPhonebook || null;
+  }
+
+  function normalizeTicketPhone(phone) {
+    const phonebook = getPhonebookApi();
+    if (typeof phonebook?.normalizePhone === "function") {
+      return phonebook.normalizePhone(phone);
+    }
+
+    const digits = String(phone || "").replace(/\D+/g, "");
+    return digits.length >= 8 ?digits : "";
+  }
+
+  function applyPhonebookNameToTicket(ticket, options = {}) {
+    if (!ticket) return false;
+    const phonebook = getPhonebookApi();
+    const contact = phonebook?.findByPhone?.(ticket.phone);
+    if (!contact?.name) return false;
+    if (!options.force && ticket.customName) return false;
+
+    ticket.customName = contact.name;
+    return true;
+  }
+
+  function syncTicketsWithPhonebook(options = {}) {
+    let changed = false;
+
+    state.tickets.forEach((ticket) => {
+      if (options.phoneKey && normalizeTicketPhone(ticket.phone) !== options.phoneKey) return;
+      const previousName = options.previousName || "";
+      const shouldForce = Boolean(options.force || !ticket.customName || ticket.customName === previousName);
+      if (applyPhonebookNameToTicket(ticket, { force: shouldForce })) {
+        changed = true;
+      }
+    });
+
+    if (changed) {
+      persist();
+    }
+
+    return changed;
+  }
+
+  function rememberTicketContact(ticket) {
+    if (!ticket) return null;
+    const phonebook = getPhonebookApi();
+    if (!phonebook?.upsertContact) return null;
+    if (phonebook.isNameUsefulForPhone && !phonebook.isNameUsefulForPhone(ticket.customName, ticket.phone)) {
+      return null;
+    }
+    if (!normalizeTicketPhone(ticket.phone)) return null;
+
+    return phonebook.upsertContact({
+      name: ticket.customName,
+      phone: ticket.phone,
+      source: "transcricao",
+    });
   }
 
   function parseSingleReportText(text) {
@@ -4188,6 +4256,19 @@ function formatAudioTime(seconds) {
     const page = document.getElementById("pagina-ia");
     if (page && !page.classList.contains("hidden")) {
       window.initIaTranscriberPage?.();
+    }
+  });
+
+  window.addEventListener("protocord:phonebook-updated", (event) => {
+    const contact = event.detail?.contact;
+    if (!contact?.phoneKey) return;
+    const changed = syncTicketsWithPhonebook({
+      phoneKey: contact.phoneKey,
+      previousName: event.detail?.previousContact?.name || "",
+      force: true,
+    });
+    if (changed) {
+      render();
     }
   });
 })();
